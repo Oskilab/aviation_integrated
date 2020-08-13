@@ -21,6 +21,16 @@ First, you will need to upload, the ASRS dataset and place it in the folder `pre
 6. `flight_vol.py`: combines FAA volume data with results from step 3
 7. `combine.py`: combines result from step (4) with results of the abbreviation/LIWC/doc2vec analysis (2)
 
+## Organization of Repository
+1. `preprocess_asrs/` is the directory in which ASRS tracon codes are extracted and cleaned
+2. `asrs_analysis/` is the directory responsible for analyzing the ASRS dataset via LIWC, Doc2Vec, and abbreviation analysis.
+3. `abrev_datasets/` includes the results from the abbreviation/ASRS repository
+4. `datasets/` includes the data from the FAA website.
+5. `faa/` includes the repository that cleans the FAA incident/accident data
+6. `aviation_data_huiyi/`: includes the repository that cleans the NTSB incident/accident data.
+7. `join_faa_ntsb.py`: joins the results from `faa/` and `aviation_data_huiyi/` into one dataset. This creates the file `airport_month_events.csv`
+8. `flight_vol.py`: combines `airport_month_events.csv` with the FAA volume data scrapped from the website above. This creates `combined_vol_incident.csv`
+9. `combine.py`: this combines `combined_vol_incident.csv` with all the abbreviation datasets from the ASRS repository. This creates the files: `final_dataset_{1|3|6|12|inf}.csv`.
 ## Datasets
 Before jumping into a detailed description of each step, here is some background information on the datasets involved.
 
@@ -262,14 +272,4 @@ python flight_vol.py
 python combine.py
 ```
 
-## Organization of Repository
-1. `preprocess_asrs/` is the directory in which ASRS tracon codes are extracted and cleaned
-2. `asrs_analysis/` is the directory responsible for analyzing the ASRS dataset via LIWC, Doc2Vec, and abbreviation analysis.
-3. `abrev_datasets/` includes the results from the abbreviation/ASRS repository
-4. `datasets/` includes the data from the FAA website.
-5. `faa/` includes the repository that cleans the FAA incident/accident data
-6. `aviation_data_huiyi/`: includes the repository that cleans the NTSB incident/accident data.
-7. `join_faa_ntsb.py`: joins the results from `faa/` and `aviation_data_huiyi/` into one dataset. This creates the file `airport_month_events.csv`
-8. `flight_vol.py`: combines `airport_month_events.csv` with the FAA volume data scrapped from the website above. This creates `combined_vol_incident.csv`
-9. `combine.py`: this combines `combined_vol_incident.csv` with all the abbreviation datasets from the ASRS repository. This creates the files: `final_dataset_{1|3|6|12|inf}.csv`.
 
