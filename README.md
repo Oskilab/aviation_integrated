@@ -218,7 +218,25 @@ cd ../
 
 **Running**:
 ```
-python join\_faa\_ntsb.py
+python join_faa_ntsb.py
+```
+
+### (6) Merging with Volume Data (flight\_vol.py)
+**Purpose**: combine faa/ntsb accident/incident data from the volume data from this [link](https://aspm.faa.gov/opsnet/sys/tower.asp). Merged on same Joining the FAA/NTSB datasets (join\_faa\_ntsb.py)tracon_month.
+
+**Input**:
+* `airport_month_events.csv` from the result of `join_faa_ntsb.py` 
+* `WEB-Report-xxxx.{csv|xls}`: these are the datasets queried from the link above.
+
+**Output**:
+* `Combined_vol_incident.csv`: airport_month_events.csv + volume data. 
+    * They are combined on tracon_month. If some data cannot be matched, then they are filled with nas
+* `nf_dates.csv`: stands for not found dates. If the date in `airport_month_events.csv` cannot be found in the vol data, but the code exists in the vol data, the row is added to `nf_dates.csv`
+* `nf_codes.csv`: stands for not found codes. If the code doesn’t exist in the vol data, the row is added to `nf_codes.csv`
+
+**Running**:
+```
+python flight_vol.py
 ```
 
 
