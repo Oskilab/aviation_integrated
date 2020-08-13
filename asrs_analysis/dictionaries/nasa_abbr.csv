@@ -1,0 +1,559 @@
+ACRONYM,acronym,Fullform7,link7
+AGL ,agl ,Above Ground Level ,NASA ASRS
+ATA ,ata ,Actual Time Of Arrival ,NASA ASRS
+ATD ,atd ,Actual Time Of Departure ,NASA ASRS
+AERO ,aero ,Aeronautical ,NASA ASRS
+AIM ,aim ,Aeronautical Information Manual ,NASA ASRS
+ACR ,acr ,Air Carrier ,NASA ASRS
+ADC ,adc ,Air Data Computer ,NASA ASRS
+ADIZ ,adiz ,Air Defense Identification Zone ,NASA ASRS
+ADG ,adg ,Air Driven Generator ,NASA ASRS
+AFB ,afb ,Air Force Base ,NASA ASRS
+ANG ,ang ,Air National Guard ,NASA ASRS
+ARSR ,arsr ,Air Route Surveillance Radar ,NASA ASRS
+ARTCC ,artcc ,Air Route Traffic Control Center ,NASA ASRS
+ATA ,ata ,Air Traffic Area ,NASA ASRS
+ATC ,atc ,Air Traffic Control ,NASA ASRS
+ACFT ,acft ,Aircraft ,NASA ASRS
+ATP ,atp ,Airline Transport Pilot Certificate ,NASA ASRS
+ATR ,atr ,Airline Transport Rating ,NASA ASRS
+ARPT,arpt,Airport ,NASA ASRS
+ARPTS,arpts,Airports,NASA ASRS
+AFD ,afd ,Airport Directory ,NASA ASRS
+ASR ,asr ,Airport Surveillance Radar ,NASA ASRS
+ATCT ,atct ,Airport Traffic Control Tower ,NASA ASRS
+ATOG ,atog ,Allowable Takeoff Gross Weight ,NASA ASRS
+AC ,ac ,Alternating Current ,NASA ASRS
+ALT,alt,Altitude ,NASA ASRS
+ALTS,alts,Altitudes,NASA ASRS
+ALTDEV ,altdev ,Altitude Deviation ,NASA ASRS
+AMB ,amb ,Ambiguity ,NASA ASRS
+AM ,am ,Ante Meridiem ,NASA ASRS
+APCHS,apchs,Approachs ,NASA ASRS
+APCHED,apched,Approached,NASA ASRS
+APCHING ,apching ,Approaching,NASA ASRS
+APCH CTL ,apch ctl ,Approach Control ,NASA ASRS
+APPROX ,approx ,Approximately ,NASA ASRS
+RNAV ,rnav ,Area Navigation ,NASA ASRS
+ARR ,arr ,"Arrival, Arrive ",NASA ASRS
+ASAP ,asap ,As Soon As Possible ,NASA ASRS
+ATTN ,attn ,Attention ,NASA ASRS
+ADI ,adi ,Attitude Direction Indicator ,NASA ASRS
+AUTH ,auth ,Authority/Authorized ,NASA ASRS
+AFSS ,afss ,Automated Flight Service Station ,NASA ASRS
+ARTS ,arts ,Automated Radar Terminal Systems ,NASA ASRS
+ASOS/AWOS ,asos/awos ,Automated Surface Observation Sys (Or Weather Observation Sys) ,NASA ASRS
+ASOS,asos,Automated Surface Observation Sys (Or Weather Observation Sys) ,NASA ASRS
+AWOS ,awos ,Automated Surface Observation Sys (Or Weather Observation Sys) ,NASA ASRS
+AUTO ,auto ,Automatic ,NASA ASRS
+ACARS ,acars ,Automatic Communications Addressing & Reporting System ,NASA ASRS
+ADF ,adf ,Automatic Direction Finder ,NASA ASRS
+ALS ,als ,Automatic Landing System ,NASA ASRS
+ATIS ,atis ,Automatic Terminal Information Service ,NASA ASRS
+AWOS ,awos ,Automatic Weather Observing/Reporting System ,NASA ASRS
+AFDS ,afds ,Autopilot and Flight Director System ,NASA ASRS
+AUX ,aux ,Auxiliary ,NASA ASRS
+APU ,apu ,Auxiliary Power Unit ,NASA ASRS
+AVG ,avg ,Average ,NASA ASRS
+AVGAS ,avgas ,Aviation Gasoline ,NASA ASRS
+AME ,ame ,Aviation Medical Examiner ,NASA ASRS
+ASRS ,asrs ,Aviation Safety Reporting System ,NASA ASRS
+BC ,bc ,Back Course ,NASA ASRS
+BAL,bal,Balance ,NASA ASRS
+BALS,bals,Balances,NASA ASRS
+BALED,baled,Balanced,NASA ASRS
+BALING,baling,Balancing,NASA ASRS
+BASE OPS ,base ops ,Base Operations Office ,NASA ASRS
+BTWN ,btwn ,Between ,NASA ASRS
+BFR ,bfr ,Biennial Flight Review ,NASA ASRS
+BRITE ,brite ,Bright Radar Indicator Tower Equipment ,NASA ASRS
+BCSTN ,bcstn ,Broadcast Station ,NASA ASRS
+BKN ,bkn ,Broken ,NASA ASRS
+CAB ,cab ,Cabin Attendant ,NASA ASRS
+CAPT ,capt ,Captain ,NASA ASRS
+CARB ,carb ,Carburetor ,NASA ASRS
+CAT ,cat ,Category ,NASA ASRS
+CRT ,crt ,Cathode Ray Tube ,NASA ASRS
+C ,c ,Celsius ,NASA ASRS
+CTR ,ctr ,Center ,NASA ASRS
+CADC ,cadc ,Central Air Data Computer ,NASA ASRS
+CAWS ,caws ,Central Aural Warning System ,NASA ASRS
+CDT ,cdt ,Central Daylight Time ,NASA ASRS
+CPU ,cpu ,Central Processing Unit ,NASA ASRS
+CST ,cst ,Central Standard Time ,NASA ASRS
+CFI ,cfi ,Certified Flight Instructor ,NASA ASRS
+CHK,chk,Check ,NASA ASRS
+CHKS,chks,Checks,NASA ASRS
+CHKED,chked,Checked,NASA ASRS
+CHKING,chking,Checking,NASA ASRS
+CB ,cb ,Circuit Breaker ,NASA ASRS
+CAP ,cap ,Civil Air Patrol ,NASA ASRS
+CLR,clr,Clear ,NASA ASRS
+CLRS,clrs,Clears,NASA ASRS
+CLRED,clred,Cleared,NASA ASRS
+CLRING,clring,Clearing,NASA ASRS
+CAT ,cat ,Clear Air Turbulence ,NASA ASRS
+CLRNC ,clrnc ,Clearance ,NASA ASRS
+CD ,cd ,Clearance Delivery ,NASA ASRS
+CLB,clb,Climb ,NASA ASRS
+CLBS,clbs,Climbs,NASA ASRS
+CLBED,clbed,Climbed,NASA ASRS
+CLBING,clbing,Climbing,NASA ASRS
+CRM ,crm ,Cockpit Resource Management ,NASA ASRS
+CTAF ,ctaf ,Common Traffic Advisory Frequency ,NASA ASRS
+COM,com,Communication ,NASA ASRS
+COMS,coms,Communication ,NASA ASRS
+CGP ,cgp ,Company Ground Personnel ,NASA ASRS
+LMM ,lmm ,Compass Locator At Ils Middle Marker ,NASA ASRS
+LOM ,lom ,Compass Locator At Ils Outer Marker ,NASA ASRS
+CONFIG ,config ,Configuration ,NASA ASRS
+CSD ,csd ,Constant Speed Drive ,NASA ASRS
+CTL,ctl,Control ,NASA ASRS
+CTLS,ctls,Controls,NASA ASRS
+CTLED,ctled,Controlled,NASA ASRS
+CTLING,ctling,Controlling,NASA ASRS
+CDU ,cdu ,Control Display Unit ,NASA ASRS
+CFIT ,cfit ,Controlled Flight Into Terrain ,NASA ASRS
+CFTT ,cftt ,Controlled Flight Toward Terrain ,NASA ASRS
+CTLR,ctlr,Controller ,NASA ASRS
+CTLRS,ctlrs,Controllers,NASA ASRS
+CTLR'S,ctlr's,Controller's,NASA ASRS
+CIC ,cic ,Controller In Charge ,NASA ASRS
+Z ,z ,Coordinated Universal Time ,NASA ASRS
+COORD ,coord ,Coordination ,NASA ASRS
+CDI ,cdi ,Course Deviation Indicator ,NASA ASRS
+CFR ,cfr ,Crash Fire Rescue Equipment ,NASA ASRS
+XCOUNTRY ,xcountry ,Cross Country ,NASA ASRS
+XING ,xing ,Crossing ,NASA ASRS
+XWIND ,xwind ,Crosswind ,NASA ASRS
+DH ,dh ,Decision Height ,NASA ASRS
+DVFR ,dvfr ,Defense Visual Flight Rules ,NASA ASRS
+DEG,deg,Degree ,NASA ASRS
+DEGS,degs,Degrees,NASA ASRS
+DEMO ,demo ,Demonstration ,NASA ASRS
+DEPT,dept,Department ,NASA ASRS
+DEPTS,depts,Department ,NASA ASRS
+DOD ,dod ,Department Of Defense ,NASA ASRS
+DOE ,doe ,Department Of Energy ,NASA ASRS
+DOT ,dot ,Department Of Transportation ,NASA ASRS
+DEP,dep,Departure ,NASA ASRS
+DEPS,deps,Departures ,NASA ASRS
+DSND,dsnd,Descend ,NASA ASRS
+DSNDS,dsnds,Descends,NASA ASRS
+DSNDED,dsnded,Descended,NASA ASRS
+DSNDING,dsnding,Descending,NASA ASRS
+DSCNT ,dscnt ,Descent ,NASA ASRS
+DEST,dest,Destination ,NASA ASRS
+DESTS,dests,Destinations,NASA ASRS
+DEV,dev,Deviation ,NASA ASRS
+DEVS,devs,Deviations,NASA ASRS
+DGPS ,dgps ,Differential Global Positioning System ,NASA ASRS
+DFDR ,dfdr ,Digital Flight Data Recorder ,NASA ASRS
+DFGS ,dfgs ,Digital Flight Guidance System ,NASA ASRS
+DF ,df ,Direction Finder ,NASA ASRS
+DME ,dme ,Distance Measuring Equipment ,NASA ASRS
+DISTR ,distr ,Distraction ,NASA ASRS
+EBND ,ebnd ,Eastbound ,NASA ASRS
+EDT ,edt ,Eastern Daylight Time ,NASA ASRS
+EST ,est ,Eastern Standard Time ,NASA ASRS
+EMI ,emi ,Electromagnetic Interference ,NASA ASRS
+ECAM ,ecam ,Electronic Centralized Aircraft Monitoring ,NASA ASRS
+EFIS ,efis ,Electronic Flight Instrument System ,NASA ASRS
+EMER,emer,Emergency ,NASA ASRS
+EMERS,emers,Emergencies ,NASA ASRS
+ELT ,elt ,Emergency Locator Transmitter ,NASA ASRS
+EMS ,ems ,Emergency Medical Service ,NASA ASRS
+ENRTE ,enrte ,En Route ,NASA ASRS
+ENG ,eng ,Engine ,NASA ASRS
+EICAS ,eicas ,Engine Indicating and Crew Alerting System ,NASA ASRS
+ENGR ,engr ,Engineer ,NASA ASRS
+EQUIP ,equip ,Equipment ,NASA ASRS
+EST ,est ,"Estimate, Estimation ",NASA ASRS
+ETA ,eta ,Estimated Time Of Arrival ,NASA ASRS
+ETD ,etd ,Estimated Time Of Departure ,NASA ASRS
+EVAC,evac,Evacuate,NASA ASRS
+EVACS,evacs,Evacuations,NASA ASRS
+EVACED,evaced,Evacuated,NASA ASRS
+EVAL ,eval ,Evaluate,NASA ASRS
+EXAM ,exam ,Examination ,NASA ASRS
+EAC ,eac ,Expected Approach Clearance ,NASA ASRS
+EAT ,eat ,Expected Approach Time ,NASA ASRS
+DCU ,dcu ,Data Control Unit ,NASA ASRS
+DB ,db ,Decibel ,NASA ASRS
+EROPS ,erops ,Extended Range Operations ,NASA ASRS
+ETOPS ,etops ,Extended Range Twin Operations ,NASA ASRS
+GHZ ,ghz ,Gigahertz ,NASA ASRS
+GS ,gs ,Glideslope (One Word) ,NASA ASRS
+GNS ,gns ,Global Navigation System ,NASA ASRS
+GPS ,gps ,Global Positioning System ,NASA ASRS
+GAR ,gar ,Go Around ,NASA ASRS
+GOV ,gov ,Government ,NASA ASRS
+GMT ,gmt ,Greenwich Mean Time ,NASA ASRS
+GND,gnd,Ground ,NASA ASRS
+GNDS,gnds,Grounds,NASA ASRS
+GNDED,gnded,Grounded,NASA ASRS
+GNDING,gnding,Grounding,NASA ASRS
+GC ,gc ,Ground Control ,NASA ASRS
+GPWS ,gpws ,Ground Proximity Warning System ,NASA ASRS
+GND SPD ,gnd spd ,Ground Speed ,NASA ASRS
+FAC ,fac ,Facility ,NASA ASRS
+FAX ,fax ,Facsimile ,NASA ASRS
+F ,f ,Fahrenheit ,NASA ASRS
+FAM ,fam ,Federal Air Marshal ,NASA ASRS
+FAA ,faa ,Federal Aviation Administration ,NASA ASRS
+FAR,far,Federal Aviation Regulation ,NASA ASRS
+FARS,fars,Federal Aviation Regulations,
+FCC ,fcc ,Federal Communications Commission ,NASA ASRS
+FT ,ft ,Feet,NASA ASRS
+FPM ,fpm ,Feet Per Minute ,NASA ASRS
+FAF ,faf ,Final Approach Fix ,NASA ASRS
+FO ,fo ,First Officer ,NASA ASRS
+FBO ,fbo ,Fixed-Base Operator ,NASA ASRS
+FLT ,flt ,Flight ,NASA ASRS
+FA,fa,Flight Attendant ,NASA ASRS
+FA'S,fa's,Flight Attendant's,NASA ASRS
+FCDU ,fcdu ,Flight Control Data Concentrator ,NASA ASRS
+FCU ,fcu ,Flight Control Unit ,NASA ASRS
+FLC ,flc ,Flight Crew ,NASA ASRS
+FD ,fd ,Flight Director ,NASA ASRS
+FE,fe,Flight Engineer ,NASA ASRS
+FE'S,fe's,Flight Engineer's,NASA ASRS
+FGC ,fgc ,Flight Guidance Computer ,NASA ASRS
+FGS ,fgs ,Flight Guidance Unit ,NASA ASRS
+FLIP ,flip ,Flight Information Publication ,NASA ASRS
+FIDO ,fido ,Flight Inspection District Office ,NASA ASRS
+FL ,fl ,Flight Level ,NASA ASRS
+FMC ,fmc ,Flight Management Computer ,NASA ASRS
+FMGC ,fmgc ,Flight Management Guidance Computer ,NASA ASRS
+FMGS ,fmgs ,Flight Management Guidance System ,NASA ASRS
+FMS ,fms ,Flight Management System ,NASA ASRS
+FMA ,fma ,Flight Mode Annunciator ,NASA ASRS
+FSS ,fss ,Flight Service Station ,NASA ASRS
+FSS'S,fss's,Flight Service Station Specialist's,NASA ASRS
+FSDO ,fsdo ,Flight Standards District Office ,NASA ASRS
+FYI ,fyi ,For Your Information ,NASA ASRS
+FOD ,fod ,Foreign Object Damage ,NASA ASRS
+FREQ,freq,Frequency ,NASA ASRS
+FREQS,freqs,Frequencies,NASA ASRS
+FM ,fm ,Frequency Modulation ,NASA ASRS
+HDOF,hdof,Handoff ,NASA ASRS
+HDOFS,hdofs,Handoffs,NASA ASRS
+HUD ,hud ,Head Up Display ,NASA ASRS
+HDG,hdg,Heading ,NASA ASRS
+HDGS,hdgs,Headings,NASA ASRS
+HQ ,hq ,Headquarters ,NASA ASRS
+HVY ,hvy ,Heavy ,NASA ASRS
+HGT ,hgt ,Height ,NASA ASRS
+QFE ,qfe ,Height Above Airport Elevation ,NASA ASRS
+HELI,heli,Helicopter ,NASA ASRS
+HELIS,helis,Helicopters ,NASA ASRS
+HZ ,hz ,Hertz ,NASA ASRS
+HF ,hf ,High Frequency ,NASA ASRS
+HIALS ,hials ,High Intensity Approach Light System ,NASA ASRS
+HIRL ,hirl ,High Intensity Runway Lights ,NASA ASRS
+HWY ,hwy ,Highway ,NASA ASRS
+HORIZ,horiz,Horizontal ,NASA ASRS
+HORIZLY,horizly,Horizontally,NASA ASRS
+HSI ,hsi ,Horizontal Situation Indicator ,NASA ASRS
+HR,hr,Hour ,NASA ASRS
+HRS,hrs,Hours,NASA ASRS
+HRLY,hrly,Hourly,NASA ASRS
+HYD ,hyd ,Hydraulic ,NASA ASRS
+ID ,id ,Identification ,NASA ASRS
+IFF ,iff ,"Identification, Friend Or Foe ",NASA ASRS
+IDENT ,ident ,Identify ,NASA ASRS
+IAW ,iaw ,In Accordance With ,NASA ASRS
+INBND ,inbnd ,Inbound ,NASA ASRS
+INC ,inc ,Incorporated ,NASA ASRS
+IAS ,ias ,Indicated Air Speed ,NASA ASRS
+ISDU ,isdu ,Inertial Navigation Display Unit ,NASA ASRS
+INS ,ins ,Inertial Navigation System ,NASA ASRS
+IRS,irs,Inertial Reference System,NASA ASRS
+IRU ,iru ,Inertial Reference Unit ,NASA ASRS
+INFO ,info ,Information ,NASA ASRS
+IAF ,iaf ,Initial Approach Fix ,NASA ASRS
+IOE ,ioe ,Initial Operating Experience ,NASA ASRS
+GA ,ga ,General Aviation ,NASA ASRS
+GADO ,gado ,General Aviation District Office ,NASA ASRS
+INOP ,inop ,Inoperative ,NASA ASRS
+ISTR ,istr ,"Instruct, Instructor ",NASA ASRS
+INST,inst,Instrument ,NASA ASRS
+INSTS,insts,Instruments ,NASA ASRS
+IAP ,iap ,Instrument Approach Procedure ,NASA ASRS
+IFR ,ifr ,Instrument Flight Rules ,NASA ASRS
+ILS ,ils ,Instrument Landing System ,NASA ASRS
+IMC ,imc ,Instrument Meteorological Conditions ,NASA ASRS
+INTERFAC ,interfac ,Interfacility ,NASA ASRS
+IF ,if ,Intermediate Fix ,NASA ASRS
+INTL ,intl ,International ,NASA ASRS
+IATA ,iata ,International Air Transport Association ,NASA ASRS
+ICAO ,icao ,International Civil Aviation Organization ,NASA ASRS
+IFSS ,ifss ,International Flight Service Station ,NASA ASRS
+IRO ,iro ,International Relief Officer ,NASA ASRS
+INTERP ,interp ,Interpretation ,NASA ASRS
+INTXN ,intxn ,Intersection ,NASA ASRS
+LLWAS ,llwas ,Low Level Wind Shear Alert System ,NASA ASRS
+M ,m ,Mach Number ,NASA ASRS
+MAG ,mag ,Magnetic ,NASA ASRS
+MAINT ,maint ,Maintenance ,NASA ASRS
+MGMNT ,mgmnt ,Management ,NASA ASRS
+MGR ,mgr ,Manager ,NASA ASRS
+MVFR ,mvfr ,Marginal Visual Flight Rules ,NASA ASRS
+MCAS ,mcas ,Marine Corps Air Station ,NASA ASRS
+MAX ,max ,Maximum ,NASA ASRS
+MSL ,msl ,Mean Sea Level ,NASA ASRS
+MECH ,mech ,Mechanic ,NASA ASRS
+MF ,mf ,Medium Frequency ,NASA ASRS
+MALS ,mals ,Medium Intensity Approach Lighting System ,NASA ASRS
+MALSR ,malsr ,Medium Intensity Approach Lighting System With Runway Alignment Indicator Lights ,NASA ASRS
+MALSF ,malsf ,Medium Intensity Approach Lighting System With Sequenced ,NASA ASRS
+MIRL ,mirl ,Medium Intensity Runway Edge Lights ,NASA ASRS
+MHZ ,mhz ,Megahertz ,NASA ASRS
+MSG ,msg ,Message ,NASA ASRS
+METRO ,metro ,Metropolitan ,NASA ASRS
+MIKE,mike,Microphone ,NASA ASRS
+MIC ,mic ,Microphone ,NASA ASRS
+MLS ,mls ,Microwave Landing System ,NASA ASRS
+MM ,mm ,Middle Marker ,NASA ASRS
+MI ,mi ,Mile ,NASA ASRS
+MIL ,mil ,Military ,NASA ASRS
+MOA ,moa ,Military Operating Area ,NASA ASRS
+MTR ,mtr ,Military Training Route ,NASA ASRS
+MB ,mb ,Millibars ,NASA ASRS
+MCA ,mca ,Minimum Crossing Altitude ,NASA ASRS
+MDA ,mda ,Minimum Descent Altitude ,NASA ASRS
+MEA ,mea ,Minimum Enroute Altitude ,NASA ASRS
+MEL ,mel ,Minimum Equipment List ,NASA ASRS
+MOCA ,moca ,Minimum Obstruction Clearance Altitude ,NASA ASRS
+MSA ,msa ,Minimum Safe Altitude ,NASA ASRS
+MSAW ,msaw ,Minimum Safe Altitude Warning ,NASA ASRS
+MVA ,mva ,Minimum Vector Altitude ,NASA ASRS
+MIN,min,Minute,NASA ASRS
+MINS,mins,Minutes,NASA ASRS
+MISC ,misc ,Miscellaneous ,NASA ASRS
+MAP ,map ,Missed Approach Point ,NASA ASRS
+MCP ,mcp ,Mode Control Panel ,NASA ASRS
+MDT ,mdt ,Mountain Daylight Time ,NASA ASRS
+KG ,kg ,Kilogram ,NASA ASRS
+KHZ ,khz ,Kilohertz ,NASA ASRS
+KM ,km ,Kilometers ,NASA ASRS
+KW ,kw ,Kilowatt ,NASA ASRS
+KT,kt,Knot,NASA ASRS
+KTS,kts,Knots,NASA ASRS
+KIAS ,kias ,Knots Indicated Airspeed ,NASA ASRS
+LNDG ,lndg ,Landing ,NASA ASRS
+LWOC ,lwoc ,Landing Without Clrnc ,NASA ASRS
+LNAV ,lnav ,Lateral Navigation ,NASA ASRS
+LAT ,lat ,Latitude ,NASA ASRS
+L/R ,l/r ,Left/Right (Directions) ,NASA ASRS
+L,l,Left,NASA ASRS
+R,r,Right,NASA ASRS
+LTSS ,ltss ,Less Than Standard Separation ,NASA ASRS
+LTR ,ltr ,Letter ,NASA ASRS
+LOA ,loa ,Letter Of Agreement ,NASA ASRS
+LED ,led ,Light Emitting Diode ,NASA ASRS
+LCD ,lcd ,Liquid Crystal Display ,NASA ASRS
+LCL ,lcl ,Local ,NASA ASRS
+LC ,lc ,Local Control ,NASA ASRS
+LOC ,loc ,Localizer ,NASA ASRS
+LORAN ,loran ,Long Range Navigation ,NASA ASRS
+LONG ,long ,Longitude ,NASA ASRS
+LF ,lf ,Low Frequency ,NASA ASRS
+LIRL ,lirl ,Low Intensity Runway Edge Lights ,NASA ASRS
+LLWS ,llws ,Low Level Wind Shear ,NASA ASRS
+MFDU ,mfdu ,Multi Functional Display Unit ,NASA ASRS
+MUNI ,muni ,Municipal ,NASA ASRS
+PNF ,pnf ,Pilot Not Flying ,NASA ASRS
+PIREP,pirep,Pilot Report ,NASA ASRS
+PIREPS,pireps,Pilot Reports,NASA ASRS
+POS ,pos ,Position ,NASA ASRS
+PCA ,pca ,Positive Control Area ,NASA ASRS
+PM ,pm ,Post Meridiem ,NASA ASRS
+LB,lb,Pound ,NASA ASRS
+LBS,lbs,Pounds,NASA ASRS
+PWR ,pwr ,Power ,NASA ASRS
+PCU ,pcu ,Power Control Unit ,NASA ASRS
+PDC ,pdc ,Pre Departure Clearance ,NASA ASRS
+PRECIP ,precip ,Precipitation ,NASA ASRS
+PAPI ,papi ,Precision Approach Path Indicator ,NASA ASRS
+PAR ,par ,Precision Approach Radar ,NASA ASRS
+PVT ,pvt ,Private ,NASA ASRS
+PROB,prob,Problem ,NASA ASRS
+PROBS,probs,Problem ,NASA ASRS
+PROC,proc,Procedure ,NASA ASRS
+PROCS,procs,Procedure ,NASA ASRS
+PROP,prop,Propeller ,NASA ASRS
+PROPS,props,Propeller ,NASA ASRS
+PROX ,prox ,Proximity ,NASA ASRS
+PA ,pa ,Public Address ,NASA ASRS
+PUB ,pub ,Publication ,NASA ASRS
+NATL ,natl ,National ,NASA ASRS
+NASA ,nasa ,National Aeronautics and Space Administration ,NASA ASRS
+NOAA ,noaa ,National Oceanic and Atmospheric Administration ,NASA ASRS
+NTSB ,ntsb ,National Transportation Safety Board ,NASA ASRS
+NWS ,nws ,National Weather Service ,NASA ASRS
+NM ,nm ,Nautical Mile ,NASA ASRS
+NAS ,nas ,Naval Air Station ,NASA ASRS
+NAV,nav,Navigate,NASA ASRS
+NAVS,navs,Navigate,NASA ASRS
+NAVING,naving,Navigate,NASA ASRS
+NAVAID ,navaid ,Navigational Aid ,NASA ASRS
+NDB/DME ,ndb/dme ,NDB and DME (Co-located) ,NASA ASRS
+NMAC ,nmac ,Near Midair Collision ,NASA ASRS
+NORDO ,nordo ,No Radio ,NASA ASRS
+NORAC ,norac ,No Radio Contact ,NASA ASRS
+NFCT ,nfct ,Non Federal Control Tower ,NASA ASRS
+NDB ,ndb ,Nondirectional Radio Beacon ,NASA ASRS
+NBND ,nbnd ,Northbound ,NASA ASRS
+NOTAM ,notam ,Notice To Airmen ,NASA ASRS
+QRH ,qrh ,Quick Reference Handbook ,NASA ASRS
+RAPCON ,rapcon ,Radar Approach Control ,NASA ASRS
+RDMI ,rdmi ,Radio Direction Magnetic Indicator ,NASA ASRS
+RF ,rf ,Radio Frequency ,NASA ASRS
+RFI ,rfi ,Radio Frequency Interference ,NASA ASRS
+RMI ,rmi ,Radio Magnetic Indicator ,NASA ASRS
+RAT ,rat ,Ram Air Turbine/Ram Air Temperature ,NASA ASRS
+REF,ref,Reference ,NASA ASRS
+REFS,refs,References ,NASA ASRS
+REFED,refed,Referenced,NASA ASRS
+REFING,refing,Referencing,NASA ASRS
+REG,reg,Regulation ,NASA ASRS
+REGS,regs,Regulation ,NASA ASRS
+RTO ,rto ,Rejected Takeoff ,NASA ASRS
+RA ,ra ,Resolution Advisory ,NASA ASRS
+RESTR ,restr ,"Restrict, Restricted, Restriction ",NASA ASRS
+RPM ,rpm ,Revolutions Per Minute ,NASA ASRS
+RTE ,rte ,Route ,NASA ASRS
+RAIL ,rail ,Runway Alignment Indicator Lights ,NASA ASRS
+REIL ,reil ,Runway End Identifier Lights ,NASA ASRS
+RVV ,rvv ,Runway Visibility Value ,NASA ASRS
+RVR ,rvr ,Runway Visual Range ,NASA ASRS
+RWY,rwy,Runway,NASA ASRS
+RWYS,rwys,Runways,NASA ASRS
+ONS ,ons ,Omega Navigation System ,NASA ASRS
+OJT ,ojt ,On-The-Job Training ,NASA ASRS
+OP,op,Operation,NASA ASRS
+OPS,ops,Operations,NASA ASRS
+OPDEV ,opdev ,Operational Deviation ,NASA ASRS
+OPERROR ,operror ,Operational Error ,NASA ASRS
+OTS ,ots ,Out Of Service ,NASA ASRS
+OM ,om ,Outer Marker ,NASA ASRS
+OAT ,oat ,Outside Air Temperature ,NASA ASRS
+OVCST ,ovcst ,Overcast ,NASA ASRS
+PDT ,pdt ,Pacific Daylight Time ,NASA ASRS
+PST ,pst ,Pacific Standard Time ,NASA ASRS
+PAX ,pax ,Passenger ,NASA ASRS
+PLT,plt,Pilot ,NASA ASRS
+PLTS,plts,Pilots,NASA ASRS
+PLT'S,plt's,Pilot's,NASA ASRS
+PCL ,pcl ,Pilot Controlled Lighting ,NASA ASRS
+PLTDEV ,pltdev ,Pilot Deviation ,NASA ASRS
+PF ,pf ,Pilot Flying ,NASA ASRS
+PIC ,pic ,Pilot In Command ,NASA ASRS
+SL ,sl ,Sea Level ,NASA ASRS
+SO,so,Second Officer ,NASA ASRS
+SO'S,so's,Second Officer's,NASA ASRS
+SELCAL ,selcal ,Selective Calling ,NASA ASRS
+SFL ,sfl ,Sequence Flashing Lights ,NASA ASRS
+SVC,svc,Service ,NASA ASRS
+SVCS,svcs,Services,NASA ASRS
+STOL ,stol ,Short Takeoff and Landing ,NASA ASRS
+SIGMET ,sigmet ,Significant Meteorological Information ,NASA ASRS
+SIT ,sit ,Situation ,NASA ASRS
+SBND ,sbnd ,Southbound ,NASA ASRS
+SVFR ,svfr ,Special Visual Flight Rules ,NASA ASRS
+SPEC,spec,Specification ,NASA ASRS
+SPECS,specs,Specifications,NASA ASRS
+SPD,spd,Speed ,NASA ASRS
+SPDS,spds,Speeds,NASA ASRS
+SPDING,spding,Speeding,NASA ASRS
+STAB ,stab ,Stabilizer ,NASA ASRS
+STD ,std ,Standard ,NASA ASRS
+ALSF-1 ,alsf-1 ,Standard 2400' Hi-Intensity Approach Lighting System With Sequenced Flashers (Cat I Config) ,NASA ASRS
+ALSF-2 ,alsf-2 ,Standard 2400' Hi-Intensity Approach Lighting System With Sequenced Flashers (Cat Ii Config) ,NASA ASRS
+SID ,sid ,Standard Instrument Departure ,NASA ASRS
+SOP ,sop ,Standard Operating Procedure ,NASA ASRS
+STAR ,star ,Standard Terminal Arrival Route ,NASA ASRS
+SM ,sm ,Statute Mile ,NASA ASRS
+SUPVR,supvr,Supervisor ,NASA ASRS
+SUPVRS,supvrs,Supervisors,NASA ASRS
+SYS ,sys ,System ,NASA ASRS
+TRNG ,trng ,Training ,NASA ASRS
+XMISSION ,xmission ,Transmission ,NASA ASRS
+XMIT ,xmit ,Transmit ,NASA ASRS
+XMITS,xmits,Transmits,NASA ASRS
+XMITING,xmiting,Transmitting,NASA ASRS
+XPONDER ,xponder ,Transponder ,NASA ASRS
+TAS ,tas ,True Air Speed ,NASA ASRS
+TURB ,turb ,Turbulence ,NASA ASRS
+USAF ,usaf ,U S Air Force ,NASA ASRS
+USA ,usa ,U S Army ,NASA ASRS
+USCG ,uscg ,U S Coast Guard ,NASA ASRS
+USMC ,usmc ,U S Marine Corps ,NASA ASRS
+USN ,usn ,U S Navy ,NASA ASRS
+UHF ,uhf ,Ultra High Frequency ,NASA ASRS
+UNAUTH ,unauth ,Unauthorized ,NASA ASRS
+UFO ,ufo ,Unidentified Flying Object ,NASA ASRS
+UTC ,utc ,Universal Time Constant (Zulu/GMT) ,NASA ASRS
+VERT,vert,Vertical ,NASA ASRS
+VERTLY,vertly,Vertically,NASA ASRS
+VNAV ,vnav ,Vertical Navigation ,NASA ASRS
+VSTOL ,vstol ,Vertical/Short Takeoff and Landing ,NASA ASRS
+VHF ,vhf ,Very High Frequency ,NASA ASRS
+VLF ,vlf ,Very Low Frequency ,NASA ASRS
+TR ,tr ,VFR Low Altitude Training Routes ,NASA ASRS
+VR ,vr ,VFR Military Training Routes ,NASA ASRS
+VOR ,vor ,VFR Omni-Directional Radio Range ,NASA ASRS
+VIS ,vis ,Visibility ,NASA ASRS
+VASI ,vasi ,Visual Approach Slope Indicator ,NASA ASRS
+VFR ,vfr ,Visual Flight Rules ,NASA ASRS
+VMC ,vmc ,Visual Meteorological Conditions ,NASA ASRS
+VOR/DME ,vor/dme ,VOR and DME (Co-located) ,NASA ASRS
+VORTAC ,vortac ,VOR and TACAN (Co-Located) ,NASA ASRS
+TACAN ,tacan ,Tactical Air Navigation Aid ,NASA ASRS
+TKOF,tkof,Takeoff ,NASA ASRS
+TKOFS,tkofs,Takeoff ,NASA ASRS
+TOGW ,togw ,Takeoff Gross Weight ,NASA ASRS
+TXWY ,txwy ,Taxiway ,NASA ASRS
+TELCO ,telco ,Telephone Company ,NASA ASRS
+TEMP,temp,Temperature ,NASA ASRS
+TEMPS,temps,Temperatures,NASA ASRS
+TCA ,tca ,Terminal Control Area ,NASA ASRS
+TRACON ,tracon ,Terminal Radar Approach Control Facility ,NASA ASRS
+TRSA ,trsa ,Terminal Radar Service Area ,NASA ASRS
+TSTM,tstm,Thunderstorm ,NASA ASRS
+TSTMS,tstms,Thunderstorm ,NASA ASRS
+TOC ,toc ,Top Of Climb ,NASA ASRS
+TOD ,tod ,Top Of Descent ,NASA ASRS
+TDZ ,tdz ,Touchdown Zone ,NASA ASRS
+TWR,twr,Tower ,NASA ASRS
+TWRS,twrs,Towers,NASA ASRS
+TFC ,tfc ,Traffic ,NASA ASRS
+TA ,ta ,Traffic Advisory ,NASA ASRS
+TCAS,tcas,Traffic Alert and Collision Avoidance ,NASA ASRS
+TCASII ,tcasii ,Traffic Alert and Collision Avoidance ,NASA ASRS
+WX ,wx ,Weather ,NASA ASRS
+WK,wk,Week ,NASA ASRS
+WKS,wks,Weeks,NASA ASRS
+WKLY,wkly,Weekly,NASA ASRS
+WT,wt,Weight ,NASA ASRS
+WTS,wts,Weights,NASA ASRS
+WBND ,wbnd ,Westbound ,NASA ASRS
+WAC,wac,World Aeronautical Chart ,NASA ASRS
+INSTS ,insts ,Instruments,NASA ASRS
+IRS/IRU ,irs/iru ,Inertial Reference System/Unit ,NASA ASRS
+IRU,iru,Inertial Reference Unit ,NASA ASRS
+ISTR ,istr ,Instruct,NASA ASRS
+MST ,mst ,Mountain Standard Time ,NASA ASRS
+"N,S,E,W ","n,s,e,w ","North, South, East, West ",NASA ASRS
+N,n,North,NASA ASRS
+S,s,South,NASA ASRS
+E,e,East,NASA ASRS
+W,w,West,NASA ASRS
+NAV,nav,Navigate ,NASA ASRS
+NAVS,navs,Navigations,NASA ASRS
+NAVING,naving,Navigating,NASA ASRS
+TCAS,tcas,Traffic Alert and Collision Avoidance System ,NASA ASRS
+TCASII ,tcasii ,Traffic Alert and Collision Avoidance System ,NASA ASRS
+WAC ,wac ,World Aeronautical Chart ,NASA ASRS
+Z,z,Coordinated Universal Time (GMT),NASA ASRS
