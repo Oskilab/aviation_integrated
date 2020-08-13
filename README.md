@@ -20,27 +20,27 @@ This dataset includes information on incidents/accidents that occurred and the r
 
 **Files used**
 1. `d2v_tracon_month_{narrative|synopsis|combined}_{1|3|6|12|inf}mon.csv`: this is the result of creating doc2vec representations of the columns (narrative, synopsis, combined of ASRS dataset), and comparing these vectors to each other utilizing the cosine\_similarity metric. Each row represents a `tracon_month`: an airport_code or tracon_code paired with a year and month. The `{1|3|6|12|inf}` selection indicates over what time period is compared. For instance, if we are looking at a particular row in the ASRS dataset with a date of January 2011, and if the selection is 1 month, the doc2vec numbers are calculated over December 2010. If the selection is 3 months, then the doc2vec numbers are calculated over October - November of 2010.
-    a. Column format: `d2v_{cos_sim|num_comp}{|_other_tracon|_all_tracon}{_replace|}`
-        i. `{cos_sim|num_comp}`: `cos_sim` means the number given is an average cosine_similarity metric over some qualifiers (see other selections) whereas `num_comp` is the number of comparisons made in the average cosine similarity metric.
-        ii. `{|_other_tracon|_all_tracon}`: if this selection is blank, then the comparisons are made over the given tracon and year/month. For instance, if the given tracon/year/month is SFO/January/2011, then the cos_sim number is calculated to be the average cosine similarity of pairwise doc2vec vectors (calculated via the narrative/synopsis/combined column) during January 2011 of the SFO tracon/airport. If the selection is `_other_tracon`, then the comparisons are made during January 2011 to all other tracons except SFO. If the selection is `_all_tracon`, then the comparisons are made to all tracons during January 2011.
+    * Column format: `d2v_{cos_sim|num_comp}{|_other_tracon|_all_tracon}{_replace|}`
+        1. `{cos_sim|num_comp}`: `cos_sim` means the number given is an average cosine_similarity metric over some qualifiers (see other selections) whereas `num_comp` is the number of comparisons made in the average cosine similarity metric.
+        2. `{|_other_tracon|_all_tracon}`: if this selection is blank, then the comparisons are made over the given tracon and year/month. For instance, if the given tracon/year/month is SFO/January/2011, then the cos_sim number is calculated to be the average cosine similarity of pairwise doc2vec vectors (calculated via the narrative/synopsis/combined column) during January 2011 of the SFO tracon/airport. If the selection is `_other_tracon`, then the comparisons are made during January 2011 to all other tracons except SFO. If the selection is `_all_tracon`, then the comparisons are made to all tracons during January 2011.
 
-        iii. `{_replace|}`: if the selection has `replace` then the doc2vec calculations occurred after replacing all abbreviations (found in this repository TO-DO) are replaced with their fullforms. If the selection is blank, then no such replacement is done.
-    b. Examples: we will use the same example as above with the date of January 2011 in SFO.
-        i. `d2v_cos_sim_other_tracon`: this is the average cosine similarity calculated between pairwise comparisons of doc2vec vectors from the reports made in January 2011 in SFO to all reports made in January 2011 in tracons/airports outside of SFO.
-        ii. `d2v_num_comp_all_tracon_replace`: this is the number of comparisons made between doc2vec vectors from the reports made in January 2011 in SFO to all reports made in Junary 2011.
+        3. `{_replace|}`: if the selection has `replace` then the doc2vec calculations occurred after replacing all abbreviations (found in this repository TO-DO) are replaced with their fullforms. If the selection is blank, then no such replacement is done.
+    * Examples: we will use the same example as above with the date of January 2011 in SFO.
+        1. `d2v_cos_sim_other_tracon`: this is the average cosine similarity calculated between pairwise comparisons of doc2vec vectors from the reports made in January 2011 in SFO to all reports made in January 2011 in tracons/airports outside of SFO.
+        2. `d2v_num_comp_all_tracon_replace`: this is the number of comparisons made between doc2vec vectors from the reports made in January 2011 in SFO to all reports made in Junary 2011.
 2. `liwc_tracon_month_{narrative|synopsis|combined}.csv`: LIWC is a categorization of some number of words (for instance common adverbs, family related words, swear words, etc.). This csv takes each `tracon_month` from the ASRS dataset and counts how many of each category was used during that `tracon_month`.
 3. `total_cts_tagged_{narrative|synopsis|combined}.csv`: this is the result of the abbreviation analysis done in the other repository on the ASRS dataset. This dataframe consists of a list of words/acronyms that appear in the corresponding column (narrative/synopsis/combined), the number of times they appear in the whole dataset, the corresponding full-forms, and whether or not we consider them to be abbreviations.
-    a. This csv was created utilizing some aviation dictionaries (which have some common abbreviations and their full forms). The five dictionaries are CASA, FAA, IATA, NASA and HAND (or hand-coded) dictionaries.
-    b. Each word is given a tag or categorization. The tag starting with the prefix `pos_` indicates that the word was found in any of the aviation dictionaries. Whereas if the tag starts with `neg_` then the word was not found in any of the aviation dictionaries.
-        i. `pos_word`: a word that was found in an aviation dictionary and is an English word according to the enchant dictionary
-        ii. `pos_stopword`: a word that was found in an aviation dictionary and is an English stopword
-        iii. `pos_nonword`: a word that was found in an aviation dictionary and is not an English word
-        iv. `pos_iata_only_words`: a word that was found only in the iata dictionary
-        v. `pos_handcoded_abrev`: a word that was found in an aviation dictionary and is an English word. However, we mark these to be abbreviations by inspection (in other words they are `pos_word` that are actually abbreviations despite being in the English dictionary)
-        vi. `neg_word`: a word that was not found in an aviation dictionary and is an English word.
-        vii. `neg_stopword`: a word that was not found in an aviation dictionary and is an English stopword.
-        viii. `neg_nonword`: a word that was not found in an aviation dictionary and is not an English word.
-        ix. `neg_nonword_city_exception`: these are `neg_nonwords` that overlap with a city name (ex: york)
+    * This csv was created utilizing some aviation dictionaries (which have some common abbreviations and their full forms). The five dictionaries are CASA, FAA, IATA, NASA and HAND (or hand-coded) dictionaries.
+    * Each word is given a tag or categorization. The tag starting with the prefix `pos_` indicates that the word was found in any of the aviation dictionaries. Whereas if the tag starts with `neg_` then the word was not found in any of the aviation dictionaries.
+        1. `pos_word`: a word that was found in an aviation dictionary and is an English word according to the enchant dictionary
+        2. `pos_stopword`: a word that was found in an aviation dictionary and is an English stopword
+        3. `pos_nonword`: a word that was found in an aviation dictionary and is not an English word
+        4. `pos_iata_only_words`: a word that was found only in the iata dictionary
+        5. `pos_handcoded_abrev`: a word that was found in an aviation dictionary and is an English word. However, we mark these to be abbreviations by inspection (in other words they are `pos_word` that are actually abbreviations despite being in the English dictionary)
+        6. `neg_word`: a word that was not found in an aviation dictionary and is an English word.
+        7. `neg_stopword`: a word that was not found in an aviation dictionary and is an English stopword.
+        8. `neg_nonword`: a word that was not found in an aviation dictionary and is not an English word.
+        9. `neg_nonword_city_exception`: these are `neg_nonwords` that overlap with a city name (ex: york)
 
 
 ## Organization of Repository
