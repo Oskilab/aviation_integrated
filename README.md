@@ -187,7 +187,7 @@ cd aviation_data_huiyi
 cd ../
 ```
 ### (4) Cleaning FAA Data (faa)
-**Purpose**: ake the FAA incident/accident data, clean the airportname and airportcodes, and create a dataframe of tracon_months and the number of faa incidents and accidents that occured within that tracon_month
+**Purpose**: Take the FAA incident/accident data, clean the airportname and airportcodes, and create a dataframe of tracon_months and the number of faa incidents and accidents that occured within that tracon_month
 
 **Input**:
 * `FAA_AIDS_full.csv`: the main FAA incident/accident dataset
@@ -204,6 +204,21 @@ We perform some basic cleaning steps (stripping, etc.) and ensure that the airpo
 cd faa
 python clean_data.py
 cd ../
+```
+
+### (5) Joining the FAA/NTSB datasets (join\_faa\_ntsb.py)
+**Purpose**: merges the two datasets created by the previous two steps (`aviation_data_huiyi/` and `faa/` subdirectories)
+
+**Input**:
+* `NTSB_AIDS_full_output_new.csv`: result from previous step
+* `faa_incidents.csv`: result from previous step
+
+**Output**:
+* `Airport_month_events.csv`: organized by tracon_month. Each row has the number of faa_incidents, ntsb_accidents, ntsb_incidents, tracon_month, and a `dataset` field indicating which dataset the row came from.
+
+**Running**:
+```
+python join\_faa\_ntsb.py
 ```
 
 
