@@ -45,4 +45,4 @@ fin_df = fin_df[['airport_code', 'airport_name', 'year', 'month', 'ntsb_accident
         'ntsb_incidents', 'faa_incidents', 'dataset']]
 fin_df.fillna(0, inplace = True)
 # fin_df.to_csv('airport_month_events_jimmy.csv')
-fin_df.to_csv('airport_month_events.csv')
+fin_df.to_csv('results/airport_month_events.csv')
