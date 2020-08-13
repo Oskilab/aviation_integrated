@@ -13,7 +13,7 @@ for col in ['narrative', 'synopsis', 'combined']:
 
     # ntsb/faa incident dataset + volume
     # airport_month_events = pd.read_csv('airport_month_events.csv', index_col = 0)
-    airport_month_events = pd.read_csv('combined_vol_incident.csv', index_col = 0)
+    airport_month_events = pd.read_csv('results/combined_vol_incident.csv', index_col = 0)
 
     # abreviation counts
     # total_cts = pd.read_csv('abrev_datasets/total_cts_tagged_{col}.csv')
@@ -99,4 +99,4 @@ for col in ['narrative', 'synopsis', 'combined']:
 
         print('% covered', len(asrs_covered_ind) / asrs.shape[0])
         res = pd.DataFrame.from_dict({idx: row for idx, row in enumerate(final_rows)}, orient = 'index')
-        res.to_csv(f'final_dataset_{n_month}mon.csv')
+        res.to_csv(f'results/final_dataset_{n_month}mon.csv')
