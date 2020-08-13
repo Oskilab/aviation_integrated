@@ -157,7 +157,7 @@ cd ../
 * `LIWC2015-dictionary-poster-unlocked.xlsx`: LIWC dictionary
 
 **Output**:
-* `liwc_tracon_month_{narrative|synopsis|combined}.csv`: LIWC is a categorization of some number of words (for instance common adverbs, family related words, swear words, etc.). This csv takes each `tracon_month` from the ASRS dataset and counts how many of each category was used during that `tracon_month`.
+`liwc_tracon_month_{narrative|synopsis|combined}.csv`: LIWC is a categorization of some number of words (for instance common adverbs, family related words, swear words, etc.). This csv takes each `tracon_month` from the ASRS dataset and counts how many of each category was used during that `tracon_month`.
 
 **Running**:
 ```
@@ -178,12 +178,31 @@ cd ../
 * `NTSB_AIDS_full_output_new.csv`: for each tracon_month, calculate the number of ntsb_incidents and ntsb_accidents
 
 **Methodology**:
-* Cleaning is accomplished by removing whitespace, lowercasing, etc. If an airport code is not found in airports.csv, then a slightly adjusted version is tried (removing first letter). Missing airport_code and airport_names are filled in utilizing latitude/longitude information. For more info: read the `README.md` found in the directory
+Cleaning is accomplished by removing whitespace, lowercasing, etc. If an airport code is not found in airports.csv, then a slightly adjusted version is tried (removing first letter). Missing airport_code and airport_names are filled in utilizing latitude/longitude information. For more info: read the `README.md` found in the directory
 
 **Running**:
 ```
 cd aviation_data_huiyi
 ./run_all
+cd ../
+```
+### (4) Cleaning FAA Data (faa)
+**Purpose**: ake the FAA incident/accident data, clean the airportname and airportcodes, and create a dataframe of tracon_months and the number of faa incidents and accidents that occured within that tracon_month
+
+**Input**:
+* `FAA_AIDS_full.csv`: the main FAA incident/accident dataset
+* `FAA_AIDS_airports.csv`: the airport codes found in the FAA dataset, and their corresponding frequencies
+
+**Output**:
+* `faa_incidents.csv`: the faa_incidents organized via tracon_month.
+
+**Methodology**:
+We perform some basic cleaning steps (stripping, etc.) and ensure that the airport codes are found in the IATA.org website (by querying programmatically).
+
+**Running**:
+```
+cd faa
+python clean_data.py
 cd ../
 ```
 
