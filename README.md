@@ -222,7 +222,7 @@ python join_faa_ntsb.py
 ```
 
 ### (6) Merging with Volume Data (flight\_vol.py)
-**Purpose**: combine faa/ntsb accident/incident data from the volume data from this [link](https://aspm.faa.gov/opsnet/sys/tower.asp). Merged on same Joining the FAA/NTSB datasets (join\_faa\_ntsb.py)tracon_month.
+**Purpose**: combine faa/ntsb accident/incident data from the volume data from this [link](https://aspm.faa.gov/opsnet/sys/tower.asp). Merged on same tracon_month.
 
 **Input**:
 * `airport_month_events.csv` from the result of `join_faa_ntsb.py` 
@@ -239,6 +239,28 @@ python join_faa_ntsb.py
 python flight_vol.py
 ```
 
+### (7) Joining All Datasets (combine.py)
+**Purpose**: combine asrs dataset, d2v dataset, liwc dataset, faa/ntsb incident/accident, volume data all together
+
+**Input**:
+* `tracon_month_{narrative|synopsis|combined}.csv`: processed ASRS dataset
+* `combined_vol_data.py`: combined faa/ntsb incident/accident data with volume data
+* `liwc_tracon_month_{narrative|synopsis|combined}.csv`: dataframe of tracon_months and their corresponding liwc category counts
+* `d2v_tracon_month_{narrative|synopsis|combined}_{1|3|6|12|inf}mon.csv`: doc2vec cosine similarity output
+
+**Output**:
+* `final_dataset_{1|3|6|12|inf}mon.csv`: combined dataset with all relevant information
+
+**Methodology**:
+* We take each row from `combined_vol_incident.csv` and combine the corresponding d2v row, liwc row, and row from `tracon_month_{narrative|synopsis|combined}.csv` (processed ASRS dataset). They’re combined starting on the month before the given month of `combined_vol_incident.csv` (see below)
+    * Let’s say that the row from `combined_vol_incident.csv` has a tracon_month of SFO on January 2011
+    * If the month_range is 1, then the rows from LIWC, D2V, and processed ASRS dataset that has a tracon_month of SFO on December 2010 are joined with that of SFO on January 2011
+    * If the month range is 12, then the rows from LIWC, D2V, and processed ASRS dataset has a tracon_month of SFO from January 2010 to December 2010
+
+**Running**:
+```
+python combine.py
+```
 
 ## Organization of Repository
 1. `preprocess_asrs/` is the directory in which ASRS tracon codes are extracted and cleaned
