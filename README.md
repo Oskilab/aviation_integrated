@@ -67,4 +67,3 @@ The assumption in this repository is that the ASRS/other repository has already 
 ```
 ./run_all
 ```
-
