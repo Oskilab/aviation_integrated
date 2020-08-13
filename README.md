@@ -1,3 +1,5 @@
+# Aviation Integrated
+
 This repository processes the ASRS dataset by extracting the tracon information. Then, the ASRS columns `narrative, synopsis, and narrative` (which are descriptions and summaries of accidents/incidents that we have access to) are all analyzed utilizing LIWC, Doc2Vec, and word categorization. Then, the FAA/NTSB accident/incident data is cleaned and merged with volume data provided by the FAA website, which is then combined with information about the number of abbreviations, LIWC categories, Doc2Vec information, etc. provided by the ASRS dataset (that we analyzed before). When matching any two different sets of data, we utilize tracon\_code and the date of the event/summary. Anytime the tracon\_codes are not matched with any of the other datasets, we utilize NaNs to fill in the missing data.
 
 
@@ -63,7 +65,7 @@ python clean.py
 cd ../
 ```
 
-### (2) Analyzing ASRS Dataset
+### (2) Analyzing ASRS Dataset (asrs\_analysis/)
 #### (2.a) abbrev\_words\_analysis.py
 **Purpose**: Take the ASRS dataset and create a dataframe with known abbreviations (within narrative/synopsis/combined columns).
 
@@ -72,7 +74,7 @@ cd ../
 * Dictionaries: `FAA.csv`, `CASA.csv`, `IATA_IACO.csv`, `hand_code.csv`, `nasa_abbr.csv`, and `LIWC2015-dictionary-poster-unlocked.xlsx` 
 
 **Output**:
-* `total_cts_tagged_{narrative|synopsis|combined}.csv`: this is a dataframe where each row represents a word. Columns include a ct (number of occurences in dataset), a tag (categorization of the word), and the fullform version of the abbreviation (for each dictionary i.e iata_fullform, nasa_fullform, etc.). If a fullform does not exist, then it’s left blank
+* `total_cts_tagged_{narrative|synopsis|combined}.csv`: this is a dataframe where each row represents a word. Columns include a ct (number of occurences in dataset), a tag (categorization of the word), the fullform version of the abbreviation (for each dictionary i.e iata_fullform, nasa_fullform, etc.) and whether or not we consider the word to be an abbreviation. If a fullform does not exist, then it’s left blank
 * A csv for each tag (pos_stopword, neg_nonword, etc. see future slides): subset of total\_cts\_tagged_{...}.
 * `{unique_|}abrev_bar_plot_{narrative|synopsis|combined}.png`: bar plot of tag breakdown. If the first selection is ‘unique_’, then we only look at unique words (not total counts)
 
@@ -109,7 +111,7 @@ cd ../
 * Dictionaries: `FAA.csv`, `CASA.csv`, `IATA_IACO.csv`, `hand_code.csv`, `nasa_abbr.csv`, and `LIWC2015-dictionary-poster-unlocked.xlsx` 
 
 **Output**:
-* `Tracon_month_{narrative|synopsis|combined}.csv`: dataframe consisting of tracon_months and their associated counts 
+* `tracon_month_{narrative|synopsis|combined}.csv`: dataframe consisting of tracon_months and their associated counts 
     * List of columns
         * `tracon_month` (this is the index)
         * `pos_nonword_{ct|unique_ct}`: the number of times the tag `pos_nonword` shows up in the tracon_month
@@ -117,20 +119,55 @@ cd ../
         * `all_abrevs_no_overcount_{ct|unique_ct}`: the number of times all abbreviations show up in the tracon_month.
         * `{casa|faa|iata|nasa|hand}_{ct|unique_ct}`: the number of times abbreviations show up for each given dictionary
 
+**Running**:
+```
+cd asrs_analysis
+python top_down.py
+cd ../
+``` 
  
+#### (2.c) Doc2Vec Cosine Similarity (cos_sim.py)
+**Purpose**: convert the narrative/synopsis/combined fields in the ASRS dataset into doc2vec vectors and calculate the average cosine similarity between vectors in a given tracon_month to other groups (explained below).
+
+**Input**:
+* `ASRS 1988-2019_extracted.csv`: Main dataset
+* `total_cts_tagged_{narrative|synopsis|combined}.csv` from abbrev analysis
+
+**Output**:
+* `d2v_tracon_month_{narrative|synopsis|combined}_{1|3|6|12|inf}mon.csv`: this is the result of creating doc2vec representations of the columns (narrative, synopsis, combined of ASRS dataset), and comparing these vectors to each other utilizing the cosine\_similarity metric. Each row represents a `tracon_month`: an airport_code or tracon_code paired with a year and month. The `{1|3|6|12|inf}` selection indicates over what time period is compared. For instance, if we are looking at a particular row in the ASRS dataset with a date of January 2011, and if the selection is 1 month, the doc2vec numbers are calculated over December 2010. If the selection is 3 months, then the doc2vec numbers are calculated over October - November of 2010.
+    * Column format: `d2v_{cos_sim|num_comp}{|_other_tracon|_all_tracon}{_replace|}`
+        * `{cos_sim|num_comp}`: `cos_sim` means the number given is an average cosine_similarity metric over some qualifiers (see other selections) whereas `num_comp` is the number of comparisons made in the average cosine similarity metric.
+        * `{|_other_tracon|_all_tracon}`: if this selection is blank, then the comparisons are made over the given tracon and year/month. For instance, if the given tracon/year/month is SFO/January/2011, then the cos_sim number is calculated to be the average cosine similarity of pairwise doc2vec vectors (calculated via the narrative/synopsis/combined column) during January 2011 of the SFO tracon/airport. If the selection is `_other_tracon`, then the comparisons are made during January 2011 to all other tracons except SFO. If the selection is `_all_tracon`, then the comparisons are made to all tracons during January 2011.
+        * `{_replace|}`: if the selection has `replace` then the doc2vec calculations occurred after replacing all abbreviations (found in this repository TO-DO) are replaced with their fullforms. If the selection is blank, then no such replacement is done.
+    * Examples: we will use the same example as above with the date of January 2011 in SFO.
+        * `d2v_cos_sim_other_tracon`: this is the average cosine similarity calculated between pairwise comparisons of doc2vec vectors from the reports made in January 2011 in SFO to all reports made in January 2011 in tracons/airports outside of SFO.
+        * `d2v_num_comp_all_tracon_replace`: this is the number of comparisons made between doc2vec vectors from the reports made in January 2011 in SFO to all reports made in Junary 2011.
+
+**Running**:
+```
+cd asrs_analysis
+python cos_sim.py
+cd ../
+``` 
+#### (2.d) LIWC Analysis (liwc\_analysis.py)
+**Purpose**: for each tracon\_month, calculate the counts of each LIWC category
+
+**Input**:
+* `ASRS 1988-2019_extracted.csv`: Main dataset
+* `LIWC2015-dictionary-poster-unlocked.xlsx`: LIWC dictionary
+
+**Output**:
+* `liwc_tracon_month_{narrative|synopsis|combined}.csv`: LIWC is a categorization of some number of words (for instance common adverbs, family related words, swear words, etc.). This csv takes each `tracon_month` from the ASRS dataset and counts how many of each category was used during that `tracon_month`.
+
+**Running**:
+```
+cd asrs_analysis
+python liwc_analysis.py
+cd ../
+```
+<!-- ### (3) Cleaning NTSB Data (aviation\_data\_huiyi) -->
 
 <!-- **Files used** -->
-<!-- 1. `d2v_tracon_month_{narrative|synopsis|combined}_{1|3|6|12|inf}mon.csv`: this is the result of creating doc2vec representations of the columns (narrative, synopsis, combined of ASRS dataset), and comparing these vectors to each other utilizing the cosine\_similarity metric. Each row represents a `tracon_month`: an airport_code or tracon_code paired with a year and month. The `{1|3|6|12|inf}` selection indicates over what time period is compared. For instance, if we are looking at a particular row in the ASRS dataset with a date of January 2011, and if the selection is 1 month, the doc2vec numbers are calculated over December 2010. If the selection is 3 months, then the doc2vec numbers are calculated over October - November of 2010. -->
-<!--     * Column format: `d2v_{cos_sim|num_comp}{|_other_tracon|_all_tracon}{_replace|}` -->
-<!--         1. `{cos_sim|num_comp}`: `cos_sim` means the number given is an average cosine_similarity metric over some qualifiers (see other selections) whereas `num_comp` is the number of comparisons made in the average cosine similarity metric. -->
-<!--         2. `{|_other_tracon|_all_tracon}`: if this selection is blank, then the comparisons are made over the given tracon and year/month. For instance, if the given tracon/year/month is SFO/January/2011, then the cos_sim number is calculated to be the average cosine similarity of pairwise doc2vec vectors (calculated via the narrative/synopsis/combined column) during January 2011 of the SFO tracon/airport. If the selection is `_other_tracon`, then the comparisons are made during January 2011 to all other tracons except SFO. If the selection is `_all_tracon`, then the comparisons are made to all tracons during January 2011. -->
-<!--  -->
-<!--         3. `{_replace|}`: if the selection has `replace` then the doc2vec calculations occurred after replacing all abbreviations (found in this repository TO-DO) are replaced with their fullforms. If the selection is blank, then no such replacement is done. -->
-<!--     * Examples: we will use the same example as above with the date of January 2011 in SFO. -->
-<!--         1. `d2v_cos_sim_other_tracon`: this is the average cosine similarity calculated between pairwise comparisons of doc2vec vectors from the reports made in January 2011 in SFO to all reports made in January 2011 in tracons/airports outside of SFO. -->
-<!--         2. `d2v_num_comp_all_tracon_replace`: this is the number of comparisons made between doc2vec vectors from the reports made in January 2011 in SFO to all reports made in Junary 2011. -->
-<!-- 2. `liwc_tracon_month_{narrative|synopsis|combined}.csv`: LIWC is a categorization of some number of words (for instance common adverbs, family related words, swear words, etc.). This csv takes each `tracon_month` from the ASRS dataset and counts how many of each category was used during that `tracon_month`. -->
-<!-- 3. `total_cts_tagged_{narrative|synopsis|combined}.csv`: this is the result of the abbreviation analysis done in the other repository on the ASRS dataset. This dataframe consists of a list of words/acronyms that appear in the corresponding column (narrative/synopsis/combined), the number of times they appear in the whole dataset, the corresponding full-forms, and whether or not we consider them to be abbreviations. -->
 <!--     * This csv was created utilizing some aviation dictionaries (which have some common abbreviations and their full forms). The five dictionaries are CASA, FAA, IATA, NASA and HAND (or hand-coded) dictionaries. -->
 <!--     * Each word is given a tag or categorization. The tag starting with the prefix `pos_` indicates that the word was found in any of the aviation dictionaries. Whereas if the tag starts with `neg_` then the word was not found in any of the aviation dictionaries. -->
 <!--         1. `pos_word`: a word that was found in an aviation dictionary and is an English word according to the enchant dictionary -->
