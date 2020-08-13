@@ -165,20 +165,27 @@ cd asrs_analysis
 python liwc_analysis.py
 cd ../
 ```
-<!-- ### (3) Cleaning NTSB Data (aviation\_data\_huiyi) -->
+### (3) Cleaning NTSB Data (aviation\_data\_huiyi)
+**Purpose**: take the NTSB incident/accident data, clean the airportname and airportcodes, and create a dataframe of tracon_months and the number of ntsb incidents and accidents that occured within that tracon_month
 
-<!-- **Files used** -->
-<!--     * This csv was created utilizing some aviation dictionaries (which have some common abbreviations and their full forms). The five dictionaries are CASA, FAA, IATA, NASA and HAND (or hand-coded) dictionaries. -->
-<!--     * Each word is given a tag or categorization. The tag starting with the prefix `pos_` indicates that the word was found in any of the aviation dictionaries. Whereas if the tag starts with `neg_` then the word was not found in any of the aviation dictionaries. -->
-<!--         1. `pos_word`: a word that was found in an aviation dictionary and is an English word according to the enchant dictionary -->
-<!--         2. `pos_stopword`: a word that was found in an aviation dictionary and is an English stopword -->
-<!--         3. `pos_nonword`: a word that was found in an aviation dictionary and is not an English word -->
-<!--         4. `pos_iata_only_words`: a word that was found only in the iata dictionary -->
-<!--         5. `pos_handcoded_abrev`: a word that was found in an aviation dictionary and is an English word. However, we mark these to be abbreviations by inspection (in other words they are `pos_word` that are actually abbreviations despite being in the English dictionary) -->
-<!--         6. `neg_word`: a word that was not found in an aviation dictionary and is an English word. -->
-<!--         7. `neg_stopword`: a word that was not found in an aviation dictionary and is an English stopword. -->
-<!--         8. `neg_nonword`: a word that was not found in an aviation dictionary and is not an English word. -->
-<!--         9. `neg_nonword_city_exception`: these are `neg_nonwords` that overlap with a city name (ex: york) -->
+**Input**:
+* `NTSB_airportcode.csv`: all airport codes in NTSB dataset and their corresponding frequencies
+* `NTSB_airportname.csv`: all airport names in NTSB dataset and their corresponding frequencies
+* `NTSB_AIDS_full.txt`: all incidents/accident data from NTSB dataset 
+* `airports.csv`: scraped from wikipedia
+
+**Output**:
+* `NTSB_AIDS_full_output_new.csv`: for each tracon_month, calculate the number of ntsb_incidents and ntsb_accidents
+
+**Methodology**:
+* Cleaning is accomplished by removing whitespace, lowercasing, etc. If an airport code is not found in airports.csv, then a slightly adjusted version is tried (removing first letter). Missing airport_code and airport_names are filled in utilizing latitude/longitude information. For more info: read the `README.md` found in the directory
+
+**Running**:
+```
+cd aviation_data_huiyi
+./run_all
+cd ../
+```
 
 
 ## Organization of Repository
