@@ -3,3 +3,4 @@ misc/
 *.swp
 results/tracon_*.csv
 results/*
+!results/.placeholder

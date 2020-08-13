@@ -1,4 +1,16 @@
 #!/bin/bash
+cd preprocess_asrs
+echo ================================= ASRS Cleaning ================================
+python clean.py
+print "================================= ASRS Cleaning ================================\n\n"
+cd ../
+
+cp preprocess_asrs/outputs/*.csv asrs_analysis/datasets
+cd asrs_analysis
+echo ================================= ASRS Analysis ================================
+./run_all
+print "================================= ASRS Analysis ================================\n\n"
+cd ../
 
 cd aviation_data_huiyi
 echo ================================= NTSB Cleaning ================================
