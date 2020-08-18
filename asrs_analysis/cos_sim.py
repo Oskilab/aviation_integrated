@@ -80,8 +80,8 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}):
                 d2v_sub = np.vstack(d2v_list)
 
                 cos_res = cosine_similarity(found_d2v, d2v_sub)
-                sum_d2v = np.sum(cos_res)
-                num_comp = cos_res.shape[0] * cos_res.shape[1]
+                sum_d2v = np.sum(cos_res) - cos_res.shape[0] # comparisons to itself
+                num_comp = (cos_res.shape[0] * cos_res.shape[1] - cos_res.shape[0])
                 avg_d2v = sum_d2v / num_comp
             else:
                 avg_d2v = np.nan
