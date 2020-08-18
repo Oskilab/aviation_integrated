@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+"""
+Combines faa/ntsb incident data by processing them into the same shape and concatenating 
+them together
+"""
 import pandas as pd
 from tqdm import tqdm as tqdm
 from IPython import embed
@@ -12,7 +16,10 @@ ntsb.rename({'airportcode_new': 'airport_code', 'airportname_new': 'airport_name
         ' Investigation Type _ Accident ': 'ntsb_accidents', \
         ' Investigation Type _ Incident ': 'ntsb_incidents'},
            axis = 1, inplace = True)
+ntsb['dataset'] = 'ntsb'
 
+# preprocess faa into correct shape. faa_incidents.csv had each unique month/year as a column
+# but we change the dataframe so that each row only has one particular month/year
 months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 cols = list(faa.columns)[2:]
 
@@ -35,14 +42,12 @@ for idx in tqdm(range(1, faa.shape[0])):
             df_dict['month'].append(month)
             df_dict['faa_incidents'].append(row[col])
 
-ntsb['dataset'] = 'ntsb'
-
 faa_df = pd.DataFrame(df_dict)
 faa_df['dataset'] = 'faa'
 
+# combine and save
 fin_df = pd.concat([ntsb, faa_df], axis = 0, sort = False)
 fin_df = fin_df[['airport_code', 'airport_name', 'year', 'month', 'ntsb_accidents',\
         'ntsb_incidents', 'faa_incidents', 'dataset']]
 fin_df.fillna(0, inplace = True)
-# fin_df.to_csv('airport_month_events_jimmy.csv')
 fin_df.to_csv('results/airport_month_events.csv')

@@ -2,10 +2,9 @@ import pandas as pd, numpy as np
 from IPython import embed
 from tqdm import tqdm
 """
-Combines ASRS data with FAA/NTSB, LIWC
+Combines ASRS data with FAA/NTSB, LIWC and Doc2Vec datasets
 """
 
-# need to iterate over col = narrative, synopsis, combined
 for col in ['narrative', 'synopsis', 'combined']:
     print('col', col)
     # asrs
@@ -14,9 +13,6 @@ for col in ['narrative', 'synopsis', 'combined']:
     # ntsb/faa incident dataset + volume
     # airport_month_events = pd.read_csv('airport_month_events.csv', index_col = 0)
     airport_month_events = pd.read_csv('results/combined_vol_incident.csv', index_col = 0)
-
-    # abreviation counts
-    # total_cts = pd.read_csv('abrev_datasets/total_cts_tagged_{col}.csv')
 
     # liwc counts
     liwc_df = pd.read_csv('abrev_datasets/liwc_tracon_month_{col}_counts.csv',index_col = 0, header = [1])
@@ -31,29 +27,32 @@ for col in ['narrative', 'synopsis', 'combined']:
     def get_month(x):
         return int(str(x).split()[1].split("/")[1])
 
-    tracon = pd.Series(liwc_df.index.map(get_tracon), index = liwc_df.index)
-    year = pd.Series(liwc_df.index.map(get_year), index = liwc_df.index)
-    month = pd.Series(liwc_df.index.map(get_month), index = liwc_df.index)
-
-    liwc_df['tracon'] = tracon
-    liwc_df['month'] = month
-    liwc_df['year'] = year
-
+    # preprocess liwc_df
+    liwc_df['tracon'] = pd.Series(liwc_df.index.map(get_tracon), index = liwc_df.index)
+    liwc_df['month'] = pd.Series(liwc_df.index.map(get_year), index = liwc_df.index)
+    liwc_df['year'] = pd.Series(liwc_df.index.map(get_month), index = liwc_df.index)
     liwc_df = liwc_df.reset_index().rename({'index':'tracon_month'}, axis = 1)
 
-    tracon = pd.Series(tracon_nar.index.map(get_tracon))
-    year = pd.Series(tracon_nar.index.map(get_year))
-    month = pd.Series(tracon_nar.index.map(get_month))
-
+    # preprocess asrs
     asrs = tracon_nar.reset_index()
-    asrs['tracon'] = tracon
-    asrs['month'] = month
-    asrs['year'] = year
+    asrs['tracon'] = pd.Series(tracon_nar.index.map(get_tracon))
+    asrs['month'] = pd.Series(tracon_nar.index.map(get_month))
+    asrs['year'] = pd.Series(tracon_nar.index.map(get_year))
     dicts = ['casa', 'faa', 'hand', 'iata_iaco', 'nasa']
 
     def num_months_between(month1, year1, month2, year2):
         return (year2 - year1) * 12 + month2 - month1
 
+    """
+    This returns a function to be applied row-wise on a dataframe. The inner function, when
+    applied, returns a pandas series that finds which rows are within a month range. If
+    the FAA/NTSB incident tracon_month occurs in January 2011, then the inner function finds
+    all the rows that are within num_months months before January 2011.
+    @param: month1 (int) 1-12
+    @param: year1 (int)
+    @param: num_months (int)
+    @returns: function(row) that returns a pandas Series selecting the correct rows
+    """
     def generate_compare(month1, year1, num_months = 1): # accident date
         def inner_func(row):
             month2, year2 = row['month'], row['year']
@@ -72,8 +71,12 @@ for col in ['narrative', 'synopsis', 'combined']:
         d2v_tm.index = d2v_tm.index.rename('tracon_month')
         d2v_tm.reset_index(inplace = True) 
 
+        # combine with doc2vec 
         asrs = asrs.merge(d2v_tm, on = 'tracon_month')
 
+        # this creates a dictionary from year/month -> pd.DataFrame of all the rows in 
+        # the ASRS dataset within the month range (utilizing n_month)
+        # ex.: January 2011, w/ n_month = 1 -> pd.DataFrame of all rows in ASRS in December 2010
         tracon_month_dict = {}
         print('first')
         for idx, date_row in tqdm(airport_month_events[['month', 'year']].drop_duplicates().iterrows()):
@@ -81,6 +84,8 @@ for col in ['narrative', 'synopsis', 'combined']:
             compare_func = generate_compare(date_row['month'], date_row['year'], num_months = n_month)
             tracon_month_dict[code] = asrs.loc[asrs.apply(compare_func, axis = 1), :].copy()
 
+        # combines ASRS with incident/accident dataset (note d2v + liwc have already been merged to
+        # ASRS). This utilizes the dictionary created above
         final_rows = []
         print('second')
         asrs_covered_ind = set()
