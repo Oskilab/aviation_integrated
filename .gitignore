@@ -1,3 +1,20 @@
 *.swp
 .ipynb_checkpoints/
 **/*.pyc
+**/outputs/**
+**/resuls/**
+
+
+/* Large files */
+asrs_analysis/datasets/ASRS 1988-2019_extracted.csv
+asrs_analysis/datasets/ASRS 1988-2019.csv
+asrs_analysis/.git/lfs/objects/e5/29/e529c8c891572a573231c15d67701cb1ea3e073739abc8e6245e105e3a1bdce4
+asrs_analysis/.git/lfs/objects/57/a5/57a50852e5a067e19ff4cb16b7c9d687da5855917dbda3848ef6ce3c7b00adbb
+asrs_analysis/.git/lfs/objects/99/e0/99e05fb017d4298a2f0fdb861ba98d7e894f1ebf0c61c46034237d06b6b38e1f
+.git/objects/20/c4f43bdf0e03165404e2b0d1c1931cc67381ed
+.git/objects/5e/d0ddf237d1ffc28474c5a338dd33ddd63a8b0e
+.git/objects/a0/ce066899f281850d505f4dce4657c7e87646dc
+preprocess_asrs/outputs/ASRS 1988-2019_extracted.csv
+preprocess_asrs/datasets/ASRS Data-20200824T040436Z-001.zip
+preprocess_asrs/datasets/ASRS 1988-2019.csv
+preprocess_asrs/datasets/ASRS Data/

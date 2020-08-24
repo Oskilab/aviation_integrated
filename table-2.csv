@@ -1,0 +1,250 @@
+Group,City served,FAA,IATA,ICAO,Airport name,Role,Enpl.
+Commercial Service – Primary airports,Alpena,APN,APN,KAPN,Alpena County Regional Airport,P-N,"10,031"
+Commercial Service – Primary airports,Detroit,DTW,DTW,KDTW,Detroit Metropolitan Airport,P-L,"16,847,135"
+Commercial Service – Primary airports,Escanaba,ESC,ESC,KESC,Delta County Airport,P-N,"16,822"
+Commercial Service – Primary airports,Flint,FNT,FNT,KFNT,Bishop International Airport,P-S,"398,508"
+Commercial Service – Primary airports,Grand Rapids,GRR,GRR,KGRR,Gerald R. Ford International Airport,P-S,"1,334,979"
+Commercial Service – Primary airports,Hancock,CMX,CMX,KCMX,Houghton County Memorial Airport,P-N,"25,439"
+Commercial Service – Primary airports,Iron Mountain,IMT,IMT,KIMT,Ford Airport,P-N,"12,604"
+Commercial Service – Primary airports,Kalamazoo,AZO,AZO,KAZO,Kalamazoo/Battle Creek International Airport,P-N,"154,242"
+Commercial Service – Primary airports,Lansing,LAN,LAN,KLAN,Capital Region International Airport (was Lansing Capital City),P-N,"161,863"
+Commercial Service – Primary airports,Marquette,SAW,MQT,KSAW,Sawyer International Airport,P-N,"45,462"
+Commercial Service – Primary airports,Muskegon,MKG,MKG,KMKG,Muskegon County Airport,P-N,"18,165"
+Commercial Service – Primary airports,Pellston,PLN,PLN,KPLN,Pellston Regional Airport,P-N,"25,497"
+Commercial Service – Primary airports,Saginaw,MBS,MBS,KMBS,MBS International Airport,P-N,"122,469"
+Commercial Service – Primary airports,Sault Ste. Marie,CIU,CIU,KCIU,Chippewa County International Airport,P-N,"20,974"
+Commercial Service – Primary airports,Traverse City,TVC,TVC,KTVC,Cherry Capital Airport (was Cherry County Airpark),P-N,"223,924 </onlyinclude>"
+Commercial Service –Nonprimary airports,Beaver Island (St. James),SJX,,KSJX,Beaver Island Airport,CS,9
+Commercial Service –Nonprimary airports,Charlevoix,CVX,,KCVX,Charlevoix Municipal Airport,CS,750
+Commercial Service –Nonprimary airports,Ironwood,IWD,IWD,KIWD,Gogebic-Iron County Airport,CS,"5,069"
+Commercial Service –Nonprimary airports,Detroit/Pontiac,PTK,PTK,KPTK,Oakland County International Airport,CS,"3,409"
+Other airportswith scheduledpassenger service,Manistee,MBL,MBL,KMBL,Manistee County-Blacker Airport,GA,"4,243"
+Reliever airports,Detroit / Grosse Ile,ONZ,,KONZ,Grosse Ile Municipal Airport,R,0
+Reliever airports,Detroit / Ypsilanti,YIP,YIP,KYIP,Willow Run Airport,R,"4,093"
+Reliever airports,Howell,OZW,,KOZW,Livingston County Spencer J. Hardy Airport,R,2
+Reliever airports,New Hudson,Y47,,,Oakland Southwest Airport (Oakland/Southwest Airport),R,0
+Reliever airports,Plymouth / Canton,1D2,,,Canton-Plymouth-Mettetal Airport (Canton-Plymouth Mettetal Airport),R,0
+Reliever airports,Port Huron,PHN,PHN,KPHN,St. Clair County International Airport,R,9
+Reliever airports,Romeo,D98,,,Romeo State Airport,R,0
+Reliever airports,Troy,VLL,,KVLL,Oakland/Troy Airport,R,853
+General Aviation airports,Adrian,ADG,ADG,KADG,Lenawee County Airport,GA,0
+General Aviation airports,Allegan,35D,,,Padgham Field,GA,12
+General Aviation airports,Alma,AMN,AMN,KAMN,Gratiot Community Airport,GA,0
+General Aviation airports,Ann Arbor,ARB,ARB,KARB,Ann Arbor Municipal Airport,GA,16
+General Aviation airports,Atlanta,Y93,,,Atlanta Municipal Airport,GA,0
+General Aviation airports,Bad Axe,BAX,,KBAX,Huron County Memorial Airport,GA,0
+General Aviation airports,Battle Creek,BTL,BTL,KBTL,W. K. Kellogg Airport (W. K. Kellogg Regional),GA,1
+General Aviation airports,Bay City,3CM,,,James Clements Municipal Airport & SPB,GA,0
+General Aviation airports,Bellaire,ACB,ACB,KACB,Antrim County Airport,GA,6
+General Aviation airports,Benton Harbor,BEH,BEH,KBEH,Southwest Michigan Regional Airport,GA,6
+General Aviation airports,Big Rapids,RQB,WBR,KRQB,Roben-Hood Airport,GA,0
+General Aviation airports,Bois Blanc Island,6Y1,,,Bois Blanc Island Airport (Bois Blanc Airport),GA,0
+General Aviation airports,Cadillac,CAD,CAD,KCAD,Wexford County Airport,GA,0
+General Aviation airports,Caro,CFS,,KCFS,Tuscola Area Airport,GA,3
+General Aviation airports,Charlotte,FPK,,KFPK,Fitch H. Beach Airport,GA,0
+General Aviation airports,Cheboygan,SLH,,KSLH,Cheboygan County Airport,GA,0
+General Aviation airports,Clare,48D,,,Clare Municipal Airport,GA,0
+General Aviation airports,Coldwater,OEB,,KOEB,Branch County Memorial Airport,GA,0
+General Aviation airports,Detroit,DET,DET,KDET,Coleman A. Young Municipal Airport  (was Detroit City),GA,557[1][2][3]
+General Aviation airports,Dowagiac,C91,,,Dowagiac Municipal Airport,GA,0
+General Aviation airports,Drummond Island,DRM,DRE,KDRM,Drummond Island Airport,GA,0
+General Aviation airports,Evart,9C8,,,Evart Municipal Airport,GA,0
+General Aviation airports,Frankfort,FKS,,KFKS,Frankfort Dow Memorial Field,GA,1
+General Aviation airports,Fremont,FFX,,KFFX,Fremont Municipal Airport,GA,0
+General Aviation airports,Gaylord,GLR,GLR,KGLR,Gaylord Regional Airport (Otsego County Airport),GA,975
+General Aviation airports,Gladwin,GDW,GDW,KGDW,Gladwin Zettel Memorial Airport,GA,0
+General Aviation airports,Grand Haven,3GM,,,Grand Haven Memorial Airpark,GA,14
+General Aviation airports,Grand Ledge,4D0,,,Abrams Municipal Airport,GA,4
+General Aviation airports,Grayling,GOV,,KGOV,Grayling Army Airfield,GA,0
+General Aviation airports,Greenville,6D6,,,Greenville Municipal Airport,GA,0
+General Aviation airports,Harbor Springs,MGN,,KMGN,Harbor Springs Airport (Harbor Springs Municipal),GA,"8,014"
+General Aviation airports,Hart / Shelby,C04,,,Oceana County Airport,GA,0
+General Aviation airports,Hastings,9D9,,,Hastings Airport (was Hastings City/Barry County),GA,0
+General Aviation airports,Hillsdale,JYM,,KJYM,Hillsdale Municipal Airport,GA,0
+General Aviation airports,Holland,BIV,,KBIV,West Michigan Regional Airport (was Tulip City Airport),GA,766
+General Aviation airports,Houghton Lake,HTL,HTL,KHTL,Roscommon County - Blodgett Memorial Airport,GA,0
+General Aviation airports,Ionia,Y70,,,Ionia County Airport,GA,0
+General Aviation airports,Jackson,JXN,JXN,KJXN,Jackson County Airport (Reynolds Field),GA,4
+General Aviation airports,Lakeview,13C,,,Lakeview Airport (Griffith Field),GA,0
+General Aviation airports,Lambertville,DUH,,KDUH,Toledo Suburban Airport,GA,2
+General Aviation airports,Lapeer,D95,,,Dupont-Lapeer Airport,GA,0
+General Aviation airports,Ludington,LDM,LDM,KLDM,Mason County Airport,GA,5
+General Aviation airports,Mackinac Island,MCD,MCD,KMCD,Mackinac Island Airport,GA,"2,549"
+General Aviation airports,Manistique,ISQ,ISQ,KISQ,Schoolcraft County Airport,GA,3
+General Aviation airports,Marlette,77G,,,Marlette Airport (Marlette Township Airport),GA,0
+General Aviation airports,Marshall,RMY,,KRMY,Brooks Field,GA,2
+General Aviation airports,Mason,TEW,,KTEW,Mason Jewett Field,GA,4
+General Aviation airports,Menominee,MNM,MNM,KMNM,Menominee–Marinette Twin County Airport,GA,0
+General Aviation airports,Midland,IKW,,KIKW,Jack Barstow Airport (Jack Barstow Municipal),GA,0
+General Aviation airports,Mio,51M,,,Oscoda County Dennis Kauffman Memorial Airport,GA,0
+General Aviation airports,Monroe,TTF,,KTTF,Custer Airport (Monroe Custer Airport),GA,0
+General Aviation airports,Mount Pleasant,MOP,MOP,KMOP,Mount Pleasant Municipal Airport,GA,8
+General Aviation airports,Newberry,ERY,,KERY,Luce County Airport,GA,0
+General Aviation airports,Niles,3TR,NLE,,Jerry Tyler Memorial Airport,GA,0
+General Aviation airports,Ontonagon,OGM,,KOGM,Ontonagon County Airport (Schuster Field),GA,0
+General Aviation airports,Oscoda,OSC,OSC,KOSC,Oscoda-Wurtsmith Airport,GA,4
+General Aviation airports,Owosso,RNP,,KRNP,Owosso Community Airport,GA,0
+General Aviation airports,Rogers City,PZQ,,KPZQ,Presque Isle County Airport,GA,0
+General Aviation airports,Saginaw,HYX,,KHYX,Saginaw County H.W. Browne Airport,GA,0
+General Aviation airports,Sandusky,Y83,,,Sandusky City Airport,GA,0
+General Aviation airports,South Haven,LWA,,KLWA,South Haven Area Regional Airport,GA,25
+General Aviation airports,Sparta,8D4,,,Paul C. Miller - Sparta Airport,GA,10
+General Aviation airports,St. Ignace,83D,,,Mackinac County Airport,GA,30
+General Aviation airports,Sturgis,IRS,IRS,KIRS,Kirsch Municipal Airport,GA,0
+General Aviation airports,Three Rivers,HAI,HAI,KHAI,Three Rivers Municipal Dr. Haines Airport,GA,2
+General Aviation airports,West Branch,Y31,,,West Branch Community Airport,GA,0
+General Aviation airports,White Cloud,42C,,,White Cloud Airport,GA,0
+Other public-use airports (not listed in NPIAS),Alpena,53M,,,Silver City Airpark,,
+Other public-use airports (not listed in NPIAS),Avoca,39G,,,Avoca Airport (was Rasor Airport),,
+Other public-use airports (not listed in NPIAS),Bad Axe,E53,,,Engler Field,,
+Other public-use airports (not listed in NPIAS),Baldwin,7D3,,,Baldwin Municipal Airport,,
+Other public-use airports (not listed in NPIAS),Bannister,4M4,,,Shady Lawn Field (Shady Lawn Farms),,
+Other public-use airports (not listed in NPIAS),Baraga,2P4,,,Baraga Airport,,
+Other public-use airports (not listed in NPIAS),Bath,41G,,,University Airpark,,
+Other public-use airports (not listed in NPIAS),Belleville,43G,,,Belleville Airport,,
+Other public-use airports (not listed in NPIAS),Berrien Springs,C20,,,Andrews University Airpark,,
+Other public-use airports (not listed in NPIAS),Blissfield,44G,,,Betz Airport,,
+Other public-use airports (not listed in NPIAS),Boyne City,N98,,,Boyne City Municipal Airport,,
+Other public-use airports (not listed in NPIAS),Boyne Falls,BFA,,KBFA,Boyne Mountain Airport,,
+Other public-use airports (not listed in NPIAS),Brighton,45G,,,Brighton Airport,,
+Other public-use airports (not listed in NPIAS),Brooklyn,6G8,,,Shamrock Field,,
+Other public-use airports (not listed in NPIAS),Carleton,W87,,,Buzzwick Airport (Buzz Wick Airport) (was Wickenheiser Airport),,
+Other public-use airports (not listed in NPIAS),Charlotte,49G,,,Wend Valley Airport,,
+Other public-use airports (not listed in NPIAS),Cheboygan,2M7,,,Hoffman's Black Mountain Aerodrome,,
+Other public-use airports (not listed in NPIAS),Chesaning,50G,,,Howard Nixon Memorial Airport,,
+Other public-use airports (not listed in NPIAS),Clinton,7N4,,,Honey Acres Airport,,
+Other public-use airports (not listed in NPIAS),Clio,51G,,,Cagney Airport,,
+Other public-use airports (not listed in NPIAS),Corunna,56M,,,Millstream Airpark,,
+Other public-use airports (not listed in NPIAS),Croswell,55G,,,Arnold Field,,
+Other public-use airports (not listed in NPIAS),Crystal Falls,50D,,,Iron County Airport,,
+Other public-use airports (not listed in NPIAS),Davison,6G0,,,Athelone Williams Memorial Airport,,
+Other public-use airports (not listed in NPIAS),Deckerville,56G,,,Indian Creek Ranch Airport,,
+Other public-use airports (not listed in NPIAS),Dexter,2E8,,,Cackleberry Airport,,
+Other public-use airports (not listed in NPIAS),East Jordan,Y94,,,East Jordan City Airport,,
+Other public-use airports (not listed in NPIAS),East Tawas,6D9,ECA,,Iosco County Airport,,
+Other public-use airports (not listed in NPIAS),Eastport,59M,,,Torchport Airport (Torchport Airpark),,
+Other public-use airports (not listed in NPIAS),Eaton Rapids,60G,,,Skyway Estates Airport,,
+Other public-use airports (not listed in NPIAS),Elwell,68R,,,Hamp Airport (Hamp Skyport),,
+Other public-use airports (not listed in NPIAS),Emmett,2E2,,,Sharpe's Strip,,
+Other public-use airports (not listed in NPIAS),Empire,Y87,,,Empire Airport,,
+Other public-use airports (not listed in NPIAS),Flushing,3DA,,,Dalton Airport,,
+Other public-use airports (not listed in NPIAS),Fowlerville,65G,,,Maple Grove Airport,,
+Other public-use airports (not listed in NPIAS),Frankenmuth,66G,,,"William ""Tiny"" Zehnder Field",,
+Other public-use airports (not listed in NPIAS),Fruitport,39Z,,,Flying-A-Ranch Airport,,
+Other public-use airports (not listed in NPIAS),Gaylord,4Y4,,,Lakes of the North Airport,,
+Other public-use airports (not listed in NPIAS),Genesee,68G,,,Duford Field,,
+Other public-use airports (not listed in NPIAS),Gladwin,5M6,,,Sugar Springs Airport,,
+Other public-use airports (not listed in NPIAS),Grand Marais,Y98,,,Grand Marais Airport,,
+Other public-use airports (not listed in NPIAS),Grant,01C,,,Grant Airport,,
+Other public-use airports (not listed in NPIAS),Gregory,69G,,,Richmond Field,,
+Other public-use airports (not listed in NPIAS),Hale,H80,,,Field of Dreams Airport,,
+Other public-use airports (not listed in NPIAS),Harrietta,4Y9,,,Bunch's Half Acre Airport,,
+Other public-use airports (not listed in NPIAS),Harrison,80D,,,Clare County Airport,,
+Other public-use airports (not listed in NPIAS),Harrisville,5Y0,,,Harrisville Airport (Harrisville City Airport),,
+Other public-use airports (not listed in NPIAS),Harsens Island,Z92,,,Harsens Island Airport,,
+Other public-use airports (not listed in NPIAS),Hessel,5Y1,,,Albert J. Lindberg Airport,,
+Other public-use airports (not listed in NPIAS),Hillman,Y95,,,Hillman Airport,,
+Other public-use airports (not listed in NPIAS),Holland,HLM,HLM,KHLM,Park Township Airport,,4
+Other public-use airports (not listed in NPIAS),Houghton Lake Heights,5Y2,,,Houghton Lake State Airport,,
+Other public-use airports (not listed in NPIAS),Howell,4Y1,,,Raether Airport,,
+Other public-use airports (not listed in NPIAS),Howell,13M,,,Aeronut Park Balloonport,,
+Other public-use airports (not listed in NPIAS),Indian River,Y65,,,Calvin Campbell Municipal Airport,,
+Other public-use airports (not listed in NPIAS),Interlochen,Y88,,,Green Lake Airport (Green Lake Township Airport),,
+Other public-use airports (not listed in NPIAS),Iron River,Y73,,,Stambaugh Airport,,
+Other public-use airports (not listed in NPIAS),Ishpeming,M61,,,Edward F Johnson Airport,,
+Other public-use airports (not listed in NPIAS),Jenison,08C,,,Riverview Airport,,
+Other public-use airports (not listed in NPIAS),Kalamazoo,4N0,,,Newman's Airport,,
+Other public-use airports (not listed in NPIAS),Kalkaska,Y89,,,Kalkaska City Airport (Kalkaska Airport),,
+Other public-use airports (not listed in NPIAS),Kent City,24M,,,Wilderness Airpark,,
+Other public-use airports (not listed in NPIAS),Laingsburg,15W,,,Dennis Farms Airport,,
+Other public-use airports (not listed in NPIAS),Lake City,Y91,,,Home Acres Sky Ranch Airport,,
+Other public-use airports (not listed in NPIAS),Lake Isabella,D15,,,Lake Isabella - Cal Brewer Memorial Airport (was Lake Isabella Airpark),,
+Other public-use airports (not listed in NPIAS),Lewiston,8M8,,,Garland Airport (Eagle II Airport),,
+Other public-use airports (not listed in NPIAS),Lexington,7MI,,,Flugplatz Airport,,
+Other public-use airports (not listed in NPIAS),Lincoln,3L7,,,"Milwrick Flying ""M"" Airport (was Flying ""M"" Ranch Airport)",,
+Other public-use airports (not listed in NPIAS),Linden,9G2,,,Price's Airport,,
+Other public-use airports (not listed in NPIAS),Lowell,24C,,,Lowell City Airport,,
+Other public-use airports (not listed in NPIAS),Luzerne,5Y4,,,Lost Creek Airport,,
+Other public-use airports (not listed in NPIAS),Mancelona,D90,,,Mancelona Municipal Airport,,
+Other public-use airports (not listed in NPIAS),Manchester,75G,,,Rossettie Airport,,
+Other public-use airports (not listed in NPIAS),Marine City,76G,,,Marine City Airport,,
+Other public-use airports (not listed in NPIAS),Mecosta,0C5,,,Canadian Lakes Airport,,
+Other public-use airports (not listed in NPIAS),Mecosta,27C,,,Mecosta Morton Airport (Mecosta-Morton Airport),,
+Other public-use airports (not listed in NPIAS),Moorestown,6Y0,,,Moorestown Airpark,,
+Other public-use airports (not listed in NPIAS),Munising,5Y7,,,Hanley Field,,
+Other public-use airports (not listed in NPIAS),Napoleon,3NP,,,Napoleon Airport,,
+Other public-use airports (not listed in NPIAS),Napoleon,6H4,,,Van Wagnen Airport (was Day Field),,
+Other public-use airports (not listed in NPIAS),Napoleon,26W,,,Wolf Lake Airport,,
+Other public-use airports (not listed in NPIAS),Northport,5D5,,,Woolsey Memorial Airport,,
+Other public-use airports (not listed in NPIAS),Nunica,33C,,,Jablonski Airport,,
+Other public-use airports (not listed in NPIAS),Nunica,5N7,,,Hat Field (Hatfield Airport),,
+Other public-use airports (not listed in NPIAS),Parchment,2H4,,,"Triple ""H"" Airport",,
+Other public-use airports (not listed in NPIAS),Paw Paw,2C5,,,Almena Airport,,
+Other public-use airports (not listed in NPIAS),Petersburg,88G,,,Gradolph Field,,
+Other public-use airports (not listed in NPIAS),Pinconning,52I,,,Gross Airport,,
+Other public-use airports (not listed in NPIAS),Plainwell,61D,,,Plainwell Municipal Airport,,
+Other public-use airports (not listed in NPIAS),Port Austin,29C,,,Grindstone Air Harbor,,
+Other public-use airports (not listed in NPIAS),Pullman,M86,,,Walle Field (Walle Airfield),,
+Other public-use airports (not listed in NPIAS),Ray,57D,,,Ray Community Airport,,
+Other public-use airports (not listed in NPIAS),Reed City,RCT,RCT,KRCT,Nartron Field,,
+Other public-use airports (not listed in NPIAS),Rockford,35C,,,Wells Airport,,
+Other public-use airports (not listed in NPIAS),Roscommon,3RC,,,Roscommon Conservation Airport,,
+Other public-use airports (not listed in NPIAS),Sandusky,96G,,,Cowley Field,,
+Other public-use airports (not listed in NPIAS),Sault Ste. Marie,ANJ,,KANJ,Sault Ste. Marie Municipal Airport (Sanderson Field),,83
+Other public-use airports (not listed in NPIAS),Schoolcraft,P97,,,Prairie Ronde Airport,,
+Other public-use airports (not listed in NPIAS),Sebewaing,98G,,,Sebewaing Airport (Sebewaing Township Airport),,
+Other public-use airports (not listed in NPIAS),Sidnaw,6Y9,,,Prickett–Grooms Field,,
+Other public-use airports (not listed in NPIAS),Smiths Creek,11G,,,Johnson Field,,
+Other public-use airports (not listed in NPIAS),St. Clair,5Y5,,,David's Landing,,
+Other public-use airports (not listed in NPIAS),St. Helen,6Y6,,,St. Helen Airport,,
+Other public-use airports (not listed in NPIAS),St. Johns,2S3,,,Archer Memorial Field,,
+Other public-use airports (not listed in NPIAS),St. Johns,97G,,,Glowacki Airport,,
+Other public-use airports (not listed in NPIAS),St. Johns,3S5,,,Schiffer Acres Airport,,
+Other public-use airports (not listed in NPIAS),St. Johns,39T,,,Tripp Creek Airport,,
+Other public-use airports (not listed in NPIAS),Stanwood,38C,,,Cain Field,,
+Other public-use airports (not listed in NPIAS),Sunfield,C43,,,Hiram Cure Airfield,,
+Other public-use airports (not listed in NPIAS),Tecumseh,34G,,,Merillat Airport,,
+Other public-use airports (not listed in NPIAS),Tecumseh,3TE,,,Meyers-Diver's Airport (was Al Meyers Airport),,
+Other public-use airports (not listed in NPIAS),Thompsonville,7Y2,,,Thompsonville Airport,,
+Other public-use airports (not listed in NPIAS),Topinabee,Y30,,,Pbeaaye Airport,,
+Other public-use airports (not listed in NPIAS),Traverse City,Y04,,,Sugar Loaf Resort Airport (Wallace G. Fryer Airfield),,
+Other public-use airports (not listed in NPIAS),Traverse City,4M0,,,Lake Ann Airway Estates Airport,,
+Other public-use airports (not listed in NPIAS),Watervliet,40C,,,Watervliet Municipal Airport,,
+Other public-use airports (not listed in NPIAS),Wayland,41C,,,Calkins Field,,
+Other public-use airports (not listed in NPIAS),Weidman,D11,,,Ojibwa Airpark,,
+Other public-use airports (not listed in NPIAS),Westphalia,3F5,,,Forest Hill Airport,,
+Other public-use airports (not listed in NPIAS),Williamston,89Y,,,Maidens Airport,,
+Other public-use airports (not listed in NPIAS),Winn,53W,,,Woodruff Lake Airport,,
+Other public-use airports (not listed in NPIAS),Yale,48G,,,Gavagan Field,,
+Other public-use airports (not listed in NPIAS),Yale,4Y8,,,Para Field,,
+Other public-use airports (not listed in NPIAS),Yale,D20,,,Yale Airport,,
+Other public-use airports (not listed in NPIAS),Zeeland,Z98,,,Ottawa Executive Airport,,
+Othermilitary,Mount Clemens,MTC,MTC,KMTC,Selfridge ANGB,,
+Othermilitary,Traverse City,,,,CGAS Traverse City (at Cherry Capital Airport),,
+Notable private-use airports,Ada,2MI5,,,"Somerville Airport (public use in 2005, FAA: 34I)",,
+Notable private-use airports,Albion,42MI,,,"Midway Airport (public use in 2002, FAA: 35G)",,
+Notable private-use airports,Athens,77MI,,,"David's Airport (David's Field) (public use in 2007, FAA: 9C2)",,
+Notable private-use airports,Beaver Island,6Y8,,,Welke Airport,,
+Notable private-use airports,DeWitt,MI10,,,Hoerner's Corners Airport,,
+Notable private-use airports,Gladstone,43MI,,,"West Gladstone Airport (public use in 2003, FAA: 9C9)",,
+Notable private-use airports,St. Johns,82MI,,,"Randolph's Landing Area (Randolph's Airport) (public use in 2008, FAA: 61G)",,
+Notable private-use airports,Traverse City,,,,Traverse Area Model Pilots Society (TRAMPS) Aerodrome,,
+Notable private-use airports,Vassar,2MI8,,,"Vassar Field (former public use, FAA: 4P4)",,
+Notable former airports,Avoca,07D,,,Tackaberry Airport (closed 2010?) [1],,
+Notable former airports,Acme,,,,Acme Skyport (closed 1995?)[4],,
+Notable former airports,Carson City,47G,,,Mayes Airport (closed 2008?) [2],,
+Notable former airports,Dearborn,,,,Ford Airport (closed 1947) [3],,
+Notable former airports,East Lansing,2D8,,,Davis Airport (closed 2000) [4] [5],,
+Notable former airports,Elk Rapids,34U,,,"Yuba Airport (closed indefinitely, FAA record still active)",,
+Notable former airports,Erie,M84,,,Erie Aerodrome (closed 2010?) [6],,
+Notable former airports,Gregory,35L,,,Carriage Lane Airport (closed 2007?) [7],,
+Notable former airports,Kalamazoo,09C,,,Austin Lake Airport (closed 2001?) [8],,
+Notable former airports,Marquette,MQT,,KMQT,Marquette County Airport (closed 1999) [9],,
+Notable former airports,Mason,,,,Craft's Field [10],,
+Notable former airports,New Lothrop,6B3,,,Bean Blossom Airport (closed 2008?) [11],,
+Notable former airports,Onaway,Y96,,,Leo E. Goetz County Airport (closed permanently ~2015-2018),,
+Notable former airports,Onsted,MI51,,,"Loar's Field (public use in 2006, FAA: 83G)",,
+Notable former airports,Rock,MI00,,,"Bonnie Field (public use in 2008, FAA: 6Y4)",,
+Notable former airports,Rothbury,42N,,,Double JJ Resort Ranch Airport (closed 2008?) [12],,
+Notable former airports,Standish,Y75,,,Standish Industrial Airport (closed 2006?) [13],,
+Notable former airports,Traverse City,,,,Traverse City Ransom Field (closed 1969)[5],,

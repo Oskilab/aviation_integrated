@@ -1,0 +1,671 @@
+City,FAA,IATA,ICAO,Airport,Role,Enplanements
+ALABAMA,,,,,,
+Birmingham,BHM,BHM,KBHM,Birmingham–Shuttlesworth International Airport,P-S,"1,304,467"
+Dothan,DHN,DHN,KDHN,Dothan Regional Airport,P-N,"49,411"
+Huntsville,HSV,HSV,KHSV,Huntsville International Airport (Carl T. Jones Field),P-S,"527,801"
+Mobile,MOB,MOB,KMOB,Mobile Regional Airport,P-N,"288,209"
+Montgomery,MGM,MGM,KMGM,Montgomery Regional Airport (Dannelly Field),P-N,"173,210"
+ALASKA,,,,,,
+Anchorage,LHD,,PALH,Lake Hood Seaplane Base (also see Lake Hood Airstrip),P-N,"23,382"
+Anchorage,MRI,MRI,PAMR,Merrill Field,P-N,"19,144"
+Anchorage,ANC,ANC,PANC,Ted Stevens Anchorage International Airport,P-M,"2,563,524"
+Aniak,ANI,ANI,PANI,Aniak Airport,P-N,"13,688"
+Barrow,BRW,BRW,PABR,Wiley Post–Will Rogers Memorial Airport,P-N,"45,300"
+Bethel,BET,BET,PABE,Bethel Airport (also see Bethel Seaplane Base),P-N,"155,791"
+Cordova,CDV,CDV,PACV,Merle K. (Mudhole) Smith Airport,P-N,"18,649"
+Deadhorse,SCC,SCC,PASC,Deadhorse Airport (Prudhoe Bay Airport),P-N,"51,205"
+Dillingham,DLG,DLG,PADL,Dillingham Airport,P-N,"33,616"
+Fairbanks,FAI,FAI,PAFA,Fairbanks International Airport,P-S,"538,881"
+Galena,GAL,GAL,PAGA,Edward G. Pitka Sr. Airport,P-N,"10,532"
+Homer,HOM,HOM,PAHO,Homer Airport,P-N,"44,117"
+Juneau,JNU,JNU,PAJN,Juneau International Airport,P-N,"420,442"
+Kenai,ENA,ENA,PAEN,Kenai Municipal Airport,P-N,"92,485"
+Ketchikan,KTN,KTN,PAKT,Ketchikan International Airport,P-N,"127,881"
+King Salmon,AKN,AKN,PAKN,King Salmon Airport,P-N,"36,717"
+Kodiak,ADQ,ADQ,PADQ,Kodiak Airport,P-N,"79,682"
+Kotzebue,OTZ,OTZ,PAOT,Ralph Wien Memorial Airport,P-N,"64,481"
+Nome,OME,OME,PAOM,Nome Airport,P-N,"60,655"
+Petersburg,PSG,PSG,PAPG,Petersburg James A. Johnson Airport,P-N,"21,896"
+Sitka,SIT,SIT,PASI,Sitka Rocky Gutierrez Airport,P-N,"83,404"
+St. Mary's,KSM,KSM,PASM,St. Mary's Airport,P-N,"12,851"
+Unalakleet,UNK,UNK,PAUN,Unalakleet Airport,P-N,"16,948"
+Unalaska,DUT,DUT,PADU,Unalaska Airport (Tom Madsen Airport),P-N,"31,055"
+Valdez,VDZ,VDZ,PAVD,Valdez Airport (Pioneer Field),P-N,"12,631"
+Wrangell,WRG,WRG,PAWG,Wrangell Airport (also see Wrangell Seaplane Base),P-N,"12,569"
+Yakutat,YAK,YAK,PAYA,Yakutat Airport (also see Yakutat Seaplane Base),P-N,"10,756"
+ARIZONA,,,,,,
+Bullhead City,IFP,IFP,KIFP,Laughlin/Bullhead International Airport,P-N,"109,334"
+Flagstaff,FLG,FLG,KFLG,Flagstaff Pulliam Airport,P-N,"64,578"
+Grand Canyon,GCN,GCN,KGCN,Grand Canyon National Park Airport,P-N,"319,206"
+Mesa,IWA,AZA,KIWA,Phoenix–Mesa Gateway Airport (formerly Williams AFB),P-S,"705,731"
+Page,PGA,PGA,KPGA,Page Municipal Airport,P-N,"17,435"
+Peach Springs,1G4,GCW,,Grand Canyon West Airport,P-N,"128,739"
+Phoenix,PHX,PHX,KPHX,Phoenix Sky Harbor International Airport,P-L,"20,896,265"
+Tucson,TUS,TUS,KTUS,Tucson International Airport,P-S,"1,594,594"
+Yuma,NYL,YUM,KNYL,Yuma International Airport / MCAS Yuma,P-N,"74,742"
+ARKANSAS,,,,,,
+Fayetteville,XNA,XNA,KXNA,Northwest Arkansas Regional Airport,P-S,"673,810"
+Fort Smith,FSM,FSM,KFSM,Fort Smith Regional Airport,P-N,"83,920"
+Little Rock,LIT,LIT,KLIT,Clinton National Airport (Adams Field) (was Little Rock National),P-S,"958,824"
+Texarkana,TXK,TXK,KTXK,Texarkana Regional Airport (Webb Field),P-N,"33,565"
+CALIFORNIA,,,,,,
+Arcata/Eureka,ACV,ACV,KACV,Arcata Airport,P-N,"69,732"
+Bakersfield,BFL,BFL,KBFL,Meadows Field,P-N,"100,433"
+Burbank,BUR,BUR,KBUR,Hollywood Burbank Airport (was Bob Hope Airport),P-M,"2,077,892"
+Fresno,FAT,FAT,KFAT,Fresno Yosemite International Airport,P-S,"761,298"
+Long Beach,LGB,LGB,KLGB,Long Beach Airport (Daugherty Field),P-S,"1,386,357"
+Los Angeles,LAX,LAX,KLAX,Los Angeles International Airport,P-L,"39,636,042"
+Mammoth Lakes,MMH,MMH,KMMH,Mammoth Yosemite Airport,P-N [nb 1],"21,826"
+Monterey,MRY,MRY,KMRY,Monterey Regional Airport (was Monterey Peninsula Airport),P-N,"192,136"
+Oakland,OAK,OAK,KOAK,Oakland International Airport,P-M,"5,934,639"
+Ontario,ONT,ONT,KONT,Ontario International Airport,P-M,"2,104,625"
+Orange County,SNA,SNA,KSNA,John Wayne Airport (was Orange County Airport),P-M,"5,217,242"
+Palm Springs,PSP,PSP,KPSP,Palm Springs International Airport,P-S,"995,801"
+Redding,RDD,RDD,KRDD,Redding Municipal Airport,P-N,"43,414"
+Sacramento,SMF,SMF,KSMF,Sacramento International Airport,P-M,"4,969,366"
+San Diego,SAN,SAN,KSAN,San Diego International Airport (Lindbergh Field),P-L,"10,340,164"
+San Francisco,SFO,SFO,KSFO,San Francisco International Airport,P-L,"25,707,101"
+San Jose,SJC,SJC,KSJC,Norman Y. Mineta San José International Airport,P-M,"5,321,603"
+San Luis Obispo,SBP,SBP,KSBP,San Luis Obispo County Regional Airport (McChesney Field),P-N,"162,719"
+Santa Barbara,SBA,SBA,KSBA,Santa Barbara Municipal Airport (Santa Barbara Airport),P-N,"329,751"
+Santa Maria,SMX,SMX,KSMX,Santa Maria Public Airport (Capt G. Allan Hancock Field),P-N,"40,120"
+Santa Rosa,STS,STS,KSTS,Charles M. Schulz–Sonoma County Airport,P-N,"167,151"
+Stockton,SCK,SCK,KSCK,Stockton Metropolitan Airport,P-N,"93,076"
+COLORADO,,,,,,
+Aspen,ASE,ASE,KASE,Aspen-Pitkin County Airport (Sardy Field),P-N,"254,392"
+Colorado Springs,COS,COS,KCOS,City of Colorado Springs Municipal Airport,P-S,"657,694"
+Denver,DEN,DEN,KDEN,Denver International Airport,P-L,"28,267,394"
+Durango,DRO,DRO,KDRO,Durango-La Plata County Airport,P-N,"187,789"
+Eagle/Vail,EGE,EGE,KEGE,Eagle County Regional Airport,P-N,"163,840"
+Grand Junction,GJT,GJT,KGJT,Grand Junction Regional Airport (Walker Field),P-N,"218,319"
+Gunnison,GUC,GUC,KGUC,Gunnison-Crested Butte Regional Airport,P-N,"30,780"
+Hayden,HDN,HDN,KHDN,Yampa Valley Airport (Yampa Valley Regional),P-N,"34,979"
+Montrose,MTJ,MTJ,KMTJ,Montrose Regional Airport,P-N,"116,272"
+CONNECTICUT,,,,,,
+Hartford,BDL,BDL,KBDL,Bradley International Airport,P-M,"2,982,194"
+New Haven,HVN,HVN,KHVN,Tweed New Haven Regional Airport,P-N,"27,911"
+DELAWARE,,,,,,
+Wilmington,ILG,ILG,KILG,Wilmington Airport,P-N,"30,355"
+Middletown,EVY,,KEVY,Summit Airport,R,12
+FLORIDA,,,,,,
+Daytona Beach,DAB,DAB,KDAB,Daytona Beach International Airport,P-N,"340,815"
+Fort Lauderdale,FLL,FLL,KFLL,Fort Lauderdale–Hollywood International Airport,P-L,"17,950,989"
+Fort Myers,RSW,RSW,KRSW,Southwest Florida International Airport,P-M,"5,044,024"
+Fort Walton Beach,VPS,VPS,KVPS,Destin–Fort Walton Beach Airport / Eglin Air Force Base,P-S,"813,600"
+Gainesville,GNV,GNV,KGNV,Gainesville Regional Airport,P-N,"273,253"
+Jacksonville,JAX,JAX,KJAX,Jacksonville International Airport,P-M,"3,479,923"
+Key West,EYW,EYW,KEYW,Key West International Airport,P-S,"497,656"
+Melbourne,MLB,MLB,KMLB,Orlando Melbourne International Airport,P-N,"241,289"
+Miami,MIA,MIA,KMIA,Miami International Airport,P-L,"21,421,031"
+Orlando,MCO,MCO,KMCO,Orlando International Airport,P-L,"24,562,271"
+Panama City Beach,ECP,ECP,KECP,Northwest Florida Beaches International Airport  [nb 2],P-S,"621,406"
+Pensacola,PNS,PNS,KPNS,Pensacola International Airport,P-S,"1,098,889"
+Punta Gorda,PGD,PGD,KPGD,Punta Gorda Airport,P-S,"821,557"
+Sanford,SFB,SFB,KSFB,Orlando Sanford International Airport,P-S,"1,601,614"
+Sarasota,SRQ,SRQ,KSRQ,Sarasota–Bradenton International Airport,P-S,"977,530"
+St. Augustine,SGJ,UST,KSGJ,Northeast Florida Regional Airport,P-N,"28,462"
+St. Petersburg,PIE,PIE,KPIE,St. Pete–Clearwater International Airport,P-S,"1,143,483"
+Tallahassee,TLH,TLH,KTLH,Tallahassee International Airport,P-N,"415,272"
+Tampa,TPA,TPA,KTPA,Tampa International Airport,P-L,"10,941,173"
+West Palm Beach,PBI,PBI,KPBI,Palm Beach International Airport,P-M,"3,100,624"
+GEORGIA,,,,,,
+Albany,ABY,ABY,KABY,Southwest Georgia Regional Airport,P-N,"34,226"
+Atlanta,ATL,ATL,KATL,Hartsfield–Jackson Atlanta International Airport,P-L,"50,501,858"
+Augusta,AGS,AGS,KAGS,Augusta Regional Airport (Bush Field),P-N,"270,797"
+Brunswick,BQK,BQK,KBQK,Brunswick Golden Isles Airport,P-N,"36,054"
+Columbus,CSG,CSG,KCSG,Columbus Metropolitan Airport,P-N,"44,813"
+Savannah,SAV,SAV,KSAV,Savannah/Hilton Head International Airport,P-S,"1,056,265"
+Valdosta,VLD,VLD,KVLD,Valdosta Regional Airport,P-N,"40,275"
+HAWAII,,,,,,
+"Hilo, Hawaii",ITO,ITO,PHTO,Hilo International Airport,P-S,"640,757"
+"Honolulu, Oahu",HNL,HNL,PHNL,Daniel K. Inouye International Airport,P-L,"9,656,340"
+"Kahului, Maui",OGG,OGG,PHOG,Kahului Airport,P-M,"3,352,813"
+"Kailua-Kona, Hawaii",KOA,KOA,PHKO,Ellison Onizuka Kona International Airport at Keahole,P-S,"1,569,602"
+"Kaunakakai, Molokai",MKK,MKK,PHMK,Molokai Airport,P-N,"92,560"
+"Lanai City, Lanai",LNY,LNY,PHNY,Lanai Airport,P-N,"43,275"
+"Lihue, Kauai",LIH,LIH,PHLI,Lihue Airport,P-S,"1,458,940"
+IDAHO,,,,,,
+Boise,BOI,BOI,KBOI,Boise Airport (Boise Air Terminal) (Gowen Field),P-S,"1,633,507"
+Idaho Falls,IDA,IDA,KIDA,Idaho Falls Regional Airport (Fanning Field),P-N,"146,213"
+Lewiston,LWS,LWS,KLWS,Lewiston-Nez Perce County Airport,P-N,"72,724"
+Pocatello,PIH,PIH,KPIH,Pocatello Regional Airport,P-N,"34,462"
+Sun Valley,SUN,SUN,KSUN,Friedman Memorial Airport,P-N,"77,729"
+Twin Falls,TWF,TWF,KTWF,Magic Valley Regional Airport (Joslin Field),P-N,"38,869"
+ILLINOIS,,,,,,
+Belleville,BLV,BLV,KBLV,MidAmerica St. Louis Airport / Scott Air Force Base,P-N,"79,988"
+Bloomington,BMI,BMI,KBMI,Central Illinois Regional Airport at Bloomington-Normal,P-N,"188,490"
+Champaign (Savoy),CMI,CMI,KCMI,University of Illinois - Willard Airport,P-N,"89,318"
+Chicago,ORD,ORD,KORD,Chicago O'Hare International Airport,P-L,"37,589,899"
+Chicago,MDW,MDW,KMDW,Chicago Midway International Airport,P-L,"11,044,387"
+Marion,MWA,MWA,KMWA,Williamson County Regional Airport (Veterans Airport of Southern Illinois),P-N,"10,044"
+Moline,MLI,MLI,KMLI,Quad City International Airport,P-N,"364,393"
+Peoria,PIA,PIA,KPIA,General Wayne A. Downing Peoria International Airport,P-N,"307,189"
+Quincy,UIN,UIN,KUIN,Quincy Regional Airport (Baldwin Field),P-N,"7,847"
+Rockford,RFD,RFD,KRFD,Chicago Rockford International Airport (was Northwest Chicagoland Regional Airport at Rockford),P-N,"101,790"
+Springfield,SPI,SPI,KSPI,Abraham Lincoln Capital Airport,P-N,"93,269"
+INDIANA,,,,,,
+Evansville,EVV,EVV,KEVV,Evansville Regional Airport,P-N,"204,352"
+Fort Wayne,FWA,FWA,KFWA,Fort Wayne International Airport,P-N,"360,369"
+Indianapolis,IND,IND,KIND,Indianapolis International Airport,P-M,"4,216,766"
+South Bend,SBN,SBN,KSBN,South Bend International Airport (was South Bend Regional),P-N,"329,957"
+IOWA,,,,,,
+Cedar Rapids,CID,CID,KCID,The Eastern Iowa Airport,P-S,"547,786"
+Des Moines,DSM,DSM,KDSM,Des Moines International Airport,P-S,"1,216,357"
+Dubuque,DBQ,DBQ,KDBQ,Dubuque Regional Airport,P-N,"37,954"
+Sioux City,SUX,SUX,KSUX,Sioux Gateway Airport (Col. Bud Day Field),P-N,"36,413"
+Waterloo,ALO,ALO,KALO,Waterloo Regional Airport,P-N,"27,069"
+KANSAS,,,,,,
+Garden City,GCK,GCK,KGCK,Garden City Regional Airport,P-N,"26,825"
+Manhattan,MHK,MHK,KMHK,Manhattan Regional Airport,P-N,"63,761"
+Topeka,FOE,FOE,KFOE,Topeka Regional Airport (formerly Forbes Field Airport),P-N,"6,051"
+Wichita,ICT,ICT,KICT,Wichita Dwight D. Eisenhower National Airport (formerly Wichita Mid-Continent Airport),P-S,"781,944"
+KENTUCKY,,,,,,
+Cincinnati/Covington,CVG,CVG,KCVG,Cincinnati/Northern Kentucky International Airport,P-M,"3,269,979"
+Lexington,LEX,LEX,KLEX,Blue Grass Airport,P-S,"638,316"
+Louisville,SDF,SDF,KSDF,Louisville International Airport (Standiford Field),P-S,"1,631,494"
+Owensboro,OWB,OWB,KOWB,Owensboro-Daviess County Regional Airport,P-N,"23,537"
+Paducah,PAH,PAH,KPAH,Barkley Regional Airport,P-N,"20,266"
+LOUISIANA,,,,,,
+Alexandria,AEX,AEX,KAEX,Alexandria International Airport,P-N,"129,776"
+Baton Rouge,BTR,BTR,KBTR,Baton Rouge Metropolitan Airport (Ryan Field),P-N,"364,200"
+Lafayette,LFT,LFT,KLFT,Lafayette Regional Airport,P-N,"206,667"
+Lake Charles,LCH,LCH,KLCH,Lake Charles Regional Airport,P-N,"53,576"
+Monroe,MLU,MLU,KMLU,Monroe Regional Airport,P-N,"102,342"
+New Orleans,MSY,MSY,KMSY,Louis Armstrong New Orleans International Airport,P-M,"5,569,705"
+Shreveport,SHV,SHV,KSHV,Shreveport Regional Airport,P-N,"270,395"
+MAINE,,,,,,
+Bangor,BGR,BGR,KBGR,Bangor International Airport,P-N,"269,013"
+Portland,PWM,PWM,KPWM,Portland International Jetport,P-S,"886,343"
+Presque Isle,PQI,PQI,KPQI,Northern Maine Regional Airport at Presque Isle,P-N,"12,526"
+Rockland,RKD,RKD,KRKD,Knox County Regional Airport,P-N,"16,206"
+MARYLAND,,,,,,
+Baltimore,BWI,BWI,KBWI,Baltimore/Washington International Thurgood Marshall Airport,P-L,"13,371,816"
+Hagerstown,HGR,HGR,KHGR,Hagerstown Regional Airport (Richard A. Henson Field),P-N,"23,654"
+Salisbury,SBY,SBY,KSBY,Salisbury-Ocean City Wicomico Regional Airport,P-N,"64,393"
+MASSACHUSETTS,,,,,,
+Boston,BOS,BOS,KBOS,Gen. Edward Lawrence Logan International Airport,P-L,"17,759,044"
+Hyannis,HYA,HYA,KHYA,Barnstable Municipal Airport (Boardman/Polando Field),P-N,"31,027"
+Nantucket,ACK,ACK,KACK,Nantucket Memorial Airport,P-N,"126,197"
+Provincetown,PVC,PVC,KPVC,Provincetown Municipal Airport,P-N,"10,074"
+Vineyard Haven,MVY,MVY,KMVY,Martha's Vineyard Airport,P-N,"54,084"
+Worcester,ORH,ORH,KORH,Worcester Regional Airport,P-N,"57,800"
+MINNESOTA,,,,,,
+Bemidji,BJI,BJI,KBJI,Bemidji Regional Airport,P-N,"25,510"
+Brainerd,BRD,BRD,KBRD,Brainerd Lakes Regional Airport,P-N,"18,200"
+Duluth,DLH,DLH,KDLH,Duluth International Airport,P-N,"124,284"
+Hibbing,HIB,HIB,KHIB,Range Regional Airport (was Chisholm–Hibbing Airport),P-N,"12,654"
+International Falls,INL,INL,KINL,Falls International Airport,P-N,"13,831"
+Minneapolis,MSP,MSP,KMSP,Minneapolis–St. Paul International Airport (Wold–Chamberlain Field),P-L,"18,123,844"
+Rochester,RST,RST,KRST,Rochester International Airport,P-N,"112,864"
+St. Cloud,STC,STC,KSTC,St. Cloud Regional Airport,P-N,"15,615"
+MISSISSIPPI,,,,,,
+Columbus,GTR,GTR,KGTR,Golden Triangle Regional Airport,P-N,"40,823"
+Gulfport / Biloxi,GPT,GPT,KGPT,Gulfport–Biloxi International Airport,P-S,"305,157"
+Jackson,JAN,JAN,KJAN,Jackson–Evers International Airport,P-S,"491,464"
+MISSOURI,,,,,,
+Columbia,COU,COU,KCOU,Columbia Regional Airport,P-N,"65,014"
+Joplin,JLN,JLN,KJLN,Joplin Regional Airport,P-N,"27,930"
+Kansas City,MCI,MCI,KMCI,Kansas City International Airport (originally Mid-Continent International Airport),P-M,"5,391,557"
+Springfield,SGF,SGF,KSGF,Springfield-Branson National Airport,P-N,"462,126"
+St. Louis,STL,STL,KSTL,St. Louis Lambert International Airport,P-M,"6,793,076"
+MONTANA,,,,,,
+Billings,BIL,BIL,KBIL,Billings Logan International Airport,P-S,"423,213"
+Bozeman,BZN,BZN,KBZN,Bozeman Yellowstone International Airport (was Gallatin Field Airport),P-S,"553,245"
+Butte,BTM,BTM,KBTM,Bert Mooney Airport,P-N,"25,890"
+Great Falls,GTF,GTF,KGTF,Great Falls International Airport,P-N,"176,730"
+Helena,HLN,HLN,KHLN,Helena Regional Airport,P-N,"103,239"
+Kalispell,GPI,FCA,KGPI,Glacier Park International Airport,P-N,"247,816"
+Missoula,MSO,MSO,KMSO,Missoula International Airport,P-S,"381,582"
+Sidney,SDY,SDY,KSDY,Sidney–Richland Municipal Airport,P-N,"8,065"
+NEBRASKA,,,,,,
+Grand Island,GRI,GRI,KGRI,Central Nebraska Regional Airport,P-N,"68,879"
+Lincoln,LNK,LNK,KLNK,Lincoln Airport (was Lincoln Municipal),P-N,"162,876"
+Omaha,OMA,OMA,KOMA,Eppley Airfield,P-M,"2,127,387"
+NEVADA,,,,,,
+Boulder City,BVU,BLD,KBVU,Boulder City Municipal Airport,P-N,"211,615"
+Elko,EKO,EKO,KEKO,Elko Regional Airport (J.C. Harris Field),P-N,"14,893"
+Las Vegas,LAS,LAS,KLAS,McCarran International Airport,P-L,"22,833,267"
+North Las Vegas,VGT,VGT,KVGT,North Las Vegas Airport,P-N,"15,828"
+Reno,RNO,RNO,KRNO,Reno/Tahoe International Airport,P-S,"1,771,864"
+NEW HAMPSHIRE,,,,,,
+Lebanon,LEB,LEB,KLEB,Lebanon Municipal Airport,P-N,"10,245"
+Manchester,MHT,MHT,KMHT,Manchester–Boston Regional Airport,P-S,"995,403"
+Portsmouth,PSM,PSM,KPSM,Portsmouth International Airport at Pease,P-N,"73,247"
+NEW JERSEY,,,,,,
+Atlantic City,ACY,ACY,KACY,Atlantic City International Airport,P-S,"589,091"
+Trenton,TTN,TTN,KTTN,Trenton Mercer Airport,P-N,"278,436"
+New York / Newark,EWR,EWR,KEWR,Newark Liberty International Airport,P-L,"19,923,009"
+NEW MEXICO,,,,,,
+Albuquerque,ABQ,ABQ,KABQ,Albuquerque International Sunport,P-M,"2,341,719"
+Hobbs,HOB,HOB,KHOB,Lea County Regional Airport,P-N,"14,707"
+Roswell,ROW,ROW,KROW,Roswell International Air Center,P-N,"44,378"
+Santa Fe,SAF,SAF,KSAF,Santa Fe Regional Airport,P-N,"71,252"
+NEW YORK,,,,,,
+Albany,ALB,ALB,KALB,Albany International Airport,P-S,"1,393,666"
+Binghamton,BGM,BGM,KBGM,Greater Binghamton Airport (Edwin A. Link Field),P-N,"33,425"
+Buffalo,BUF,BUF,KBUF,Buffalo Niagara International Airport,P-M,"2,348,512"
+Elmira,ELM,ELM,KELM,Elmira/Corning Regional Airport,P-N,"126,472"
+Farmingdale,FRG,FRG,KFRG,Republic Airport,P-N,"10,910"
+Islip,ISP,ISP,KISP,Long Island MacArthur Airport,P-S,"648,593"
+Ithaca,ITH,ITH,KITH,Ithaca Tompkins International Airport,P-N,"97,212"
+New York,JFK,JFK,KJFK,John F. Kennedy International Airport (was New York International Airport),P-L,"29,533,154"
+New York,LGA,LGA,KLGA,LaGuardia Airport (and Marine Air Terminal),P-L,"14,614,802"
+Newburgh,SWF,SWF,KSWF,Stewart International Airport,P-N,"228,640"
+Niagara Falls,IAG,IAG,KIAG,Niagara Falls International Airport,P-N,"142,605"
+Plattsburgh,PBG,PBG,KPBG,Plattsburgh International Airport,P-N,"139,398"
+Rochester,ROC,ROC,KROC,Greater Rochester International Airport,P-S,"1,205,774"
+Syracuse,SYR,SYR,KSYR,Syracuse Hancock International Airport,P-S,"1,013,149"
+Watertown,ART,ART,KART,Watertown International Airport,P-N,"22,785"
+White Plains,HPN,HPN,KHPN,Westchester County Airport,P-S,"759,334"
+NORTH CAROLINA,,,,,,
+Asheville,AVL,AVL,KAVL,Asheville Regional Airport,P-N,"416,939"
+Charlotte,CLT,CLT,KCLT,Charlotte/Douglas International Airport,P-L,"21,511,880"
+Concord,JQF,USA,KJQF,Concord Regional Airport,P-N,"90,338"
+Fayetteville,FAY,FAY,KFAY,Fayetteville Regional Airport (Grannis Field),P-N,"224,541"
+Greensboro,GSO,GSO,KGSO,Piedmont Triad International Airport,P-S,"848,261"
+Greenville,PGV,PGV,KPGV,Pitt-Greenville Airport,P-N,"47,457"
+Jacksonville,OAJ,OAJ,KOAJ,Albert J. Ellis Airport,P-N,"149,987"
+New Bern,EWN,EWN,KEWN,Coastal Carolina Regional Airport (was Craven County Regional),P-N,"106,110"
+Raleigh,RDU,RDU,KRDU,Raleigh-Durham International Airport,P-M,"5,401,714"
+Wilmington,ILM,ILM,KILM,Wilmington International Airport,P-N,"413,185"
+NORTH DAKOTA,,,,,,
+Bismarck,BIS,BIS,KBIS,Bismarck Municipal Airport,P-N,"273,980"
+Dickinson,DIK,DIK,KDIK,Dickinson Theodore Roosevelt Regional Airport,P-N,"16,822"
+Fargo,FAR,FAR,KFAR,Hector International Airport,P-S,"402,976"
+Grand Forks,GFK,GFK,KGFK,Grand Forks International Airport,P-N,"132,557"
+Minot,MOT,MOT,KMOT,Minot International Airport,P-N,"150,634"
+Williston,XWA,XWA,KXWA,Williston Basin International Airport,P-N,"68,829"
+Devils Lake,DVL,DVL,KDVL,Devils Lake Regional Airport (Knoke Field),CS,"8,209"
+Jamestown,JMS,JMS,KJMS,Jamestown Regional Airport,CS,"7,941"
+OHIO,,,,,,
+Akron,CAK,CAK,KCAK,Akron-Canton Regional Airport,P-S,"685,553"
+Cincinnati,LUK,LUK,KLUK,Cincinnati Municipal Lunken Airport,P-N,"25,706"
+Cleveland,CLE,CLE,KCLE,Cleveland-Hopkins International Airport,P-M,"4,083,476"
+Columbus,CMH,CMH,KCMH,John Glenn Columbus International Airport,P-M,"3,567,864"
+Columbus,LCK,LCK,KLCK,Rickenbacker International Airport,P-N,"102,751"
+Dayton,DAY,DAY,KDAY,James M. Cox Dayton International Airport,P-S,"1,019,922"
+Toledo,TOL,TOL,KTOL,Toledo Express Airport,P-N,"92,522"
+Youngstown,YNG,YNG,KYNG,Youngstown-Warren Regional Airport / Youngstown ARS,P-N,"53,633"
+OKLAHOMA,,,,,,
+Lawton,LAW,LAW,KLAW,Lawton–Fort Sill Regional Airport,P-N,"51,088"
+Oklahoma City,OKC,OKC,KOKC,Will Rogers World Airport,P-S,"1,796,473"
+Tulsa,TUL,TUL,KTUL,Tulsa International Airport,P-S,"1,342,315"
+OREGON,,,,,,
+Eugene,EUG,EUG,KEUG,Eugene Airport (Mahlon Sweet Field),P-N,"483,224"
+Medford,MFR,MFR,KMFR,Rogue Valley International-Medford Airport,P-N,"401,469"
+North Bend,OTH,OTH,KOTH,Southwest Oregon Regional Airport (was North Bend Municipal),P-N,"14,719"
+Portland,PDX,PDX,KPDX,Portland International Airport,P-L,"9,071,154"
+Redmond,RDM,RDM,KRDM,Redmond Municipal Airport (Roberts Field),P-N,"306,517"
+PENNSYLVANIA,,,,,,
+Allentown,ABE,ABE,KABE,Lehigh Valley International Airport (was Allentown–Bethlehem–Easton International Airport),P-N,"376,769"
+Erie,ERI,ERI,KERI,Erie International Airport (Tom Ridge Field),P-N,"95,924"
+Harrisburg,MDT,MDT,KMDT,Harrisburg International Airport,P-S,"636,916"
+Latrobe,LBE,LBE,KLBE,Arnold Palmer Regional Airport,P-N,"151,704"
+Philadelphia,PHL,PHL,KPHL,Philadelphia International Airport,P-L,"15,285,948"
+Pittsburgh,PIT,PIT,KPIT,Pittsburgh International Airport,P-M,"4,670,954"
+State College,UNV,SCE,KUNV,University Park Airport,P-N,"153,737"
+Wilkes-Barre,AVP,AVP,KAVP,Wilkes-Barre/Scranton International Airport,P-N,"258,830"
+Williamsport,IPT,IPT,KIPT,Williamsport Regional Airport,P-N,"22,547"
+RHODE ISLAND,,,,,,
+Block Island,BID,BID,KBID,Block Island State Airport,P-N,"17,225"
+Providence,PVD,PVD,KPVD,Theodore Francis Green State Airport,P-S,"1,803,000"
+Westerly,WST,WST,KWST,Westerly State Airport,P-N,"17,218"
+SOUTH CAROLINA,,,,,,
+Charleston,CHS,CHS,KCHS,Charleston International Airport / Charleston AFB,P-S,"1,811,695"
+Columbia,CAE,CAE,KCAE,Columbia Metropolitan Airport,P-S,"553,658"
+Florence,FLO,FLO,KFLO,Florence Regional Airport,P-N,"45,300"
+Greenville,GSP,GSP,KGSP,Greenville-Spartanburg International Airport (Roger Milliken Field),P-S,"991,276"
+Hilton Head,HXD,HHH,KHXD,Hilton Head Airport,P-N,"30,956"
+Myrtle Beach,MYR,MYR,KMYR,Myrtle Beach International Airport,P-S,"944,849"
+SOUTH DAKOTA,,,,,,
+Aberdeen,ABR,ABR,KABR,Aberdeen Regional Airport,P-N,"26,529"
+Rapid City,RAP,RAP,KRAP,Rapid City Regional Airport,P-N,"272,537"
+Sioux Falls,FSD,FSD,KFSD,Sioux Falls Regional Airport (Joe Foss Field),P-S,"510,105"
+TENNESSEE,,,,,,
+Chattanooga,CHA,CHA,KCHA,Chattanooga Metropolitan Airport (Lovell Field),P-N,"422,442"
+Knoxville,TYS,TYS,KTYS,McGhee Tyson Airport,P-S,"887,103"
+Memphis,MEM,MEM,KMEM,Memphis International Airport,P-S,"2,016,089"
+Nashville,BNA,BNA,KBNA,Nashville International Airport (Berry Field),P-M,"6,338,517"
+Tri-Cities,TRI,TRI,KTRI,Tri-Cities Regional Airport (Tri-Cities Regional TN/VA),P-N,"204,926"
+TEXAS,,,,,,
+Abilene,ABI,ABI,KABI,Abilene Regional Airport,P-N,"84,809"
+Amarillo,AMA,AMA,KAMA,Rick Husband Amarillo International Airport,P-N,"334,815"
+Austin,AUS,AUS,KAUS,Austin-Bergstrom International Airport,P-M,"6,095,545"
+Beaumont,BPT,BPT,KBPT,Jack Brooks Regional Airport (was Southeast Texas Regional),P-N,"26,518"
+Brownsville,BRO,BRO,KBRO,Brownsville/South Padre Island International Airport,P-N,"120,151"
+College Station,CLL,CLL,KCLL,Easterwood Airport (Easterwood Field),P-N,"78,907"
+Corpus Christi,CRP,CRP,KCRP,Corpus Christi International Airport,P-N,"325,815"
+Dallas,DAL,DAL,KDAL,Dallas Love Field,P-M,"7,554,596"
+Dallas,DFW,DFW,KDFW,Dallas/Fort Worth International Airport,P-L,"31,283,579"
+El Paso,ELP,ELP,KELP,El Paso International Airport,P-M,"1,414,376"
+Harlingen,HRL,HRL,KHRL,Valley International Airport,P-N,"263,760"
+Houston,IAH,IAH,KIAH,George Bush Intercontinental Airport,P-L,"20,062,072"
+Houston,HOU,HOU,KHOU,William P. Hobby Airport,P-M,"6,285,181"
+Killeen,GRK,GRK,KGRK,Killeen-Fort Hood Regional Airport / Robert Gray Army Airfield,P-N,"157,161"
+Laredo,LRD,LRD,KLRD,Laredo International Airport,P-N,"101,115"
+Longview,GGG,GGG,KGGG,East Texas Regional Airport,P-N,"22,480"
+Lubbock,LBB,LBB,KLBB,Lubbock Preston Smith International Airport,P-S,"448,093"
+McAllen,MFE,MFE,KMFE,McAllen Miller International Airport,P-S,"355,224"
+Midland,MAF,MAF,KMAF,Midland International Air and Space Port,P-S,"471,490"
+San Angelo,SJT,SJT,KSJT,San Angelo Regional Airport (Mathis Field),P-N,"60,277"
+San Antonio,SAT,SAT,KSAT,San Antonio International Airport,P-M,"4,179,994"
+Tyler,TYR,TYR,KTYR,Tyler Pounds Regional Airport,P-N,"52,494"
+Waco,ACT,ACT,KACT,Waco Regional Airport,P-N,"64,356"
+Wichita Falls,SPS,SPS,KSPS,Wichita Falls Municipal Airport / Sheppard Air Force Base,P-N,"40,165"
+UTAH,,,,,,
+Cedar City,CDC,CDC,KCDC,Cedar City Regional Airport,P-N,"14,413"
+Ogden,OGD,OGD,KOGD,Ogden-Hinckley Airport,P-N,"15,609"
+Provo,PVU,PVU,KPVU,Provo Municipal Airport,P-N,"78,451"
+Salt Lake City,SLC,SLC,KSLC,Salt Lake City International Airport,P-L,"11,143,738"
+St. George,SGU,SGU,KSGU,St. George Regional Airport (opened 2011),P-N,"78,680"
+VERMONT,,,,,,
+Burlington,BTV,BTV,KBTV,Burlington International Airport,P-S,"593,311"
+VIRGINIA,,,,,,
+Charlottesville,CHO,CHO,KCHO,Charlottesville–Albemarle Airport,P-N,"295,930"
+Lynchburg,LYH,LYH,KLYH,Lynchburg Regional Airport (Preston Glenn Field),P-N,"75,465"
+Newport News,PHF,PHF,KPHF,Newport News/Williamsburg International Airport (Patrick Henry Field),P-N,"199,421"
+Norfolk,ORF,ORF,KORF,Norfolk International Airport,P-S,"1,602,631"
+Richmond,RIC,RIC,KRIC,Richmond International Airport (Byrd Field),P-S,"1,777,648"
+Roanoke,ROA,ROA,KROA,Roanoke–Blacksburg Regional Airport (Woodrum Field),P-N,"305,212"
+"Washington, D.C. / Arlington County",DCA,DCA,KDCA,Ronald Reagan Washington National Airport,P-L,"11,470,854"
+"Washington, D.C. / Dulles / Chantilly",IAD,IAD,KIAD,Washington Dulles International Airport,P-L,"10,596,942"
+WASHINGTON,,,,,,
+Bellingham,BLI,BLI,KBLI,Bellingham International Airport,P-S,"415,285"
+Friday Harbor,FHR,FRD,KFHR,Friday Harbor Airport,P-N,"12,831"
+Pasco,PSC,PSC,KPSC,Tri-Cities Airport,P-N,"374,301"
+"Pullman / Moscow, Idaho",PUW,PUW,KPUW,Pullman/Moscow Regional Airport,P-N,"61,833"
+Seattle,BFI,BFI,KBFI,King County International Airport (Boeing Field),P-N,"17,795"
+Seattle / Tacoma (SeaTac),SEA,SEA,KSEA,Seattle–Tacoma International Airport,P-L,"21,887,110"
+Spokane,GEG,GEG,KGEG,Spokane International Airport (Geiger Field),P-S,"1,570,652"
+Walla Walla,ALW,ALW,KALW,Walla Walla Regional Airport,P-N,"47,439"
+Wenatchee,EAT,EAT,KEAT,Pangborn Memorial Airport,P-N,"60,068"
+Yakima,YKM,YKM,KYKM,Yakima Air Terminal (McAllister Field),P-N,"70,993"
+WEST VIRGINIA,,,,,,
+Charleston,CRW,CRW,KCRW,Yeager Airport,P-N,"213,412"
+Clarksburg,CKB,CKB,KCKB,North Central West Virginia Airport (was Harrison-Marion Regional),P-N,"26,025"
+Huntington,HTS,HTS,KHTS,Tri-State Airport (Milton J. Ferguson Field),P-N,"98,489"
+Morgantown,MGW,MGW,KMGW,Morgantown Municipal Airport (Walter L. Bill Hart Field),P-N,"7,851"
+WISCONSIN,,,,,,
+Appleton,ATW,ATW,KATW,Appleton International Airport,P-N,"348,026"
+Eau Claire,EAU,EAU,KEAU,Chippewa Valley Regional Airport,P-N,"23,950"
+Green Bay,GRB,GRB,KGRB,Green Bay–Austin Straubel International Airport,P-N,"314,909"
+La Crosse,LSE,LSE,KLSE,La Crosse Regional Airport,P-N,"99,651"
+Madison,MSN,MSN,KMSN,Dane County Regional Airport (Truax Field),P-S,"1,043,185"
+Milwaukee,MKE,MKE,KMKE,Milwaukee Mitchell International Airport,P-M,"3,496,724"
+Mosinee,CWA,CWA,KCWA,Central Wisconsin Airport,P-N,"124,632"
+Rhinelander,RHI,RHI,KRHI,Rhinelander–Oneida County Airport,P-N,"24,477"
+WYOMING,,,,,,
+Casper,CPR,CPR,KCPR,Casper/Natrona County International Airport,P-N,"92,805"
+Cody,COD,COD,KCOD,Yellowstone Regional Airport,P-N,"40,340"
+Gillette,GCC,GCC,KGCC,Gillette–Campbell County Airport,P-N,"28,383"
+Jackson Hole,JAC,JAC,KJAC,Jackson Hole Airport,P-N,"342,044"
+Laramie,LAR,LAR,KLAR,Laramie Regional Airport,P-N,"15,957"
+Rock Springs,RKS,RKS,KRKS,Southwest Wyoming Regional Airport (Rock Springs–Sweetwater County Airport),P-N,"16,110"
+AMERICAN SAMOA,,,,,,
+"Pago Pago, Tutuila",PPG,PPG,NSTU,Pago Pago International Airport,P-N,"65,439"
+GUAM,,,,,,
+Agana / Tamuning,GUM,GUM,PGUM,Antonio B. Won Pat International Airport,P-S,"1,444,299"
+NORTHERN MARIANAS,,,,,,
+"Obyan, Saipan Island",GSN,SPN,PGSN,Saipan International Airport (Francisco C. Ada),P-S,"430,275"
+Rota Island,GRO,ROP,PGRO,Rota International Airport,P-N,"19,178"
+Tinian Island,TNI,TIQ,PGWT,Tinian International Airport (West Tinian),P-N,"38,452"
+PUERTO RICO,,,,,,
+Aguadilla,BQN,BQN,TJBQ,Rafael Hernández International Airport,P-N,"257,871"
+Ceiba,RVR,NRR,TJRV,José Aponte de la Torre Airport,P-N,"43,005"
+Culebra,CPX,CPX,TJCP,Benjamín Rivera Noriega Airport,P-N,"31,141"
+Ponce,PSE,PSE,TJPS,Mercedita International Airport,P-N,"105,804"
+San Juan / Carolina,SJU,SJU,TJSJ,Luis Muñoz Marín International Airport,P-M,"4,343,354"
+San Juan / Miramar,SIG,SIG,TJIG,Fernando Luis Ribas Dominicci Airport (Isla Grande Airport),P-N,"24,054"
+Vieques,VQS,VQS,TJVQ,Antonio Rivera Rodríguez Airport,P-N,"63,104"
+U.S. VIRGIN ISLANDS,,,,,,
+"Charlotte Amalie, St. Thomas",STT,STT,TIST,Cyril E. King Airport,P-S,"729,382"
+"Christiansted, St. Croix",STX,STX,TISX,Henry E. Rohlsen Airport,P-N,"196,047"
+Alpena,APN,APN,KAPN,Alpena County Regional Airport,P-N,"10,031"
+Detroit,DTW,DTW,KDTW,Detroit Metropolitan Airport,P-L,"16,847,135"
+Escanaba,ESC,ESC,KESC,Delta County Airport,P-N,"16,822"
+Flint,FNT,FNT,KFNT,Bishop International Airport,P-S,"398,508"
+Grand Rapids,GRR,GRR,KGRR,Gerald R. Ford International Airport,P-S,"1,334,979"
+Hancock,CMX,CMX,KCMX,Houghton County Memorial Airport,P-N,"25,439"
+Iron Mountain,IMT,IMT,KIMT,Ford Airport,P-N,"12,604"
+Kalamazoo,AZO,AZO,KAZO,Kalamazoo/Battle Creek International Airport,P-N,"154,242"
+Lansing,LAN,LAN,KLAN,Capital Region International Airport (was Lansing Capital City),P-N,"161,863"
+Marquette,SAW,MQT,KSAW,Sawyer International Airport,P-N,"45,462"
+Muskegon,MKG,MKG,KMKG,Muskegon County Airport,P-N,"18,165"
+Pellston,PLN,PLN,KPLN,Pellston Regional Airport,P-N,"25,497"
+Saginaw,MBS,MBS,KMBS,MBS International Airport,P-N,"122,469"
+Sault Ste. Marie,CIU,CIU,KCIU,Chippewa County International Airport,P-N,"20,974"
+Traverse City,TVC,TVC,KTVC,Cherry Capital Airport (was Cherry County Airpark),P-N,"223,924 </onlyinclude>"
+Beaver Island (St. James),SJX,,KSJX,Beaver Island Airport,CS,9
+Charlevoix,CVX,,KCVX,Charlevoix Municipal Airport,CS,750
+Ironwood,IWD,IWD,KIWD,Gogebic-Iron County Airport,CS,"5,069"
+Detroit/Pontiac,PTK,PTK,KPTK,Oakland County International Airport,CS,"3,409"
+Manistee,MBL,MBL,KMBL,Manistee County-Blacker Airport,GA,"4,243"
+Detroit / Grosse Ile,ONZ,,KONZ,Grosse Ile Municipal Airport,R,0
+Detroit / Ypsilanti,YIP,YIP,KYIP,Willow Run Airport,R,"4,093"
+Howell,OZW,,KOZW,Livingston County Spencer J. Hardy Airport,R,2
+New Hudson,Y47,,,Oakland Southwest Airport (Oakland/Southwest Airport),R,0
+Plymouth / Canton,1D2,,,Canton-Plymouth-Mettetal Airport (Canton-Plymouth Mettetal Airport),R,0
+Port Huron,PHN,PHN,KPHN,St. Clair County International Airport,R,9
+Romeo,D98,,,Romeo State Airport,R,0
+Troy,VLL,,KVLL,Oakland/Troy Airport,R,853
+Adrian,ADG,ADG,KADG,Lenawee County Airport,GA,0
+Allegan,35D,,,Padgham Field,GA,12
+Alma,AMN,AMN,KAMN,Gratiot Community Airport,GA,0
+Ann Arbor,ARB,ARB,KARB,Ann Arbor Municipal Airport,GA,16
+Atlanta,Y93,,,Atlanta Municipal Airport,GA,0
+Bad Axe,BAX,,KBAX,Huron County Memorial Airport,GA,0
+Battle Creek,BTL,BTL,KBTL,W. K. Kellogg Airport (W. K. Kellogg Regional),GA,1
+Bay City,3CM,,,James Clements Municipal Airport & SPB,GA,0
+Bellaire,ACB,ACB,KACB,Antrim County Airport,GA,6
+Benton Harbor,BEH,BEH,KBEH,Southwest Michigan Regional Airport,GA,6
+Big Rapids,RQB,WBR,KRQB,Roben-Hood Airport,GA,0
+Bois Blanc Island,6Y1,,,Bois Blanc Island Airport (Bois Blanc Airport),GA,0
+Cadillac,CAD,CAD,KCAD,Wexford County Airport,GA,0
+Caro,CFS,,KCFS,Tuscola Area Airport,GA,3
+Charlotte,FPK,,KFPK,Fitch H. Beach Airport,GA,0
+Cheboygan,SLH,,KSLH,Cheboygan County Airport,GA,0
+Clare,48D,,,Clare Municipal Airport,GA,0
+Coldwater,OEB,,KOEB,Branch County Memorial Airport,GA,0
+Detroit,DET,DET,KDET,Coleman A. Young Municipal Airport  (was Detroit City),GA,557[1][2][3]
+Dowagiac,C91,,,Dowagiac Municipal Airport,GA,0
+Drummond Island,DRM,DRE,KDRM,Drummond Island Airport,GA,0
+Evart,9C8,,,Evart Municipal Airport,GA,0
+Frankfort,FKS,,KFKS,Frankfort Dow Memorial Field,GA,1
+Fremont,FFX,,KFFX,Fremont Municipal Airport,GA,0
+Gaylord,GLR,GLR,KGLR,Gaylord Regional Airport (Otsego County Airport),GA,975
+Gladwin,GDW,GDW,KGDW,Gladwin Zettel Memorial Airport,GA,0
+Grand Haven,3GM,,,Grand Haven Memorial Airpark,GA,14
+Grand Ledge,4D0,,,Abrams Municipal Airport,GA,4
+Grayling,GOV,,KGOV,Grayling Army Airfield,GA,0
+Greenville,6D6,,,Greenville Municipal Airport,GA,0
+Harbor Springs,MGN,,KMGN,Harbor Springs Airport (Harbor Springs Municipal),GA,"8,014"
+Hart / Shelby,C04,,,Oceana County Airport,GA,0
+Hastings,9D9,,,Hastings Airport (was Hastings City/Barry County),GA,0
+Hillsdale,JYM,,KJYM,Hillsdale Municipal Airport,GA,0
+Holland,BIV,,KBIV,West Michigan Regional Airport (was Tulip City Airport),GA,766
+Houghton Lake,HTL,HTL,KHTL,Roscommon County - Blodgett Memorial Airport,GA,0
+Ionia,Y70,,,Ionia County Airport,GA,0
+Jackson,JXN,JXN,KJXN,Jackson County Airport (Reynolds Field),GA,4
+Lakeview,13C,,,Lakeview Airport (Griffith Field),GA,0
+Lambertville,DUH,,KDUH,Toledo Suburban Airport,GA,2
+Lapeer,D95,,,Dupont-Lapeer Airport,GA,0
+Ludington,LDM,LDM,KLDM,Mason County Airport,GA,5
+Mackinac Island,MCD,MCD,KMCD,Mackinac Island Airport,GA,"2,549"
+Manistique,ISQ,ISQ,KISQ,Schoolcraft County Airport,GA,3
+Marlette,77G,,,Marlette Airport (Marlette Township Airport),GA,0
+Marshall,RMY,,KRMY,Brooks Field,GA,2
+Mason,TEW,,KTEW,Mason Jewett Field,GA,4
+Menominee,MNM,MNM,KMNM,Menominee–Marinette Twin County Airport,GA,0
+Midland,IKW,,KIKW,Jack Barstow Airport (Jack Barstow Municipal),GA,0
+Mio,51M,,,Oscoda County Dennis Kauffman Memorial Airport,GA,0
+Monroe,TTF,,KTTF,Custer Airport (Monroe Custer Airport),GA,0
+Mount Pleasant,MOP,MOP,KMOP,Mount Pleasant Municipal Airport,GA,8
+Newberry,ERY,,KERY,Luce County Airport,GA,0
+Niles,3TR,NLE,,Jerry Tyler Memorial Airport,GA,0
+Ontonagon,OGM,,KOGM,Ontonagon County Airport (Schuster Field),GA,0
+Oscoda,OSC,OSC,KOSC,Oscoda-Wurtsmith Airport,GA,4
+Owosso,RNP,,KRNP,Owosso Community Airport,GA,0
+Rogers City,PZQ,,KPZQ,Presque Isle County Airport,GA,0
+Saginaw,HYX,,KHYX,Saginaw County H.W. Browne Airport,GA,0
+Sandusky,Y83,,,Sandusky City Airport,GA,0
+South Haven,LWA,,KLWA,South Haven Area Regional Airport,GA,25
+Sparta,8D4,,,Paul C. Miller - Sparta Airport,GA,10
+St. Ignace,83D,,,Mackinac County Airport,GA,30
+Sturgis,IRS,IRS,KIRS,Kirsch Municipal Airport,GA,0
+Three Rivers,HAI,HAI,KHAI,Three Rivers Municipal Dr. Haines Airport,GA,2
+West Branch,Y31,,,West Branch Community Airport,GA,0
+White Cloud,42C,,,White Cloud Airport,GA,0
+Alpena,53M,,,Silver City Airpark,,
+Avoca,39G,,,Avoca Airport (was Rasor Airport),,
+Bad Axe,E53,,,Engler Field,,
+Baldwin,7D3,,,Baldwin Municipal Airport,,
+Bannister,4M4,,,Shady Lawn Field (Shady Lawn Farms),,
+Baraga,2P4,,,Baraga Airport,,
+Bath,41G,,,University Airpark,,
+Belleville,43G,,,Belleville Airport,,
+Berrien Springs,C20,,,Andrews University Airpark,,
+Blissfield,44G,,,Betz Airport,,
+Boyne City,N98,,,Boyne City Municipal Airport,,
+Boyne Falls,BFA,,KBFA,Boyne Mountain Airport,,
+Brighton,45G,,,Brighton Airport,,
+Brooklyn,6G8,,,Shamrock Field,,
+Carleton,W87,,,Buzzwick Airport (Buzz Wick Airport) (was Wickenheiser Airport),,
+Charlotte,49G,,,Wend Valley Airport,,
+Cheboygan,2M7,,,Hoffman's Black Mountain Aerodrome,,
+Chesaning,50G,,,Howard Nixon Memorial Airport,,
+Clinton,7N4,,,Honey Acres Airport,,
+Clio,51G,,,Cagney Airport,,
+Corunna,56M,,,Millstream Airpark,,
+Croswell,55G,,,Arnold Field,,
+Crystal Falls,50D,,,Iron County Airport,,
+Davison,6G0,,,Athelone Williams Memorial Airport,,
+Deckerville,56G,,,Indian Creek Ranch Airport,,
+Dexter,2E8,,,Cackleberry Airport,,
+East Jordan,Y94,,,East Jordan City Airport,,
+East Tawas,6D9,ECA,,Iosco County Airport,,
+Eastport,59M,,,Torchport Airport (Torchport Airpark),,
+Eaton Rapids,60G,,,Skyway Estates Airport,,
+Elwell,68R,,,Hamp Airport (Hamp Skyport),,
+Emmett,2E2,,,Sharpe's Strip,,
+Empire,Y87,,,Empire Airport,,
+Flushing,3DA,,,Dalton Airport,,
+Fowlerville,65G,,,Maple Grove Airport,,
+Frankenmuth,66G,,,"William ""Tiny"" Zehnder Field",,
+Fruitport,39Z,,,Flying-A-Ranch Airport,,
+Gaylord,4Y4,,,Lakes of the North Airport,,
+Genesee,68G,,,Duford Field,,
+Gladwin,5M6,,,Sugar Springs Airport,,
+Grand Marais,Y98,,,Grand Marais Airport,,
+Grant,01C,,,Grant Airport,,
+Gregory,69G,,,Richmond Field,,
+Hale,H80,,,Field of Dreams Airport,,
+Harrietta,4Y9,,,Bunch's Half Acre Airport,,
+Harrison,80D,,,Clare County Airport,,
+Harrisville,5Y0,,,Harrisville Airport (Harrisville City Airport),,
+Harsens Island,Z92,,,Harsens Island Airport,,
+Hessel,5Y1,,,Albert J. Lindberg Airport,,
+Hillman,Y95,,,Hillman Airport,,
+Holland,HLM,HLM,KHLM,Park Township Airport,,4
+Houghton Lake Heights,5Y2,,,Houghton Lake State Airport,,
+Howell,4Y1,,,Raether Airport,,
+Howell,13M,,,Aeronut Park Balloonport,,
+Indian River,Y65,,,Calvin Campbell Municipal Airport,,
+Interlochen,Y88,,,Green Lake Airport (Green Lake Township Airport),,
+Iron River,Y73,,,Stambaugh Airport,,
+Ishpeming,M61,,,Edward F Johnson Airport,,
+Jenison,08C,,,Riverview Airport,,
+Kalamazoo,4N0,,,Newman's Airport,,
+Kalkaska,Y89,,,Kalkaska City Airport (Kalkaska Airport),,
+Kent City,24M,,,Wilderness Airpark,,
+Laingsburg,15W,,,Dennis Farms Airport,,
+Lake City,Y91,,,Home Acres Sky Ranch Airport,,
+Lake Isabella,D15,,,Lake Isabella - Cal Brewer Memorial Airport (was Lake Isabella Airpark),,
+Lewiston,8M8,,,Garland Airport (Eagle II Airport),,
+Lexington,7MI,,,Flugplatz Airport,,
+Lincoln,3L7,,,"Milwrick Flying ""M"" Airport (was Flying ""M"" Ranch Airport)",,
+Linden,9G2,,,Price's Airport,,
+Lowell,24C,,,Lowell City Airport,,
+Luzerne,5Y4,,,Lost Creek Airport,,
+Mancelona,D90,,,Mancelona Municipal Airport,,
+Manchester,75G,,,Rossettie Airport,,
+Marine City,76G,,,Marine City Airport,,
+Mecosta,0C5,,,Canadian Lakes Airport,,
+Mecosta,27C,,,Mecosta Morton Airport (Mecosta-Morton Airport),,
+Moorestown,6Y0,,,Moorestown Airpark,,
+Munising,5Y7,,,Hanley Field,,
+Napoleon,3NP,,,Napoleon Airport,,
+Napoleon,6H4,,,Van Wagnen Airport (was Day Field),,
+Napoleon,26W,,,Wolf Lake Airport,,
+Northport,5D5,,,Woolsey Memorial Airport,,
+Nunica,33C,,,Jablonski Airport,,
+Nunica,5N7,,,Hat Field (Hatfield Airport),,
+Parchment,2H4,,,"Triple ""H"" Airport",,
+Paw Paw,2C5,,,Almena Airport,,
+Petersburg,88G,,,Gradolph Field,,
+Pinconning,52I,,,Gross Airport,,
+Plainwell,61D,,,Plainwell Municipal Airport,,
+Port Austin,29C,,,Grindstone Air Harbor,,
+Pullman,M86,,,Walle Field (Walle Airfield),,
+Ray,57D,,,Ray Community Airport,,
+Reed City,RCT,RCT,KRCT,Nartron Field,,
+Rockford,35C,,,Wells Airport,,
+Roscommon,3RC,,,Roscommon Conservation Airport,,
+Sandusky,96G,,,Cowley Field,,
+Sault Ste. Marie,ANJ,,KANJ,Sault Ste. Marie Municipal Airport (Sanderson Field),,83
+Schoolcraft,P97,,,Prairie Ronde Airport,,
+Sebewaing,98G,,,Sebewaing Airport (Sebewaing Township Airport),,
+Sidnaw,6Y9,,,Prickett–Grooms Field,,
+Smiths Creek,11G,,,Johnson Field,,
+St. Clair,5Y5,,,David's Landing,,
+St. Helen,6Y6,,,St. Helen Airport,,
+St. Johns,2S3,,,Archer Memorial Field,,
+St. Johns,97G,,,Glowacki Airport,,
+St. Johns,3S5,,,Schiffer Acres Airport,,
+St. Johns,39T,,,Tripp Creek Airport,,
+Stanwood,38C,,,Cain Field,,
+Sunfield,C43,,,Hiram Cure Airfield,,
+Tecumseh,34G,,,Merillat Airport,,
+Tecumseh,3TE,,,Meyers-Diver's Airport (was Al Meyers Airport),,
+Thompsonville,7Y2,,,Thompsonville Airport,,
+Topinabee,Y30,,,Pbeaaye Airport,,
+Traverse City,Y04,,,Sugar Loaf Resort Airport (Wallace G. Fryer Airfield),,
+Traverse City,4M0,,,Lake Ann Airway Estates Airport,,
+Watervliet,40C,,,Watervliet Municipal Airport,,
+Wayland,41C,,,Calkins Field,,
+Weidman,D11,,,Ojibwa Airpark,,
+Westphalia,3F5,,,Forest Hill Airport,,
+Williamston,89Y,,,Maidens Airport,,
+Winn,53W,,,Woodruff Lake Airport,,
+Yale,48G,,,Gavagan Field,,
+Yale,4Y8,,,Para Field,,
+Yale,D20,,,Yale Airport,,
+Zeeland,Z98,,,Ottawa Executive Airport,,
+Mount Clemens,MTC,MTC,KMTC,Selfridge ANGB,,
+Traverse City,,,,CGAS Traverse City (at Cherry Capital Airport),,
+Ada,2MI5,,,"Somerville Airport (public use in 2005, FAA: 34I)",,
+Albion,42MI,,,"Midway Airport (public use in 2002, FAA: 35G)",,
+Athens,77MI,,,"David's Airport (David's Field) (public use in 2007, FAA: 9C2)",,
+Beaver Island,6Y8,,,Welke Airport,,
+DeWitt,MI10,,,Hoerner's Corners Airport,,
+Gladstone,43MI,,,"West Gladstone Airport (public use in 2003, FAA: 9C9)",,
+St. Johns,82MI,,,"Randolph's Landing Area (Randolph's Airport) (public use in 2008, FAA: 61G)",,
+Traverse City,,,,Traverse Area Model Pilots Society (TRAMPS) Aerodrome,,
+Vassar,2MI8,,,"Vassar Field (former public use, FAA: 4P4)",,
+Avoca,07D,,,Tackaberry Airport (closed 2010?) [1],,
+Acme,,,,Acme Skyport (closed 1995?)[4],,
+Carson City,47G,,,Mayes Airport (closed 2008?) [2],,
+Dearborn,,,,Ford Airport (closed 1947) [3],,
+East Lansing,2D8,,,Davis Airport (closed 2000) [4] [5],,
+Elk Rapids,34U,,,"Yuba Airport (closed indefinitely, FAA record still active)",,
+Erie,M84,,,Erie Aerodrome (closed 2010?) [6],,
+Gregory,35L,,,Carriage Lane Airport (closed 2007?) [7],,
+Kalamazoo,09C,,,Austin Lake Airport (closed 2001?) [8],,
+Marquette,MQT,,KMQT,Marquette County Airport (closed 1999) [9],,
+Mason,,,,Craft's Field [10],,
+New Lothrop,6B3,,,Bean Blossom Airport (closed 2008?) [11],,
+Onaway,Y96,,,Leo E. Goetz County Airport (closed permanently ~2015-2018),,
+Onsted,MI51,,,"Loar's Field (public use in 2006, FAA: 83G)",,
+Rock,MI00,,,"Bonnie Field (public use in 2008, FAA: 6Y4)",,
+Rothbury,42N,,,Double JJ Resort Ranch Airport (closed 2008?) [12],,
+Standish,Y75,,,Standish Industrial Airport (closed 2006?) [13],,
+Traverse City,,,,Traverse City Ransom Field (closed 1969)[5],,

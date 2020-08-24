@@ -1,0 +1,161 @@
+,LocID,Facility Name,City,State
+0,ABE,Allentown Tower,Allentown,PENNSYLVANIA
+1,ABI,Abilene Tower,Abilene,TEXAS
+2,ABQ,Albuquerque Tower,Albuquerque,NEW MEXICO
+3,ACT,Waco Tower,Waco,TEXAS
+4,ACY,Atlantic City Tower,Atlantic City,NEW JERSEY
+5,AGS,Augusta Tower,Augusta,GEORGIA
+6,ALB,Albany Tower,Latham,NEW YORK
+7,ALO,Waterloo Tower,Waterloo,IOWA
+8,AMA,Amarillo Tower,Amarillo,TEXAS
+9,ASE,Aspen Tower,Aspen,COLORADO
+10,AUS,Austin Tower,Austin,TEXAS
+11,AVL,Asheville Tower,Fletcher,NORTH CAROLINA
+12,AVP,Wilkes-Barre Tower,Avoca,PENNSYLVANIA
+13,AZO,Kalamazoo Tower,Portage,MICHIGAN
+14,BFL,Bakersfield Tower,Bakersfield,CALIFORNIA
+15,BGM,Binghamton Tower,Johnson City,NEW YORK
+16,BGR,Bangor Tower,Bangor,MAINE
+17,BHM,Birmingham Tower,Birmingham,ALABAMA
+18,BIL,Billings Tower,Billings,MONTANA
+19,BIS,Bismarck Tower,Bismarck,NORTH DAKOTA
+20,BNA,Nashville Tower,Nashville,TENNESSEE
+21,BOI,BOISE Tower,Boise,IDAHO
+22,BTR,Baton Rouge Tower,Baton Rouge,LOUISIANA
+23,BTV,Burlington Tower,S. Burlington,VERMONT
+24,BUF,Buffalo Tower,Cheektowaga,NEW YORK
+25,CAE,Columbia Tower,West Columbia,SOUTH CAROLINA
+26,CAK,Akron-Canton Tower,North Canton,OHIO
+27,CHA,Chatanooga Tower,Chattanooga,TENNESSEE
+28,CHS,Charleston Tower,Charleston,SOUTH CAROLINA
+29,CID,Cedar Rapids Tower,Cedar Rapids,IOWA
+30,CKB,Clarksburg Tower,Bridgeport,WEST VIRGINIA
+31,CLE,Cleveland Tower,Cleveland,OHIO
+32,CLT,Charlotte Tower,Charlotte,NORTH CAROLINA
+33,CMH,Columbus Tower,Columbus,OHIO
+34,CMI,Champaign Tower,Savoy,ILLINOIS
+35,COS,Colorado Springs Tower,Peterson AFB,COLORADO
+36,CPR,Casper Tower,Casper,WYOMING
+37,CRP,Corpus Christi Tower,Corpus Christi,TEXAS
+38,CRW,Charleston Tower,Charleston,WEST VIRGINIA
+39,CVG,Cincinnati Tower,Erlanger,KENTUCKY
+40,DAB,Daytona Beach Tower,Daytona Beach,FLORIDA
+41,DAY,Dayton Tower,Vandalia,OHIO
+42,DLH,Duluth Tower,Duluth,MINNESOTA
+43,DSM,Des Moines Tower,Des Moines,IOWA
+44,ELM,Elmira Tower,Elmira,NEW YORK
+45,ELP,El Paso Tower,El Paso,TEXAS
+46,ERI,Erie Tower,Erie,PENNSYLVANIA
+47,EUG,Eugene Tower,Eugene,OREGON
+48,EVV,Evansville Tower,Evansville,INDIANA
+49,FAI,Fairbanks Tower,Fairbanks,ALASKA
+50,FAR,Fargo Tower,Fargo,NORTH DAKOTA
+51,FAT,Fresno Tower,Fresno,CALIFORNIA
+52,FAY,Fayetteville Tower,Fayetteville,NORTH CAROLINA
+53,FLO,Florence Tower,Florence,SOUTH CAROLINA
+54,FNT,Flint Tower,Flint,MICHIGAN
+55,FSD,Sioux Falls Tower,Sioux Falls,SOUTH DAKOTA
+56,FSM,Fort Smith Tower,Fort Smith,ARKANSAS
+57,FWA,Fort Wayne Tower,Fort Wayne,INDIANA
+58,GEG,Spokane Tower,Spokane,WASHINGTON
+59,GGG,Longview Tower,Longview,TEXAS
+60,GPT,Gulfport Tower,Gulfport,MISSISSIPPI
+61,GRB,Green Bay Tower,Green Bay,WISCONSIN
+62,GRR,Grand Rapids Tower,Grand Rapids,MICHIGAN
+63,GSO,Greensboro Tower,Greensboro,NORTH CAROLINA
+64,GSP,Greer Tower,Greer,SOUTH CAROLINA
+65,GTF,Great Falls Tower,Great Falls,MONTANA
+66,HLN,Helena Tower,Helena,MONTANA
+67,HSV,Huntsville Tower,Huntsville,ALABAMA
+68,HTS,Huntington Tower,Huntington,WEST VIRGINIA
+69,HUF,Terre Haute /Hulman ATCT/TRACON,Terra Haute,INDIANA
+70,ICT,Wichita Tower,Wichita,KANSAS
+71,ILM,Wilmington Tower,Wilmington,NORTH CAROLINA
+72,IND,Indianapolis Tower,Indianapolis,INDIANA
+73,ITO,Hilo Tower,Hilo,HAWAII
+74,JAN,Jackson Tower,Jackson,MISSISSIPPI
+75,JAX,Jacksonville Tower,Jacksonville,FLORIDA
+76,LAN,Lansing Tower,Lansing,MICHIGAN
+77,LBB,Lubbock Tower,Lubbock,TEXAS
+78,LCH,Lake Charles Tower,Lake Charles,LOUISIANA
+79,LEX,Lexington Tower,Lexington,KENTUCKY
+80,LFT,Lafayette Tower,Lafayette,LOUISIANA
+81,LIT,Little Rock Tower,Little Rock,ARKANSAS
+82,MAF,Midland Tower,Midland,TEXAS
+83,MBS,Saginaw Tower,Freeland,MICHIGAN
+84,MCI,Kansas City Tower,Kansas City,MISSOURI
+85,MDT,Harrisburg Intl Tower,Middletown,PENNSYLVANIA
+86,MFD,Mansfield Tower,Mansfield,OHIO
+87,MGM,Montgomery Tower,Hope Hull,ALABAMA
+88,MIA,Miami Tower,Miami,FLORIDA
+89,MKE,Milwaukee Tower,Milwaukee,WISCONSIN
+90,MKG,Muskegon Tower,Muskegon,MICHIGAN
+91,MLI,Quad City Tower,Milan,ILLINOIS
+92,MLU,Monroe Tower,Monroe,LOUISIANA
+93,MOB,Mobile Tower,Mobile,ALABAMA
+94,MSN,Madison Tower,Madison,WISCONSIN
+95,MSY,New Orleans Tower,New Orleans,LOUISIANA
+96,MWH,Grant County Tower,Moses Lake,WASHINGTON
+97,MYR,Myrtle Beach Tower,Myrtle Beach,SOUTH CAROLINA
+98,OKC,Oklahoma City Tower,Oklahoma City,OKLAHOMA
+99,ORF,Norfolk Tower,Virginia Beach,VIRGINIA
+100,PBI,Palm Beach Tower,West Palm Beach,FLORIDA
+101,PHL,Philadelphia Tower,Philadelphia,PENNSYLVANIA
+102,PIA,Peoria Tower,Peoria,ILLINOIS
+103,PIT,FAA Pittsburgh ATC Tower,Pittsburgh,PENNSYLVANIA
+104,PSC,Pasco Tower,Pasco,WASHINGTON
+105,PVD,Providence Tower,Warwick,RHODE ISLAND
+106,PWM,Portland Tower,Portland,MAINE
+107,RDG,Reading Tower,Reading,PENNSYLVANIA
+108,RDU,Raleigh-Durham Tower,Morrisville,NORTH CAROLINA
+109,RFD,Rockford Tower,Rockford,ILLINOIS
+110,ROA,Roanoke Tower,Roanoke,VIRGINIA
+111,ROC,Rochester Tower,Rochester,NEW YORK
+112,ROW,Roswell Tower,Roswell,NEW MEXICO
+113,RST,Rochester Tower,Rochester,MINNESOTA
+114,RSW,Fort Myers Tower,Fort Myers,FLORIDA
+115,SAT,San Antonio Tower,San Antonio,TEXAS
+116,SAV,Savannah Tower,Savannah,GEORGIA
+117,SBA,Santa Barbara Tower,Goleta,CALIFORNIA
+118,SBN,South Bend Tower,South Bend,INDIANA
+119,SDF,Standiford Tower,Louisville,KENTUCKY
+120,SGF,Springfield Tower,Springfield,MISSOURI
+121,SHV,Shreveport Tower,Barksdale AFB,LOUISIANA
+122,SPI,Springfield Tower,Springfield,ILLINOIS
+123,SUX,Sioux Gateway Tower,Sioux City,IOWA
+124,SYR,Syracuse Tower,North Syracuse,NEW YORK
+125,TLH,Tallahassee Tower,Tallahassee,FLORIDA
+126,TOL,Toledo Tower,Swanton,OHIO
+127,TPA,Tampa Tower,Tampa,FLORIDA
+128,TRI,Tri-Cities Tower,Blountville,TENNESSEE
+129,TUL,Tulsa Tower,Tulsa,OKLAHOMA
+130,TWF,Twin Falls Tower,Twin Falls,IDAHO
+131,TYS,Knoxville Tower,Loisville,TENNESSEE
+132,YNG,Youngstown Tower,Vienna,OHIO
+133,A11,Anchorage TRACON,Anchorage,ALASKA
+134,A80,Atlanta    TRACON,Peachtree    City,GEORGIA
+135,A90,Boston    TRACON,Merrimack,NEW    HAMPSHIRE
+136,C90,Chicago    TRACON,Elgin,ILLINOIS
+137,D01,Denver    TRACON,Denver,COLORADO
+138,D10,Dallas    - Ft Worth TRACON,Dallas-Fort    Worth,TEXAS
+139,D21,Detroit    TRACON,Detroit,MICHIGAN
+140,F11,Central    Florida TRACON,Orlando,FLORIDA
+141,I90,Houston    TRACON,Houston,TEXAS
+142,K90,Cape    TRACON,Falmouth,MASSACHUSETTS
+143,L30,Las    Vegas TRACON,Las    Vegas,NEVADA
+144,M03,Memphis    TRACON,Memphis,TENNESSEE
+145,M98,Minneapolis    TRACON,Minneapolis,MINNESOTA
+146,N90,New    York TRACON,Westbury,NEW    YORK
+147,NCT,Northern    California TRACON,Mather,CALIFORNIA
+148,NMM,Meridian    TRACON,Meridian,MISSISSIPPI
+149,P31,Pensacola    TRACON,Pensacola,FLORIDA
+150,P50,Phoenix    TRACON,Phoenix,ARIZONA
+151,P80,Portland    TRACON,Portland,OREGON
+152,PCT,Potomac TRACON,Warrenton,VIRGINIA
+153,R90,Omaha    TRACON,Bellevue,NEBRASKA
+154,S46,Seattle TRACON,Burien,WASHINGTON
+155,S56,Salt    Lake City TRACON,Salt    Lake City,UTAH
+156,SCT,Southern California TRACON,San Diego,CALIFORNIA
+157,T75,St    Louis TRACON,St.    Charles,MISSOURI
+158,U90,Tucson    TRACON,Tucson,ARIZONA
+159,Y90,Yankee    TRACON,Windsor    Locks,CONNECTICUT
