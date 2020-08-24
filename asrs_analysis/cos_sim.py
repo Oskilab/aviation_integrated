@@ -24,17 +24,15 @@ def generate_compare(month1, year1, num_months = 1): # accident date
 @param: month_range_dict (dict): month_range (1/3/6/12/inf) -> list of dataframes
     where each dataframe has the relevant doc2vec comparison info
 """
-def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}):
+def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col = ""):
     for month_range in [1, 3, 6, 12, np.inf]:
         tracon_month_dict = {}
-        print('first')
         for idx, date_row in tqdm(all_pds[['month', 'year']].drop_duplicates().iterrows()):
             code = ' '.join([str(date_row['month']), str(date_row['year'])])
             compare_func = generate_compare(date_row['month'], date_row['year'], num_months = month_range)
             tracon_month_dict[code] = all_pds.loc[all_pds.apply(compare_func, axis = 1), :].copy()
 
         index_to_d2v, index_to_d2v_other, index_to_d2v_all = {}, {}, {}
-        print('second')
         for idx, row in tqdm(all_pds.iterrows()):
             index_id = f"{row['tracon_code']} {row['year']}/{row['month']}"
             code = ' '.join([str(row['month']), str(row['year'])])
@@ -44,6 +42,7 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}):
             # same tracon
             searched = tracon_month_dict[code]
             searched = searched.loc[searched['tracon_code'] == row['tracon_code'], :]
+            embed()
 
             if searched.shape[0] > 1:
                 d2v_list = [d2v_model.docvecs[x] for x in list(searched.index)]
@@ -65,6 +64,7 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}):
             # other tracon
             searched = tracon_month_dict[code]
             searched = searched.loc[searched['tracon_code'] != row['tracon_code'], :]
+            embed()
             if searched.shape[0] > 1 and found_d2v is not None:
                 d2v_list = [d2v_model.docvecs[x] for x in list(searched.index)]
                 d2v_sub = np.vstack(d2v_list)
@@ -82,6 +82,7 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}):
 
             # all tracons
             searched = tracon_month_dict[code]
+            embed()
             if searched.shape[0] > 1 and found_d2v is not None:
                 d2v_list = [d2v_model.docvecs[x] for x in list(searched.index)]
                 d2v_sub = np.vstack(d2v_list)
@@ -127,7 +128,7 @@ for col in ['narrative', 'synopsis', 'combined']:
         docs = [TaggedDocument(' '.join(x), [idx]) for idx, x in \
                 enumerate(all_pds.apply(lambda x: convert_to_words(x, col, r_d), axis = 1))]
         model = Doc2Vec(docs, vector_size = 20, window = 3)
-        analyze_d2v(all_pds, model, len(r_d) > 0, month_range_dict)
+        analyze_d2v(all_pds, model, len(r_d) > 0, month_range_dict, col = col)
 
     for month_range in month_range_dict.keys():
         res = pd.concat(month_range_dict[month_range], axis = 1)
