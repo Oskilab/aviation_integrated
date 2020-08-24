@@ -6,6 +6,8 @@
 
 
 /* Large files */
+/* find . -size + 100M | cat >> .gitignore */
+
 asrs_analysis/datasets/ASRS 1988-2019_extracted.csv
 asrs_analysis/datasets/ASRS 1988-2019.csv
 asrs_analysis/.git/lfs/objects/e5/29/e529c8c891572a573231c15d67701cb1ea3e073739abc8e6245e105e3a1bdce4
