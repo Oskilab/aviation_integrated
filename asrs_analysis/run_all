@@ -4,7 +4,7 @@ python abbrev_words_analysis.py
 print "========== Finished Analyzing Abbreviations =============\n\n"
 
 echo ============= Creating Abbreviations Counts =============
-python top_down.py --job dataset --abrev_cts_path ./results/total_cts_tagged_narrative.csv
+python top_down.py
 print "============= Finished Abbreviations Counts =============\n\n"
 
 echo ==================== Analyzing LIWC ====================

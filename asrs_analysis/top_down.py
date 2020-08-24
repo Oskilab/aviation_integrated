@@ -10,29 +10,21 @@ from preprocess_helper import *
 python top_down.py --job dataset --abrev_cts_path ./results/total_cts_tagged_narrative.csv
 """
 
-# Deal with arguments passed in from commandline
-parser = argparse.ArgumentParser(description = "Tracon_Month Analysis")
-parser.add_argument("--job", nargs = 1)
-parser.add_argument("--abrev_cts_path", nargs = "?")
-
-args = parser.parse_args()
-
-if (len(args.job) == 0) or args.job[0] != 'abrev_analysis' and args.job[0] != 'dataset':
-    print('must include --job argument. -h for more info')
-    quit()
-else:
-    job = args.job[0]
-
-if job == 'dataset':
-    abrev_cts_path = args.abrev_cts_path
-
-# Load total_cts from abrev_words_analysis.py (list of words and their associated tags)
-total_cts = pd.read_csv(abrev_cts_path)
-total_cts = total_cts.drop('Unnamed: 0', axis = 1)
-
-# set of abbreviations to calculate counts
-all_abrevs = set(total_cts.loc[total_cts['abrev'] == 1, 'acronym'])
-pos_nonword_abrevs = set(total_cts.loc[total_cts['tag'] == 'pos_nonword', 'acronym'])
+# # Deal with arguments passed in from commandline
+# parser = argparse.ArgumentParser(description = "Tracon_Month Analysis")
+# parser.add_argument("--job", nargs = 1)
+# parser.add_argument("--abrev_cts_path", nargs = "?")
+#
+# args = parser.parse_args()
+#
+# if (len(args.job) == 0) or args.job[0] != 'abrev_analysis' and args.job[0] != 'dataset':
+#     print('must include --job argument. -h for more info')
+#     quit()
+# else:
+#     job = args.job[0]
+#
+# if job == 'dataset':
+#     abrev_cts_path = args.abrev_cts_path
 
 import copy
 """
@@ -56,7 +48,7 @@ def convert_ctr_to_series(counter, abrev_set = set()):
     return pd.Series({'ct': ct, 'unique_ct': unique_ct})
 
 # see preprocess_helper
-all_pds = load_asrs()
+all_pds = load_asrs(load_saved = True)
 aviation_dicts = load_dictionaries()
 
 level = ['tracon', 'tracon_month', 'tracon_quarter']
@@ -73,6 +65,15 @@ for idx, sel in list(enumerate(all_sel))[1:2]:
     for col in ['narrative', 'synopsis', 'combined']:
         print(level[idx], col)
         index_to_counter = {} # dictionary from tracon_month -> collections.Counter obj
+
+        # load total_cts
+        total_cts = pd.read_csv(f'results/total_cts_tagged_{col}.csv')
+        total_cts = total_cts.drop('Unnamed: 0', axis = 1)
+
+        # set of abbreviations to calculate counts
+        all_abrevs = set(total_cts.loc[total_cts['abrev'] == 1, 'acronym'])
+        pos_nonword_abrevs = set(total_cts.loc[total_cts['tag'] == 'pos_nonword', 'acronym'])
+
         for i in tqdm(range(tmp.shape[0])):
             # this creates the string id of the given tracon_month
             index_id = tmp.loc[i, sel[0]]
