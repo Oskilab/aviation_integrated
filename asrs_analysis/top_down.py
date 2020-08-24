@@ -54,10 +54,7 @@ aviation_dicts = load_dictionaries()
 level = ['tracon', 'tracon_month', 'tracon_quarter']
 all_sel = [['tracon_code'], ['tracon_code', 'year', 'month'], ['tracon_code', 'year', 'quarter']]
 
-# the list of set of acronyms for each dictionary. this is used to create counts for each
-# tracon month
-df_sets = [set(x['acronym']).intersection(all_abrevs) for x in aviation_dicts.values()]
-
+mult_rep_cols = ['narrative', 'synopsis', 'callback']
 for idx, sel in list(enumerate(all_sel))[1:2]:
     # this groups by tracon_code, year and month, so each row is a unique tracon_month
     tmp = all_pds[sel].groupby(sel).count().reset_index()
@@ -65,6 +62,7 @@ for idx, sel in list(enumerate(all_sel))[1:2]:
     for col in ['narrative', 'synopsis', 'combined']:
         print(level[idx], col)
         index_to_counter = {} # dictionary from tracon_month -> collections.Counter obj
+        index_to_other_info = {}
 
         # load total_cts
         total_cts = pd.read_csv(f'results/total_cts_tagged_{col}.csv')
@@ -74,6 +72,9 @@ for idx, sel in list(enumerate(all_sel))[1:2]:
         all_abrevs = set(total_cts.loc[total_cts['abrev'] == 1, 'acronym'])
         pos_nonword_abrevs = set(total_cts.loc[total_cts['tag'] == 'pos_nonword', 'acronym'])
 
+        # the list of set of acronyms for each dictionary. this is used to create counts for each
+        # tracon month
+        df_sets = [set(x['acronym']).intersection(all_abrevs) for x in aviation_dicts.values()]
         for i in tqdm(range(tmp.shape[0])):
             # this creates the string id of the given tracon_month
             index_id = tmp.loc[i, sel[0]]
@@ -88,6 +89,20 @@ for idx, sel in list(enumerate(all_sel))[1:2]:
                 selector = selector & (all_pds[sel[sel_idx]] == tmp.loc[i, sel[sel_idx]])
             asrs = all_pds.loc[selector, :].copy()
 
+            other_info = {}
+
+            any_col_has_multiple_reports = None
+            for col in mult_rep_cols:
+                other_info[f'{col}_num_multiple_reports'] = asrs[f'{col}_multiple_reports'].sum()
+                if any_col_has_multiple_reports is None:
+                    any_col_has_multiple_reports = asrs[f'{col}_multiple_reports']
+                else:
+                    any_col_has_multiple_reports = any_col_has_multiple_reports | \
+                            asrs[f'{col}_multiple_reports']
+            other_info['num_multiple_reports'] = any_col_has_multiple_reports.sum()
+            other_info['num_observations'] = asrs.shape[0]
+            other_info['num_callbacks'] = asrs['contains_callback'].sum()
+
             # this is redundant (occurs in preprocess_helper.py)
             asrs[col] = asrs[col].str.lower()
 
@@ -95,7 +110,9 @@ for idx, sel in list(enumerate(all_sel))[1:2]:
             # showed up within the given tracon_month, then saved to index_to_counter
             split = asrs.apply(lambda x: convert_to_words(x, col), axis = 1) # see preprocess.helper
             index_to_counter[index_id] = Counter(np.hstack(split.values).flatten())
+            index_to_other_info[index_id] = pd.Series(other_info)
 
+        other_info = pd.DataFrame.from_dict(index_to_other_info, orient = 'index')
         key_ctr = list(index_to_counter.items())
 
         # count the number of times pos_nonword shows up in each tracon_month
@@ -108,7 +125,7 @@ for idx, sel in list(enumerate(all_sel))[1:2]:
                 for key, ctr in key_ctr}, orient = 'index')
         all_df = all_df.add_prefix("all_abrevs_no_overcount_")
 
-        all_dfs = [pos_nonword_df, all_df]
+        all_dfs = [pos_nonword_df, all_df, other_info]
         # count the number of times words in each dictionary shows up in each tracon_month
         for dict_idx, dict_name in enumerate(aviation_dicts.keys()):
             print(dict_name)
