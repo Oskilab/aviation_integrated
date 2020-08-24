@@ -5,7 +5,10 @@ from tqdm import tqdm
 
 coverage = namedtuple('coverage', ['name', 'part', 'total'])
 
-def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv'):
+def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False):
+    if load_saved:
+        return pd.read_csv('results/asrs_extracted_processed.csv')
+
     asrs = pd.read_csv(path)
 
     # Dropping Duplicates
@@ -77,6 +80,7 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv'):
     asrs = tracon_analysis(asrs)
     print(coverage(name = 'after tracon analysis', part = asrs.shape[0], total = total))
     asrs = generate_date_cols(asrs)
+    asrs.to_csv('results/asrs_extracted_processed.csv')
     return asrs
 
 def load_dictionaries():
