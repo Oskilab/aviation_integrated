@@ -8,10 +8,17 @@ headers = {}
 
 # Read input files
 full = pd.read_csv('input_csvs/FAA_AIDS_full.csv')
-codes = pd.read_csv('input_csvs/FAA_AIDS_airports.csv')
+new = pd.read_csv('input_csvs/FAA_AIDS_addition.csv')
+rename_dict = {}
+for col in new.columns:
+    rename_dict[col] = col.lower().replace(" ", "")
+new.rename(rename_dict, axis = 1, inplace = True)
+
+full = pd.concat([full, new], axis = 0, ignore_index = True, sort = False)
+# codes = pd.read_csv('input_csvs/FAA_AIDS_airports.csv')
 
 # Generate search queries
-eventairports = list(codes['eventairport'])
+# eventairports = list(codes['eventairport'])
 all_airports = list(full['eventairport'])
 all_cities = list(full['eventcity'])
 pairs = []
@@ -25,11 +32,15 @@ for pair in unique_pairs_raw:
     else:
         unique_pairs.append(pair)
 
+from tqdm import trange
 # Search for codes and names from IATA.org
 guesses = {}
 not_found = []
 count = 1
-for pair in tqdm(unique_pairs):
+tr = trange(len(unique_pairs), desc = 'searching for codes')
+for pair_idx in tr:
+    pair = unique_pairs[pair_idx]
+
     if type(pair[0]) == float:
         n = pair[1]
     elif pair[0] in pair[1]:
@@ -41,12 +52,13 @@ for pair in tqdm(unique_pairs):
     r = requests.get(request_str, headers=headers)
     if r.status_code != 200:
         while True:
-            print('retrying...')
-            time.sleep(10)
+            tr.set_description('retrying iata...')
+            time.sleep(1)
             r = requests.get(request_str, headers=headers)
             if r.status_code == 200:
-                    break
-    soup = bs(r.text)
+                tr.set_description('searching for codes')
+                break
+    soup = bs(r.text, 'lxml')
     try:
         table = soup.findAll('table', attrs={'class':'datatable'})[1]
         table_body = table.find('tbody')

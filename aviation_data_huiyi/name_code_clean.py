@@ -6,11 +6,20 @@ import numpy as np
 import ftfy
 from IPython import embed
 
+ntsb_full = pd.read_csv("datasets/NTSB_AviationData_new.txt", sep = "|")
+# future proofing
+ntsb_code = ntsb_full[[" Airport Code ","Event Id "]] .groupby(" Airport Code ").count().reset_index()
+ntsb_code.rename({' Airport Code ': 'airportcode', 'Event Id ': 'Freq'}, axis = 1, inplace = True)
+
+ntsb_name = ntsb_full[[" Airport Name ","Event Id "]] .groupby(" Airport Name ").count().reset_index()
+ntsb_name.rename({' Airport Name ': 'airportname', 'Event Id ': 'Freq'}, axis = 1, inplace = True)
+
+
 """
 Phase 1: Clean airportcode and airportname from ntsb. We strip whitespace, uppercase, etc.
 """
-ntsb_code = pd.read_csv("datasets/NTSB_airportcode.csv")
-ntsb_name = pd.read_csv("datasets/NTSB_airportname.csv")
+# ntsb_code = pd.read_csv("datasets/NTSB_airportcode.csv")
+# ntsb_name = pd.read_csv("datasets/NTSB_airportname.csv")
 airport_code = pd.read_csv("datasets/airports.csv")
 
 def clean(col): 

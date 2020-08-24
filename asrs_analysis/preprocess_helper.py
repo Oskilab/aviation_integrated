@@ -1,35 +1,91 @@
 import pandas as pd, re, numpy as np
 from IPython import embed
-from collections import Counter
+from collections import Counter, namedtuple
+from tqdm import tqdm
+
+coverage = namedtuple('coverage', ['name', 'part', 'total'])
 
 def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv'):
     asrs = pd.read_csv(path)
+
+    # Dropping Duplicates
+    dup_cols = ['ACN', 'narrative_report1', 'narrative_report2', 'synopsis_report1'] + \
+            ['callback_report1', 'callback_report2', 'Locale Reference']
+    asrs_dropped = asrs.drop_duplicates(dup_cols)
+    print(coverage(name = 'dropping duplicate asrs', part = asrs_dropped.shape[0], \
+            total = asrs.shape[0]))
+    asrs = asrs_dropped
+
+    # for simplicity's sake we create an empty synopsis_report2
+    asrs['synopsis_report2'] = np.nan
+
+    type_reports = ['narrative', 'callback', 'synopsis']
+    # creating fields for multiple reports
+    for type_report in type_reports:
+        asrs[f'{type_report}_multiple_reports'] = asrs.apply(lambda row: \
+                (not pd.isna(row[f'{type_report}_report1'])) and
+                (not pd.isna(row[f'{type_report}_report2'])), axis = 1
+        )
+    # creating field for containing a callback report
+    asrs["contains_callback"] = asrs.apply(lambda row: \
+            (not pd.isna(row["callback_report1"])) or
+            (not pd.isna(row["callback_report2"])), axis = 1
+    )
+    # create combined reports
+    for type_report in type_reports:
+        report1 = asrs[f'{type_report}_report1'].replace(np.nan, '')
+        report2 = asrs[f'{type_report}_report2'].replace(np.nan, '')
+        asrs[type_report] = report1 + " " + report2
+
     def generate_date_cols(asrs):
-        asrs['year'] = asrs['date'].apply(lambda x: int(x // 100))
-        asrs['month'] = asrs['date'].apply(lambda x: int(x % 100))
-        asrs['quarter'] = (asrs['month'] - 1) // 3 + 1
+        asrs['year'] = asrs['Date'].apply(lambda x: int(x // 100))
+        asrs['month'] = asrs['Date'].apply(lambda x: int(x % 100))
         return asrs.loc[asrs['year'] != 20, :].copy()
+
     def tracon_analysis(asrs):
         pat = re.compile('(info|atc)_(code|type|repeated)\d')
         dropcols = [col for col in asrs if pat.match(col)]
 
         all_pds = []
-        for info_type in ['atc', 'info']:
-            for i in range(4):
-                curr = asrs.loc[asrs[f"{info_type}_type{i}"] == 'TRACON', :].copy()
-                tracon_code = curr[f"{info_type}_code{i}"].copy()
-                curr.drop(dropcols, axis = 1, inplace = True)
-                curr['tracon_code'] = tracon_code
-                all_pds.append(curr)
+        for idx, row in tqdm(asrs.iterrows(), total = asrs.shape[0]):
+            curr_codes = set()
+            for info_type in ['atc', 'info']:
+                for i in range(6):
+                    tracon_code = row[f'{info_type}_code{i}']
+                    if tracon_code not in curr_codes:
+                        copy_row = row.copy()
+                        copy_row['tracon_code'] = tracon_code
+                        copy_row.drop(dropcols, axis = 0, inplace = True)
+                        all_pds.append(copy_row)
+
+                        curr_codes.add(tracon_code)
+        embed()
+        1/0
+
+
+        # all_pds = []
+        # for info_type in ['atc', 'info']:
+        #     for i in range(6):
+        #         curr = asrs.loc[asrs[f"{info_type}_type{i}"] == 'TRACON', :].copy()
+        #         tracon_code = curr[f"{info_type}_code{i}"].copy()
+        #         curr.drop(dropcols, axis = 1, inplace = True)
+        #         curr['tracon_code'] = tracon_code
+        #         all_pds.append(curr)
         all_pds = pd.concat(all_pds, ignore_index = True)
         return all_pds
 
-    tolist = lambda x: [x['synopsis'], x['narrative']]
-    asrs['combined'] = asrs.apply(tolist, axis = 1).str.join(sep = ' ')
-    cols = ['narrative', 'synopsis', 'combined']
+    asrs['combined'] = asrs['narrative'] + ' ' + asrs['callback'] + ' ' + \
+            asrs['synopsis']
+
+    cols = ['narrative', 'synopsis', 'callback']
     for col in cols:
         asrs[col] = asrs[col].str.lower()
+        asrs[f'{col}_report1'] = asrs[f'{col}_report1'].str.lower()
+        asrs[f'{col}_report2'] = asrs[f'{col}_report2'].replace(np.nan, '').str.lower()
+    asrs['combined'] = asrs['combined'].str.lower()
+    print(asrs.shape[0])
     asrs = tracon_analysis(asrs)
+    print(asrs.shape[0])
     asrs = generate_date_cols(asrs)
     return asrs
 
@@ -58,14 +114,36 @@ def load_dictionaries():
     hand_code = hand_code[["acronym", "Fullform6"]].copy().rename({"Fullform6": "hand_fullform"}, axis = 1)
     hand_code.drop_duplicates(["acronym"], inplace = True, keep = 'first')
 
+    # hand_code2
+    hand_code2 = pd.read_csv('dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
+    hand_code2.index.rename('acronym', inplace = True)
+    hand_code2.reset_index(inplace = True)
+    hand_code2.rename({'hand_fullform2': 'hand2_fullform'}, axis = 1, inplace = True)
+    hand_code2 = hand_code2[['acronym', 'hand2_fullform']]
+    hand_code2.drop_duplicates(['acronym'], inplace = True, keep = 'first')
+    hand_code2.dropna(axis = 0, how = 'any', inplace = True)
+
     return {
         'casa': casa,
         'faa': faa,
         'iata': iata_iaco,
         'nasa': nasa,
-        'hand': hand_code
+        'hand': hand_code,
+        'hand2': hand_code2
     }
 
+
+def neg_nonword_to_neg_word_set():
+    hand_code2 = pd.read_csv('dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
+    return set(hand_code2.loc[~hand_code2.loc[:, 'add_to_realworld_dictionary'].isna(), :].index)
+
+def neg_nonword_to_airport_set():
+    hand_code2 = pd.read_csv('dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
+    return set(hand_code2.loc[~hand_code2.loc[:, 'add_to_airport'].isna(), :].index)
+
+def neg_nonword_to_mispelled_dict():
+    hand_code2 = pd.read_csv('dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
+    return dict(hand_code2.loc[~hand_code2.loc[:, 'mispelled_word_fix'].isna(), 'mispelled_word_fix'])
 
 # starts with (, ' or [
 r1 = "^([\(\'\[]{1})([A-Za-z\d]{1,})$"
@@ -80,8 +158,10 @@ r5 = "^([A-Za-z]{1,})/([A-Za-z]{1,})$"
 
 pats = [r3, r1, r2, r4, r5]
 grps = [2, 2, 1, 1, 1]
+mispelled_dict = neg_nonword_to_mispelled_dict()
 
 def convert_to_words(row, col = 'narrative', replace_dict = {}):
+    # replace_dict.update(mispelled_dict)
     s = row[col]
     if isinstance(s, float) and np.isnan(s):
         s = ''
@@ -111,11 +191,7 @@ def generator_split(split_series):
 
 def create_counter(df, col = 'narrative'):
     print('create_counter')
-    split = df.apply(lambda x: convert_to_words(x, col), axis = 1)
+    split = df.apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
     res = Counter(generator_split(split))
     res = pd.DataFrame.from_dict(dict(res), orient = 'index')
     return res
-
-# asrs = load_asrs()
-# res = create_counter(asrs, col = 'narrative')
-# embed()

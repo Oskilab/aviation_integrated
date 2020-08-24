@@ -4,6 +4,7 @@ from IPython import embed
 from collections import Counter
 import matplotlib.pyplot as plt
 from preprocess_helper import load_asrs, create_counter, load_dictionaries
+from preprocess_helper import neg_nonword_to_neg_word_set, neg_nonword_to_airport_set
 from bs4 import BeautifulSoup
 
 # get list of cities
@@ -31,13 +32,14 @@ cities = set(cities_words)
 
 aviation_dicts = load_dictionaries() # see preprocess helper
 asrs = load_asrs() # see preprocess helper
+negnw_to_negw = neg_nonword_to_neg_word_set()
+negnw_to_airport = neg_nonword_to_airport_set()
 
 # create set of all abbreviations in all dictionaries
 dfs = list(aviation_dicts.values())
 all_abrevs = set(dfs[0]['acronym'])
 for i in range(1, len(dfs)):
     all_abrevs.update(dfs[i]['acronym'])
-
 
 # python dictionaries
 eng_stopwords = set(stopwords.words('english'))
@@ -64,6 +66,16 @@ for orig_col in ['narrative', 'synopsis', 'combined']:
     fn.loc[sel, 'abrev'] = 1
     fn.loc[sel, 'tag'] = 'neg_nonword'
 
+    # add back handcoded neg_nonwords to neg_words
+    neg_word_sel = np.logical_and(sel, fn.index.map(lambda x: x in negnw_to_negw))
+    fn.loc[neg_word_sel, 'abrev'] = 0
+    fn.loc[neg_word_sel, 'tag'] = 'neg_word_hand'
+
+    # convert some neg_nonword to airport tag
+    neg_airport_sel = np.logical_and(sel, fn.index.map(lambda x: x in negnw_to_airport))
+    fn.loc[neg_word_sel, 'abrev'] = 0
+    fn.loc[neg_word_sel, 'tag'] = 'neg_airport'
+
     sel = np.array(sel) & fn.index.str.contains('[^A-Za-z]', na = True)
     fn.loc[sel, 'abrev'] = 0
     fn.loc[sel, 'tag'] = 'neg_nonalpha_abrev'
@@ -71,6 +83,14 @@ for orig_col in ['narrative', 'synopsis', 'combined']:
     sel = fn.index.map(lambda x: x not in eng_stopwords and not d.check(x) and x in cities)
     fn.loc[sel, 'abrev'] = 0
     fn.loc[sel, 'tag'] = 'neg_nonword_city_exception'
+
+    fn_sub = fn.loc[(fn['tag'] == 'neg_nonword') | (fn['tag'] == 'neg_word_hand') | \
+            (fn['tag'] == 'neg_airport')]
+    cts = fn_sub[[0, 'tag']].groupby('tag').sum().rename({0: 'ct'}, axis = 1)
+    unique_cts = fn_sub[[0, 'tag']].groupby('tag').count().rename({0: 'unique_ct'}, axis = 1)
+
+    neg_nonword_summary = pd.concat([cts, unique_cts], axis = 1)
+    neg_nonword_summary.to_csv(f'results/neg_nonword_summary_{orig_col}.csv')
 
     fn.to_csv(f'results/fn_tagged_{orig_col}.csv')
 
@@ -155,8 +175,29 @@ for orig_col in ['narrative', 'synopsis', 'combined']:
     # words_and_abrev2 = words_and_abrev1.loc[~sel].copy()
     total_cts.loc[sel, 'tag'] = 'pos_iata_only_words'
     total_cts.loc[sel, 'abrev'] = 0
-    total_cts.reset_index().rename({'index': 'acronym'}, axis = 1)\
-            .to_csv(f'results/total_cts_tagged_{orig_col}.csv')
+    total_cts = total_cts.reset_index().rename({'index': 'acronym'}, axis = 1)
+    total_cts.to_csv(f'results/total_cts_tagged_{orig_col}.csv')
+
+
+    dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'hand2', 'iata']
+    dictionary_summary = {}
+    for dictionary in dictionary_names:
+        subset = total_cts.loc[~total_cts[f'{dictionary}_fullform'].isna(), :]
+        dictionary_summary[dictionary] = pd.Series({'ct': np.sum(subset[0]), \
+                'unique_ct': subset.shape[0]})
+    dictionary_names.remove('iata')
+
+    sel = None
+    for dictionary in dictionary_names:
+        if sel is None:
+            sel = ~total_cts[f'{dictionary}_fullform'].isna()
+        else:
+            sel = sel | (~total_cts[f'{dictionary}_fullform'].isna())
+    subset = total_cts.loc[sel, :].copy()
+    dictionary_summary['total_top_down_abrev'] = pd.Series({'ct': np.sum(subset[0]), \
+            'unique_ct': subset.shape[0]})
+    dictionary_summary = pd.DataFrame.from_dict(dictionary_summary, orient = 'index')
+    dictionary_summary.to_csv(f'results/dictionary_summary_{orig_col}.csv')
 
     # The following section creates a series of bar plots showing the breakdown of the total corpus
     # by the created tags. If there's a unique preceding the name of the file, then it's the breakdown
