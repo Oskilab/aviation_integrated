@@ -52,26 +52,15 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv'):
             for info_type in ['atc', 'info']:
                 for i in range(6):
                     tracon_code = row[f'{info_type}_code{i}']
-                    if tracon_code not in curr_codes:
+                    if tracon_code not in curr_codes and not pd.isna(tracon_code):
                         copy_row = row.copy()
                         copy_row['tracon_code'] = tracon_code
+                        copy_row['ident_type'] = row[f'{info_type}_type{i}']
                         copy_row.drop(dropcols, axis = 0, inplace = True)
                         all_pds.append(copy_row)
 
                         curr_codes.add(tracon_code)
-        embed()
-        1/0
-
-
-        # all_pds = []
-        # for info_type in ['atc', 'info']:
-        #     for i in range(6):
-        #         curr = asrs.loc[asrs[f"{info_type}_type{i}"] == 'TRACON', :].copy()
-        #         tracon_code = curr[f"{info_type}_code{i}"].copy()
-        #         curr.drop(dropcols, axis = 1, inplace = True)
-        #         curr['tracon_code'] = tracon_code
-        #         all_pds.append(curr)
-        all_pds = pd.concat(all_pds, ignore_index = True)
+        all_pds = pd.DataFrame.from_records(all_pds)
         return all_pds
 
     asrs['combined'] = asrs['narrative'] + ' ' + asrs['callback'] + ' ' + \
@@ -83,9 +72,10 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv'):
         asrs[f'{col}_report1'] = asrs[f'{col}_report1'].str.lower()
         asrs[f'{col}_report2'] = asrs[f'{col}_report2'].replace(np.nan, '').str.lower()
     asrs['combined'] = asrs['combined'].str.lower()
-    print(asrs.shape[0])
+
+    total = asrs.shape[0]
     asrs = tracon_analysis(asrs)
-    print(asrs.shape[0])
+    print(coverage(name = 'after tracon analysis', part = asrs.shape[0], total = total))
     asrs = generate_date_cols(asrs)
     return asrs
 
