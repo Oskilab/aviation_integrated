@@ -1,5 +1,7 @@
+from collections import Counter
+from IPython import embed
 import pandas as pd, numpy as np, matplotlib.pyplot as plt
-import re
+import re, os
 
 def separate_atc_info(row):
     """
@@ -91,7 +93,14 @@ def expand_atc(df):
     return df
     
 # true data
-ac = pd.read_csv('datasets/ASRS 1988-2019.csv')
+datasets_folder = 'datasets/ASRS Data/'
+all_acs, all_fns = [], list(os.listdir(datasets_folder))
+for fn in all_fns:
+    # one file is not structured like the others
+    if ".swp" not in fn and fn != "8-2019 - 6-2020-ASRS_DBOnline-2.csv":
+        all_acs.append(pd.read_csv(f'{datasets_folder}{fn}'))
+
+ac = pd.concat(all_acs, axis = 0, ignore_index = True)
 
 # create sets
 wiki_pd = pd.read_csv('datasets/wiki_code.csv')
@@ -102,8 +111,16 @@ all_codes.update(wiki_pd['ICAO'])
 all_codes.update(tracon_pd['LocID'])
 all_codes.remove(np.nan)
 
-# remove all np nans and turn them into empty strings
-ac.loc[ac['atcadvisory'].isnull(), 'atcadvisory'] = ''
+# preprocess atc_advisory fields
+atc_adv_cols = ['atc_advisory_acft1', 'atc_advisory_acft2']
+for atc_col in atc_adv_cols:
+    # remove all np nans and turn them into empty strings
+    ac.loc[ac[atc_col].isna(), atc_col] = ''
+ac['atcadvisory'] = ac[atc_adv_cols[0]] + '; ' + ac[atc_adv_cols[1]]
+
+# remove the "; " at the end of atcadvisory
+ends_with_sel = ac['atcadvisory'].str.endswith('; ')
+ac.loc[ends_with_sel, 'atcadvisory'] = ac.loc[ends_with_sel, 'atcadvisory'].str.slice(stop = -2)
 
 # Find Codes and Split. This creates a pd.Series where each element is a list consisting of tuples
 # in the form of (atc type, atc code, possible repeated atc type).
@@ -129,10 +146,11 @@ def remove_firstpass(row):
 
 # our goal now is to make sure all the removed_firstpass becomes empty string
 subset['removed_firstpass'] = subset.apply(remove_firstpass, axis = 1)
+# embed() run "subset['removed_firstpass'].unique()"
+# 1/0
 
 # Deal with some leftover garbage (only TRACON/Tower left), this only finds 2 rows
 d = set(['TRACON', 'Tower', ''])
-ct = 0
 all_idx = []
 for row in subset['removed_firstpass'].iteritems():
     all_d = True
@@ -140,55 +158,45 @@ for row in subset['removed_firstpass'].iteritems():
         if elem not in d:
             all_d = False
     if all_d:
-        ct += 1
         all_idx.append(row[0])
 subset.loc[all_idx, 'removed_firstpass'] = '' 
 leftovers = subset[~subset['removed_firstpass'].str.match(r'^ *$')]
 leftovers.to_csv('outputs/leftovers.csv')
 
 # MANUAL FIXING. Check leftovers.csv if you need to double check
-fixed_indices = [10989, 22166, 40340, 45628, 54368, 83361, 84230, \
-        90534, 90826, 91426, 91672, 97163, 97242, 98013, 101283, \
-        106488, 108336, 130642, 132420, 139763, 162464, 210483, 225008]
-subset.loc[10989, 'firstpass'] = [('TRACON', 'O', '')]
-# 21879 has miscellaneous ampersand
-subset.loc[22166, 'firstpass'].append(('Tower', 'V. C. BIRD', '')) # BIRD not in set anyways
-subset.loc[40340, 'firstpass'] = [('Military Facility', 'USAF ACFT', '')] + \
-        subset.loc[40340, 'firstpass'][1:] # USAF and ACFT are not in set 
-subset.loc[45628, 'firstpass'] = [('TRACON', 'N(0', '')]
-subset.loc[54368, 'firstpass'] = subset.loc[54368, 'firstpass'][:-1] + \
-        [('Military Facility', 'RIDGE CTRL', '')] # RIDGE/CTRL not found 
-subset.loc[83361, 'firstpass'] = subset.loc[83361, 'firstpass'][:1] + \
-        [('Military Facility', 'ZBW CAPE', '')] + subset.loc[83361, 'firstpass'][2:]
-subset.loc[84230, 'firstpass'] = subset.loc[84230, 'firstpass'][:-1] + \
+fixed_indices = [23223, 50769, 68226, 79476, 91462, 92231, 95644, \
+        95925, 107140, 116490, 133368, 150243, 153256, 154491, 208448, \
+        224205, 224497]
+subset.loc[23223, 'firstpass'] = subset.loc[23223, 'firstpass'][:-1] + \
+        [('Tower', 'ZZZ1', '')]
+subset.loc[50769, 'firstpass'] = subset.loc[50769, 'firstpass'][:2] + \
+        [('UNICOM', '148.30', '')] + subset.loc[50769, 'firstpass'][-1:]
+subset.loc[68226, 'firstpass'] = subset.loc[68226, 'firstpass'][:1] + \
+        [('UNICOM', 'FBO', '')] 
+subset.loc[79476, 'firstpass'] = subset.loc[79476, 'firstpass'][:-1] + \
+        [('Military Facility', 'RIDGE CTRL', '')]
+subset.loc[91462, 'firstpass'] = subset.loc[91462, 'firstpass'][:1] + \
+        [('Military Facility', 'ZBW CAPE', '')] + subset.loc[91462, 'firstpass'][2:]
+subset.loc[92231, 'firstpass'] = subset.loc[92231, 'firstpass'][:-1] + \
         [('FSS', 'JNU', ''), ('FSS', 'RDU', '')] # Both of these are found, so separated
-subset.loc[90534, 'firstpass'] = subset.loc[90534, 'firstpass'][:-1] + \
-        [('UNICOM', '998.00', '')]
-subset.loc[90826, 'firstpass'] = subset.loc[90826, 'firstpass'][:-1] + \
-        [('UNICOM', '123.14', '')]
-subset.loc[91426, 'firstpass'] = subset.loc[91426, 'firstpass'][:2] + \
+subset.loc[95644, 'firstpass'] = subset.loc[95644, 'firstpass'][:2] + \
         [('UNICOM', '998.00', ''), ('UNICOM', '159', '')]
-subset.loc[91672, 'firstpass'] = subset.loc[91672, 'firstpass'][:2] + \
+subset.loc[95925, 'firstpass'] = subset.loc[95925, 'firstpass'][:2] + \
         [('UNICOM', '123.14', ''), ('UNICOM', '159', '')]
-# 91672 is skipped b/c LAX is in sets, and 'Special Flight Rules' is excess text
-# 97079 same thing
-subset.loc[97163, 'firstpass'] = [('CTAF', 'Airshow Control', '')]
-subset.loc[97242, 'firstpass'] = [('UNICOM', 'GROVE CITY', '')]
-subset.loc[98013, 'firstpass'] = subset.loc[98013, 'firstpass'][:2] + \
-        [('UNICOM', '148.30', ''), ('UNICOM', '159', '')]
-# 99991 kept excess info in removed_firstpass because code was found
-subset.loc[101283, 'firstpass'] = subset.loc[101283, 'firstpass'][:-1] + \
-        [('UNICOM', 'Local FBO', '')] # Local/FBO not found
-subset.loc[106488, 'firstpass'] =  subset.loc[106488, 'firstpass'] + [('CTAF', '', '')]
-subset.loc[108336, 'firstpass'] =  [('UNICOM', 'I-23', '')] # not found
-subset.loc[130642, 'firstpass'] =  [('CTAF', 'OTX 1', '')] # not found
-subset.loc[132420, 'firstpass'].append(('UNICOM', '0', '')) # not found
-subset.loc[139763, 'firstpass'].append(('CTAF', 'NOT', '')) # not found
-# only semicolon, leaving it
-subset.loc[162464, 'firstpass'] = [('UNICOM', 'BAY BRIDGE', '')] # BAY is found
-# but that's located in romania (not the BAY BRIDGE)
-subset.loc[210483, 'firstpass'].append(('CTAF', '', ''))
-subset.loc[225008, 'firstpass'] = [('UNICOM', '122.9', '')]
+subset.loc[107140, 'firstpass'] = []
+subset.loc[116490, 'firstpass'] = subset.loc[116490, 'firstpass'][:-1] + \
+        [('Tower', 'ZZZ1', '')]
+subset.loc[133368, 'firstpass'] = subset.loc[133368, 'firstpass'][:1] + \
+        [('UNICOM', '0', '')] + subset.loc[133368, 'firstpass'][1:]
+subset.loc[150243, 'firstpass'].append(('UNICOM', 'I23', ''))
+subset.loc[153256, 'firstpass'] = [('UNICOM', '122.9', '')]
+subset.loc[154491, 'firstpass'] = subset.loc[154491, 'firstpass'][:-1] + \
+        [('TRACON', 'ZZZZ', '')]
+subset.loc[208448, 'firstpass'].append(('TRACON', 'O', ''))
+subset.loc[224205, 'firstpass'] = subset.loc[224205, 'firstpass'][:-1] + \
+        [('UNICOM', '998.00', '')]
+subset.loc[224497, 'firstpass'] = subset.loc[224497, 'firstpass'][:-1] + \
+        [('UNICOM', '123.14', '')]
 subset.loc[fixed_indices, 'remove_firstpass'] = ''
 
 subset = separate_nonatc(subset)
@@ -197,7 +205,7 @@ subset = expand_atc(subset)
 # Create dictionaries of the most common info codes and types
 # key -> value: code -> number of times it is used
 code_ct_dict, type_ct_dict = {}, {}
-for i in range(4):
+for i in range(6):
     cts = subset[f'info_code{i}'].value_counts()
     for idx, code in enumerate(cts.index):
         if code == '':
@@ -217,6 +225,7 @@ for i in range(4):
 
 type_df = pd.DataFrame({'type': list(type_ct_dict.keys()), 'ct': list(type_ct_dict.values())})
 type_df.sort_values(by = 'ct', ascending = False)
+
 # creates barplot of most common words (types)
 plt.title("Most Common Words (not ATC)")
 type_df.iloc[:10].plot.barh(x = 'type', y = 'ct')

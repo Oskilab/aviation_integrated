@@ -30,7 +30,8 @@ except:
 Phase 1: Complement missing airport name and code using latitude/longitude
 """
 
-data = pd.read_csv("datasets/NTSB_AIDS_full.txt", sep="|")
+# data = pd.read_csv("datasets/NTSB_AIDS_full.txt", sep="|")
+data = pd.read_csv("datasets/NTSB_AviationData_new.txt", sep = "|")
 ntsb_code = pd.read_csv("datasets/NTSB_airportcode.csv")
 ntsb_name = pd.read_csv("datasets/NTSB_airportname.csv")
 airport_code = pd.read_csv("datasets/airports.csv", usecols=['ident', 'type', 'name', 'latitude_deg', \
@@ -242,13 +243,16 @@ Output columns:
 
 code_cleaned, name_cleaned, code_bool = [], [], []
 
-for i in data.index: 
+for i in tqdm(data.index):
     code = data.loc[i, 'airportcode']
     name = data.loc[i, 'airportname_cleanedletter']
     
     code_ind = code_dict_trusted.get(code)
     name_ind = name_dict_trusted.get(code)
-    if isinstance(name_ind, pd.Series) and len(name_ind) == 1:
+    # if isinstance(name_ind, pd.Series) and len(name_ind) == 1:
+    if isinstance(name_ind, pd.Series):
+        name_ind = name_ind.iloc[0]
+    elif isinstance(name_ind, list):
         name_ind = name_ind[0]
     if not pd.isna(code_ind):
         code_cleaned.append(airport_code.loc[code_ind, 'iata_code'])
@@ -281,7 +285,8 @@ for i in data.index:
             code_cleaned.append(code)
             name_cleaned.append(name)
             code_bool.append('notfound')
-
+    if isinstance(code_cleaned[-1], pd.Series):
+        embed()
 
 data['airportcode_new'] = code_cleaned
 data['airportname_new'] = name_cleaned
@@ -328,4 +333,3 @@ output_df = data_filtered[['airportcode_new', 'airportname_new', 'year', 'month'
         .groupby(by=['airportcode_new', 'airportname_new', 'year', 'month']).sum()
 
 output_df.to_csv("results/NTSB_AIDS_full_output_new.csv")
-embed()

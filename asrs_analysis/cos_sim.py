@@ -3,10 +3,9 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from IPython import embed
 from tqdm import tqdm
 from preprocess_helper import *
+from sklearn.metrics.pairwise import cosine_similarity
 
 all_pds = load_asrs()
-
-from sklearn.metrics.pairwise import cosine_similarity
 
 def num_months_between(month1, year1, month2, year2):
     return (year2 - year1) * 12 + month2 - month1
@@ -18,6 +17,13 @@ def generate_compare(month1, year1, num_months = 1): # accident date
         return n_m > 0 and n_m <= num_months
     return inner_func
 
+"""
+@param: all_pds(pd.DataFrame) should be the full asrs dataset
+@param: d2v_model (gensim.models.doc2vec) model that was trained on full dataset
+@param: replace (bool): if true, the abbreviations were replaced by fullforms
+@param: month_range_dict (dict): month_range (1/3/6/12/inf) -> list of dataframes
+    where each dataframe has the relevant doc2vec comparison info
+"""
 def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}):
     for month_range in [1, 3, 6, 12, np.inf]:
         tracon_month_dict = {}
@@ -70,8 +76,9 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}):
             else:
                 avg_d2v = np.nan
                 num_comp = np.nan
-            index_to_d2v_other[index_id] = pd.Series({f'd2v_cos_sim_other_tracon{"_replace" if replace else ""}': avg_d2v, 
-                f'd2v_num_comp_other_tracon{"_replace" if replace else ""}': num_comp})
+            index_to_d2v_other[index_id] = pd.Series({\
+                    f'd2v_cos_sim_other_tracon{"_replace" if replace else ""}': avg_d2v, \
+                    f'd2v_num_comp_other_tracon{"_replace" if replace else ""}': num_comp})
 
             # all tracons
             searched = tracon_month_dict[code]
@@ -86,14 +93,13 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}):
             else:
                 avg_d2v = np.nan
                 num_comp = np.nan
-            index_to_d2v_all[index_id] = pd.Series({f'd2v_cos_sim_all_tracon{"_replace" if replace else ""}': avg_d2v, 
-                f'd2v_num_comp_all_tracon{"_replace" if replace else ""}': num_comp})
+            index_to_d2v_all[index_id] = pd.Series({\
+                    f'd2v_cos_sim_all_tracon{"_replace" if replace else ""}': avg_d2v, \
+                    f'd2v_num_comp_all_tracon{"_replace" if replace else ""}': num_comp})
         same = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
         other = pd.DataFrame.from_dict(index_to_d2v_other, orient = 'index')
         all_tr = pd.DataFrame.from_dict(index_to_d2v_all, orient = 'index')
         fin = pd.concat([same, other, all_tr], axis = 1)
-                # .to_csv(f'results/d2v_{level[idx]}_{col}_{month_range}mon.csv')
-        # return fin
         month_range_dict[month_range] = month_range_dict.get(month_range, []) + [fin]
 
 

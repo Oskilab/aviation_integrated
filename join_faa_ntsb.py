@@ -46,7 +46,7 @@ faa_df = pd.DataFrame(df_dict)
 faa_df['dataset'] = 'faa'
 
 # combine and save
-fin_df = pd.concat([ntsb, faa_df], axis = 0, sort = False)
+fin_df = pd.concat([ntsb, faa_df], axis = 0, sort = False, ignore_index = True)
 fin_df = fin_df[['airport_code', 'airport_name', 'year', 'month', 'ntsb_accidents',\
         'ntsb_incidents', 'faa_incidents', 'dataset']]
 fin_df.fillna(0, inplace = True)
