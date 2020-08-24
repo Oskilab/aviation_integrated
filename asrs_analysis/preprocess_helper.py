@@ -181,7 +181,9 @@ def generator_split(split_series):
 
 def create_counter(df, col = 'narrative'):
     print('create_counter')
-    split = df.apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
+    tqdm.pandas()
+    # split = df.apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
+    split = df.progress_apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
     res = Counter(generator_split(split))
     res = pd.DataFrame.from_dict(dict(res), orient = 'index')
     return res

@@ -45,7 +45,7 @@ for i in range(1, len(dfs)):
 eng_stopwords = set(stopwords.words('english'))
 d = enchant.Dict("en_US")
 
-for orig_col in ['narrative', 'synopsis', 'combined']:
+for orig_col in ['narrative', 'synopsis', 'callback' , 'combined']:
     # this creates a dataframe of word counts
     total_cts = create_counter(asrs, orig_col)
     total_cts.sort_values(by = 0, ascending = False, inplace = True)
