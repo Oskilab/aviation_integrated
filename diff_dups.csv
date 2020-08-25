@@ -1,3 +1,4 @@
+iata_code,eventdate_conv,eventcity,eventstate,eventairport,lat,lon, Event Date ,Location , Country ,airportname_new,latitude_rounded,longitude_rounded,eventairport_conv,airportname_new_conv
 AGC,06/14/2001,PITTSBURGH,PA,PITTSBURGH INTL,,, 06/14/2001 ,, United States ,Allegheny County Airport,40.4,-79.85,pittsburgh international,allegheny county
 AGC,12/18/2000,PITTSBURGH,PA,PITTSBURGH INTL,,, 12/18/2000 ,, United States ,Allegheny County Airport,40.4,-79.85,pittsburgh international,allegheny county
 PVG,06/03/2000,PLAINFIELD,IL,BOLINGBROOK'S CLOW INTL,,, 06/03/2000 ,, United States ,Shanghai Pudong International Airport,999999.0,-76.45,bolingbrook's clow international,shanghai pudong international

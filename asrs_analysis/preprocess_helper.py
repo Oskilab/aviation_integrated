@@ -15,6 +15,7 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
     dup_cols = ['ACN', 'narrative_report1', 'narrative_report2', 'synopsis_report1'] + \
             ['callback_report1', 'callback_report2', 'Locale Reference']
     asrs_dropped = asrs.drop_duplicates(dup_cols)
+    # asrs_dropped = asrs.drop_duplicates()
     print(coverage(name = 'dropping duplicate asrs', part = asrs_dropped.shape[0], \
             total = asrs.shape[0]))
     asrs = asrs_dropped
@@ -55,7 +56,7 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
             for info_type in ['atc', 'info']:
                 for i in range(6):
                     tracon_code = row[f'{info_type}_code{i}']
-                    if tracon_code not in curr_codes and not pd.isna(tracon_code):
+                    if tracon_code not in curr_codes:
                         copy_row = row.copy()
                         copy_row['tracon_code'] = tracon_code
                         copy_row['ident_type'] = row[f'{info_type}_type{i}']

@@ -42,7 +42,6 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             # same tracon
             searched = tracon_month_dict[code]
             searched = searched.loc[searched['tracon_code'] == row['tracon_code'], :]
-            embed()
 
             if searched.shape[0] > 1:
                 d2v_list = [d2v_model.docvecs[x] for x in list(searched.index)]
@@ -64,7 +63,6 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             # other tracon
             searched = tracon_month_dict[code]
             searched = searched.loc[searched['tracon_code'] != row['tracon_code'], :]
-            embed()
             if searched.shape[0] > 1 and found_d2v is not None:
                 d2v_list = [d2v_model.docvecs[x] for x in list(searched.index)]
                 d2v_sub = np.vstack(d2v_list)
@@ -82,7 +80,6 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
 
             # all tracons
             searched = tracon_month_dict[code]
-            embed()
             if searched.shape[0] > 1 and found_d2v is not None:
                 d2v_list = [d2v_model.docvecs[x] for x in list(searched.index)]
                 d2v_sub = np.vstack(d2v_list)
