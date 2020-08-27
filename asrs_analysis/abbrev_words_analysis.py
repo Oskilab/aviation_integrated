@@ -31,7 +31,7 @@ for x in cities:
 cities = set(cities_words)
 
 aviation_dicts = load_dictionaries() # see preprocess helper
-asrs = load_asrs() # see preprocess helper
+asrs = load_asrs(load_saved = True) # see preprocess helper
 negnw_to_negw = neg_nonword_to_neg_word_set()
 negnw_to_airport = neg_nonword_to_airport_set()
 
@@ -45,7 +45,7 @@ for i in range(1, len(dfs)):
 eng_stopwords = set(stopwords.words('english'))
 d = enchant.Dict("en_US")
 
-for orig_col in ['narrative', 'synopsis', 'callback' , 'combined']:
+for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_synopsis_combined']:
     # this creates a dataframe of word counts
     total_cts = create_counter(asrs, orig_col)
     total_cts.sort_values(by = 0, ascending = False, inplace = True)
