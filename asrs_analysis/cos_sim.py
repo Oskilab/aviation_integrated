@@ -1,11 +1,12 @@
 import pandas as pd, numpy as np, re
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from IPython import embed
+from collections import Counter
 from tqdm import tqdm
 from preprocess_helper import *
 from sklearn.metrics.pairwise import cosine_similarity
 
-all_pds = load_asrs()
+all_pds = load_asrs(load_saved = True)
 
 def num_months_between(month1, year1, month2, year2):
     return (year2 - year1) * 12 + month2 - month1
@@ -16,6 +17,24 @@ def generate_compare(month1, year1, num_months = 1): # accident date
         n_m = num_months_between(month1, year1, month2, year2)
         return n_m > 0 and n_m <= num_months
     return inner_func
+def calculate_avg_comp(list_idx1, list_idx2, d2v_model, overlap = 0, same = False):
+    if len(list_idx1) == 1 and len(list_idx2) == 1 and same:
+        return np.nan, np.nan
+    elif len(list_idx1) > 0 and len(list_idx2) > 0:
+        d2v1 = np.vstack([d2v_model.docvecs[x] for x in list_idx1])
+        d2v2 = np.vstack([d2v_model.docvecs[x] for x in list_idx2])
+
+        cos_res = cosine_similarity(d2v1, d2v2)
+        sum_d2v = np.sum(cos_res) - overlap
+        num_comp = cos_res.shape[0] * cos_res.shape[1] - overlap
+        # just a test
+        assert(cos_res.shape[0] == len(list_idx1) and cos_res.shape[1] == len(list_idx2))
+        avg_d2v = sum_d2v / num_comp
+        if same:
+            num_comp /= 2 # you're comparing to itself so 2way symmetry
+        return avg_d2v, num_comp
+    else:
+        return np.nan, np.nan
 
 """
 @param: all_pds(pd.DataFrame) should be the full asrs dataset
@@ -26,85 +45,82 @@ def generate_compare(month1, year1, num_months = 1): # accident date
 """
 def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col = ""):
     for month_range in [1, 3, 6, 12, np.inf]:
-        tracon_month_dict = {}
-        for idx, date_row in tqdm(all_pds[['month', 'year']].drop_duplicates().iterrows()):
+        tracon_month_dict, tracon_all_dict = {}, {}
+        cos_res_tracon_dict = {}
+        month_year_pd = all_pds[['month', 'year']].drop_duplicates()
+        for idx, date_row in tqdm(month_year_pd.iterrows(), total = month_year_pd.shape[0], desc = \
+                f"{col} dict creation {month_range}mon"):
             code = ' '.join([str(date_row['month']), str(date_row['year'])])
             compare_func = generate_compare(date_row['month'], date_row['year'], num_months = month_range)
             tracon_month_dict[code] = all_pds.loc[all_pds.apply(compare_func, axis = 1), :].copy()
 
-        index_to_d2v, index_to_d2v_other, index_to_d2v_all = {}, {}, {}
-        for idx, row in tqdm(all_pds.iterrows()):
+            all_tracon = list(tracon_month_dict[code].drop_duplicates(col).index)
+            avg_d2v, num_comp = calculate_avg_comp(all_tracon, all_tracon, d2v_model, \
+                    overlap = len(all_tracon), same = True)
+            tracon_all_dict[code] = (avg_d2v, num_comp)
+
+        index_to_d2v  = {}
+        tracon_month_unique = all_pds[['tracon_code', 'month', 'year']].drop_duplicates()
+
+        for idx, row in tqdm(tracon_month_unique.iterrows(), total = tracon_month_unique.shape[0], \
+                desc = f"{col} analysis {month_range}mon"):
+        # for idx, row in tqdm(all_pds.iterrows(), total = all_pds.shape[0], desc = f"{col} analysis " + \
+        #         f"{month_range}mon"):
             index_id = f"{row['tracon_code']} {row['year']}/{row['month']}"
             code = ' '.join([str(row['month']), str(row['year'])])
 
-            found_d2v = None
+            searched = tracon_month_dict[code] # all rows with time period
+            same_tracon = list(searched.loc[searched['tracon_code'] == row['tracon_code'], :]\
+                    .drop_duplicates(f"{col}").index)
+            other_tracon = list(searched.loc[searched['tracon_code'] != row['tracon_code'], :]\
+                    .drop_duplicates(f"{col}").index)
+            all_tracon = list(searched.drop_duplicates(f"{col}").index)
 
-            # same tracon
-            searched = tracon_month_dict[code]
-            searched = searched.loc[searched['tracon_code'] == row['tracon_code'], :]
+            d2v_dict = {}
+            # same to same tracon
+            avg_d2v, num_comp = calculate_avg_comp(same_tracon, same_tracon, d2v_model,\
+                    overlap = len(same_tracon), same = True)
+            d2v_dict[f'd2v_within_tracon{"_replace" if replace else ""}'] = avg_d2v
+            d2v_dict[f'd2v_num_comp_within_tracon{"_replace" if replace else ""}'] = num_comp
 
-            if searched.shape[0] > 1:
-                d2v_list = [d2v_model.docvecs[x] for x in list(searched.index)]
-                d2v_sub = np.vstack(d2v_list)
-                found_d2v = d2v_sub
+            # same to other tracon
+            avg_d2v, num_comp = calculate_avg_comp(same_tracon, other_tracon, d2v_model)
+            d2v_dict[f'd2v_tracon_to_other{"_replace" if replace else ""}'] = avg_d2v
+            d2v_dict[f'd2v_num_comp_tracon_to_other{"_replace" if replace else ""}'] = num_comp
 
-                cos_res = cosine_similarity(d2v_sub, d2v_sub)
-                sum_d2v = np.sum(cos_res) - np.sum(np.diagonal(cos_res))
+            # other to other tracon
+            avg_d2v, num_comp = calculate_avg_comp(other_tracon, other_tracon, d2v_model, \
+                    overlap = len(other_tracon), same = True)
+            d2v_dict[f'd2v_other_to_other{"_replace" if replace else ""}'] = avg_d2v
+            d2v_dict[f'd2v_num_comp_other_to_other{"_replace" if replace else ""}'] = num_comp
 
-                num_comp = cos_res.shape[0] * (cos_res.shape[0] - 1)
-                avg_d2v = sum_d2v / num_comp
-                num_comp /= num_comp
-            else:
-                avg_d2v = np.nan
-                num_comp = np.nan
-            index_to_d2v[index_id] = pd.Series({f'd2v_cos_sim{"_replace" if replace else ""}': avg_d2v,\
-                    f'd2v_num_comp{"_replace" if replace else ""}': num_comp})
+            # same to all tracon
+            avg_d2v, num_comp = calculate_avg_comp(same_tracon, all_tracon, d2v_model, \
+                    overlap = len(same_tracon))
+            d2v_dict[f'd2v_tracon_to_all{"_replace" if replace else ""}'] = avg_d2v
+            d2v_dict[f'd2v_num_comp_tracon_to_all{"_replace" if replace else ""}'] = num_comp
 
-            # other tracon
-            searched = tracon_month_dict[code]
-            searched = searched.loc[searched['tracon_code'] != row['tracon_code'], :]
-            if searched.shape[0] > 1 and found_d2v is not None:
-                d2v_list = [d2v_model.docvecs[x] for x in list(searched.index)]
-                d2v_sub = np.vstack(d2v_list)
+            # all to all tracon
+            # avg_d2v, num_comp = calculate_avg_comp(all_tracon, all_tracon, d2v_model, \
+            #         overlap = len(all_tracon), same = True)
+            d2v_dict[f'd2v_all_to_all{"_replace" if replace else ""}'] = tracon_all_dict[code][0]
+            d2v_dict[f'd2v_num_comp_all_to_all{"_replace" if replace else ""}'] = \
+                    tracon_all_dict[code][1]
 
-                cos_res = cosine_similarity(found_d2v, d2v_sub)
-                sum_d2v = np.sum(cos_res)
-                num_comp = cos_res.shape[0] * cos_res.shape[1]
-                avg_d2v = sum_d2v / num_comp
-            else:
-                avg_d2v = np.nan
-                num_comp = np.nan
-            index_to_d2v_other[index_id] = pd.Series({\
-                    f'd2v_cos_sim_other_tracon{"_replace" if replace else ""}': avg_d2v, \
-                    f'd2v_num_comp_other_tracon{"_replace" if replace else ""}': num_comp})
+            # b/w report1 and report2
+            if col == 'narrative' or col == 'callback': # only those with mult reports
+                this_tracon = searched.loc[searched['tracon_code'] == row['tracon_code'], :].copy()
+                this_tracon.drop_duplicates([f'{col}_report1', f'{col}_report2'], inplace = True)
+                d2v_dict[f'd2v_avg_between_reports{"_replace" if replace else ""}'] = \
+                        this_tracon[f'{col}_multiple_reports_cos_sim{"_replace" if replace else ""}'].mean()
+                d2v_dict[f'd2v_num_between_reports{"_replace" if replace else ""}'] = \
+                        this_tracon[f'{col}_multiple_reports_cos_sim{"_replace" if replace else ""}'].count()
 
-            # all tracons
-            searched = tracon_month_dict[code]
-            if searched.shape[0] > 1 and found_d2v is not None:
-                d2v_list = [d2v_model.docvecs[x] for x in list(searched.index)]
-                d2v_sub = np.vstack(d2v_list)
-
-                cos_res = cosine_similarity(found_d2v, d2v_sub)
-                sum_d2v = np.sum(cos_res) - cos_res.shape[0] # comparisons to itself
-                num_comp = (cos_res.shape[0] * cos_res.shape[1] - cos_res.shape[0])
-                avg_d2v = sum_d2v / num_comp
-            else:
-                avg_d2v = np.nan
-                num_comp = np.nan
-            index_to_d2v_all[index_id] = pd.Series({\
-                    f'd2v_cos_sim_all_tracon{"_replace" if replace else ""}': avg_d2v, \
-                    f'd2v_num_comp_all_tracon{"_replace" if replace else ""}': num_comp})
-        same = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
-        other = pd.DataFrame.from_dict(index_to_d2v_other, orient = 'index')
-        all_tr = pd.DataFrame.from_dict(index_to_d2v_all, orient = 'index')
-        fin = pd.concat([same, other, all_tr], axis = 1)
+            index_to_d2v[index_id] = pd.Series(d2v_dict)
+        fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
         month_range_dict[month_range] = month_range_dict.get(month_range, []) + [fin]
 
-
-dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'iata']
-all_pds = all_pds.reset_index().drop('index', axis = 1)
-for col in ['narrative', 'synopsis', 'combined']:
-
+def load_replace_dictionary(col):
     # TODO: put this in preprocess_helper.py
     total_cts = pd.read_csv(f'results/total_cts_tagged_{col}.csv', index_col = 0)
     total_cts = total_cts.loc[total_cts['abrev'] == 1, :]
@@ -118,13 +134,65 @@ for col in ['narrative', 'synopsis', 'combined']:
                 dict_fullform = str(dict_fullform).lower()
                 replace_dict[row['acronym']] = dict_fullform
                 break
-    # train doc2vec
-    print('training doc2vec models. This can take a while...')
-    month_range_dict = {}
-    for r_d in [replace_dict, {}]:
-        docs = [TaggedDocument(' '.join(x), [idx]) for idx, x in \
-                enumerate(all_pds.apply(lambda x: convert_to_words(x, col, r_d), axis = 1))]
+    return replace_dict
+
+dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'iata']
+all_pds = all_pds.reset_index().drop('index', axis = 1)
+
+# deal with multiple reports
+for mult_col in ['narrative', 'callback']:
+    for r_d in [load_replace_dictionary(mult_col), {}]:
+        replace = len(r_d) > 0
+        cos_col_name = f'{mult_col}_multiple_reports_cos_sim{"_replace" if replace else ""}'
+        all_pds[cos_col_name] = np.nan
+
+        # creating list of tagged documents
+        docs, set_of_docs = [], set()
+        for idx, row in tqdm(all_pds.iterrows(), total = all_pds.shape[0], desc = 'creating' + \
+                f' documents for {mult_col}{" replace" if replace else ""}'):
+            field1 = row[f'{mult_col}_report1']
+            if field1 not in set_of_docs and not pd.isna(field1):
+                dup_idx = all_pds.loc[all_pds[f'{mult_col}_report1'] == field1, :].index
+                doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report1', r_d))
+                docs.append(TaggedDocument(doc_str, [f'{index} 1' for index in dup_idx]))
+                set_of_docs.add(field1)
+
+            field2 = row[f'{mult_col}_report2']
+            if field2 not in set_of_docs and not pd.isna(field2):
+                dup_idx = all_pds.loc[all_pds[f'{mult_col}_report2'] == field2, :].index
+                doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report2', r_d))
+                docs.append(TaggedDocument(doc_str, [f'{index} 2' for index in dup_idx]))
+                set_of_docs.add(field2)
+
         model = Doc2Vec(docs, vector_size = 20, window = 3)
+        only_mult_rep_df = all_pds.loc[all_pds[f'{mult_col}_multiple_reports'], :]
+        for idx, row in only_mult_rep_df.iterrows():
+            vec1, vec2 = model.docvecs[f'{idx} 1'], model.docvecs[f'{idx} 2']
+            cos_sim = cosine_similarity(vec1.reshape(1, 20), vec2.reshape(1, 20))
+            all_pds.loc[idx, cos_col_name] = cos_sim[0, 0]
+
+
+for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
+    month_range_dict = {}
+    for r_d in [load_replace_dictionary(col), {}]:
+        # creating tagged documents
+        docs, set_of_docs = [], set()
+        for idx, row in all_pds.iterrows():
+            if row[col] not in set_of_docs:
+                # preprocess document
+                np_res = convert_to_words(row, col, r_d)
+                doc_str = ' '.join(np_res)
+
+                all_idx = list(all_pds.loc[all_pds[col] == row[col]].index)
+                docs.append(TaggedDocument(doc_str, all_idx))
+
+                # to remove duplicates
+                set_of_docs.add(row[col])
+
+        # train doc2vec
+        print('training doc2vec models. This can take a while...')
+        model = Doc2Vec(docs, vector_size = 20, window = 3)
+
         analyze_d2v(all_pds, model, len(r_d) > 0, month_range_dict, col = col)
 
     for month_range in month_range_dict.keys():

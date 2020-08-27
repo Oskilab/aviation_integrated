@@ -5,32 +5,38 @@ from tqdm import tqdm
 Combines ASRS data with FAA/NTSB, LIWC and Doc2Vec datasets
 """
 
-for col in ['narrative', 'synopsis', 'combined']:
+# for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
+for col in ['narrative']:
     print('col', col)
     # asrs
-    tracon_nar = pd.read_csv('abrev_datasets/tracon_month_{col}.csv', index_col = 0)
+    tracon_nar = pd.read_csv(f'asrs_analysis/results/tracon_month_{col}.csv', index_col = 0)
 
     # ntsb/faa incident dataset + volume
     # airport_month_events = pd.read_csv('airport_month_events.csv', index_col = 0)
     airport_month_events = pd.read_csv('results/combined_vol_incident.csv', index_col = 0)
 
     # liwc counts
-    liwc_df = pd.read_csv('abrev_datasets/liwc_tracon_month_{col}_counts.csv',index_col = 0, header = [1])
+    liwc_df = pd.read_csv(f'asrs_analysis/results/liwc_tracon_month_{col}_counts.csv',index_col = 0, header = [1])
     # liwc_df = liwc_df.reset_index().rename({'index':'tracon_month'}, axis = 1)
 
     def get_tracon(x):
-        return str(x).split()[0]
+        split_x = str(x).split()
+        if len(split_x) > 2:
+            return " ".join(split_x[:-1])
+        else:
+            return split_x[0]
 
     def get_year(x):
-        return int(str(x).split()[1].split("/")[0])
+        return int(str(x).split()[-1].split("/")[0])
 
     def get_month(x):
-        return int(str(x).split()[1].split("/")[1])
+        return int(str(x).split()[-1].split("/")[1])
+
 
     # preprocess liwc_df
     liwc_df['tracon'] = pd.Series(liwc_df.index.map(get_tracon), index = liwc_df.index)
-    liwc_df['month'] = pd.Series(liwc_df.index.map(get_year), index = liwc_df.index)
-    liwc_df['year'] = pd.Series(liwc_df.index.map(get_month), index = liwc_df.index)
+    liwc_df['month'] = pd.Series(liwc_df.index.map(get_month), index = liwc_df.index)
+    liwc_df['year'] = pd.Series(liwc_df.index.map(get_year), index = liwc_df.index)
     liwc_df = liwc_df.reset_index().rename({'index':'tracon_month'}, axis = 1)
 
     # preprocess asrs
@@ -64,10 +70,9 @@ for col in ['narrative', 'synopsis', 'combined']:
 
     num_months = [1, 3, 6, 12, np.inf]
     for n_month in num_months:
-        print('month window', n_month)
         asrs = asrs_orig.copy()
 
-        d2v_tm = pd.read_csv(f'./abrev_datasets/d2v_tracon_month_{col}_{n_month}mon.csv', index_col = 0)
+        d2v_tm = pd.read_csv(f'./asrs_analysis/results/d2v_tracon_month_{col}_{n_month}mon.csv', index_col = 0)
         d2v_tm.index = d2v_tm.index.rename('tracon_month')
         d2v_tm.reset_index(inplace = True) 
 
@@ -78,8 +83,9 @@ for col in ['narrative', 'synopsis', 'combined']:
         # the ASRS dataset within the month range (utilizing n_month)
         # ex.: January 2011, w/ n_month = 1 -> pd.DataFrame of all rows in ASRS in December 2010
         tracon_month_dict = {}
-        print('first')
-        for idx, date_row in tqdm(airport_month_events[['month', 'year']].drop_duplicates().iterrows()):
+        month_year_df = airport_month_events[['month', 'year']].drop_duplicates()
+        for idx, date_row in tqdm(month_year_df.iterrows(), total = month_year_df.shape[0], desc = \
+                f"Creating year/month dictionary {n_month}mon"):
             code = ' '.join([str(date_row['month']), str(date_row['year'])])
             compare_func = generate_compare(date_row['month'], date_row['year'], num_months = n_month)
             tracon_month_dict[code] = asrs.loc[asrs.apply(compare_func, axis = 1), :].copy()
@@ -87,9 +93,9 @@ for col in ['narrative', 'synopsis', 'combined']:
         # combines ASRS with incident/accident dataset (note d2v + liwc have already been merged to
         # ASRS). This utilizes the dictionary created above
         final_rows = []
-        print('second')
         asrs_covered_ind = set()
-        for idx, row in tqdm(airport_month_events.iterrows()):
+        for idx, row in tqdm(airport_month_events.iterrows(), total = airport_month_events.shape[0], desc = \
+                f"Combining ASRS {n_month}mon"):
             code = ' '.join([str(row['month']), str(row['year'])])
             if code in tracon_month_dict:
                 searched = tracon_month_dict[code]
@@ -97,11 +103,13 @@ for col in ['narrative', 'synopsis', 'combined']:
                 asrs_covered_ind.update(searched.index)
 
                 if searched.shape[0] > 0:
-                    cumulative = searched.drop(['tracon_month', 'tracon'], axis = 1).sum()
+                    cumulative = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis = 1).sum()
                     final_rows.append(pd.concat([row, cumulative], axis = 0))
                 else:
-                    final_rows.append(pd.concat([row, pd.Series(index = asrs.columns)], axis = 0))
+                    final_rows.append(pd.concat([row, pd.Series(index = asrs.columns.drop(\
+                            ['tracon_month', 'tracon', 'year', 'month']))], axis = 0))
 
-        print('% covered', len(asrs_covered_ind) / asrs.shape[0])
+        print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
+        print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
         res = pd.DataFrame.from_dict({idx: row for idx, row in enumerate(final_rows)}, orient = 'index')
-        res.to_csv(f'results/final_dataset_{n_month}mon.csv')
+        res.to_csv(f'results/final_dataset_{col}_{n_month}mon.csv')
