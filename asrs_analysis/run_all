@@ -1,16 +1,16 @@
 #!/bin/bash
 echo ================ Analyzing Abbreviations ================
 python abbrev_words_analysis.py
-print "========== Finished Analyzing Abbreviations =============\n\n"
+printf "========== Finished Analyzing Abbreviations =============\n\n"
 
 echo ============= Creating Abbreviations Counts =============
 python top_down.py
-print "============= Finished Abbreviations Counts =============\n\n"
+printf "============= Finished Abbreviations Counts =============\n\n"
 
 echo ==================== Analyzing LIWC ====================
 python liwc_analysis.py
-print "=============== Finished Analyzing LIWC ================\n\n"
+printf "=============== Finished Analyzing LIWC ================\n\n"
 
 echo ================== Analyzing Doc2Vec ==================
 python cos_sim.py
-echo "=============== Finished Analyzing Doc2Vec ============\n\n"
+printf "=============== Finished Analyzing Doc2Vec ============\n\n"
