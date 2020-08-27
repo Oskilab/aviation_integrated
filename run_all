@@ -2,38 +2,38 @@
 cd preprocess_asrs
 echo ================================= ASRS Cleaning ================================
 python clean.py
-print "================================= ASRS Cleaning ================================\n\n"
+printf "================================= ASRS Cleaning ================================\n\n"
 cd ../
 
 cp preprocess_asrs/outputs/*.csv asrs_analysis/datasets
 cd asrs_analysis
 echo ================================= ASRS Analysis ================================
 ./run_all
-print "================================= ASRS Analysis ================================\n\n"
+printf "================================= ASRS Analysis ================================\n\n"
 cd ../
 
 cd aviation_data_huiyi
 echo ================================= NTSB Cleaning ================================
 ./run_all
-print "================================= NTSB Cleaning ================================\n\n"
+printf "================================= NTSB Cleaning ================================\n\n"
 
 
 cd ../faa
 echo ================================= FAA Cleaning =================================
 python clean_data.py
-print "================================= FAA Cleaning =================================\n\n" 
+printf "================================= FAA Cleaning =================================\n\n" 
 
 cd ../
 
 echo ====================== Join FAA/NTSB Data ======================================
 python join_faa_ntsb.py
-print "====================== Join FAA/NTSB Data ======================================\n\n"
+printf "====================== Join FAA/NTSB Data ======================================\n\n"
 
 echo ==================== Combine FAA/NTSB Data with Volume Data ====================
 python flight_vol.py
-print "==================== Combine FAA/NTSB Data with Volume Data ====================\n\n"
+printf "==================== Combine FAA/NTSB Data with Volume Data ====================\n\n"
 
 
 echo ====================== Combine Abrev w/Volume + Incident Data ==================
 python combine.py
-print "====================== Combine Abrev w/Volume + Incident Data ==================\n\n"
+printf "====================== Combine Abrev w/Volume + Incident Data ==================\n\n"
