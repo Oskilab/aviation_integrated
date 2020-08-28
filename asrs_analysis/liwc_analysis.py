@@ -21,7 +21,7 @@ def convert_ctr_to_series(counter, word_dict = {}):
 # create dictionary of name of liwc group -> set of words
 start = 0
 group_to_set = {}
-for idx in np.nonzero(~liwc.loc[3].isna())[0]:
+for idx in (~liwc.loc[3].isna().to_numpy()).nonzero()[0]:
     name = liwc.iloc[1, idx]
     all_words = []
     for series_idx in range(start, idx):

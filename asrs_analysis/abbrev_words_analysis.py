@@ -31,7 +31,7 @@ for x in cities:
 cities = set(cities_words)
 
 aviation_dicts = load_dictionaries() # see preprocess helper
-asrs = load_asrs(load_saved = True) # see preprocess helper
+asrs = load_asrs(load_saved = False) # see preprocess helper
 negnw_to_negw = neg_nonword_to_neg_word_set()
 negnw_to_airport = neg_nonword_to_airport_set()
 
