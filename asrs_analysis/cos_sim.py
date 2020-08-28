@@ -131,9 +131,9 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                 #         overlap = len(all_tracon), same = True)
                 avg_d2v, num_comp = calculate_avg_comp2(all_tracon, all_tracon, cos_res, \
                         overlap = len(all_tracon), same = True)
-                d2v_dict[f'd2v_all_to_all{"_replace" if replace else ""}'] = tracon_all_dict[code][0]
+                d2v_dict[f'd2v_all_to_all{"_replace" if replace else ""}'] = avg_d2v
                 d2v_dict[f'd2v_num_comp_all_to_all{"_replace" if replace else ""}'] = \
-                        tracon_all_dict[code][1]
+                        num_comp
 
                 # # b/w report1 and report2
                 if col == 'narrative' or col == 'callback': # only those with mult reports
@@ -168,37 +168,42 @@ dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'iata']
 all_pds = all_pds.reset_index().drop('index', axis = 1)
 
 # deal with multiple reports
-# for mult_col in ['narrative', 'callback']:
-#     for r_d in [load_replace_dictionary(mult_col), {}]:
-#         replace = len(r_d) > 0
-#         cos_col_name = f'{mult_col}_multiple_reports_cos_sim{"_replace" if replace else ""}'
-#         all_pds[cos_col_name] = np.nan
-#
-#         # creating list of tagged documents
-#         docs, set_of_docs = [], set()
-#         for idx, row in tqdm(all_pds.iterrows(), total = all_pds.shape[0], desc = 'creating' + \
-#                 f' documents for {mult_col}{" replace" if replace else ""}'):
-#             field1 = row[f'{mult_col}_report1']
-#             if field1 not in set_of_docs and not pd.isna(field1):
-#                 dup_idx = all_pds.loc[all_pds[f'{mult_col}_report1'] == field1, :].index
-#                 doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report1', r_d))
-#                 docs.append(TaggedDocument(doc_str, [f'{index} 1' for index in dup_idx]))
-#                 set_of_docs.add(field1)
-#
-#             field2 = row[f'{mult_col}_report2']
-#             if field2 not in set_of_docs and not pd.isna(field2):
-#                 dup_idx = all_pds.loc[all_pds[f'{mult_col}_report2'] == field2, :].index
-#                 doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report2', r_d))
-#                 docs.append(TaggedDocument(doc_str, [f'{index} 2' for index in dup_idx]))
-#                 set_of_docs.add(field2)
-#
-#         model = Doc2Vec(docs, vector_size = 20, window = 3)
-#         only_mult_rep_df = all_pds.loc[all_pds[f'{mult_col}_multiple_reports'], :]
-#         for idx, row in only_mult_rep_df.iterrows():
-#             vec1, vec2 = model.docvecs[f'{idx} 1'], model.docvecs[f'{idx} 2']
-#             cos_sim = cosine_similarity(vec1.reshape(1, 20), vec2.reshape(1, 20))
-#             all_pds.loc[idx, cos_col_name] = cos_sim[0, 0]
-#
+for mult_col in ['narrative', 'callback']:
+    for r_d in [load_replace_dictionary(mult_col), {}]:
+        replace = len(r_d) > 0
+        cos_col_name = f'{mult_col}_multiple_reports_cos_sim{"_replace" if replace else ""}'
+        all_pds[cos_col_name] = np.nan
+
+        # creating list of tagged documents
+        docs, set_of_docs = [], set()
+        for idx, row in tqdm(all_pds.iterrows(), total = all_pds.shape[0], desc = 'creating' + \
+                f' documents for {mult_col}{" replace" if replace else ""}'):
+            field1 = row[f'{mult_col}_report1']
+            if field1 not in set_of_docs and not pd.isna(field1):
+                dup_idx = list(all_pds.loc[all_pds[f'{mult_col}_report1'] == field1, :].index)
+                dup_idx += list(all_pds.loc[all_pds[f'{mult_col}_report2'] == field1, :].index)
+                doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report1', r_d))
+                docs.append(TaggedDocument(doc_str, [f'{index} 1' for index in dup_idx]))
+                set_of_docs.add(field1)
+
+            field2 = row[f'{mult_col}_report2']
+            if field2 not in set_of_docs and not pd.isna(field2):
+                dup_idx = list(all_pds.loc[all_pds[f'{mult_col}_report2'] == field2, :].index)
+                dup_idx += list(all_pds.loc[all_pds[f'{mult_col}_report1'] == field2, :].index)
+                doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report2', r_d))
+                docs.append(TaggedDocument(doc_str, [f'{index} 2' for index in dup_idx]))
+                set_of_docs.add(field2)
+
+        model = Doc2Vec(docs, vector_size = 20, window = 3)
+        only_mult_rep_df = all_pds.loc[all_pds[f'{mult_col}_multiple_reports'], :]
+        for idx, row in only_mult_rep_df.iterrows():
+            if row[f'{mult_col}_report1'] == row[f'{mult_col}_report2']:
+                vec1, vec2 = model.docvecs[f'{idx} 1'], model.docvecs[f'{idx} 1']
+            else:
+                vec1, vec2 = model.docvecs[f'{idx} 1'], model.docvecs[f'{idx} 2']
+            cos_sim = cosine_similarity(vec1.reshape(1, 20), vec2.reshape(1, 20))
+            all_pds.loc[idx, cos_col_name] = cos_sim[0, 0]
+
 
 for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
     month_range_dict = {}

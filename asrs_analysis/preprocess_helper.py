@@ -42,8 +42,8 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
         asrs[type_report] = report1 + " " + report2
 
     def generate_date_cols(asrs):
-        asrs['year'] = asrs['Date'].apply(lambda x: int(x // 100))
-        asrs['month'] = asrs['Date'].apply(lambda x: int(x % 100))
+        asrs['year'] = asrs['Date'].apply(lambda x: int(x // 100) if not pd.isna(x) else np.nan)
+        asrs['month'] = asrs['Date'].apply(lambda x: int(x % 100) if not pd.isna(x) else np.nan)
         return asrs.loc[asrs['year'] != 20, :].copy()
 
     def tracon_analysis(asrs):
@@ -115,8 +115,8 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
     asrs['combined'] = asrs['combined'].str.lower()
 
     # TODO: remove this, only doing this so it doesn't destroy my laptop
-    np.random.seed(42)
-    asrs = asrs.loc[np.random.choice(asrs.index, 10000), :].copy()
+    # np.random.seed(42)
+    # asrs = asrs.loc[np.random.choice(asrs.index, 10000), :].copy()
 
     total = asrs.shape[0]
     asrs = tracon_analysis(asrs)
