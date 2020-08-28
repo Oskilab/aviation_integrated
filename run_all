@@ -12,17 +12,28 @@ echo ================================= ASRS Analysis ===========================
 printf "================================= ASRS Analysis ================================\n\n"
 cd ../
 
-cd aviation_data_huiyi
+cd faa_ntsb_analysis
+
+
+# cd aviation_data_huiyi
+# echo ================================= NTSB Cleaning ================================
+# ./run_all
+# printf "================================= NTSB Cleaning ================================\n\n"
+#
+#
+# cd ../faa
+# echo ================================= FAA Cleaning =================================
+# python clean_data.py
+# printf "================================= FAA Cleaning =================================\n\n" 
+
+cd faa_ntsb_analysis
 echo ================================= NTSB Cleaning ================================
-./run_all
+python find_faa_code.py
 printf "================================= NTSB Cleaning ================================\n\n"
 
-
-cd ../faa
 echo ================================= FAA Cleaning =================================
-python clean_data.py
+python find_ntsb_code.py
 printf "================================= FAA Cleaning =================================\n\n" 
-
 cd ../
 
 echo ====================== Join FAA/NTSB Data ======================================

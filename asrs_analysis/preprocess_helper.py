@@ -122,6 +122,9 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
     asrs = tracon_analysis(asrs)
     print(coverage(name = 'after tracon analysis', part = asrs.shape[0], total = total))
     asrs = generate_date_cols(asrs)
+    total = asrs.shape[0]
+    asrs = asrs.loc[asrs['year'] >= 1988 & asrs['year'] < 2020]
+    print(coverage(asrs.shape[0], total))
     asrs.to_csv('results/asrs_extracted_processed.csv')
     return asrs
 
