@@ -50,6 +50,8 @@ if page_google:
                 res = pd.concat(all_res, axis = 0)
                 lat_lon_records.append(res)
                 tqdm_obj.set_description(f"found {len(lat_lon_records)}")
+
+                # for good measure
                 if (len(lat_lon_records) % 50) == 0:
                     pd.DataFrame.from_records(lat_lon_records).to_csv('results/lat_lon_records.csv')
                     pickle.dump(errors, open('results/idx_errors.pckl', 'wb'))
