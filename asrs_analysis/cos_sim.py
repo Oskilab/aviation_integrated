@@ -180,18 +180,22 @@ for mult_col in ['narrative', 'callback']:
                 f' documents for {mult_col}{" replace" if replace else ""}'):
             field1 = row[f'{mult_col}_report1']
             if field1 not in set_of_docs and not pd.isna(field1):
-                dup_idx = list(all_pds.loc[all_pds[f'{mult_col}_report1'] == field1, :].index)
-                dup_idx += list(all_pds.loc[all_pds[f'{mult_col}_report2'] == field1, :].index)
+                dup_idx = [f'{index} 1' for index in \
+                        all_pds.loc[all_pds[f'{mult_col}_report1'] == field1, :].index]
+                dup_idx += [f'{index} 2' for index in \
+                        all_pds.loc[all_pds[f'{mult_col}_report2'] == field1, :].index]
                 doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report1', r_d))
-                docs.append(TaggedDocument(doc_str, [f'{index} 1' for index in dup_idx]))
+                docs.append(TaggedDocument(doc_str, dup_idx))
                 set_of_docs.add(field1)
 
             field2 = row[f'{mult_col}_report2']
             if field2 not in set_of_docs and not pd.isna(field2):
-                dup_idx = list(all_pds.loc[all_pds[f'{mult_col}_report2'] == field2, :].index)
-                dup_idx += list(all_pds.loc[all_pds[f'{mult_col}_report1'] == field2, :].index)
+                dup_idx = [f'{index} 2' for index in \
+                        all_pds.loc[all_pds[f'{mult_col}_report2'] == field2, :].index]
+                dup_idx += [f'{index} 1' for index in \
+                        all_pds.loc[all_pds[f'{mult_col}_report1'] == field2, :].index]
                 doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report2', r_d))
-                docs.append(TaggedDocument(doc_str, [f'{index} 2' for index in dup_idx]))
+                docs.append(TaggedDocument(doc_str, dup_idx))
                 set_of_docs.add(field2)
 
         model = Doc2Vec(docs, vector_size = 20, window = 3)
