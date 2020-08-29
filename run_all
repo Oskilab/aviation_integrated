@@ -1,4 +1,30 @@
 #!/bin/bash
+
+cd faa_ntsb_analysis
+echo ================================= NTSB Cleaning ================================
+python find_faa_code.py
+printf "================================= NTSB Cleaning ================================\n\n"
+
+echo ================================= FAA Cleaning =================================
+python find_ntsb_code.py
+printf "================================= FAA Cleaning =================================\n\n" 
+cd ../
+
+# cd aviation_data_huiyi
+# echo ================================= NTSB Cleaning ================================
+# ./run_all
+# printf "================================= NTSB Cleaning ================================\n\n"
+#
+#
+# cd ../faa
+# echo ================================= FAA Cleaning =================================
+# python clean_data.py
+# printf "================================= FAA Cleaning =================================\n\n" 
+
+echo ====================== Join FAA/NTSB Data ======================================
+python join_faa_ntsb.py
+printf "====================== Join FAA/NTSB Data ======================================\n\n"
+
 cd preprocess_asrs
 echo ================================= ASRS Cleaning ================================
 python clean.py
@@ -12,33 +38,6 @@ echo ================================= ASRS Analysis ===========================
 printf "================================= ASRS Analysis ================================\n\n"
 cd ../
 
-cd faa_ntsb_analysis
-
-
-# cd aviation_data_huiyi
-# echo ================================= NTSB Cleaning ================================
-# ./run_all
-# printf "================================= NTSB Cleaning ================================\n\n"
-#
-#
-# cd ../faa
-# echo ================================= FAA Cleaning =================================
-# python clean_data.py
-# printf "================================= FAA Cleaning =================================\n\n" 
-
-cd faa_ntsb_analysis
-echo ================================= NTSB Cleaning ================================
-python find_faa_code.py
-printf "================================= NTSB Cleaning ================================\n\n"
-
-echo ================================= FAA Cleaning =================================
-python find_ntsb_code.py
-printf "================================= FAA Cleaning =================================\n\n" 
-cd ../
-
-echo ====================== Join FAA/NTSB Data ======================================
-python join_faa_ntsb.py
-printf "====================== Join FAA/NTSB Data ======================================\n\n"
 
 echo ==================== Combine FAA/NTSB Data with Volume Data ====================
 python flight_vol.py

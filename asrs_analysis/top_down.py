@@ -1,10 +1,10 @@
-import pandas as pd, numpy as np, re, multiprocessing as mp, gc
-import argparse
 from IPython import embed
 from tqdm import tqdm
 from collections import Counter
 from preprocess_helper import *
-import copy
+
+import pandas as pd, numpy as np, re
+import argparse, pickle, copy
 """
 This converts a collections.Counter object to a pd.Series object. The collections.Counter
 counts how many times each word showed up within a tracon_month, and the abrev_set is a
@@ -39,6 +39,7 @@ mult_rep_cols = ['narrative', 'callback']
 # this groups by tracon_code, year and month, so each row is a unique tracon_month
 sel = ['tracon_code', 'year', 'month']
 tmp = all_pds[sel].groupby(sel).count().reset_index()
+
 
 for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
     index_to_counter = {} # dictionary from tracon_month -> collections.Counter obj
