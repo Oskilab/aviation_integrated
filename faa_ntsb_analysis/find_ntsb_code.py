@@ -23,6 +23,9 @@ for col in strip_cols:
 invalid_codes = ['n/a', 'none', 'na']
 for inv_code in invalid_codes:
     full[' Airport Code '] = full[' Airport Code '].str.replace(inv_code, "")
+
+nonna_code_sel = ~(full[' Airport Code '].isna())
+full.loc[nonna_code_sel, ' Airport Code '] = full.loc[nonna_code_sel, ' Airport Code '].str.upper()
 full[' Airport Name '] = full[' Airport Name '].str.replace("N/A", "")
 full['year'] = full[' Event Date '].str.split("/").apply(lambda x: x[2]).apply(int)
 full['month'] = full[' Event Date '].str.split("/").apply(lambda x: x[0]).apply(int)

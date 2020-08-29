@@ -5,7 +5,7 @@
 Combines faa/ntsb incident data by processing them into the same shape and concatenating 
 them together
 """
-import pandas as pd
+import pandas as pd, pickle, numpy as np
 from tqdm import tqdm as tqdm
 from IPython import embed
 
@@ -15,11 +15,14 @@ ntsb = pd.read_csv('faa_ntsb_analysis/results/NTSB_AIDS_full_processed.csv')
 ntsb['dataset'] = 'ntsb'
 ntsb.rename({' Airport Code ': 'airport_code','ntsb_ Incident ': 'ntsb_incidents',\
         'ntsb_ Accident ': 'ntsb_accidents'}, axis = 1, inplace = True)
+non_na_sel = ~ntsb['airport_code'].isna()
+ntsb.loc[non_na_sel, 'airport_code'] = ntsb.loc[non_na_sel, 'airport_code'].str.upper()
 
 faa_df = pd.read_csv('faa_ntsb_analysis/results/FAA_AIDS_full_processed.csv')
 faa_df.rename({'tracon_code': 'airport_code'}, axis = 1, inplace = True)
 faa_df['dataset'] = 'faa'
 
+# old code
 # ntsb.rename({'airportcode_new': 'airport_code', 'airportname_new': 'airport_name', \
 #         ' Investigation Type _ Accident ': 'ntsb_accidents', \
 #         ' Investigation Type _ Incident ': 'ntsb_incidents'},
@@ -50,12 +53,21 @@ faa_df['dataset'] = 'faa'
 #             df_dict['faa_incidents'].append(row[col])
 #
 # faa_df = pd.DataFrame(df_dict)
+ntsb.loc[ntsb['airport_code'].isna(), 'airport_code'] = 'nan'
+faa_df.loc[faa_df['airport_code'].isna(), 'airport_code'] = 'nan'
+
+index_cols = ['airport_code', 'year', 'month']
+ntsb.set_index(index_cols, inplace = True)
+faa_df.set_index(index_cols, inplace = True)
+
 
 # combine and save
-fin_df = pd.concat([ntsb, faa_df], axis = 0, sort = False, ignore_index = True)
-fin_df = fin_df[['airport_code', 'year', 'month', 'ntsb_accidents',\
-        'ntsb_incidents', 'faa_incidents', 'dataset']]
-fin_df['ntsb_accidents'].fillna(0, inplace = True)
-fin_df['ntsb_incidents'].fillna(0, inplace = True)
-fin_df['faa_incidents'].fillna(0, inplace = True)
+fin_df = pd.concat([ntsb, faa_df], axis = 0, sort = False).groupby(level = list(range(3))).sum()
+fin_df.reset_index(inplace = True)
+fin_df.loc[fin_df['airport_code'] == 'nan', 'airport_code'] = np.nan
+
+assert(fin_df.drop_duplicates(index_cols).shape[0] == fin_df.shape[0])
+
+# save results
 fin_df.to_csv('results/airport_month_events.csv')
+pickle.dump(fin_df['airport_code'].unique(), open('results/unique_airport_code_ntsb_faa.pckl', 'wb'))

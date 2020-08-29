@@ -1,11 +1,13 @@
-import pandas as pd, numpy as np, re
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from IPython import embed
 from collections import Counter
 from tqdm import tqdm
 from preprocess_helper import *
 from sklearn.metrics.pairwise import cosine_similarity
+from itertools import product
+import pandas as pd, numpy as np, re, pickle
 
+num_time_periods = (2020 - 1988) * 12
 all_pds = load_asrs(load_saved = True)
 
 def num_months_between(month1, year1, month2, year2):
@@ -37,7 +39,7 @@ def calculate_avg_comp(list_idx1, list_idx2, d2v_model, overlap = 0, same = Fals
         return np.nan, np.nan
 def calculate_avg_comp2(list_idx1, list_idx2, cos_res, overlap = 0, same = False):
     num_comp = len(list_idx1) * len(list_idx2) - overlap
-    if num_comp == 0:
+    if num_comp <= 0:
         return np.nan, np.nan
     else:
         list_idx1, list_idx2 = np.array(list_idx1), np.array(list_idx2)
@@ -59,25 +61,52 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
     for month_range in [1, 3, 6, 12, np.inf]:
         tracon_month_dict, tracon_all_dict = {}, {}
         cos_res_tracon_dict = {}
-        month_year_pd = all_pds[['month', 'year']].drop_duplicates()
-        for idx, date_row in tqdm(month_year_pd.iterrows(), total = month_year_pd.shape[0], desc = \
-                f"{col} dict creation {month_range}mon"):
-            code = ' '.join([str(date_row['month']), str(date_row['year'])])
-            compare_func = generate_compare(date_row['month'], date_row['year'], num_months = month_range)
+        total_dict = {}
+        for month, year in tqdm(product(range(1, 13), range(1988, 2020)), total = num_time_periods, \
+                desc = f"{col} dict creation {month_range}mon"):
+            code = ' '.join([str(month), str(year)])
+            compare_func = generate_compare(month, year, num_months = month_range)
             tracon_month_dict[code] = all_pds.loc[all_pds.apply(compare_func, axis = 1), :].copy()
 
             all_tracon = list(tracon_month_dict[code].drop_duplicates(col).index)
-            # avg_d2v, num_comp = calculate_avg_comp(all_tracon, all_tracon, d2v_model, \
-            #         overlap = len(all_tracon), same = True)
-            # tracon_all_dict[code] = (avg_d2v, num_comp)
 
             if len(all_tracon) >= 1:
                 d2v1 = np.vstack([d2v_model.docvecs[x] for x in all_tracon])
                 cos_res = cosine_similarity(d2v1, d2v1)
                 cos_res_tracon_dict[code] = cos_res
 
+                all_idx = list(range(len(all_tracon)))
+                avg_d2v, num_comp = calculate_avg_comp2(all_idx, all_idx, cos_res, \
+                        overlap = len(all_tracon), same = True)
+                res = pd.Series({
+                    f'd2v_other_to_other{"_replace" if replace else ""}': avg_d2v,
+                    f'd2v_num_comp_other_to_other{"_replace" if replace else ""}': num_comp,
+                    f'd2v_all_to_all{"_replace" if replace else ""}': avg_d2v,
+                    f'd2v_num_comp_all_to_all{"_replace" if replace else ""}': num_comp
+                })
+            else:
+                res = pd.Series({
+                    f'd2v_other_to_other{"_replace" if replace else ""}': np.nan,
+                    f'd2v_num_comp_other_to_other{"_replace" if replace else ""}': np.nan,
+                    f'd2v_all_to_all{"_replace" if replace else ""}': np.nan,
+                    f'd2v_num_comp_all_to_all{"_replace" if replace else ""}': np.nan
+                })
+            total_dict[month, year] = res
+
+
         index_to_d2v  = {}
         tracon_month_unique = all_pds[['tracon_code', 'month', 'year']].drop_duplicates()
+
+        all_combs = set(all_pds[['tracon_code', 'year', 'month']].apply(lambda x: (x[0], x[1], x[2]), axis = 1))
+        unique_ntsb_faa_codes = pickle.load(open('../results/unique_airport_code_ntsb_faa.pckl' ,'rb'))
+
+        total = unique_ntsb_faa_codes.shape[0] * num_time_periods
+        for code_mon_yr in tqdm(product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)), \
+                total = total, desc = "d2v on missing tracon_month"):
+            if code_mon_yr not in all_combs:
+                code, month, year = code_mon_yr
+                index_to_d2v[code] = total_dict[month, year]
+
 
         for idx, row in tqdm(tracon_month_unique.iterrows(), total = tracon_month_unique.shape[0], \
                 desc = f"{col} analysis {month_range}mon"):
@@ -97,38 +126,29 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                 d2v_dict = {}
 
                 # same to same tracon
-                # avg_d2v, num_comp = calculate_avg_comp(same_tracon, same_tracon, d2v_model,\
-                #         overlap = len(same_tracon), same = True)
                 avg_d2v, num_comp = calculate_avg_comp2(same_tracon, same_tracon, cos_res, \
                         overlap = len(same_tracon), same = True)
                 d2v_dict[f'd2v_within_tracon{"_replace" if replace else ""}'] = avg_d2v
                 d2v_dict[f'd2v_num_comp_within_tracon{"_replace" if replace else ""}'] = num_comp
 
                 # same to other tracon
-                # avg_d2v, num_comp = calculate_avg_comp(same_tracon, other_tracon, d2v_model)
                 avg_d2v, num_comp = calculate_avg_comp2(same_tracon, other_tracon, cos_res)
                 d2v_dict[f'd2v_tracon_to_other{"_replace" if replace else ""}'] = avg_d2v
                 d2v_dict[f'd2v_num_comp_tracon_to_other{"_replace" if replace else ""}'] = num_comp
 
                 # other to other tracon
-                # avg_d2v, num_comp = calculate_avg_comp(other_tracon, other_tracon, d2v_model, \
-                #         overlap = len(other_tracon), same = True)
                 avg_d2v, num_comp = calculate_avg_comp2(other_tracon, other_tracon, cos_res, \
                         overlap = len(other_tracon), same = True)
                 d2v_dict[f'd2v_other_to_other{"_replace" if replace else ""}'] = avg_d2v
                 d2v_dict[f'd2v_num_comp_other_to_other{"_replace" if replace else ""}'] = num_comp
 
                 # same to all tracon
-                # avg_d2v, num_comp = calculate_avg_comp(same_tracon, all_tracon, d2v_model, \
-                #         overlap = len(same_tracon))
                 avg_d2v, num_comp = calculate_avg_comp2(same_tracon, all_tracon, cos_res, \
                         overlap = len(same_tracon))
                 d2v_dict[f'd2v_tracon_to_all{"_replace" if replace else ""}'] = avg_d2v
                 d2v_dict[f'd2v_num_comp_tracon_to_all{"_replace" if replace else ""}'] = num_comp
 
                 # all to all tracon
-                # avg_d2v, num_comp = calculate_avg_comp(all_tracon, all_tracon, d2v_model, \
-                #         overlap = len(all_tracon), same = True)
                 avg_d2v, num_comp = calculate_avg_comp2(all_tracon, all_tracon, cos_res, \
                         overlap = len(all_tracon), same = True)
                 d2v_dict[f'd2v_all_to_all{"_replace" if replace else ""}'] = avg_d2v
@@ -167,7 +187,7 @@ def load_replace_dictionary(col):
 dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'iata']
 all_pds = all_pds.reset_index().drop('index', axis = 1)
 
-# deal with multiple reports
+# # deal with multiple reports
 for mult_col in ['narrative', 'callback']:
     for r_d in [load_replace_dictionary(mult_col), {}]:
         replace = len(r_d) > 0
@@ -178,6 +198,7 @@ for mult_col in ['narrative', 'callback']:
         docs, set_of_docs = [], set()
         for idx, row in tqdm(all_pds.iterrows(), total = all_pds.shape[0], desc = 'creating' + \
                 f' documents for {mult_col}{" replace" if replace else ""}'):
+            # note duplicated code, TODO: fix
             field1 = row[f'{mult_col}_report1']
             if field1 not in set_of_docs and not pd.isna(field1):
                 dup_idx = [f'{index} 1' for index in \

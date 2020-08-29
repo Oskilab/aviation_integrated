@@ -12,12 +12,10 @@ for col in ['narrative']:
     tracon_nar = pd.read_csv(f'asrs_analysis/results/tracon_month_{col}.csv', index_col = 0)
 
     # ntsb/faa incident dataset + volume
-    # airport_month_events = pd.read_csv('airport_month_events.csv', index_col = 0)
     airport_month_events = pd.read_csv('results/combined_vol_incident.csv', index_col = 0)
 
     # liwc counts
     liwc_df = pd.read_csv(f'asrs_analysis/results/liwc_tracon_month_{col}_counts.csv',index_col = 0, header = [1])
-    # liwc_df = liwc_df.reset_index().rename({'index':'tracon_month'}, axis = 1)
 
     def get_tracon(x):
         split_x = str(x).split()
@@ -77,7 +75,7 @@ for col in ['narrative']:
         d2v_tm.reset_index(inplace = True) 
 
         # combine with doc2vec 
-        asrs = asrs.merge(d2v_tm, on = 'tracon_month')
+        asrs = asrs.merge(d2v_tm, on = 'tracon_month', how = 'outer')
 
         # this creates a dictionary from year/month -> pd.DataFrame of all the rows in 
         # the ASRS dataset within the month range (utilizing n_month)
