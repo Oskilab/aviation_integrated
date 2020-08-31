@@ -3,7 +3,7 @@ from IPython import embed
 from collections import Counter, namedtuple
 from tqdm import tqdm
 
-coverage = namedtuple('coverage', ['name', 'part', 'total'])
+coverage = namedtuple('coverage', ['part', 'total'])
 
 def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False):
     if load_saved:
@@ -16,7 +16,7 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
             ['callback_report1', 'callback_report2', 'Locale Reference']
     asrs_dropped = asrs.drop_duplicates(dup_cols)
     # asrs_dropped = asrs.drop_duplicates()
-    print(coverage(name = 'dropping duplicate asrs', part = asrs_dropped.shape[0], \
+    print(coverage(part = asrs_dropped.shape[0], \
             total = asrs.shape[0]))
     asrs = asrs_dropped
 
@@ -120,10 +120,10 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
 
     total = asrs.shape[0]
     asrs = tracon_analysis(asrs)
-    print(coverage(name = 'after tracon analysis', part = asrs.shape[0], total = total))
+    print(coverage(part = asrs.shape[0], total = total))
     asrs = generate_date_cols(asrs)
     total = asrs.shape[0]
-    asrs = asrs.loc[asrs['year'] >= 1988 & asrs['year'] < 2020]
+    asrs = asrs.loc[(asrs['year'] >= 1988) & (asrs['year'] < 2020)]
     print(coverage(asrs.shape[0], total))
     asrs.to_csv('results/asrs_extracted_processed.csv')
     return asrs

@@ -63,10 +63,10 @@ def get_state(x):
     else:
         state_str = x_split[1].strip()
         return us_state_abbrev.get(state_str, state_str)
-vol_tracons = set(pickle.load(open('../results/vol_data.pckl', 'rb')))
-num_na = (full[' Airport Code '] == '').sum()
-print('vol match', coverage(full[' Airport Code '].apply(lambda x: x in vol_tracons).sum(), \
-        full.shape[0]), f'na codes {num_na}')
+# vol_tracons = set(pickle.load(open('../results/vol_data.pckl', 'rb')))
+# num_na = (full[' Airport Code '] == '').sum()
+# print('vol match', coverage(full[' Airport Code '].apply(lambda x: x in vol_tracons).sum(), \
+#         full.shape[0]), f'na codes {num_na}')
 
 
 all_full_states = set(us_state_abbrev.values())
