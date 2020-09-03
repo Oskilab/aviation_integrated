@@ -17,13 +17,13 @@ the number of unique words within the set that showed up).
 @return: pd.Series with a ct of the number of times any word within the set showed up,
     and a unique_ct (the number of unique words within the set that showed up)
 """
-def convert_ctr_to_series(counter, abrev_set = set()):
+def convert_ctr_to_series(counter, abrev_set = set(), abrev_col = 'narr'):
     ct, unique_ct = 0, 0
     for word, num in counter.items():
         if word in abrev_set:
             ct += num
             unique_ct += 1
-    return pd.Series({'ct': ct, 'unique_ct': unique_ct})
+    return pd.Series({f'{abrev_col}': ct, f'unq_{abrev_col}': unique_ct})
 
 # see preprocess_helper
 all_pds = load_asrs(load_saved = True)
@@ -40,8 +40,11 @@ mult_rep_cols = ['narrative', 'callback']
 sel = ['tracon_code', 'year', 'month']
 tmp = all_pds[sel].groupby(sel).count().reset_index()
 
+abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
+        'narrative_synopsis_combined': 'narrsyn', 'combined:' 'all'}
 
 for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
+    abrev_col = abrev_col_dict[col]
     index_to_counter = {} # dictionary from tracon_month -> collections.Counter obj
     index_to_other_info = {}
 
@@ -105,19 +108,19 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
     key_ctr = list(index_to_counter.items())
 
     # count the number of times pos_nonword shows up in each tracon_month
-    pos_nonword_df = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, pos_nonword_abrevs) \
+    pos_nonword_df = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, pos_nonword_abrevs, abrev_col) \
             for key, ctr in key_ctr}, orient = 'index')
-    pos_nonword_df = pos_nonword_df.add_prefix("pos_nonword_")
+    pos_nonword_df = pos_nonword_df.add_prefix(f"pos_nwrd_")
 
     # count the number of times an abrev shows up in each tracon_month
-    all_df = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, all_abrevs) \
+    all_df = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, all_abrevs, abrev_col) \
             for key, ctr in key_ctr}, orient = 'index')
-    all_df = all_df.add_prefix("all_abrevs_no_overcount_")
+    all_df = all_df.add_prefix("abrvs_no_ovrcnt_")
 
     all_dfs = [pos_nonword_df, all_df, other_info]
     # count the number of times words in each dictionary shows up in each tracon_month
     for dict_idx, dict_name in enumerate(aviation_dicts.keys()):
-        cts = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, df_sets[dict_idx])\
+        cts = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, df_sets[dict_idx], abrev_col)\
                 for key, ctr in key_ctr}, orient = 'index')
         cts = cts.add_prefix(f"{dict_name}_")
         cts.to_csv(f'results/tracon_month_{col}_{dict_name}.csv')

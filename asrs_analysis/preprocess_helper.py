@@ -26,6 +26,7 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
     type_reports = ['narrative', 'callback', 'synopsis']
     # creating fields for multiple reports
     for type_report in type_reports:
+        # whether or not the row has multiple reports (t/f)
         asrs[f'{type_report}_multiple_reports'] = asrs.apply(lambda row: \
                 (not pd.isna(row[f'{type_report}_report1'])) and
                 (not pd.isna(row[f'{type_report}_report2'])), axis = 1
