@@ -50,6 +50,8 @@ def calculate_avg_comp2(list_idx1, list_idx2, cos_res, overlap = 0, same = False
         return avg_d2v, num_comp
         
 
+abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
+        'narrative_synopsis_combined': 'narrsyn', 'combined:' 'all'}
 """
 @param: all_pds(pd.DataFrame) should be the full asrs dataset
 @param: d2v_model (gensim.models.doc2vec) model that was trained on full dataset
@@ -58,7 +60,12 @@ def calculate_avg_comp2(list_idx1, list_idx2, cos_res, overlap = 0, same = False
     where each dataframe has the relevant doc2vec comparison info
 """
 def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col = ""):
+    abrev_col = abrev_col_dict[col]
     for month_range in [1, 3, 6, 12, np.inf]:
+        mr_str = str(month_range)
+        if month_range == np.inf:
+            mr_str = 'a'
+        mr_str += 'm'
         tracon_month_dict, tracon_all_dict = {}, {}
         cos_res_tracon_dict = {}
         total_dict = {}
@@ -79,17 +86,17 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                 avg_d2v, num_comp = calculate_avg_comp2(all_idx, all_idx, cos_res, \
                         overlap = len(all_tracon), same = True)
                 res = pd.Series({
-                    f'd2v_other_to_other{"_replace" if replace else ""}': avg_d2v,
-                    f'd2v_num_comp_other_to_other{"_replace" if replace else ""}': num_comp,
-                    f'd2v_all_to_all{"_replace" if replace else ""}': avg_d2v,
-                    f'd2v_num_comp_all_to_all{"_replace" if replace else ""}': num_comp
+                    f'trcn_out{"_flfrm" if replace else ""}_{abrev_col}_{mr_str}': avg_d2v,
+                    f'trcn_out{"_flfrm" if replace else ""}_ct_{abrev_col}_{mr_str}': num_comp,
+                    f'trcn_all{"_flfrm" if replace else ""}_{abrev_col}_{mr_str}': avg_d2v,
+                    f'trcn_all{"_flfrm" if replace else ""}_ct_{abrev_col}_{mr_str}': num_comp
                 })
             else:
                 res = pd.Series({
-                    f'd2v_other_to_other{"_replace" if replace else ""}': np.nan,
-                    f'd2v_num_comp_other_to_other{"_replace" if replace else ""}': np.nan,
-                    f'd2v_all_to_all{"_replace" if replace else ""}': np.nan,
-                    f'd2v_num_comp_all_to_all{"_replace" if replace else ""}': np.nan
+                    f'trcn_out{"_flfrm" if replace else ""}_{abrev_col}_{mr_str}': np.nan,
+                    f'trcn_out{"_flfrm" if replace else ""}_ct_{abrev_col}_{mr_str}': np.nan,
+                    f'trcn_all{"_flfrm" if replace else ""}_{abrev_col}_{mr_str}': np.nan,
+                    f'trcn_all{"_flfrm" if replace else ""}_ct_{abrev_col}_{mr_str}': np.nan
                 })
             total_dict[month, year] = res
 
@@ -128,41 +135,41 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                 # same to same tracon
                 avg_d2v, num_comp = calculate_avg_comp2(same_tracon, same_tracon, cos_res, \
                         overlap = len(same_tracon), same = True)
-                d2v_dict[f'd2v_within_tracon{"_replace" if replace else ""}'] = avg_d2v
-                d2v_dict[f'd2v_num_comp_within_tracon{"_replace" if replace else ""}'] = num_comp
+                d2v_dict[f'trcn{"_flrfrm" if replace else ""}_{abrev_col}_{mr_str}'] = avg_d2v
+                d2v_dict[f'trcn{"_flrfrm" if replace else ""}_ct_{abrev_col}_{mr_str}'] = num_comp
 
                 # same to other tracon
                 avg_d2v, num_comp = calculate_avg_comp2(same_tracon, other_tracon, cos_res)
-                d2v_dict[f'd2v_tracon_to_other{"_replace" if replace else ""}'] = avg_d2v
-                d2v_dict[f'd2v_num_comp_tracon_to_other{"_replace" if replace else ""}'] = num_comp
+                d2v_dict[f'trcn_invout{"_flfrm" if replace else ""}_{abrev_col}_{mr_str}'] = avg_d2v
+                d2v_dict[f'trcn_invout{"_flfrm" if replace else ""}_ct_{abrev_col}_{mr_str}'] = num_comp
 
                 # other to other tracon
                 avg_d2v, num_comp = calculate_avg_comp2(other_tracon, other_tracon, cos_res, \
                         overlap = len(other_tracon), same = True)
-                d2v_dict[f'd2v_other_to_other{"_replace" if replace else ""}'] = avg_d2v
-                d2v_dict[f'd2v_num_comp_other_to_other{"_replace" if replace else ""}'] = num_comp
+                d2v_dict[f'trcn_out{"_flfrm" if replace else ""}_{abrev_col}_{mr_str}'] = avg_d2v
+                d2v_dict[f'trcn_out{"_flfrm" if replace else ""}_ct_{abrev_col}_{mr_str}'] = num_comp
 
                 # same to all tracon
                 avg_d2v, num_comp = calculate_avg_comp2(same_tracon, all_tracon, cos_res, \
                         overlap = len(same_tracon))
-                d2v_dict[f'd2v_tracon_to_all{"_replace" if replace else ""}'] = avg_d2v
-                d2v_dict[f'd2v_num_comp_tracon_to_all{"_replace" if replace else ""}'] = num_comp
+                d2v_dict[f'trcn_invout{"_flfrm" if replace else ""}_{abrev_col}_{mr_str}'] = avg_d2v
+                d2v_dict[f'trcn_invout{"_flfrm" if replace else ""}_ct_{abrev_col}_{mr_str}'] = num_comp
 
                 # all to all tracon
                 avg_d2v, num_comp = calculate_avg_comp2(all_tracon, all_tracon, cos_res, \
                         overlap = len(all_tracon), same = True)
-                d2v_dict[f'd2v_all_to_all{"_replace" if replace else ""}'] = avg_d2v
-                d2v_dict[f'd2v_num_comp_all_to_all{"_replace" if replace else ""}'] = \
+                d2v_dict[f'trcn_all{"_flfrm" if replace else ""}_{abrev_col}_{mr_str}'] = avg_d2v
+                d2v_dict[f'trcn_all{"_flfrm" if replace else ""}_ct_{abrev_col}_{mr_str}'] = \
                         num_comp
 
                 # # b/w report1 and report2
                 if col == 'narrative' or col == 'callback': # only those with mult reports
                     this_tracon = searched.loc[searched['tracon_code'] == row['tracon_code'], :].copy()
                     this_tracon.drop_duplicates([f'{col}_report1', f'{col}_report2'], inplace = True)
-                    d2v_dict[f'd2v_avg_between_reports{"_replace" if replace else ""}'] = \
-                            this_tracon[f'{col}_multiple_reports_cos_sim{"_replace" if replace else ""}'].mean()
-                    d2v_dict[f'd2v_num_between_reports{"_replace" if replace else ""}'] = \
-                            this_tracon[f'{col}_multiple_reports_cos_sim{"_replace" if replace else ""}'].count()
+                    d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
+                            this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean()
+                    d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
+                            this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count()
 
                 index_to_d2v[index_id] = pd.Series(d2v_dict)
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
@@ -191,7 +198,7 @@ all_pds = all_pds.reset_index().drop('index', axis = 1)
 for mult_col in ['narrative', 'callback']:
     for r_d in [load_replace_dictionary(mult_col), {}]:
         replace = len(r_d) > 0
-        cos_col_name = f'{mult_col}_multiple_reports_cos_sim{"_replace" if replace else ""}'
+        cos_col_name = f'{mult_col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'
         all_pds[cos_col_name] = np.nan
 
         # creating list of tagged documents

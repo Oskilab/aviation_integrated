@@ -66,7 +66,7 @@ def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict):
     for liwc_group in group_to_set.keys():
         all_df[liwc_group]  = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, \
                 group_to_set[liwc_group]) for key, ctr in key_ctr}, orient = 'index',\
-                columns = [f"LIWC_{liwc_group}_noreplace_abrevs_count"])
+                columns = [f"liwc_{liwc_group}_ct"])
     fin_df = pd.concat(all_df, axis = 1)
 
     # with replace
@@ -74,7 +74,7 @@ def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict):
     for liwc_group in group_to_set.keys():
         all_df[liwc_group]  = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, \
                 group_to_set[liwc_group]) for key, ctr in key_ctr_replace}, orient = 'index',\
-                columns = [f"LIWC_{liwc_group}_replace_abrevs_count"])
+                columns = [f"LIWC_{liwc_group}_flfrm_abrevs_ct"])
     fin_df_replace = pd.concat(all_df, axis = 1)
     fin = pd.concat([fin_df, fin_df_replace], axis = 1)
     fin.to_csv(f'results/liwc_tracon_month_{col}_counts.csv')
