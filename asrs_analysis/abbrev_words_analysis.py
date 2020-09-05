@@ -49,6 +49,8 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     # this creates a dataframe of word counts
     total_cts = create_counter(asrs, orig_col)
     total_cts.sort_values(by = 0, ascending = False, inplace = True)
+    print(f'total number of words: {orig_col}', total_cts[0].sum())
+    print(f'total number of unique words: {orig_col}', total_cts.shape[0])
 
     # Negatives (or words that are not found in any abbreviation dictionary)
     fn = total_cts.loc[total_cts.index.map(lambda x: x not in all_abrevs), :].copy()
@@ -65,12 +67,31 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     sel = fn.index.map(lambda x: x not in eng_stopwords and not d.check(x) and x not in cities)
     fn.loc[sel, 'abrev'] = 1
     fn.loc[sel, 'tag'] = 'neg_nonword'
+
     neg_nonword_sel = sel.copy()
+
+    neg_total, neg_unq_total = fn.loc[sel, 0].sum(), fn[sel].shape[0]
+    print(f'total number of neg_nonword: {orig_col}', neg_total)
+    print(f'total number of unique neg_nonword: {orig_col}', neg_unq_total)
+
+    # add back handcoded neg_nonwords to neg_words
+    neg_word_sel = np.logical_and(sel, fn.index.map(lambda x: x in negnw_to_negw))
+    fn.loc[neg_word_sel, 'abrev'] = 0
+    fn.loc[neg_word_sel, 'tag'] = 'neg_word_hand2'
+    neg_total = neg_total - fn.loc[neg_word_sel, 0].sum()
+    neg_unq_total = neg_unq_total - fn.loc[neg_word_sel].shape[0]
+    print(f'neg_nonword lost from hand2: {orig_col}', neg_total)
+    print(f'neg_nonword lost from hand2 unique: {orig_col}', neg_unq_total)
 
     # convert some neg_nonword to airport tag
     neg_airport_sel = np.logical_and(sel, fn.index.map(lambda x: x in negnw_to_airport))
     fn.loc[neg_airport_sel, 'abrev'] = 0
     fn.loc[neg_airport_sel, 'tag'] = 'neg_airport'
+
+    neg_total = neg_total - fn.loc[neg_airport_sel, 0].sum()
+    neg_unq_total = neg_unq_total - fn.loc[neg_airport_sel].shape[0]
+    print(f'neg_nonword lost from airport: {orig_col}', neg_total)
+    print(f'neg_nonword lost from airport unique: {orig_col}', neg_unq_total)
 
     sel = np.array(sel) & fn.index.str.contains('[^A-Za-z]', na = True)
     fn.loc[sel, 'abrev'] = 0
@@ -84,7 +105,6 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     neg_word_sel = np.logical_and(neg_nonword_sel, fn.index.map(lambda x: x in negnw_to_negw))
     fn.loc[neg_word_sel, 'abrev'] = 0
     fn.loc[neg_word_sel, 'tag'] = 'neg_word_hand'
-    embed()
 
     # summary of fn
     fn_sub = fn.loc[(fn['tag'] == 'neg_nonword') | (fn['tag'] == 'neg_word_hand') | \
@@ -141,11 +161,11 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
         if abrev in eng_stopwords:
             num_stop += 1
             ct_stop += num
-    print(f"Of the {idx + 1} most common abbreviations, {num_words} are English words, " \
-            + f"{num_stop} are English stopwords")
-    print(f"Stopwords account for {ct_stop * 100 / sum_cts:.2f} of all abbreviations")
-    print(f"1000 abbreviations account for {tmp[999]:.4f} of all abbreviations\n")
-
+    # print(f"Of the {idx + 1} most common abbreviations, {num_words} are English words, " \
+    #         + f"{num_stop} are English stopwords")
+    # print(f"Stopwords account for {ct_stop * 100 / sum_cts:.2f} of all abbreviations")
+    # print(f"1000 abbreviations account for {tmp[999]:.4f} of all abbreviations\n")
+    #
     # Stopwords dataframe
     sel = pos_sel & total_cts.index.map(lambda x: x in eng_stopwords)
     total_cts.loc[sel, 'tag'] = 'pos_stopword'
@@ -179,6 +199,11 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     total_cts.loc[sel, 'tag'] = 'pos_iata_only_words'
     total_cts.loc[sel, 'abrev'] = 0
     total_cts = total_cts.reset_index().rename({'index': 'acronym'}, axis = 1)
+
+    top_down_sel = (total_cts['tag'] == 'pos_handcoded_abrev') | (total_cts['tag'] == 'pos_nonword')
+
+    print(f'total number of top down words: {orig_col}', total_cts.loc[top_down_sel, 0].sum())
+    print(f'total number of unique top down words: {orig_col}', total_cts.loc[top_down_sel].shape[0])
     total_cts.to_csv(f'results/total_cts_tagged_{orig_col}.csv')
 
 
@@ -188,6 +213,11 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
         subset = total_cts.loc[~total_cts[f'{dictionary}_fullform'].isna(), :]
         dictionary_summary[dictionary] = pd.Series({'ct': np.sum(subset[0]), \
                 'unique_ct': subset.shape[0]})
+
+        if dictionary == 'hand' or dictionary == 'hand2':
+            print(f'total number of {dictionary} words: {orig_col}', subset.sum())
+            print(f'total number of unique {dictionary} words: {orig_col}', subset.shape[0])
+
     dictionary_names.remove('iata')
 
     sel = None

@@ -6,6 +6,7 @@ from IPython import embed
 from common_funcs import load_full_wiki, match_using_name_loc, search_wiki_airportname
 import pandas as pd, numpy as np, re, ssl, pickle
 import urllib.request as request
+from selenium_funcs import check_code, get_closest_data, search_city
 coverage = namedtuple('coverage', ['part', 'total'])
 query_wiki, perform_name_matching = False, True
 
@@ -21,8 +22,39 @@ def load_faa_data():
     new.rename(rename_dict, axis = 1, inplace = True)
     return pd.concat([full, new], axis = 0, ignore_index = True, sort = False)
 
+def get_month(date):
+    months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP',
+                     'OCT', 'NOV', 'DEC']
+    split_date = date.split("-")
+    if len(split_date) != 3:
+        return np.nan
+    month_str = split_date[1]
+    if month_str not in months:
+        return np.nan
+    else:
+        return months.index(month_str) + 1
+def get_year(date):
+    split_date = date.split("-")
+    if len(split_date) != 3:
+        return np.nan
+    year_str = split_date[2]
+    try:
+        year = int(year_str)
+        if year >= 78 and year < 100:
+            return year + 1900
+        else:
+            return year + 2000
+    except ValueError:
+        return np.nan
 # load datasets
 full = load_faa_data()
+print('total original number of rows', full.shape[0])
+
+# filter on date
+full['month'] = full['localeventdate'].apply(get_month)
+full['year'] = full['localeventdate'].apply(get_year)
+full = full.loc[(full['year'] >= 1988) & (full['year'] < 2020)].copy()
+print('number of rows, filtered by date', full.shape[0])
 
 # load us state abbreviations
 us_state_abbrev = pd.read_csv('datasets/us_state_abbrev.csv', index_col = 0)
@@ -70,6 +102,46 @@ full['event_fullstate'] = full['eventstate'].apply(lambda x: us_state_abbrev.get
 full['eventcity'] = full['eventcity'].str.lower()
 full['eventairport_conv'] = full['eventairport'].apply(process_faa_name)
 
+nan_airport_name_sel = full['eventairport_conv'] == 'nan'
+print('number of non_empty airport names', full.loc[~nan_airport_name_sel].shape[0])
+
+worldcities = pd.read_csv('datasets/worldcities.csv')
+set_of_worldcities = set(worldcities['city'].str.lower())
+
+full['city_lat'] = np.nan
+full['city_lon'] = np.nan
+for city in tqdm(full.loc[nan_airport_name_sel, 'eventcity'].unique()):
+    if city in set_of_worldcities:
+        row_worldcities = worldcities[worldcities['city'].str.lower() == city].iloc[0]
+        full.loc[full['eventcity'] == city, 'city_lat'] = row_worldcities['lat']
+        full.loc[full['eventcity'] == city, 'city_lon'] = row_worldcities['lng']
+
+
+def apply_func(row):
+    return search_city(row['eventcity'], 'United States', row['city_lat'], row['city_lon'])
+    # if res is not None:
+    #     results_dict[idx] = res
+    # return res
+
+
+geo_cols = ['eventcity', 'city_lat', 'city_lon']
+city_lat_lon = full.loc[nan_airport_name_sel, geo_cols].drop_duplicates()
+
+tqdm.pandas()
+res = city_lat_lon.progress_apply(apply_func, axis = 1)
+
+# tqdm_obj = tqdm(city_lat_lon.iterrows(), total = city_lat_lon.shape[0], desc = "found 0")
+# results_dict = {}
+# for idx, row in tqdm_obj:
+#     res = search_city(row['eventcity'], 'United States', row['city_lat'], row['city_lon'])
+#     if res is not None:
+#         results_dict[idx] = res
+#         tqdm_obj.set_description(f"found {len(results_dict)}")
+
+embed()
+1/0
+
+
 if perform_name_matching:
     # load wikipedia airport name
     us_wiki_tables = load_full_wiki(us_only = True) # see common_funcs.py
@@ -89,9 +161,12 @@ not_matched = full.loc[not_matched_sel, ['eventairport_conv', 'eventcity']]\
 if query_wiki:
     wiki_search = "https://en.wikipedia.org/w/index.php?search="
     wiki_search_found = {}
-    tqdm_obj = tqdm(not_matched['eventairport_conv'], desc = "found 0")
-    for airportname in tqdm_obj:
-        res = search_wiki_airportname(airportname)
+
+    name_state = not_matched[['eventairport_conv', 'event_fullstate']].drop_duplicates()
+    tqdm_obj = tqdm(name_state.iterrows(), desc = "found 0", total = name_state.shape[0])
+    for idx, row in tqdm_obj:
+        airportname, fullstate = row['eventairport_conv'], row['event_fullstate']
+        res = search_wiki_airportname(airportname, fullstate)
         if res is not None:
             wiki_search_found[airportname] = res
             tqdm_obj.set_description(f"found {len(wiki_search_found)}")
@@ -103,14 +178,13 @@ else:
 
 wiki_search_found_set = set(wiki_search_found_df.index)
 
-nf_sel = not_matched['eventairport_conv'].apply(lambda x: x not in wiki_search_found_set)
-not_matched.loc[nf_sel, :].to_csv('not_matched.csv', index = False)
-
-
 # all the names we've matched to codes
 total_matched_names = all_matched_names.union(wiki_search_found_set)
 print(coverage(full.loc[full['eventairport_conv'].apply(lambda x: x in total_matched_names), :].shape[0],
         full.shape[0]))
+
+nf_sel = not_matched['eventairport_conv'].apply(lambda x: x not in total_matched_names)
+not_matched.loc[nf_sel, :].to_csv('not_matched.csv', index = False)
 
 name_to_iata = {}
 for idx, row in full_matched_pd.iterrows():
@@ -133,34 +207,50 @@ for idx, row in tqdm(handcoded.iterrows(),total = handcoded.shape[0]):
                  (full['eventcity'] == row['eventcity']) & \
                  (full['eventstate'] == row['eventstate']), 'tracon_code'] = row['tracon_code']
 
-def get_month(date):
-    months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP',
-                     'OCT', 'NOV', 'DEC']
-    split_date = date.split("-")
-    if len(split_date) != 3:
-        return np.nan
-    month_str = split_date[1]
-    if month_str not in months:
-        return np.nan
-    else:
-        return months.index(month_str) + 1
-def get_year(date):
-    split_date = date.split("-")
-    if len(split_date) != 3:
-        return np.nan
-    year_str = split_date[2]
-    try:
-        year = int(year_str)
-        if year >= 78 and year < 100:
-            return year + 1900
-        else:
-            return year + 2000
-    except ValueError:
-        return np.nan
+print('non empty tracon code rows', full.loc[~full['tracon_code'].isna()].shape[0])
+
+# match with wiki
+wiki_tables = load_full_wiki(us_only = False)
+matched_set = set()
+
+code_and_loc_pd =  full.loc[~full['tracon_code'].isna(), ['tracon_code']].drop_duplicates()
+for idx, row in code_and_loc_pd.iterrows():
+    selected = wiki_tables.loc[wiki_tables['wiki_IATA'] == row['tracon_code']]
+    if selected.shape[0] > 0:
+        matched_set.add(row['tracon_code'])
+
+tmp = full.loc[full['eventairport_conv'] != 'nan', :].copy()
+ct = 0
+for code in matched_set:
+    sel = tmp['tracon_code'] == code
+    ct += tmp.loc[sel].shape[0]
+print('wiki matched', ct)
+
+for idx, row in tqdm(code_and_loc_pd.iterrows(), total = code_and_loc_pd.shape[0]):
+    if row['tracon_code'] not in matched_set:
+        if check_code(row['tracon_code']):
+            matched_set.add(row['tracon_code'])
+ct = 0
+for code in matched_set:
+    sel = tmp['tracon_code'] == code
+    ct += tmp.loc[sel].shape[0]
+print('wiki + airnav matched', ct)
+
+# ct = 0
+# tqdm_obj = tqdm(code_and_loc_pd.iterrows(), desc = 'found 0', total = code_and_loc_pd.shape[0])
+# for idx, row in tqdm_obj:
+#     tuple_geo = (row['eventcity'], row['event_fullstate'], row['tracon_code'])
+#     if tuple_geo not in matched_set:
+#         if check_code(row['tracon_code'], row['eventcity'], row['event_fullstate']):
+#             ct += 1
+#             tqdm_obj.set_description(f"found {ct}")
+#             matched_set.add(tuple_geo)
+#             if len(matched_set) % 25 == 0:
+#                 pickle.dump(matched_set, open('results/faa_matched_set.pckl', 'wb'))
+
+embed()
 
 
-full['month'] = full['localeventdate'].apply(get_month)
-full['year'] = full['localeventdate'].apply(get_year)
 # hack around groupby ignoring nan values
 full['tracon_code'] = full['tracon_code'].fillna('nan') 
 
