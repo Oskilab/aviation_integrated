@@ -65,16 +65,12 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     sel = fn.index.map(lambda x: x not in eng_stopwords and not d.check(x) and x not in cities)
     fn.loc[sel, 'abrev'] = 1
     fn.loc[sel, 'tag'] = 'neg_nonword'
-
-    # add back handcoded neg_nonwords to neg_words
-    neg_word_sel = np.logical_and(sel, fn.index.map(lambda x: x in negnw_to_negw))
-    fn.loc[neg_word_sel, 'abrev'] = 0
-    fn.loc[neg_word_sel, 'tag'] = 'neg_word_hand'
+    neg_nonword_sel = sel.copy()
 
     # convert some neg_nonword to airport tag
     neg_airport_sel = np.logical_and(sel, fn.index.map(lambda x: x in negnw_to_airport))
-    fn.loc[neg_word_sel, 'abrev'] = 0
-    fn.loc[neg_word_sel, 'tag'] = 'neg_airport'
+    fn.loc[neg_airport_sel, 'abrev'] = 0
+    fn.loc[neg_airport_sel, 'tag'] = 'neg_airport'
 
     sel = np.array(sel) & fn.index.str.contains('[^A-Za-z]', na = True)
     fn.loc[sel, 'abrev'] = 0
@@ -84,6 +80,13 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     fn.loc[sel, 'abrev'] = 0
     fn.loc[sel, 'tag'] = 'neg_nonword_city_exception'
 
+    # add back handcoded neg_nonwords to neg_words
+    neg_word_sel = np.logical_and(neg_nonword_sel, fn.index.map(lambda x: x in negnw_to_negw))
+    fn.loc[neg_word_sel, 'abrev'] = 0
+    fn.loc[neg_word_sel, 'tag'] = 'neg_word_hand'
+    embed()
+
+    # summary of fn
     fn_sub = fn.loc[(fn['tag'] == 'neg_nonword') | (fn['tag'] == 'neg_word_hand') | \
             (fn['tag'] == 'neg_airport')]
     cts = fn_sub[[0, 'tag']].groupby('tag').sum().rename({0: 'ct'}, axis = 1)

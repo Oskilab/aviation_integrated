@@ -164,11 +164,11 @@ full['year'] = full['localeventdate'].apply(get_year)
 # hack around groupby ignoring nan values
 full['tracon_code'] = full['tracon_code'].fillna('nan') 
 
-vol_tracons = set(pickle.load(open('../results/vol_data.pckl', 'rb')))
-num_na = (full['tracon_code'] == 'nan').sum()
-print('vol match', coverage(full['tracon_code'].apply(lambda x: x in vol_tracons).sum(), \
-        full.shape[0]), f'na codes {num_na}')
-embed()
+# vol_tracons = set(pickle.load(open('../results/vol_data.pckl', 'rb')))
+# num_na = (full['tracon_code'] == 'nan').sum()
+# print('vol match', coverage(full['tracon_code'].apply(lambda x: x in vol_tracons).sum(), \
+#         full.shape[0]), f'na codes {num_na}')
+# embed()
 
 cols = ['tracon_code', 'month', 'year', 'eventtype']
 full = full[cols].groupby(cols[:-1]).count().rename({cols[-1]: 'faa_incidents'}, axis = 1).reset_index()

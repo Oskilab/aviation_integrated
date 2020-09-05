@@ -6,6 +6,40 @@ from IPython import embed
 import pandas as pd, urllib.request as request
 import numpy as np
 coverage = namedtuple('coverage', ['part', 'total'])
+us_state_abbrev = pd.read_csv('datasets/us_state_abbrev.csv', index_col = 0)
+us_state_abbrev = us_state_abbrev.to_dict()['full']
+
+def get_city(x):
+    x_split = x.split(",")
+    if len(x_split) != 2 and len(x_split) != 3:
+        return np.nan
+    else:
+        return x_split[0].lower().strip()
+
+def get_state(x, full = True):
+    x_split = x.split(",")
+    if len(x_split) == 3:
+        second_elem = x_split[1].strip()
+        if full:
+            return us_state_abbrev.get(second_elem, second_elem)
+        return second_elem
+    elif len(x_split) == 2:
+        return us_state_abbrev.get(x_split[-1].strip(), np.nan)
+    else:
+        return np.nan # if 2, only city, country
+
+def get_country(x):
+    x_split = x.split(",")
+    if len(x_split) >= 2:
+        last_elem = x_split[-1].strip()
+        if last_elem in us_state_abbrev:
+            return "United States"
+        else:
+            if last_elem == "USA":
+                return "United States"
+            return last_elem
+    else:
+        return np.nan
 
 def load_full_wiki(us_only = True):
     def load_wiki_table(wiki_link):
@@ -41,27 +75,14 @@ def load_full_wiki(us_only = True):
         # only select US
         contains_us_sel = us_wiki_table['Location served'].str.contains("United States")
         us_wiki_table = us_wiki_table.loc[contains_us_sel, :].copy()
-    def get_city(x):
-        x_split = x.split(",")
-        if len(x_split) != 2 and len(x_split) != 3:
-            return np.nan
-        else:
-            return x_split[0].lower().strip()
-    def get_state(x):
-        x_split = x.split(",")
-        if len(x_split) != 2 and len(x_split) != 3:
-            return np.nan
-        else:
-            return x_split[1].strip()
+
 
 
     # city/state processing
     us_wiki_table['city'] = us_wiki_table['Location served'].apply(get_city)
     us_wiki_table['fullstate'] = us_wiki_table['Location served'].apply(get_state)
-    # us_wiki_table['city'] = \
-    #         us_wiki_table['Location served'].apply(lambda x: x.split(",")[0].lower().strip())
-    # us_wiki_table['fullstate'] = \
-    #         us_wiki_table['Location served'].apply(lambda x: x.split(",")[1].strip())
+    us_wiki_table['country'] = us_wiki_table['Location served'].apply(get_country)
+
     us_wiki_table.to_csv('results/us_wiki_tables.csv')
     us_wiki_table = us_wiki_table.add_prefix("wiki_")
     return us_wiki_table
@@ -132,42 +153,63 @@ def match_using_name_loc(incident_df, wiki_table, col = 'eventairport_conv'):
         
     return pd.concat(full_matched_pd, axis = 1).T
 
-def extract_iata(wiki_link):
+def num_words_matched(left_name, right_name):
+    left_name = left_name.lower()
+    right_name_set = set(right_name.lower().split())
+    return sum([1 for word in set(left_name.split()) if word in right_name_set and \
+            word != 'airport'])
+
+def extract_iata(wiki_link, fullstate):
     fp = request.urlopen(wiki_link)
     mybytes = fp.read()
     mystr = mybytes.decode("utf8")
+
+    all_state_names = {state_name:mystr.count(state_name) for state_name \
+            in us_state_abbrev.values() if state_name in mystr}
+    if pd.isna(fullstate):
+        fullstate_count = 0
+    else:
+        fullstate_count = mystr.count(fullstate)
     find_str = 'title="IATA airport code">IATA</a>: <span class="nickname">'
     
     title_idx = mystr.index("<title>")
     title = mystr[title_idx + len("<title>"):]
     title = title[:title.index("<")]
 
-    if find_str in mystr:
+    if find_str in mystr and (fullstate_count > 0 or pd.isna(fullstate)):
         idx_of_iata = mystr.index(find_str)
         sel_str = mystr[idx_of_iata + len(find_str):]
         idx_of_lt = sel_str.index("<")
         iata = sel_str[:idx_of_lt]
-        return mystr, title, iata
-    return mystr, title, None
+        return mystr, title, iata, all_state_names
+    return mystr, title, None, all_state_names
 
-def search_wiki_airportname(airportname):
+def search_wiki_airportname(airportname, fullstate):
     wiki_search = "https://en.wikipedia.org/w/index.php?search="
-    mystr, title, iata = extract_iata(wiki_search + quote(airportname + " airport"))
+    mystr, title, iata, all_state_names = extract_iata(wiki_search + quote(airportname + " airport"), \
+            fullstate)
     if iata is not None:
-        return pd.Series({'iata': iata, 'wiki_title': title})
+        return pd.Series({'iata': iata, 'wiki_title': title, 'state_names': all_state_names, \
+                'num_words_matched': num_words_matched(airportname, title), \
+                'max_state': fullstate == max(all_state_names, key = lambda key: all_state_names[key],\
+                    default = np.nan)})
     else:
         # if the name does not redirect to a wikipedia page, then it will give a page
         # full of results, which we parse here. We only look at the first result
         bs4 = BeautifulSoup(mystr, 'html.parser')
         all_res = bs4.find_all('div', {'class': 'mw-search-result-heading'})
-        if len(all_res) > 0:
-            a_tag = all_res[0].a
+        for res in all_res[:5]:
+            a_tag = res.a
             try:
                 href = a_tag['href']
                 if 'Airport' in href or 'airport' in href:
                     wiki_str = 'https://en.wikipedia.org' + a_tag['href']
-                    mystr, title, iata = extract_iata(wiki_str)
+                    mystr, title, iata, all_state_names = extract_iata(wiki_str, fullstate)
                     if iata is not None:
-                        return pd.Series({'iata': iata, 'wiki_title': title})
+                        return pd.Series({'iata': iata, 'wiki_title': title, 'state_names': \
+                                all_state_names, 'num_words_matched': num_words_matched(airportname, title),\
+                                'max_state': fullstate == max(all_state_names, \
+                                    key = lambda key: all_state_names[key], default = np.nan) \
+                                })
             except KeyError:
                 pass

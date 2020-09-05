@@ -1,13 +1,14 @@
 #!/bin/bash
 
 cd faa_ntsb_analysis
-echo ================================= NTSB Cleaning ================================
-python find_faa_code.py
-printf "================================= NTSB Cleaning ================================\n\n"
 
 echo ================================= FAA Cleaning =================================
 python find_ntsb_code.py
 printf "================================= FAA Cleaning =================================\n\n" 
+
+echo ================================= NTSB Cleaning ================================
+python find_faa_code.py
+printf "================================= NTSB Cleaning ================================\n\n"
 cd ../
 
 # cd aviation_data_huiyi
