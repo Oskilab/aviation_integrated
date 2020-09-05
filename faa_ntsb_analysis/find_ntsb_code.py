@@ -37,9 +37,9 @@ full[' Airport Name '] = full[' Airport Name '].str.replace("N/A", "")
 # dates
 full['year'] = full[' Event Date '].str.split("/").apply(lambda x: x[2]).apply(int)
 full['month'] = full[' Event Date '].str.split("/").apply(lambda x: x[0]).apply(int)
+print('full dataset size', full.shape[0])
 full = full.loc[(full['year'] >= 1988) & (full['year'] < 2020), :]
 full = full.reset_index().drop('index', axis = 1)
-print('full dataset size', full.shape[0])
 print('already airport code', full.loc[full[' Airport Code '] != ''].shape[0])
 print('already airport name', full.loc[full[' Airport Name '] != ''].shape[0])
 print('already airport code or name', full.loc[(full[' Airport Name '] != '') | \
@@ -190,12 +190,13 @@ or airnav)
 wiki_tables = load_full_wiki(us_only = False)
 matched_set = set()
 not_matched_set = set()
+
 if True:
     matched_set = pickle.load(open('results/ntsb_matched_set.pckl', 'rb'))
     not_matched_set = pickle.load(open('results/ntsb_not_matched_set.pckl', 'rb'))
 
 code_and_loc_pd =  full.loc[full[' Airport Code '] != '', [' Airport Code ']].drop_duplicates()
-tqdm_obj = tqdm(code_and_loc_pd.iterrows(), desc = 'found 0', total = code_and_loc_pd.shape[0])
+tqdm_obj = tqdm(code_and_loc_pd.iterrows(), desc = f'found {len(matched_set)}', total = code_and_loc_pd.shape[0])
 for idx, row in tqdm_obj:
     if row[' Airport Code '] in matched_set or row[' Airport Code '] not in matched_set:
         continue
@@ -219,9 +220,12 @@ for code in matched_set:
     ct += tmp.loc[tmp[' Airport Code '] == code].shape[0]
 print('wiki matched', ct)
 
-
+# searching via selenium
 tqdm_obj = tqdm(code_and_loc_pd.iterrows(), total = code_and_loc_pd.shape[0], desc = f'found {len(matched_set)}')
 for idx, row in tqdm_obj:
+    # manually skipping
+    if idx < 26627:
+        continue
     if row[' Airport Code '] in not_matched_set:
         continue
     if row[' Airport Code '] not in matched_set:
@@ -231,6 +235,10 @@ for idx, row in tqdm_obj:
             if len(matched_set) % 25 == 0:
                 pickle.dump(matched_set, open('results/ntsb_matched_set.pckl', 'wb'))
                 pickle.dump(not_matched_set, open('results/ntsb_not_matched_set.pckl', 'wb'))
+        else:
+            not_matched_set.add(row[' Airport Code '])
+    else:
+        not_matched_set.add(row[' Airport Code '])
 ct = 0
 for code in matched_set:
     sel = tmp[' Airport Code '] == code
