@@ -8,6 +8,9 @@ Combines flight volume data (WEB-Report-*) with airport_month_events, which is t
 FAA/NTSB incident/accident data
 """
 
+tracon_fns = ['51547', '49612', '29844', '52212', '81669', '22012']
+tracon_fns = set([f'WEB-Report-{x}.csv' for x in tracon_fns])
+
 # read in flight volume data
 pds = []
 for x in os.listdir('datasets/'):
@@ -38,6 +41,11 @@ for x in os.listdir('datasets/'):
 
         part2.columns = final_cols
         part2 = part2.iloc[3:-2,:-1].copy() # some beginning rows and end rows are dropped
+
+        if x in tracon_fns:
+            part2['ATADS_Tracon_Tower'] = 'Tracon'
+        else:
+            part2['ATADS_Tracon_Tower'] = 'Tower'
         pds.append(part2)
 part2 = pd.concat(pds, axis = 0, ignore_index = True, sort = True)
 
