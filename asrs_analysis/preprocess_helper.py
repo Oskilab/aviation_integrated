@@ -185,6 +185,22 @@ def neg_nonword_to_mispelled_dict():
     hand_code2 = pd.read_csv('dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
     return dict(hand_code2.loc[~hand_code2.loc[:, 'mispelled_word_fix'].isna(), 'mispelled_word_fix'])
 
+def potential_words_from_negnw():
+    hand_code2 = pd.read_csv('dictionaries/combined_neg_nonword_handcode2.csv')
+
+    # calculate last element with any of these columns
+    added_cols = ['hand_fullform2', 'add_to_realworld_dictionary', 'add_to_airport', \
+            'mispelled_word_fix', 'Notes for future']
+    last_idx = 0
+    for col in added_cols:
+        non_na = ~hand_code2[col].isna()
+        idx = non_na[::-1].idxmax()
+        if idx > last_idx:
+            last_idx = idx
+    return set(hand_code2.loc[hand_code2.index > last_idx, 'word'])
+
+
+
 # starts with (, ' or [
 r1 = "^([\(\'\[]{1})([A-Za-z\d]{1,})$"
 # ends with ), ' or ]
