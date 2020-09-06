@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from IPython import embed
 from common_funcs import load_full_wiki, match_using_name_loc, search_wiki_airportname
 from requests import HTTPError
-from selenium_funcs import check_code, get_closest_data, search_city
+from selenium_funcs import check_code, search_city
 
 import pandas as pd, numpy as np, re, ssl, pickle, os
 import urllib.request as request
@@ -178,6 +178,7 @@ if create_backup:
             tmp[col] = res.loc[idx, col]
         backup_faa.append(tmp)
     pd.concat(backup_faa, axis = 0, ignore_index = True).to_csv('results/backup_faa.csv')
+
 
 """
 Match names using wikipedia table.
