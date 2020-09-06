@@ -4,7 +4,8 @@ from IPython import embed
 from collections import Counter
 import matplotlib.pyplot as plt
 from preprocess_helper import load_asrs, create_counter, load_dictionaries
-from preprocess_helper import neg_nonword_to_neg_word_set, neg_nonword_to_airport_set
+from preprocess_helper import neg_nonword_to_neg_word_set, neg_nonword_to_airport_set, \
+        potential_words_from_negnw
 from bs4 import BeautifulSoup
 
 # get list of cities
@@ -45,12 +46,20 @@ for i in range(1, len(dfs)):
 eng_stopwords = set(stopwords.words('english'))
 d = enchant.Dict("en_US")
 
+summary_cols = ['total words', 'unique words', 'neg_nonword unprocessed', 'unique neg_nonword unprocessed',\
+        'neg_hand2', 'unique neg_hand2','airport', 'unique airport', 'neg_nonalpha', 'unique neg_nonalpha', \
+        'neg_city', 'unique neg_city','neg_nonword processed', 'unique neg_nonword procesed',  \
+        'pot. words frm neg_nw', 'unique pot. words frm neg_nw','top down', 'unique top down','hand', \
+        'unique hand' 'hand2', 'unique_hand2']
+summary_pd = {}
 for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_synopsis_combined']:
+    summary_dict = {}
     # this creates a dataframe of word counts
     total_cts = create_counter(asrs, orig_col)
     total_cts.sort_values(by = 0, ascending = False, inplace = True)
-    print(f'total number of words: {orig_col}', total_cts[0].sum())
-    print(f'total number of unique words: {orig_col}', total_cts.shape[0])
+
+    summary_dict[summary_cols[0]] = total_cts[0].sum() # total words
+    summary_dict[summary_cols[1]] = total_cts[0].shape[0] # unique words
 
     # Negatives (or words that are not found in any abbreviation dictionary)
     fn = total_cts.loc[total_cts.index.map(lambda x: x not in all_abrevs), :].copy()
@@ -68,52 +77,43 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     fn.loc[sel, 'abrev'] = 1
     fn.loc[sel, 'tag'] = 'neg_nonword'
 
-    neg_nonword_sel = sel.copy()
-
-    neg_total, neg_unq_total = fn.loc[sel, 0].sum(), fn[sel].shape[0]
-    print(f'total number of neg_nonword: {orig_col}', neg_total)
-    print(f'total number of unique neg_nonword: {orig_col}', neg_unq_total)
+    summary_dict[summary_cols[2]] = fn.loc[sel, 0].sum() # neg nonword unprocessed
+    summary_dict[summary_cols[3]] = fn[sel].shape[0] # unique neg nonword unprocessed
 
     # add back handcoded neg_nonwords to neg_words
     neg_word_sel = np.logical_and(sel, fn.index.map(lambda x: x in negnw_to_negw))
     fn.loc[neg_word_sel, 'abrev'] = 0
     fn.loc[neg_word_sel, 'tag'] = 'neg_word_hand2'
-    neg_total = neg_total - fn.loc[neg_word_sel, 0].sum()
-    neg_unq_total = neg_unq_total - fn.loc[neg_word_sel].shape[0]
-    print(f'neg_nonword lost from hand2: {orig_col}', neg_total)
-    print(f'neg_nonword lost from hand2 unique: {orig_col}', neg_unq_total)
+    summary_dict[summary_cols[4]] = fn.loc[neg_word_sel, 0].sum() # neg_hand2
+    summary_dict[summary_cols[5]] = fn[neg_word_sel].shape[0] # unique neg_hand2
 
     # convert some neg_nonword to airport tag
     neg_airport_sel = np.logical_and(sel, fn.index.map(lambda x: x in negnw_to_airport))
     fn.loc[neg_airport_sel, 'abrev'] = 0
     fn.loc[neg_airport_sel, 'tag'] = 'neg_airport'
-
-    neg_total = neg_total - fn.loc[neg_airport_sel, 0].sum()
-    neg_unq_total = neg_unq_total - fn.loc[neg_airport_sel].shape[0]
-    print(f'neg_nonword lost from airport: {orig_col}', neg_total)
-    print(f'neg_nonword lost from airport unique: {orig_col}', neg_unq_total)
+    summary_dict[summary_cols[6]] = fn.loc[neg_airport_sel, 0].sum() # neg_hand2
+    summary_dict[summary_cols[7]] = fn[neg_airport_sel].shape[0] # unique neg_hand2
 
     sel = np.array(sel) & fn.index.str.contains('[^A-Za-z]', na = True)
     fn.loc[sel, 'abrev'] = 0
     fn.loc[sel, 'tag'] = 'neg_nonalpha_abrev'
+    summary_dict[summary_cols[8]] = fn.loc[sel, 0].sum() # neg_nonalpha
+    summary_dict[summary_cols[9]] = fn[sel].shape[0] # unique neg_nonalpha
 
     sel = fn.index.map(lambda x: x not in eng_stopwords and not d.check(x) and x in cities)
     fn.loc[sel, 'abrev'] = 0
     fn.loc[sel, 'tag'] = 'neg_nonword_city_exception'
+    summary_dict[summary_cols[10]] = fn.loc[sel, 0].sum() # city exception
+    summary_dict[summary_cols[11]] = fn[sel].shape[0] # unique city exception
 
-    # add back handcoded neg_nonwords to neg_words
-    neg_word_sel = np.logical_and(neg_nonword_sel, fn.index.map(lambda x: x in negnw_to_negw))
-    fn.loc[neg_word_sel, 'abrev'] = 0
-    fn.loc[neg_word_sel, 'tag'] = 'neg_word_hand'
+    sel = fn['tag'] == 'neg_nonword'
+    summary_dict[summary_cols[12]] = fn.loc[sel, 0].sum() # neg_nonword processed
+    summary_dict[summary_cols[13]] = fn[sel].shape[0] # unique neg_nonword processed
 
-    # summary of fn
-    fn_sub = fn.loc[(fn['tag'] == 'neg_nonword') | (fn['tag'] == 'neg_word_hand') | \
-            (fn['tag'] == 'neg_airport')]
-    cts = fn_sub[[0, 'tag']].groupby('tag').sum().rename({0: 'ct'}, axis = 1)
-    unique_cts = fn_sub[[0, 'tag']].groupby('tag').count().rename({0: 'unique_ct'}, axis = 1)
-
-    neg_nonword_summary = pd.concat([cts, unique_cts], axis = 1)
-    neg_nonword_summary.to_csv(f'results/neg_nonword_summary_{orig_col}.csv')
+    pot_words = potential_words_from_negnw()
+    sel = fn.index.map(lambda x: x in pot_words)
+    summary_dict[summary_cols[14]] = fn.loc[sel, 0].sum() # potential words from neg_nw
+    summary_dict[summary_cols[15]] = fn[sel].shape[0] # unique potential words from neg_nw
 
     fn.to_csv(f'results/fn_tagged_{orig_col}.csv')
 
@@ -201,9 +201,8 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     total_cts = total_cts.reset_index().rename({'index': 'acronym'}, axis = 1)
 
     top_down_sel = (total_cts['tag'] == 'pos_handcoded_abrev') | (total_cts['tag'] == 'pos_nonword')
-
-    print(f'total number of top down words: {orig_col}', total_cts.loc[top_down_sel, 0].sum())
-    print(f'total number of unique top down words: {orig_col}', total_cts.loc[top_down_sel].shape[0])
+    summary_dict[summary_cols[16]] = total_cts.loc[top_down_sel, 0].sum() # top down
+    summary_dict[summary_cols[17]] = total_cts[top_down_sel].shape[0] # unique top down
     total_cts.to_csv(f'results/total_cts_tagged_{orig_col}.csv')
 
 
@@ -215,11 +214,11 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
                 'unique_ct': subset.shape[0]})
 
         if dictionary == 'hand' or dictionary == 'hand2':
-            print(f'total number of {dictionary} words: {orig_col}', subset.sum())
-            print(f'total number of unique {dictionary} words: {orig_col}', subset.shape[0])
+            summary_dict[f'{dictionary}'] = subset[0].sum()
+            summary_dict[f'unique {dictionary}'] = subset[0].shape[0]
+    summary_pd[orig_col] = pd.Series(summary_dict)
 
     dictionary_names.remove('iata')
-
     sel = None
     for dictionary in dictionary_names:
         if sel is None:
@@ -286,3 +285,5 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
 
     total_summary = unique_summary.merge(ct_summary, on = 'tag')
     total_summary.to_csv(f'results/tag_summary_{orig_col}.csv')
+
+pd.DataFrame.from_dict(summary_pd, orient = 'index').to_csv('results/all_summary.csv')

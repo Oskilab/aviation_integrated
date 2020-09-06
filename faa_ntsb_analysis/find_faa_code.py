@@ -6,6 +6,7 @@ from IPython import embed
 from common_funcs import load_full_wiki, match_using_name_loc, search_wiki_airportname
 import pandas as pd, numpy as np, re, ssl, pickle
 import urllib.request as request
+from requests import HTTPError
 from selenium_funcs import check_code, get_closest_data, search_city
 coverage = namedtuple('coverage', ['part', 'total'])
 query_wiki, perform_name_matching = False, True
@@ -117,29 +118,26 @@ for city in tqdm(full.loc[nan_airport_name_sel, 'eventcity'].unique()):
         full.loc[full['eventcity'] == city, 'city_lon'] = row_worldcities['lng']
 
 
-def apply_func(row):
-    return search_city(row['eventcity'], 'United States', row['city_lat'], row['city_lon'])
-    # if res is not None:
-    #     results_dict[idx] = res
-    # return res
-
-
 geo_cols = ['eventcity', 'city_lat', 'city_lon']
 city_lat_lon = full.loc[nan_airport_name_sel, geo_cols].drop_duplicates()
 
-tqdm.pandas()
-res = city_lat_lon.progress_apply(apply_func, axis = 1)
+tqdm_obj = tqdm(city_lat_lon.iterrows(), total = city_lat_lon.shape[0], desc = "found 0")
+results_dict = {}
+errors = []
+for idx, row in tqdm_obj:
+    try:
+        res = search_city(row['eventcity'], 'United States', row['city_lat'], row['city_lon'])
+    except HTTPError as exception:
+        errors.append(exception)
+        if len(errors) % 25 == 0:
+            pickle.dump(errors, open('results/wac_search_http_errors.pckl', 'wb'))
+        continue
 
-# tqdm_obj = tqdm(city_lat_lon.iterrows(), total = city_lat_lon.shape[0], desc = "found 0")
-# results_dict = {}
-# for idx, row in tqdm_obj:
-#     res = search_city(row['eventcity'], 'United States', row['city_lat'], row['city_lon'])
-#     if res is not None:
-#         results_dict[idx] = res
-#         tqdm_obj.set_description(f"found {len(results_dict)}")
-
-embed()
-1/0
+    if res is not None:
+        results_dict[idx] = res
+        tqdm_obj.set_description(f"found {len(results_dict)}")
+        if len(results_dict) % 25 == 0:
+            pickle.dump(results_dict, open('results/wac_search_results.pckl', 'wb'))
 
 
 if perform_name_matching:

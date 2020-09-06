@@ -251,6 +251,8 @@ def search_city(city, country, lat, lon):
 
     table = table.loc[table['City'].str.contains(city).fillna(False)].copy()
     table = table.loc[table['Country'] == country].copy()
+    if table.shape[0] == 0:
+        return None
 
     table['lat'] = np.nan
     table['lon'] = np.nan
