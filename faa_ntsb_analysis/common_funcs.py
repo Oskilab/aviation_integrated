@@ -195,7 +195,7 @@ def search_wiki_airportname(airportname, fullstate):
                     default = np.nan)})
     else:
         # if the name does not redirect to a wikipedia page, then it will give a page
-        # full of results, which we parse here. We only look at the first result
+        # full of results, which we parse here. We only look at the first five results
         bs4 = BeautifulSoup(mystr, 'html.parser')
         all_res = bs4.find_all('div', {'class': 'mw-search-result-heading'})
         for res in all_res[:5]:
