@@ -5,10 +5,11 @@ from urllib.parse import quote
 from urllib.error import HTTPError
 from common_funcs import load_full_wiki, match_using_name_loc, search_wiki_airportname, \
         get_city, get_state, get_country
-from selenium_funcs import get_closest_data, quit, check_code
+from selenium_funcs import get_closest_data, quit, check_code, search_city
 import requests, pandas as pd, urllib.request as request, pickle
 import re, numpy as np, pickle
-page_google, search_wiki = False, False
+page_google, search_wiki = False, True
+match, create_backup = False, True
 key = 'AIzaSyCR9FRYW-Y7JJbo4hU682rn6kJaUA5ABUc'
 coverage = namedtuple('coverage', ['part', 'total'])
 
@@ -40,11 +41,13 @@ full['month'] = full[' Event Date '].str.split("/").apply(lambda x: x[0]).apply(
 print('full dataset size', full.shape[0])
 full = full.loc[(full['year'] >= 1988) & (full['year'] < 2020), :]
 full = full.reset_index().drop('index', axis = 1)
-print('already airport code', full.loc[full[' Airport Code '] != ''].shape[0])
-print('already airport name', full.loc[full[' Airport Name '] != ''].shape[0])
-print('already airport code or name', full.loc[(full[' Airport Name '] != '') | \
+
+# preliminary stats
+print('airport code missing', full.loc[full[' Airport Code '] != ''].shape[0])
+print('airport name missing', full.loc[full[' Airport Name '] != ''].shape[0])
+print('airport code or name missing', full.loc[(full[' Airport Name '] != '') | \
         (full[' Airport Code '] != '')].shape[0])
-print('already airport name and no code', full.loc[(full[' Airport Name '] != '') &\
+print('airport name and no code missing', full.loc[(full[' Airport Name '] != '') & \
         (full[' Airport Code '] == '')].shape[0])
 
 reg_dash = '([a-z]{1,})[-/]{1}([a-z]{1,})'
@@ -66,6 +69,7 @@ def process_ntsb_name(x):
             else:
                 fin.append(elem)
     return " ".join(fin)
+
 # calculate number of rows that are covered by volume dataset
 # vol_tracons = set(pickle.load(open('../results/vol_data.pckl', 'rb')))
 # num_na = (full[' Airport Code '] == '').sum()
@@ -155,7 +159,6 @@ airnav.com to find the identifier.
 #         return round(float(x.strip()), 5)
 
 # create geo_full
-# geo_cols = [' Latitude ', ' Longitude ', 'eventcity', 'event_fullstate', 'event_country']
 # geo_full = full.loc[only_lat_lon, geo_cols].drop_duplicates().copy()
 # geo_full[' Latitude '] = geo_full[' Latitude '].apply(conv_to_float)
 # geo_full[' Longitude '] = geo_full[' Longitude '].apply(conv_to_float)
@@ -182,70 +185,6 @@ airnav.com to find the identifier.
 # full[' Longitude '] = full[' Longitude '].apply(convert_to_float)
 # full = full.merge(lat_lon_pd, on = [' Latitude ', ' Longitude '], how = 'left')
 
-"""
-Matching codes (double checking they are codes with correct location info via wikipedia
-or airnav)
-"""
-# see if the codes are matched in wikipedia table
-wiki_tables = load_full_wiki(us_only = False)
-matched_set = set()
-not_matched_set = set()
-
-if True:
-    matched_set = pickle.load(open('results/ntsb_matched_set.pckl', 'rb'))
-    not_matched_set = pickle.load(open('results/ntsb_not_matched_set.pckl', 'rb'))
-
-code_and_loc_pd =  full.loc[full[' Airport Code '] != '', [' Airport Code ']].drop_duplicates()
-tqdm_obj = tqdm(code_and_loc_pd.iterrows(), desc = f'found {len(matched_set)}', total = code_and_loc_pd.shape[0])
-for idx, row in tqdm_obj:
-    if row[' Airport Code '] in matched_set or row[' Airport Code '] not in matched_set:
-        continue
-    selected = wiki_tables.loc[wiki_tables['wiki_IATA'] == row[' Airport Code ']]
-    if selected.shape[0] > 0:
-        matched_set.add(row[' Airport Code '])
-        tqdm_obj.set_description(f'found {len(matched_set)}')
-    else:
-        selected = wiki_tables.loc[wiki_tables['wiki_ICAO'] == row[' Airport Code ']]
-        if selected.shape[0] > 0:
-            matched_set.add(row[' Airport Code '])
-            tqdm_obj.set_description(f'found {len(matched_set)}')
-        else:
-            not_matched_set.add(row[' Airport Code '])
-
-
-# count the number of codes matched in wikipedia table
-tmp = full.loc[~code_and_name_empty, :].copy()
-ct = 0
-for code in matched_set:
-    ct += tmp.loc[tmp[' Airport Code '] == code].shape[0]
-print('wiki matched', ct)
-
-# searching via selenium
-tqdm_obj = tqdm(code_and_loc_pd.iterrows(), total = code_and_loc_pd.shape[0], desc = f'found {len(matched_set)}')
-for idx, row in tqdm_obj:
-    # manually skipping
-    if idx < 26627:
-        continue
-    if row[' Airport Code '] in not_matched_set:
-        continue
-    if row[' Airport Code '] not in matched_set:
-        if check_code(row[' Airport Code ']):
-            matched_set.add(row[' Airport Code '])
-            tqdm_obj.set_description(f'found {len(matched_set)}')
-            if len(matched_set) % 25 == 0:
-                pickle.dump(matched_set, open('results/ntsb_matched_set.pckl', 'wb'))
-                pickle.dump(not_matched_set, open('results/ntsb_not_matched_set.pckl', 'wb'))
-        else:
-            not_matched_set.add(row[' Airport Code '])
-    else:
-        not_matched_set.add(row[' Airport Code '])
-ct = 0
-for code in matched_set:
-    sel = tmp[' Airport Code '] == code
-    ct += tmp.loc[sel].shape[0]
-print('wiki + airnav matched', ct)
-embed()
-1/0
 
 # ct = 0
 # tqdm_obj = tqdm(code_and_loc_pd.iterrows(), desc = 'found 0', total = code_and_loc_pd.shape[0])
@@ -297,47 +236,69 @@ embed()
 #     full.loc[lat_sel & lon_sel, ' Airport Code '] = idx_results[idx]
 # print('selenium added', num_total_added)
 
-# look for nearest airports using selenium
-empty_code_sel = full[' Airport Code '] == ''
-empty_lat = full[' Latitude '] == ''
-empty_lon = full[' Longitude '] == ''
-only_lat_lon = ~(empty_lat | empty_lon) & empty_code_sel
-ct = 0
+"""
+look for nearest airports using wac
+"""
+def search_wac_row(full, row):
+    lat, lon = row[' Latitude '], row[' Longitude ']
 
-tmp_obj = full.loc[only_lat_lon, geo_cols].drop_duplicates()
-tqdm_obj = tqdm(tmp_obj.iterrows(), total = tmp_obj.shape[0], desc = "found 0")
-for idx, row in tqdm_obj:
-    if row['event_country'] == 'United States':
-        lat, lon = row[' Latitude '], row[' Longitude ']
+    res = search_city(row['eventcity'], row['event_country'], \
+            row[' Latitude '], row[' Longitude '])
+    if res is not None:
         lat_sel = full[' Latitude '].apply(lambda x: round(x, 5)) == lat
         lon_sel = full[' Longitude '].apply(lambda x: round(x, 5)) == lon
-        if row['event_fullstate'] in us_to_abbrev:
-            full.loc[lat_sel & lon_sel, 'Airport Code '] = \
-                    get_closest_data(row['eventcity'], us_to_abbrev[row['event_fullstate']], \
-                            row[' Latitude '], row[' Longitude '])
-            ct += full.loc[lat_sel & lon_sel].shape[0]
-            tqdm_obj.set_description(f"found {ct}")
-print('added by looking for nearest airports', ct)
+
+        tmp = full.loc[lat_sel & lon_sel, :].copy()
+
+        # add new columns
+        for col in res.columns:
+            tmp[col] = res.loc[idx, col]
+
+        return tmp, tmp.shape[0]
+    return None, 0
+
+empty_code_sel = full[' Airport Code '] == ''
+empty_lat, empty_lon = full[' Latitude '] == '', full[' Longitude '] == ''
+only_lat_lon = ~(empty_lat | empty_lon) & empty_code_sel
+
+if create_backup:
+    backup_ntsb, ct = [], 0
+    geo_cols = [' Latitude ', ' Longitude ', 'eventcity', 'event_country']
+
+    tmp_obj = full.loc[only_lat_lon, geo_cols].drop_duplicates()
+    tqdm_obj = tqdm(tmp_obj.iterrows(), total = tmp_obj.shape[0], \
+            desc = "wac near airports found 0")
+    for idx, row in tqdm_obj:
+        res, found_ct = search_wac_row(full, row)
+        ct += found_ct
+
+        if res is not None:
+            backup_ntsb.append(res)
+            tqdm_obj.set_description(f"wac near airports found {ct}")
+
+    pd.concat(backup_ntsb, axis = 0, ignore_index = True).to_csv('results/backup_ntsb.csv')
     
+"""
+Search name via wikipedia
+"""
+name_nocode = (full[' Airport Code '] == '') & (full[' Airport Name '] != '')
 
 if search_wiki:
-    # search the airport name via wikipedia
-    wiki_search_found = {}
-    total_ct = 0
-    name_and_state = full.loc[only_lat_lon, ['airport_name_0', 'event_fullstate']].drop_duplicates()
-    tqdm_obj = tqdm(name_and_state.iterrows(), total = name_and_state.shape[0], desc = "found 0, tot 0")
+    wiki_search_found, total_ct = {}, 0
+    name_and_state = full.loc[name_nocode, [' Airport Name ', 'event_fullstate', \
+            'event_country']].drop_duplicates()
+    tqdm_obj = tqdm(name_and_state.iterrows(), total = name_and_state.shape[0], desc = "wiki found 0, tot 0")
     for idx, row in tqdm_obj:
-        airportname, fullstate = row['airport_name_0'], row['event_fullstate']
-        # airportname, fullstate = row
-        if not pd.isna(airportname):
+        airportname, fullstate, country = row[' Airport Name '], row['event_fullstate'], row['event_country']
+        if not pd.isna(airportname) and country == 'United States':
             res = search_wiki_airportname(airportname, fullstate)
             if res is not None:
                 wiki_search_found[airportname] = res
-                total_ct += full.loc[full['airport_name_0'] == airportname].shape[0]
-                tqdm_obj.set_description(f"found {len(wiki_search_found)} {total_ct}")
+                total_ct += full.loc[full[' Airport Name '] == airportname].shape[0]
+                tqdm_obj.set_description(f"wiki found {len(wiki_search_found)}, tot {total_ct}")
                 if len(wiki_search_found) % 25 == 0:
                     wiki_search_found_pd = pd.DataFrame.from_dict(wiki_search_found, orient = 'index')
-                    wiki_search_found_pd.to_csv('results/ntsb_wiki_search_found1.csv')
+                    wiki_search_found_pd.to_csv('results/ntsb_wiki_search_found.csv')
 
     wiki_search_found_pd = pd.DataFrame.from_dict(wiki_search_found, orient = 'index')
     wiki_search_found_pd.to_csv('results/ntsb_wiki_search_found.csv')
@@ -345,25 +306,103 @@ else:
     wiki_search_found_pd = pd.read_csv('results/ntsb_wiki_search_found.csv', index_col = 0)
 
 wiki_search_set = set(wiki_search_found_pd.index)
-print(full.loc[full['airport_name_0'].apply(lambda x: x in wiki_search_set), :].shape)
+print(full.loc[full[' Airport Name '].apply(lambda x: x in wiki_search_set), :].shape)
 
-res1 = match_using_name_loc(full[only_lat_lon], wiki_tables, col = 'airport_name_0')
-res2 = match_using_name_loc(full[lat_lon_missing], wiki_tables)
+res = match_using_name_loc(full[name_nocode], wiki_tables, col = ' Airport Name ')
 
 print(full[full[' Airport Code '] == ''].shape)
-for idx, row in tqdm(res1.iterrows(), total = res1.shape[0]):
-    full.loc[only_lat_lon & (full['airport_name_0'] == row['airport_name_0']) & \
+for idx, row in tqdm(res.iterrows(), total = res.shape[0]):
+    full.loc[name_nocode & (full[' Airport Code '] == row[' Airport Code ']) & \
             (full['eventcity'] == row['eventcity']) &
             (full['event_fullstate'] == row['event_fullstate']), ' Airport Code '] = row['wiki_IATA']
 print(full[full[' Airport Code '] == ''].shape)
-for idx, row in tqdm(res2.iterrows(), total = res2.shape[0]):
-    full.loc[only_lat_lon & (full['eventairport_conv'] == row['eventairport_conv']) & \
-            (full['eventcity'] == row['eventcity']) &
-            (full['event_fullstate'] == row['event_fullstate']), ' Airport Code '] = row['wiki_IATA']
-print(full[full[' Airport Code '] == ''].shape)
-embed()
-1/0
 
+"""
+Matching codes (double checking they are codes with correct location info via wikipedia
+or airnav)
+"""
+def match_via_wikipedia(full, load_saved = True):
+    def match_row(code):
+        selected_iata = wiki_tables.loc[wiki_tables['wiki_IATA'] == code]
+        selected_icao = wiki_tables.loc[wiki_tables['wiki_ICAO'] == code]
+        return selected_iata.shape[0] > 0 or selected_iaco.shape[0] > 0
+
+    # load + setup
+    wiki_tables = load_full_wiki(us_only = False)
+    matched_set, not_matched_set = set(), set()
+
+    if load_saved:
+        matched_set = pickle.load(open('results/ntsb_matched_set.pckl', 'rb'))
+        not_matched_set = pickle.load(open('results/ntsb_not_matched_set.pckl', 'rb'))
+
+    code_and_loc_pd =  full.loc[full[' Airport Code '] != '', [' Airport Code ']].drop_duplicates()
+    tqdm_obj = tqdm(code_and_loc_pd.iterrows(), desc = f'match wiki found {len(matched_set)}', \
+            total = code_and_loc_pd.shape[0])
+
+    for idx, row in tqdm_obj:
+        code = row[' Airport Code ']
+        if code in matched_set or code in matched_set:
+            continue
+        if match_row(code):
+            matched_set.add(code)
+            if len(matched_set) % 25 == 0:
+                pickle.dump(matched_set, open('results/ntsb_matched_set.pckl', 'wb'))
+                pickle.dump(not_matched_set, open('results/ntsb_not_matched_set.pckl', 'wb'))
+
+            tqdm_obj.set_description(f'found {len(matched_set)}')
+        else:
+            not_matched_set.add(code)
+    return matched_set, not_matched_set
+
+def match_via_airnav(full, matched_set, not_matched_set):
+    # searching via selenium
+    tqdm_obj = tqdm(code_and_loc_pd.iterrows(), total = code_and_loc_pd.shape[0],\
+            desc = f'match airnav found {len(matched_set)}')
+    for idx, row in tqdm_obj:
+        code = row[' Airport Code ']
+        # manually skipping
+        if idx < 26627:
+            continue
+        if code not in matched_set:
+            if check_code(code):
+                matched_set.add(code)
+                tqdm_obj.set_description(f'found {len(matched_set)}')
+                if len(matched_set) % 25 == 0:
+                    pickle.dump(matched_set, open('results/ntsb_matched_set.pckl', 'wb'))
+                    pickle.dump(not_matched_set, open('results/ntsb_not_matched_set.pckl', 'wb'))
+            else:
+                not_matched_set.add(code)
+        else:
+            not_matched_set.add(code)
+
+full['found_code'] = 0
+if match:
+    # see if the codes are matched in wikipedia table
+    wiki_tables = load_full_wiki(us_only = False)
+    matched_set, not_matched_set = match_via_wikipedia(full, load_saved = True)
+
+    # count the number of codes matched in wikipedia table
+    tmp = full.loc[~code_and_name_empty, :].copy()
+    ct = 0
+    for code in matched_set:
+        ct += tmp.loc[tmp[' Airport Code '] == code].shape[0]
+    print('wiki matched', ct)
+
+    match_via_airnav(full, matched_set, not_matched_set)
+
+    ct = 0
+    for code in matched_set:
+        sel = tmp[' Airport Code '] == code
+        ct += tmp.loc[sel].shape[0]
+    print('wiki + airnav matched', ct)
+    pickle.dump(matched_set, open('results/ntsb_matched_set.pckl', 'wb'))
+else:
+    matched_set = pickle.load(open('results/ntsb_matched_set', 'rb'))
+
+full.loc[full[' Airport Code '].apply(lambda x: x in matched_set), 'found_code'] = 1
+"""
+Save results
+"""
 full = pd.concat([full, pd.get_dummies(full[' Investigation Type '], prefix = 'ntsb')], axis = 1)
 full = full[[' Airport Code ', 'year', 'month', 'ntsb_ Incident ', 'ntsb_ Accident ']]\
         .groupby([' Airport Code ', 'year', 'month']).sum()
