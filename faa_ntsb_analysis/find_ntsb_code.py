@@ -373,8 +373,8 @@ def match_via_airnav(full, matched_set, not_matched_set):
     for idx, row in tqdm_obj:
         code = row[' Airport Code ']
         # manually skipping
-        if idx < 26627:
-            continue
+        # if idx < 26627:
+        #     continue
         if code not in matched_set:
             if check_code(code):
                 matched_set.add(code)
@@ -391,7 +391,7 @@ full['found_code'] = 0
 if match:
     # see if the codes are matched in wikipedia table
     wiki_tables = load_full_wiki(us_only = False)
-    matched_set, not_matched_set = match_via_wikipedia(full, load_saved = True)
+    matched_set, not_matched_set = match_via_wikipedia(full, load_saved = False)
 
     # count the number of codes matched in wikipedia table
     tmp = full.loc[~code_and_name_empty, :].copy()
