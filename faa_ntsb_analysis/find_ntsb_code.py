@@ -5,7 +5,7 @@ from urllib.parse import quote
 from urllib.error import HTTPError
 from common_funcs import load_full_wiki, match_using_name_loc, search_wiki_airportname, \
         get_city, get_state, get_country
-from selenium_funcs import get_closest_data, quit, check_code, search_city
+from selenium_funcs import check_code, search_city
 import requests, pandas as pd, urllib.request as request, pickle
 import re, numpy as np, pickle
 page_google, search_wiki = False, True
@@ -366,10 +366,10 @@ def match_via_wikipedia(full, load_saved = True):
             not_matched_set.add(code)
     return matched_set, not_matched_set
 
-def match_via_airnav(full, matched_set, not_matched_set):
+def match_via_wac(full, matched_set, not_matched_set):
     # searching via selenium
     tqdm_obj = tqdm(code_and_loc_pd.iterrows(), total = code_and_loc_pd.shape[0],\
-            desc = f'match airnav found {len(matched_set)}')
+            desc = f'match wac found {len(matched_set)}')
     for idx, row in tqdm_obj:
         code = row[' Airport Code ']
         # manually skipping
@@ -378,7 +378,7 @@ def match_via_airnav(full, matched_set, not_matched_set):
         if code not in matched_set:
             if check_code(code):
                 matched_set.add(code)
-                tqdm_obj.set_description(f'found {len(matched_set)}')
+                tqdm_obj.set_description(f'match wac found {len(matched_set)}')
                 if len(matched_set) % 25 == 0:
                     pickle.dump(matched_set, open('results/ntsb_matched_set.pckl', 'wb'))
                     pickle.dump(not_matched_set, open('results/ntsb_not_matched_set.pckl', 'wb'))
@@ -400,7 +400,7 @@ if match:
         ct += tmp.loc[tmp[' Airport Code '] == code].shape[0]
     print('wiki matched', ct)
 
-    match_via_airnav(full, matched_set, not_matched_set)
+    match_via_wac(full, matched_set, not_matched_set)
 
     ct = 0
     for code in matched_set:
