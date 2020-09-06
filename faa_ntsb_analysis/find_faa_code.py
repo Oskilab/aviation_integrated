@@ -4,12 +4,19 @@ from collections import namedtuple
 from bs4 import BeautifulSoup
 from IPython import embed
 from common_funcs import load_full_wiki, match_using_name_loc, search_wiki_airportname
-import pandas as pd, numpy as np, re, ssl, pickle
-import urllib.request as request
 from requests import HTTPError
 from selenium_funcs import check_code, get_closest_data, search_city
+
+import pandas as pd, numpy as np, re, ssl, pickle, os
+import urllib.request as request
 coverage = namedtuple('coverage', ['part', 'total'])
 query_wiki, perform_name_matching = False, True
+create_backup, check_code = False, False
+wac_load = True
+
+if check_code and not os.path.exist('results/matched_set_faa.pckl'):
+    raise Exception("if check code is set to True, then 'results/matched_set_faa.pckl' must exist")
+    
 
 def load_faa_data():
     full = pd.read_csv('datasets/FAA_AIDS_full.csv')
@@ -103,42 +110,78 @@ full['event_fullstate'] = full['eventstate'].apply(lambda x: us_state_abbrev.get
 full['eventcity'] = full['eventcity'].str.lower()
 full['eventairport_conv'] = full['eventairport'].apply(process_faa_name)
 
+"""
+Create backup FAA file. If the airportname is nan, then we look at city names. We combine this
+with a list of downloaded worldcities (and their corresponding latitude/longitude), to create
+a list of potential airports
+"""
+
+def combine_full_worldcities(full):
+    worldcities = pd.read_csv('datasets/worldcities.csv')
+    set_of_worldcities = set(worldcities['city'].str.lower())
+
+    full['city_lat'] = np.nan
+    full['city_lon'] = np.nan
+    for city in tqdm(full.loc[nan_airport_name_sel, 'eventcity'].unique()):
+        if city in set_of_worldcities:
+            row_worldcities = worldcities[worldcities['city'].str.lower() == city].iloc[0]
+            full.loc[full['eventcity'] == city, 'city_lat'] = row_worldcities['lat']
+            full.loc[full['eventcity'] == city, 'city_lon'] = row_worldcities['lng']
+    return full
+
+def search_wac_nearby(full, load = True):
+    def save_files():
+        pickle.dump(results_dict, open('results/wac_search_results.pckl', 'wb'))
+        pickle.dump(errors, open('results/wac_search_http_errors.pckl', 'wb'))
+        pickle.dump(errors, open('results/wac_search_nf.pckl', 'wb'))
+    geo_cols = ['eventcity', 'city_lat', 'city_lon']
+    city_lat_lon = full.loc[nan_airport_name_sel, geo_cols].drop_duplicates()
+
+    tqdm_obj = tqdm(city_lat_lon.iterrows(), total = city_lat_lon.shape[0], desc = "found 0")
+    results_dict, errors, nf = {}, {}, {}
+    if load:
+        results_dict = pickle.load(open('results/wac_search_results.pckl', 'rb'))
+        errors = pickle.load(open('results/wac_search_http_errors.pckl', 'rb'))
+        nf = pickle.load(open('results/wac_search_nf.pckl', 'rb'))
+
+    for idx, row in tqdm_obj:
+        if idx in results_dict or idx in errors or idx in nf:
+            continue
+        try:
+            res = search_city(row['eventcity'], 'United States', row['city_lat'], row['city_lon'])
+            if res is not None:
+                results_dict[idx] = res
+                tqdm_obj.set_description(f"found {len(results_dict)}")
+                if len(results_dict) % 25 == 0:
+                    save_files()
+            else:
+                nf[idx] = row['eventcity']
+        except HTTPError as exception:
+            errors[idx] = exception
+
+    save_files()
+    return pd.DataFrame.from_dict(results_dict, orient = 'index')
+
 nan_airport_name_sel = full['eventairport_conv'] == 'nan'
 print('number of non_empty airport names', full.loc[~nan_airport_name_sel].shape[0])
 
-worldcities = pd.read_csv('datasets/worldcities.csv')
-set_of_worldcities = set(worldcities['city'].str.lower())
+if create_backup:
+    full = combine_full_wordcities(full) # add latitude longitude info to some cities
 
-full['city_lat'] = np.nan
-full['city_lon'] = np.nan
-for city in tqdm(full.loc[nan_airport_name_sel, 'eventcity'].unique()):
-    if city in set_of_worldcities:
-        row_worldcities = worldcities[worldcities['city'].str.lower() == city].iloc[0]
-        full.loc[full['eventcity'] == city, 'city_lat'] = row_worldcities['lat']
-        full.loc[full['eventcity'] == city, 'city_lon'] = row_worldcities['lng']
+    nan_airport_name = full.loc[nan_airport_name_sel].copy()
+    res = search_wac_nearby(full, load = wac_search)
 
+    backup_faa = []
+    for idx in res.index:
+        tmp = nan_airport_name.loc[nan_airport_name['eventcity'] == city_lat_lon.loc[idx, 'eventcity'],:].copy()
+        for col in res.columns:
+            tmp[col] = res.loc[idx, col]
+        backup_faa.append(tmp)
+    pd.concat(backup_faa, axis = 0, ignore_index = True).to_csv('results/backup_faa.csv')
 
-geo_cols = ['eventcity', 'city_lat', 'city_lon']
-city_lat_lon = full.loc[nan_airport_name_sel, geo_cols].drop_duplicates()
-
-tqdm_obj = tqdm(city_lat_lon.iterrows(), total = city_lat_lon.shape[0], desc = "found 0")
-results_dict = {}
-errors = []
-for idx, row in tqdm_obj:
-    try:
-        res = search_city(row['eventcity'], 'United States', row['city_lat'], row['city_lon'])
-    except HTTPError as exception:
-        errors.append(exception)
-        if len(errors) % 25 == 0:
-            pickle.dump(errors, open('results/wac_search_http_errors.pckl', 'wb'))
-        continue
-
-    if res is not None:
-        results_dict[idx] = res
-        tqdm_obj.set_description(f"found {len(results_dict)}")
-        if len(results_dict) % 25 == 0:
-            pickle.dump(results_dict, open('results/wac_search_results.pckl', 'wb'))
-
+"""
+Match names using wikipedia table.
+"""
 
 if perform_name_matching:
     # load wikipedia airport name
@@ -150,6 +193,9 @@ else:
 
 all_matched_names = set(full_matched_pd['eventairport_conv'])
 
+"""
+Match names querying wikipedia.
+"""
 # work on those that we could not find codes for
 not_matched_sel = full['eventairport_conv'].apply(lambda x: x not in all_matched_names)
 not_matched = full.loc[not_matched_sel, ['eventairport_conv', 'eventcity']]\
@@ -181,8 +227,11 @@ total_matched_names = all_matched_names.union(wiki_search_found_set)
 print(coverage(full.loc[full['eventairport_conv'].apply(lambda x: x in total_matched_names), :].shape[0],
         full.shape[0]))
 
+"""
+Fill in dataset with matched iata codes (found via airport name above)
+"""
 nf_sel = not_matched['eventairport_conv'].apply(lambda x: x not in total_matched_names)
-not_matched.loc[nf_sel, :].to_csv('not_matched.csv', index = False)
+not_matched.loc[nf_sel, :].to_csv('results/not_matched.csv', index = False)
 
 name_to_iata = {}
 for idx, row in full_matched_pd.iterrows():
@@ -207,47 +256,47 @@ for idx, row in tqdm(handcoded.iterrows(),total = handcoded.shape[0]):
 
 print('non empty tracon code rows', full.loc[~full['tracon_code'].isna()].shape[0])
 
-# match with wiki
-wiki_tables = load_full_wiki(us_only = False)
-matched_set = set()
+"""
+Double check that codes are in wikipedia or airnav
+"""
+full['found_code'] = 0
+if check_codes:
+    # match with wiki
+    wiki_tables = load_full_wiki(us_only = False)
+    matched_set = set()
 
-code_and_loc_pd =  full.loc[~full['tracon_code'].isna(), ['tracon_code']].drop_duplicates()
-for idx, row in code_and_loc_pd.iterrows():
-    selected = wiki_tables.loc[wiki_tables['wiki_IATA'] == row['tracon_code']]
-    if selected.shape[0] > 0:
-        matched_set.add(row['tracon_code'])
-
-tmp = full.loc[full['eventairport_conv'] != 'nan', :].copy()
-ct = 0
-for code in matched_set:
-    sel = tmp['tracon_code'] == code
-    ct += tmp.loc[sel].shape[0]
-print('wiki matched', ct)
-
-for idx, row in tqdm(code_and_loc_pd.iterrows(), total = code_and_loc_pd.shape[0]):
-    if row['tracon_code'] not in matched_set:
-        if check_code(row['tracon_code']):
+    code_and_loc_pd =  full.loc[~full['tracon_code'].isna(), ['tracon_code']].drop_duplicates()
+    for idx, row in code_and_loc_pd.iterrows():
+        selected = wiki_tables.loc[wiki_tables['wiki_IATA'] == row['tracon_code']]
+        if selected.shape[0] > 0:
             matched_set.add(row['tracon_code'])
-ct = 0
-for code in matched_set:
-    sel = tmp['tracon_code'] == code
-    ct += tmp.loc[sel].shape[0]
-print('wiki + airnav matched', ct)
 
-# ct = 0
-# tqdm_obj = tqdm(code_and_loc_pd.iterrows(), desc = 'found 0', total = code_and_loc_pd.shape[0])
-# for idx, row in tqdm_obj:
-#     tuple_geo = (row['eventcity'], row['event_fullstate'], row['tracon_code'])
-#     if tuple_geo not in matched_set:
-#         if check_code(row['tracon_code'], row['eventcity'], row['event_fullstate']):
-#             ct += 1
-#             tqdm_obj.set_description(f"found {ct}")
-#             matched_set.add(tuple_geo)
-#             if len(matched_set) % 25 == 0:
-#                 pickle.dump(matched_set, open('results/faa_matched_set.pckl', 'wb'))
+    tmp = full.loc[full['eventairport_conv'] != 'nan', :].copy()
+    ct = 0
+    for code in matched_set:
+        sel = tmp['tracon_code'] == code
+        ct += tmp.loc[sel].shape[0]
+    print('wiki matched', ct)
 
-embed()
+    # match with airnav
+    for idx, row in tqdm(code_and_loc_pd.iterrows(), total = code_and_loc_pd.shape[0]):
+        if row['tracon_code'] not in matched_set:
+            if check_code(row['tracon_code']):
+                matched_set.add(row['tracon_code'])
+    ct = 0
+    for code in matched_set:
+        sel = tmp['tracon_code'] == code
+        ct += tmp.loc[sel].shape[0]
+    print('wiki + airnav matched', ct)
+    pickle.dump(matched_set, open('results/matched_set_faa.pckl', 'wb'))
+else:
+    matched_set = pickle.load(open('results/matched_set_faa.pckl', 'rb'))
 
+full.loc[full['tracon_code'].apply(lambda x: x in matched_set), 'found_code'] = 1
+
+"""
+Get results
+"""
 
 # hack around groupby ignoring nan values
 full['tracon_code'] = full['tracon_code'].fillna('nan') 
