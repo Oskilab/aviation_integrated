@@ -10,6 +10,7 @@ import requests, pandas as pd, urllib.request as request, pickle
 import re, numpy as np, pickle
 page_google, search_wiki = False, True
 match, create_backup = False, True
+load_backupset = True
 key = 'AIzaSyCR9FRYW-Y7JJbo4hU682rn6kJaUA5ABUc'
 coverage = namedtuple('coverage', ['part', 'total'])
 
@@ -164,16 +165,16 @@ airnav.com to find the identifier.
 #     lat_lon_pd = pd.read_csv('results/lat_lon_records.csv', index_col = 0)
 #
 
-# def conv_to_float(x):
-#     if x == '':
-#         return np.nan
-#     else:
-#         return round(float(x.strip()), 5)
+def conv_to_float(x):
+    if x == '':
+        return np.nan
+    else:
+        return round(float(x.strip()), 5)
 
 # create geo_full
 # geo_full = full.loc[only_lat_lon, geo_cols].drop_duplicates().copy()
-# geo_full[' Latitude '] = geo_full[' Latitude '].apply(conv_to_float)
-# geo_full[' Longitude '] = geo_full[' Longitude '].apply(conv_to_float)
+full[' Latitude '] = full[' Latitude '].apply(conv_to_float)
+full[' Longitude '] = full[' Longitude '].apply(conv_to_float)
 #
 # # combine with lat_lon_pd
 # lat_lon_pd.rename({'lat_0': ' Latitude ', 'lon_0': ' Longitude '}, axis = 1, inplace = True)
@@ -251,7 +252,7 @@ airnav.com to find the identifier.
 """
 look for nearest airports using wac
 """
-def search_wac_row(full, row):
+def search_wac_row(idx, full, row):
     lat, lon = row[' Latitude '], row[' Longitude ']
 
     res = search_city(row['eventcity'], row['event_country'], \
@@ -263,8 +264,8 @@ def search_wac_row(full, row):
         tmp = full.loc[lat_sel & lon_sel, :].copy()
 
         # add new columns
-        for col in res.columns:
-            tmp[col] = res.loc[idx, col]
+        for col in res.index:
+            tmp[col] = res.loc[col]
 
         return tmp, tmp.shape[0]
     return None, 0
@@ -275,19 +276,36 @@ only_lat_lon = ~(empty_lat | empty_lon) & empty_code_sel
 
 if create_backup:
     backup_ntsb, ct = [], 0
+    errors = {}
+    covered_set = set()
+    if load_backupset:
+        covered_set = pickle.load(open('results/ntsb_backup_set.pckl', 'rb'))
     geo_cols = [' Latitude ', ' Longitude ', 'eventcity', 'event_country']
 
     tmp_obj = full.loc[only_lat_lon, geo_cols].drop_duplicates()
     tqdm_obj = tqdm(tmp_obj.iterrows(), total = tmp_obj.shape[0], \
             desc = "wac near airports found 0")
     for idx, row in tqdm_obj:
-        res, found_ct = search_wac_row(full, row)
+        if idx in covered_set:
+            continue
+        try:
+            res, found_ct = search_wac_row(idx, full, row)
+        except HTTPError as exception:
+            errors[idx] = exception
+            continue
         ct += found_ct
 
         if res is not None:
             backup_ntsb.append(res)
             tqdm_obj.set_description(f"wac near airports found {ct}")
+        covered_set.add(idx)
 
+        if len(covered_set) % 25 == 0:
+            pickle.dump(covered_set, open('results/ntsb_backup_set.pckl', 'wb'))
+            pickle.dump(list(errors.keys()), open('results/ntsb_backup_errors.pckl', 'wb'))
+
+    pickle.dump(covered_set, open('results/ntsb_backup_set.pckl', 'wb'))
+    pickle.dump(list(errors.keys()), open('results/ntsb_backup_errors.pckl', 'wb'))
     pd.concat(backup_ntsb, axis = 0, ignore_index = True).to_csv('results/backup_ntsb.csv')
     
 """

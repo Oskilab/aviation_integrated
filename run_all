@@ -39,7 +39,6 @@ echo ================================= ASRS Analysis ===========================
 printf "================================= ASRS Analysis ================================\n\n"
 cd ../
 
-
 echo ==================== Combine FAA/NTSB Data with Volume Data ====================
 python flight_vol.py
 printf "==================== Combine FAA/NTSB Data with Volume Data ====================\n\n"
