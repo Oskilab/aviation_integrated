@@ -116,16 +116,16 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
     asrs['combined'] = asrs['combined'].str.lower()
 
     # TODO: remove this, only doing this so it doesn't destroy my laptop
-    # np.random.seed(42)
-    # asrs = asrs.loc[np.random.choice(asrs.index, 10000), :].copy()
+    np.random.seed(42)
+    asrs = asrs.loc[np.random.choice(asrs.index, 1000), :].copy()
 
     total = asrs.shape[0]
     asrs = tracon_analysis(asrs)
     print(coverage(name = 'after tracon analysis', part = asrs.shape[0], total = total))
     asrs = generate_date_cols(asrs)
     total = asrs.shape[0]
-    asrs = asrs.loc[asrs['year'] >= 1988 & asrs['year'] < 2020]
-    print(coverage(asrs.shape[0], total))
+    asrs = asrs.loc[(asrs['year'] >= 1988) & (asrs['year'] < 2020)]
+    print(coverage('after date filter',asrs.shape[0], total))
     asrs.to_csv('results/asrs_extracted_processed.csv')
     return asrs
 
@@ -246,10 +246,10 @@ def generator_split(split_series):
             yield x
 
 def create_counter(df, col = 'narrative'):
-    print('create_counter')
-    tqdm.pandas()
+    tqdm.pandas(desc = col)
     # split = df.apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
-    split = df.progress_apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
+    dropped = df.drop_duplicates(col)
+    split = dropped.progress_apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
     res = Counter(generator_split(split))
     res = pd.DataFrame.from_dict(dict(res), orient = 'index')
     return res

@@ -61,7 +61,7 @@ def load_full_wiki(us_only = True):
     # load wikipedia airport name
     alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     all_wiki_tables = []
-    for char in tqdm(alphabet):
+    for char in alphabet:
         wiki_list_link = f'https://en.wikipedia.org/wiki/List_of_airports_by_IATA_airport_code:_{char}'
         all_wiki_tables.append(load_wiki_table(wiki_list_link))
 
@@ -75,8 +75,6 @@ def load_full_wiki(us_only = True):
         # only select US
         contains_us_sel = us_wiki_table['Location served'].str.contains("United States")
         us_wiki_table = us_wiki_table.loc[contains_us_sel, :].copy()
-
-
 
     # city/state processing
     us_wiki_table['city'] = us_wiki_table['Location served'].apply(get_city)

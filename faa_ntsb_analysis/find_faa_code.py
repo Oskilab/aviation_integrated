@@ -11,11 +11,11 @@ import pandas as pd, numpy as np, re, ssl, pickle, os
 import urllib.request as request
 coverage = namedtuple('coverage', ['part', 'total'])
 query_wiki, perform_name_matching = False, True
-create_backup, check_code = False, False
+create_backup, check_codes = False, True
 wac_load = True
 
-if check_code and not os.path.exist('results/matched_set_faa.pckl'):
-    raise Exception("if check code is set to True, then 'results/matched_set_faa.pckl' must exist")
+# if check_codes and not os.path.exists('results/matched_set_faa.pckl'):
+#     raise Exception("if check code is set to True, then 'results/matched_set_faa.pckl' must exist")
     
 
 def load_faa_data():
@@ -122,7 +122,8 @@ def combine_full_worldcities(full):
 
     full['city_lat'] = np.nan
     full['city_lon'] = np.nan
-    for city in tqdm(full.loc[nan_airport_name_sel, 'eventcity'].unique()):
+    for city in tqdm(full.loc[nan_airport_name_sel, 'eventcity'].unique(), \
+            desc = "combining w/wordcities"):
         if city in set_of_worldcities:
             row_worldcities = worldcities[worldcities['city'].str.lower() == city].iloc[0]
             full.loc[full['eventcity'] == city, 'city_lat'] = row_worldcities['lat']
@@ -137,7 +138,8 @@ def search_wac_nearby(full, load = True):
     geo_cols = ['eventcity', 'city_lat', 'city_lon']
     city_lat_lon = full.loc[nan_airport_name_sel, geo_cols].drop_duplicates()
 
-    tqdm_obj = tqdm(city_lat_lon.iterrows(), total = city_lat_lon.shape[0], desc = "found 0")
+    tqdm_obj = tqdm(city_lat_lon.iterrows(), total = city_lat_lon.shape[0], \
+            desc = "search wac nearby found 0")
     results_dict, errors, nf = {}, {}, {}
     if load:
         results_dict = pickle.load(open('results/wac_search_results.pckl', 'rb'))
@@ -151,7 +153,7 @@ def search_wac_nearby(full, load = True):
             res = search_city(row['eventcity'], 'United States', row['city_lat'], row['city_lon'])
             if res is not None:
                 results_dict[idx] = res
-                tqdm_obj.set_description(f"found {len(results_dict)}")
+                tqdm_obj.set_description(f"search wac nearby found {len(results_dict)}")
                 if len(results_dict) % 25 == 0:
                     save_files()
             else:
@@ -208,13 +210,14 @@ if query_wiki:
     wiki_search_found = {}
 
     name_state = not_matched[['eventairport_conv', 'event_fullstate']].drop_duplicates()
-    tqdm_obj = tqdm(name_state.iterrows(), desc = "found 0", total = name_state.shape[0])
+    tqdm_obj = tqdm(name_state.iterrows(), desc = "query wiki names found 0", total = name_state.shape[0])
     for idx, row in tqdm_obj:
         airportname, fullstate = row['eventairport_conv'], row['event_fullstate']
         res = search_wiki_airportname(airportname, fullstate)
         if res is not None:
             wiki_search_found[airportname] = res
-            tqdm_obj.set_description(f"found {len(wiki_search_found)}")
+            tqdm_obj.set_description(f"query wiki names found {len(wiki_search_found)}")
+
 
     wiki_search_found_df = pd.DataFrame.from_dict(wiki_search_found, orient = 'index')
     wiki_search_found_df.to_csv('results/wiki_search_found.csv')
@@ -249,7 +252,7 @@ handcoded.drop(['Unnamed: 8'], axis = 1, inplace = True)
 handcoded.rename({'Unnamed: 7': 'tracon_code'}, axis = 1,inplace = True)
 handcoded = handcoded.loc[~handcoded['tracon_code'].isna(), :].copy()
 
-for idx, row in tqdm(handcoded.iterrows(),total = handcoded.shape[0]):
+for idx, row in tqdm(handcoded.iterrows(), total = handcoded.shape[0], desc = "handcoded"):
     if row['tracon_code'] != '?':
         full.loc[(full['eventairport_conv'] == row['eventairport_conv']) & \
                  (full['eventcity'] == row['eventcity']) & \
@@ -279,7 +282,7 @@ if check_codes:
         ct += tmp.loc[sel].shape[0]
     print('wiki matched', ct)
 
-    # match with airnav
+    # match with wac
     for idx, row in tqdm(code_and_loc_pd.iterrows(), total = code_and_loc_pd.shape[0]):
         if row['tracon_code'] not in matched_set:
             if check_code(row['tracon_code']):

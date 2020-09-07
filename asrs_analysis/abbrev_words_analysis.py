@@ -200,8 +200,8 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     total_cts = total_cts.reset_index().rename({'index': 'acronym'}, axis = 1)
 
     top_down_sel = (total_cts['tag'] == 'pos_handcoded_abrev') | (total_cts['tag'] == 'pos_nonword')
-    summary_dict[summary_cols[16]] = fn.loc[top_down_sel, 0].sum() # top down
-    summary_dict[summary_cols[17]] = fn[top_down_sel].shape[0] # unique top down
+    summary_dict[summary_cols[16]] = total_cts.loc[top_down_sel, 0].sum() # top down
+    summary_dict[summary_cols[17]] = total_cts[top_down_sel].shape[0] # unique top down
     total_cts.to_csv(f'results/total_cts_tagged_{orig_col}.csv')
 
 
