@@ -43,7 +43,7 @@ def calculate_avg_comp2(list_idx1, list_idx2, cos_res, overlap = 0, same = False
         return np.nan, np.nan
     else:
         list_idx1, list_idx2 = np.array(list_idx1), np.array(list_idx2)
-        sum_d2v = cos_res[list_idx1[:, None], list_idx2]
+        sum_d2v = np.sum(cos_res[list_idx1[:, None], list_idx2])
         avg_d2v = sum_d2v / num_comp
         if same:
             num_comp /= 2
