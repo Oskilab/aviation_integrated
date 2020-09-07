@@ -4,7 +4,26 @@ from tqdm import tqdm
 """
 Combines ASRS data with FAA/NTSB, LIWC and Doc2Vec datasets
 """
+ifr_vfr_dict = {
+    'itinerant': 'itnr',
+    'general': 'gen',
+    'overflight': 'ovrflt'
+}
 
+def rename_cols(pd):
+    rename_dict = {'airport_code': 'tracon_key'}
+    for col in pd.columns:
+        if 'IFR' in col or 'VFR' in col:
+            split_col = col.lower().split("\t")
+            start_str = ''.join([ifr_vfr_dict.get(x, x) for x in split_col[1].split()])
+            end_str = '_'.join([ifr_vfr_dict.get(x, x) for x in split_col[0].split()])
+            rename_dict[col] = f'{start_str}_{end_str}'
+        elif 'Local' in col:
+            split_col = col.lower().split()
+            rename_dict[col] = f'{split_col[1]}_{split_col[0]}'
+    return pd.rename(rename_dict, axis = 1)
+
+all_res = []
 # for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
 for col in ['narrative']:
     print('col', col)
@@ -110,4 +129,8 @@ for col in ['narrative']:
         print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
         print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
         res = pd.DataFrame.from_dict({idx: row for idx, row in enumerate(final_rows)}, orient = 'index')
-        res.to_csv(f'results/final_dataset_{col}_{n_month}mon.csv')
+        res = rename_cols(res)
+        res.set_index(['tracon_key', 'year', 'month'], inplace = True)
+        all_res.append(res)
+        # res.to_csv(f'results/final_dataset_{col}_{n_month}mon.csv')
+pd.concat(all_res, ignore_index = False, axis = 1).to_csv('results/final_dataset.csv')
