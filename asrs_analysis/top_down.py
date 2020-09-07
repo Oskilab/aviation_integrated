@@ -41,7 +41,8 @@ sel = ['tracon_code', 'year', 'month']
 tmp = all_pds[sel].groupby(sel).count().reset_index()
 
 abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
-        'narrative_synopsis_combined': 'narrsyn', 'combined:' 'all'}
+        'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
+        'callback': 'call'}
 
 for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
     abrev_col = abrev_col_dict[col]

@@ -51,7 +51,8 @@ def calculate_avg_comp2(list_idx1, list_idx2, cos_res, overlap = 0, same = False
         
 
 abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
-        'narrative_synopsis_combined': 'narrsyn', 'combined:' 'all'}
+        'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
+        'callback': 'call'}
 """
 @param: all_pds(pd.DataFrame) should be the full asrs dataset
 @param: d2v_model (gensim.models.doc2vec) model that was trained on full dataset
