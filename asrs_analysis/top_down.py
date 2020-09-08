@@ -74,6 +74,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
             selector = selector & (all_pds[sel[sel_idx]] == tmp.loc[i, sel[sel_idx]])
         asrs = all_pds.loc[selector, :].copy()
 
+        asrs[f'{col}_wc'] = asrs.apply(lambda x: convert_to_words(x, col).shape[0], axis = 1)
+
         other_info = {}
 
         any_col_has_multiple_reports = None
@@ -95,6 +97,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         other_info['num_multiple_reports'] = any_col_has_multiple_reports.sum()
         other_info['num_observations'] = asrs.shape[0]
         other_info['num_callbacks'] = asrs['contains_callback'].sum()
+        other_info[f'{col}_wc'] = asrs[f'{col}_wc'].sum()
+        other_info[f'{col}_avg_wc'] = asrs[f'{col}_wc'].mean()
 
         # this is redundant (occurs in preprocess_helper.py)
         asrs[col] = asrs[col].str.lower()
@@ -130,4 +134,17 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
     # concatenate the dataframe of each counts together and save
     all_dfs = pd.concat(all_dfs, axis = 1)
     all_dfs.index = all_dfs.index.rename('tracon_month')
+
+    all_dfs['year'] = all_dfs.index.map(lambda x: int(x.split()[1].split("/")[0]))
+    all_dfs['month'] = all_dfs.index.map(lambda x: int(x.split()[1].split("/")[1]))
+
+    year_month_gb = all_dfs[['year', 'month', f'{col}_wc']].groupby(['year', 'month']).sum().reset_index()
+    all_dfs[f'{col}_wc_all'], all_dfs[f'{col}_wc_out'] = np.nan, np.nan
+
+    for idx, row in year_month_gb.iterrows():
+        all_dfs.loc[(all_dfs['year'] == row['year']) & (all_dfs['month'] == row['month']), f'{col}_wc_all'] \
+                = row['narrative_wc']
+    all_dfs[f'{col}_wc_out'] = all_dfs[f'{col}_wc_all'] - all_dfs[f'{col}_wc']
+    all_dfs.drop(['year', 'month'], axis = 1, inplace = True)
+
     all_dfs.to_csv(f'results/tracon_month_{col}.csv', index = True)
