@@ -6,43 +6,61 @@ This repository processes the ASRS dataset by extracting the tracon information.
 ## Running The Repository
 First, you will need to upload, the ASRS dataset and place it in the folder `preprocess_asrs/datasets/`. We've excluded the file because of storage reasons (git LFS). After that, you simply need to run the following command.
 ```
-./run_all
+bash -e ./run_all
 ```
 
+## A Note about Handcoded Files
+Currently there are two handcoded files that are a part of the pipeline and they should be placed in `dictionaries/combined_neg_nonword_handcode2.csv` and `datasets/not_matched_full_v1.csv`. 
+
+The first file is a dataframe consisting of words that we've categorized as `neg_nonword`, or words that are not found in any of the aviation dictionaries, and are also not considered to be english words via the enchant library. As a rule, we've ruled these to be abbreviations, but we've hand-coded some portion of them to either keep them as abbreviations or to remove them.
+
+The second file is a dataframe consisting of airport names that we weren't able to programmatically match to a specific airport code. This dataframe includes airport codes that we filled in manually.
+
+Requirements for each file
+1. `dictionaries/combined_neg_nonword_handcode2.csv`: must have the columns: `add_to_realworld_dictionary` `add_to_airport` `mispelled_word_fix`.
+2. `datasets/not_matched_full_v1.csv`: the 7th column must include the corresponding tracon\_code that was filled in.
+
+
 ## Overall Pipeline
-1. `preprocess_asrs/clean.py`: preprocesses the ASRS dataset by extracting tracon information. See `preprocess_asrs/README.md` for additional information.
-2. `asrs_analysis/run_all`: analyzes ASRS dataset by categorizing all words used in the dataset. This also calculates cosine similarity metrics (using doc2vec) and liwc counts
-3. `aviation_data_huiyi/run_all`: processes NTSB incident/accident data
-    a. See `aviation_data_huiyi/README.md` for more information.
-    b. This repository cleans the airport_codes and airport_names of the NTSB incident/accident data and it utilizes latitude/longitude informations to fill invalid rows.
-4. `faa/clean_data.py`: processes FAA incident/accident data
-    a. This code utilizes queries to iata.org to fill airport codes and airport names. It also cleans the names/codes.
-5. `join_faa_ntsb.py`: joins results from previous two steps
-6. `flight_vol.py`: combines FAA volume data with results from step 3
-7. `combine.py`: combines result from step (4) with results of the abbreviation/LIWC/doc2vec analysis (2)
+1. `faa_ntsb_analysis/`: this processes the incident/accident data provided by the FAA/NTSB datasets. There are some issues (faa has no airport code, but has airport names, and ntsb has missing airport codes) that this repository aims to fix via web requests
+    a. Warning: running this part of the pipeline in its entirety takes a very long amount of time. For instance, the NTSB lookup can take >24 hours. Much of the intensive work is for debugging purposes or the creation of backup files, so this can be turned off if needed via command line arguments (TODO)
+    b. Pipeline:
+        1. `python find_faa_code.py`: this finds the airport codes corresponding to each incident/accident row, and organizes the data into tracon\_months
+        2. `python find_ntsb_code.py`: this does the same as above for the NTSB dataset
+2. `join_faa_ntsb.py`: joins results from step 1
+3. `preprocess_asrs/clean.py`: preprocesses the ASRS dataset by extracting tracon information. See `preprocess_asrs/README.md` for additional information.
+4. `asrs_analysis/run_all`: analyzes ASRS dataset by categorizing all words used in the dataset. This also calculates cosine similarity metrics (using doc2vec) and liwc counts
+<!-- 3. `aviation_data_huiyi/run_all`: processes NTSB incident/accident data -->
+<!--     a. See `aviation_data_huiyi/README.md` for more information. -->
+<!--     b. This repository cleans the airport_codes and airport_names of the NTSB incident/accident data and it utilizes latitude/longitude informations to fill invalid rows. -->
+<!-- 4. `faa/clean_data.py`: processes FAA incident/accident data -->
+<!--     a. This code utilizes queries to iata.org to fill airport codes and airport names. It also cleans the names/codes. -->
+5. `flight_vol.py`: combines FAA volume data with results from step 2
+6. `combine.py`: combines result from step (4) with results of the abbreviation/LIWC/doc2vec analysis (2)
 
 ## Organization of Repository
 1. `preprocess_asrs/` is the directory in which ASRS tracon codes are extracted and cleaned
 2. `asrs_analysis/` is the directory responsible for analyzing the ASRS dataset via LIWC, Doc2Vec, and abbreviation analysis.
 3. `abrev_datasets/` includes the results from the abbreviation/ASRS repository
 4. `datasets/` includes the data from the FAA website.
-5. `faa/` includes the repository that cleans the FAA incident/accident data
-6. `aviation_data_huiyi/`: includes the repository that cleans the NTSB incident/accident data.
-7. `join_faa_ntsb.py`: joins the results from `faa/` and `aviation_data_huiyi/` into one dataset. This creates the file `airport_month_events.csv`
-8. `flight_vol.py`: combines `airport_month_events.csv` with the FAA volume data scrapped from the website above. This creates `combined_vol_incident.csv`
-9. `combine.py`: this combines `combined_vol_incident.csv` with all the abbreviation datasets from the ASRS repository. This creates the files: `final_dataset_{1|3|6|12|inf}.csv`.
+5. `faa_ntsb_analysis/` includes the repository that cleans the FAA/NTSB incident/accident data.
+<!-- 5. `faa/` includes the repository that cleans the FAA incident/accident data -->
+<!-- 6. `aviation_data_huiyi/`: includes the repository that cleans the NTSB incident/accident data. -->
+6. `join_faa_ntsb.py`: joins the results from `faa/` and `aviation_data_huiyi/` into one dataset. This creates the file `airport_month_events.csv`
+7. `flight_vol.py`: combines `airport_month_events.csv` with the FAA volume data scrapped from the website above. This creates `combined_vol_incident.csv`
+8. `combine.py`: this combines `combined_vol_incident.csv` with all the abbreviation datasets from the ASRS repository. This creates the files: `final_dataset_{1|3|6|12|inf}.csv`.
 ## Datasets
 Before jumping into a detailed description of each step, here is some background information on the datasets involved.
 
 ### FAA/NTSB Accident/Incident Dataset
-The subdirectories `aviation_data_huiyi` and `faa` deal with cleaning the NTSB and FAA accident/incident data respectively. Each dataset is a dataframe consisting of accidents and incidents occurring at various airports. The columns of interest include the tracon\_code/airport\_code, year and month. These datasets are transformed into a counts dataframe, where each row consists of airport\_code/tracon\_code, airport\_name year, month, and the number of incidents and accidents that occured in the FAA dataset and the NTSB dataset. Some example rows of the output are shown below (`airport_month_events.csv` for full csv).
+The subdirectory `faa_ntsb_analysis` deal with cleaning the NTSB and FAA accident/incident data. Each dataset (of FAA/NTSB) is a dataframe consisting of accidents and incidents occurring at various airports. The columns of interest include the tracon\_code/airport\_code, year and month. These datasets are transformed into a counts dataframe, where each row consists of airport\_code/tracon\_code, airport\_name year, month, and the number of incidents and accidents that occured in the FAA dataset and the NTSB dataset. Some example rows of the output are shown below (`airport_month_events.csv` for full csv).
 
 | airport\_code | airport\_name | year | month | ntsb\_accidents | ntsb\_incidents | faa\_incidents | dataset |
 | ------------- | ------------- | ---- | ----- | --------------- | --------------- | -------------- | ------- |
 | ADY | Alldays Airport | 1991 | 7 | 1.0 | 0.0 | 0.0 | ntsb |
 | NNB | Santa Ana Island | 1997 | 10 | 0.0 | 0.0 | 1.0 | faa |
 
-The original datasets are saved in `aviation_data_huiyi/datasets/NTSB_AIDS_full.txt` and `faa/datasets/FAA_AIDS_full.txt`. The columns of interest for the NTSB dataset are `Investigation Type` (incident or accident), `Event Date`, `Airport Code`, and `Airport Name`, wherease in the FAA dataset they are `eventairport`, `eventtype` (incident or accident), and `localeventdate` (airport code is looked up via a script) found in the `faa/` subdirectory.
+The original datasets are saved in `faa_ntsb_analysis/datasets/NTSB_AIDS_full.txt` and `faa_ntsb_analysis/datasets/FAA_AIDS_full.txt`. The columns of interest for the NTSB dataset are `Investigation Type` (incident or accident), `Event Date`, `Airport Code`, and `Airport Name`, wherease in the FAA dataset they are `eventairport`, `eventtype` (incident or accident), and `localeventdate` (airport code is looked up via a script) found in the `faa/` subdirectory.
 
 ### FAA Volume Dataset
 This dataset was queried from the following [link](https://aspm.faa.gov/opsnet/sys/tower.asp) and the data includes the number of flights from a given airport/facility at any year/month as well as the types of flights that occurred. These datasets are saved in `datasets/WEB-Report-*`. This data is not processed in any way and is simply joined with the rest of the data.
@@ -51,7 +69,52 @@ This dataset was queried from the following [link](https://aspm.faa.gov/opsnet/s
 This dataset includes information on incidents/accidents that occurred and the reports that were written after each incident/accident occurred. These reports are saved in the `narrative` and `synopsis` fields. We create our own field `combined` which joins the two together. The original dataset is not provided (see above). However
 
 ## In-Depth Pipeline
-### (1) Preprocessing ASRS Dataset
+### (1) Cleaning NTSB/FAA Data (faa\_ntsb\_analysis/)
+**Purpose**: take the FAA/NTSB incident/accident data and fill in the tracon\_code information (for the rows that are missing) as well as save some backup files for potential use in the future. Most importantly, this also creates a dataframe of tracon_months and the number of ntsb/faa incidents and accidents that occured within that tracon_month
+
+**Input**:
+<!-- * `NTSB_airportcode.csv`: all airport codes in NTSB dataset and their corresponding frequencies -->
+<!-- * `NTSB_airportname.csv`: all airport names in NTSB dataset and their corresponding frequencies -->
+* `NTSB_AviationData_new.txt`: all incidents/accident data from NTSB dataset 
+* `airports.csv`: scraped from wikipedia
+* `FAA_AIDS_full.csv`: the main FAA incident/accident dataset
+* `FAA_AIDS_airports.csv`: the airport codes found in the FAA dataset, and their corresponding frequencies
+* `worldcities.csv`: list of worldcities and their corresponding latitudes/longitudes. This was downloaded from this [website](https://simplemaps.com/data/world-cities)
+
+**Output**:
+* `NTSB_AIDS_full_output_new.csv`: for each tracon_month, calculate the number of ntsb_incidents and ntsb_accidents
+* `faa_incidents.csv`: the faa_incidents organized via tracon_month.
+
+**Methodology**:
+Cleaning is accomplished by removing whitespace, lowercasing, etc. If an airport code is not found in airports.csv, then a slightly adjusted version is tried (removing first letter). Missing airport_code and airport_names are filled in utilizing latitude/longitude information. For more info: read the `README.md` found in the directory
+
+**Running**:
+```
+cd faa_ntsb_analysis
+python find_faa_code.py
+python find_ntsb_code.py
+cd ../
+```
+### (4) Cleaning FAA Data (faa)
+**Purpose**: Take the FAA incident/accident data, clean the airportname and airportcodes, and create a dataframe of tracon_months and the number of faa incidents and accidents that occured within that tracon_month
+
+**Input**:
+* `FAA_AIDS_full.csv`: the main FAA incident/accident dataset
+* `FAA_AIDS_airports.csv`: the airport codes found in the FAA dataset, and their corresponding frequencies
+
+**Output**:
+* `faa_incidents.csv`: the faa_incidents organized via tracon_month.
+
+**Methodology**:
+We perform some basic cleaning steps (stripping, etc.) and ensure that the airport codes are found in the IATA.org website (by querying programmatically).
+
+**Running**:
+```
+cd faa
+python clean_data.py
+cd ../
+```
+### (3) Preprocessing ASRS Dataset
 **Purpose**: extract tracon codes from the ASRS dataset (not provided) into new columns utilizing the `atcadvisory` column. The following section repeats information found in `preprocess_asrs/README.md`.
 
 **Input**: all paths are from `preprocess_asrs/` as root.
@@ -75,8 +138,8 @@ python clean.py
 cd ../
 ```
 
-### (2) Analyzing ASRS Dataset (asrs\_analysis/)
-#### (2.a) abbrev\_words\_analysis.py
+### (4) Analyzing ASRS Dataset (asrs\_analysis/)
+#### (4.a) abbrev\_words\_analysis.py
 **Purpose**: Take the ASRS dataset and create a dataframe with known abbreviations (within narrative/synopsis/combined columns).
 
 **Input**: 
@@ -112,7 +175,7 @@ cd asrs_analysis
 python abbrev_words_analysis.py
 cd ../
 ``` 
-#### (2.b) top\_down.py
+#### (4.b) top\_down.py
 **Purpose**: Organize ASRS dataset via tracon_month and create a counts dataframe mapping tracon_month to the number of times pos_nonwords, overall abbreviations, and (faa|casa|iata|hand|nasa) abbreviations show up.
 
 **Input**: 
@@ -136,7 +199,7 @@ python top_down.py
 cd ../
 ``` 
  
-#### (2.c) Doc2Vec Cosine Similarity (cos_sim.py)
+#### (4.c) Doc2Vec Cosine Similarity (cos_sim.py)
 **Purpose**: convert the narrative/synopsis/combined fields in the ASRS dataset into doc2vec vectors and calculate the average cosine similarity between vectors in a given tracon_month to other groups (explained below).
 
 **Input**:
@@ -159,7 +222,7 @@ cd asrs_analysis
 python cos_sim.py
 cd ../
 ``` 
-#### (2.d) LIWC Analysis (liwc\_analysis.py)
+#### (4.d) LIWC Analysis (liwc\_analysis.py)
 **Purpose**: for each tracon\_month, calculate the counts of each LIWC category
 
 **Input**:
@@ -173,46 +236,6 @@ cd ../
 ```
 cd asrs_analysis
 python liwc_analysis.py
-cd ../
-```
-### (3) Cleaning NTSB Data (aviation\_data\_huiyi)
-**Purpose**: take the NTSB incident/accident data, clean the airportname and airportcodes, and create a dataframe of tracon_months and the number of ntsb incidents and accidents that occured within that tracon_month
-
-**Input**:
-* `NTSB_airportcode.csv`: all airport codes in NTSB dataset and their corresponding frequencies
-* `NTSB_airportname.csv`: all airport names in NTSB dataset and their corresponding frequencies
-* `NTSB_AIDS_full.txt`: all incidents/accident data from NTSB dataset 
-* `airports.csv`: scraped from wikipedia
-
-**Output**:
-* `NTSB_AIDS_full_output_new.csv`: for each tracon_month, calculate the number of ntsb_incidents and ntsb_accidents
-
-**Methodology**:
-Cleaning is accomplished by removing whitespace, lowercasing, etc. If an airport code is not found in airports.csv, then a slightly adjusted version is tried (removing first letter). Missing airport_code and airport_names are filled in utilizing latitude/longitude information. For more info: read the `README.md` found in the directory
-
-**Running**:
-```
-cd aviation_data_huiyi
-./run_all
-cd ../
-```
-### (4) Cleaning FAA Data (faa)
-**Purpose**: Take the FAA incident/accident data, clean the airportname and airportcodes, and create a dataframe of tracon_months and the number of faa incidents and accidents that occured within that tracon_month
-
-**Input**:
-* `FAA_AIDS_full.csv`: the main FAA incident/accident dataset
-* `FAA_AIDS_airports.csv`: the airport codes found in the FAA dataset, and their corresponding frequencies
-
-**Output**:
-* `faa_incidents.csv`: the faa_incidents organized via tracon_month.
-
-**Methodology**:
-We perform some basic cleaning steps (stripping, etc.) and ensure that the airport codes are found in the IATA.org website (by querying programmatically).
-
-**Running**:
-```
-cd faa
-python clean_data.py
 cd ../
 ```
 
