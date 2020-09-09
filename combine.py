@@ -27,7 +27,7 @@ def rename_cols(pd, month_range_str):
             split_col = col.lower().split()
             new_col = f'{split_col[1]}_{split_col[0]}'
         if new_col not in except_cols and not new_col.endswith(month_range_str):
-            new_col += month_range_str
+            new_col += "_" + month_range_str
         rename_dict[col] = new_col
     return pd.rename(rename_dict, axis = 1)
 
