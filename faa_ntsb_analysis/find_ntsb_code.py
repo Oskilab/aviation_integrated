@@ -427,7 +427,7 @@ if match:
     print('wiki + airnav matched', ct)
     pickle.dump(matched_set, open('results/ntsb_matched_set.pckl', 'wb'))
 else:
-    matched_set = pickle.load(open('results/ntsb_matched_set', 'rb'))
+    matched_set = pickle.load(open('results/ntsb_matched_set.pckl', 'rb'))
 
 full.loc[full[' Airport Code '].apply(lambda x: x in matched_set), 'found_code'] = 1
 """
