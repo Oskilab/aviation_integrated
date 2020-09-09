@@ -9,7 +9,7 @@ from selenium_funcs import check_code, search_city
 import requests, pandas as pd, urllib.request as request, pickle
 import re, numpy as np, pickle
 page_google, search_wiki = False, True
-match, create_backup = False, True
+match, create_backup = False, False
 load_backupset = True
 key = 'AIzaSyCR9FRYW-Y7JJbo4hU682rn6kJaUA5ABUc'
 coverage = namedtuple('coverage', ['part', 'total'])
@@ -216,7 +216,7 @@ full[' Longitude '] = full[' Longitude '].apply(conv_to_float)
 # REMOVED
 # look at rows with missing latitude/longitude and see if there's only 1 matching airport
 # in the wikipedia database in that location
-# wiki_tables = load_full_wiki(us_only = False)
+wiki_tables = load_full_wiki(us_only = False)
 # lat_lon_missing = (empty_lat | empty_lon) & empty_code_sel
 # city_state_country = full.loc[lat_lon_missing, \
 #         ['eventcity', 'event_fullstate', 'event_country']].drop_duplicates()
@@ -342,7 +342,7 @@ res = match_using_name_loc(full[name_nocode], wiki_tables, col = ' Airport Name 
 
 print(full[full[' Airport Code '] == ''].shape)
 for idx, row in tqdm(res.iterrows(), total = res.shape[0]):
-    full.loc[name_nocode & (full[' Airport Code '] == row[' Airport Code ']) & \
+    full.loc[name_nocode & (full[' Airport Code '] == row['wiki_IATA']) & \
             (full['eventcity'] == row['eventcity']) &
             (full['event_fullstate'] == row['event_fullstate']), ' Airport Code '] = row['wiki_IATA']
 print(full[full[' Airport Code '] == ''].shape)

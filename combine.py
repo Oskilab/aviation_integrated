@@ -10,17 +10,25 @@ ifr_vfr_dict = {
     'overflight': 'ovrflt'
 }
 
-def rename_cols(pd):
+def rename_cols(pd, month_range_str):
+    except_cols = set(['year', 'month', 'tracon_key'])
     rename_dict = {'airport_code': 'tracon_key'}
     for col in pd.columns:
+        if col == 'airport_code':
+            continue
+        new_col = col
         if 'IFR' in col or 'VFR' in col:
             split_col = col.lower().split("\t")
             start_str = ''.join([ifr_vfr_dict.get(x, x) for x in split_col[1].split()])
             end_str = '_'.join([ifr_vfr_dict.get(x, x) for x in split_col[0].split()])
-            rename_dict[col] = f'{start_str}_{end_str}'
+            new_col = f'{start_str}_{end_str}'
+            # rename_dict[col] = 
         elif 'Local' in col:
             split_col = col.lower().split()
-            rename_dict[col] = f'{split_col[1]}_{split_col[0]}'
+            new_col = f'{split_col[1]}_{split_col[0]}'
+        if new_col not in except_cols and not new_col.endswith(month_range_str):
+            new_col += month_range_str
+        rename_dict[col] = new_col
     return pd.rename(rename_dict, axis = 1)
 
 all_res = []
@@ -87,6 +95,9 @@ for col in ['narrative']:
 
     num_months = [1, 3, 6, 12, np.inf]
     for n_month in num_months:
+        month_range_str = f'{n_month}m'
+        if num_months == np.inf:
+            month_range_str = 'am'
         asrs = asrs_orig.copy()
 
         d2v_tm = pd.read_csv(f'./asrs_analysis/results/d2v_tracon_month_{col}_{n_month}mon.csv', index_col = 0)
@@ -129,8 +140,12 @@ for col in ['narrative']:
         print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
         print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
         res = pd.DataFrame.from_dict({idx: row for idx, row in enumerate(final_rows)}, orient = 'index')
-        res = rename_cols(res)
+        res = rename_cols(res, month_range_str)
         res.set_index(['tracon_key', 'year', 'month'], inplace = True)
         all_res.append(res)
         # res.to_csv(f'results/final_dataset_{col}_{n_month}mon.csv')
-pd.concat(all_res, ignore_index = False, axis = 1).to_csv('results/final_dataset.csv')
+all_res = pd.concat(all_res, ignore_index = False, axis = 1)
+all_res.to_csv('results/final_dataset.csv')
+coverage = all_res.isna().sum()
+coverage['total rows'] = all_res.shape[0]
+coverage.to_csv('results/final_coverage.csv')

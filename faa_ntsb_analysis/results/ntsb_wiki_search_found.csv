@@ -1,676 +1,197 @@
 ,iata,wiki_title,state_names,num_words_matched,max_state
-1,BUD,Budapest Ferenc Liszt International Airport - Wikipedia,{'New York': 9},0,False
-10l,BIL,Billings Logan International Airport - Wikipedia,"{'Alaska': 9, 'Arizona': 1, 'Colorado': 1, 'Illinois': 1, 'Massachusetts': 1, 'Minnesota': 1, 'Montana': 96, 'Nevada': 1, 'New York': 2, 'North Dakota': 2, 'Oregon': 1, 'Texas': 1, 'Utah': 1, 'Washington': 2}",0,False
-23ak,ANC,Ted Stevens Anchorage International Airport - Wikipedia,"{'Alaska': 193, 'California': 2, 'Colorado': 6, 'Guam': 1, 'Hawaii': 1, 'Illinois': 6, 'Indiana': 3, 'Kentucky': 4, 'Minnesota': 9, 'New York': 12, 'Oregon': 9, 'Puerto Rico': 2, 'Washington': 20}",0,True
-4r/22l,LIT,Clinton National Airport - Wikipedia,"{'Arizona': 1, 'Arkansas': 53, 'Colorado': 1, 'Georgia': 1, 'Illinois': 1, 'Missouri': 1, 'Nevada': 1, 'North Carolina': 1, 'Oklahoma': 1, 'Texas': 3, 'Washington': 3}",0,False
-5 star grand canyon helicopter tours,GCN,Grand Canyon National Park Airport - Wikipedia,"{'Arizona': 49, 'California': 2, 'Nevada': 4}",2,False
-74s ctaf,HDN,Yampa Valley Airport - Wikipedia,"{'Alaska': 3, 'California': 1, 'Colorado': 47, 'Florida': 1, 'Georgia': 1, 'Illinois': 1, 'Massachusetts': 1, 'Minnesota': 1, 'New Jersey': 1, 'New York': 1, 'Texas': 2, 'Washington': 3}",0,False
-a day in the sky at watsonville municipal,WVI,Watsonville Municipal Airport - Wikipedia,"{'California': 48, 'Illinois': 2}",2,True
-a2 global shipping,CVG,Cincinnati/Northern Kentucky International Airport - Wikipedia,"{'Alaska': 6, 'Arizona': 1, 'Colorado': 1, 'Florida': 8, 'Georgia': 1, 'Illinois': 3, 'Indiana': 2, 'Iowa': 2, 'Kansas': 6, 'Kentucky': 238, 'Minnesota': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 9, 'North Carolina': 1, 'Ohio': 18, 'Oregon': 2, 'Puerto Rico': 1, 'Tennessee': 3, 'Texas': 3, 'Washington': 17}",0,False
-abeid amani karume international,ZNZ,Abeid Amani Karume International Airport - Wikipedia,{},4,False
-abilene regional,ABI,Abilene Regional Airport - Wikipedia,"{'Arizona': 3, 'California': 3, 'Kansas': 1, 'New Mexico': 2, 'Texas': 68}",2,True
-abraham lincoln capital,SPI,Abraham Lincoln Capital Airport - Wikipedia,"{'Florida': 5, 'Illinois': 264, 'Mississippi': 3, 'Texas': 1}",3,True
-addis ababa bole airport ethiopia,ADD,Addis Ababa Bole International Airport - Wikipedia,"{'New York': 1, 'Washington': 3}",3,False
-aerodromo de goiás velho,BSB,Brasília International Airport - Wikipedia,{},0,False
-aeroparque internacional jorge newbery,EZE,Ministro Pistarini International Airport - Wikipedia,"{'Guam': 2, 'New Jersey': 2, 'New York': 3, 'Washington': 2}",0,False
-aeroporto internacional,REC,Recife/Guararapes–Gilberto Freyre International Airport - Wikipedia,{},0,False
-aeropuerto de golfito,SJO,Juan Santamaría International Airport - Wikipedia,"{'Alaska': 4, 'Colorado': 3, 'New York': 2, 'Washington': 3}",0,False
-aeropuerto de san marcos,CCS,Simón Bolívar International Airport (Venezuela) - Wikipedia,"{'New York': 2, 'Puerto Rico': 2}",0,False
-aeropuerto internacional palonegro,BGA,Palonegro International Airport - Wikipedia,{'Florida': 2},1,False
-aeropuerto san francisco ca,MLM,Morelia International Airport - Wikipedia,"{'California': 21, 'Colorado': 3}",0,True
-aeródromo san juan de los morros,HAV,José Martí International Airport - Wikipedia,"{'Alaska': 1, 'Florida': 9, 'Georgia': 1, 'Maine': 3, 'New York': 9, 'Puerto Rico': 2}",0,False
-afobaka airstrip,PBM,Johan Adolf Pengel International Airport - Wikipedia,"{'Delaware': 1, 'Florida': 6, 'Georgia': 1, 'Massachusetts': 3, 'New Hampshire': 1, 'New Jersey': 2, 'New York': 1, 'North Carolina': 2, 'Puerto Rico': 3, 'South Carolina': 1, 'Texas': 3, 'Virginia': 1}",0,False
-aiken regional,AIK,Aiken Regional Airport - Wikipedia,{'South Carolina': 26},2,True
-ainsworth regional,ANW,Ainsworth Regional Airport - Wikipedia,"{'Alabama': 1, 'Colorado': 4, 'Nebraska': 66, 'South Dakota': 4, 'Washington': 1, 'Wyoming': 3}",2,True
-air evac,FLL,Fort Lauderdale–Hollywood International Airport - Wikipedia,"{'Alaska': 11, 'Florida': 241, 'Georgia': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 8, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 16, 'North Carolina': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Virginia': 3, 'Washington': 30}",0,False
-air evac 95,FLL,Fort Lauderdale–Hollywood International Airport - Wikipedia,"{'Alaska': 11, 'Florida': 241, 'Georgia': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 8, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 16, 'North Carolina': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Virginia': 3, 'Washington': 30}",0,False
-aircraft magneto services,HPN,Westchester County Airport - Wikipedia,"{'Colorado': 2, 'Connecticut': 15, 'Florida': 22, 'Georgia': 1, 'Illinois': 1, 'Maine': 3, 'Massachusetts': 3, 'Michigan': 1, 'New Hampshire': 4, 'New Jersey': 2, 'New York': 85, 'North Carolina': 1, 'Vermont': 1, 'Washington': 7}",0,False
-aj eisenberg,ODW,A.J. Eisenberg Airport - Wikipedia,{'Washington': 21},1,True
-alaska airlines dillingham,ANC,Ted Stevens Anchorage International Airport - Wikipedia,"{'Alaska': 193, 'California': 2, 'Colorado': 6, 'Guam': 1, 'Hawaii': 1, 'Illinois': 6, 'Indiana': 3, 'Kentucky': 4, 'Minnesota': 9, 'New York': 12, 'Oregon': 9, 'Puerto Rico': 2, 'Washington': 20}",0,True
-alaska airlines gustavus,GST,Gustavus Airport - Wikipedia,{'Alaska': 44},1,True
-alaska airlines king salmon,AKN,King Salmon Airport - Wikipedia,{'Alaska': 41},2,True
-alaska airlines nome,OME,Nome Airport - Wikipedia,{'Alaska': 43},1,True
-alaska airlines redmond,SJC,San Jose International Airport - Wikipedia,"{'Alaska': 77, 'Arizona': 5, 'California': 130, 'Colorado': 2, 'Hawaii': 26, 'Indiana': 3, 'Missouri': 2, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'Oregon': 4, 'Tennessee': 3, 'Utah': 1, 'Washington': 7}",0,False
-alaska airlines sacramento,SMF,Sacramento International Airport - Wikipedia,"{'Alaska': 19, 'Arizona': 1, 'California': 80, 'Colorado': 1, 'Hawaii': 12, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 2, 'North Carolina': 1, 'Oregon': 1, 'Texas': 1, 'Washington': 9}",1,True
-alaska airlines st louis,STL,St. Louis Lambert International Airport - Wikipedia,"{'Alaska': 10, 'Arizona': 1, 'California': 1, 'Colorado': 1, 'Florida': 9, 'Georgia': 1, 'Hawaii': 4, 'Illinois': 20, 'Indiana': 10, 'Iowa': 2, 'Kansas': 8, 'Kentucky': 4, 'Michigan': 2, 'Minnesota': 1, 'Missouri': 129, 'Montana': 6, 'Nevada': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 10, 'Virginia': 1, 'Washington': 29}",1,True
-alaska airlines tucson,TUS,Tucson International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 65, 'California': 6, 'Colorado': 1, 'Georgia': 1, 'Illinois': 1, 'Indiana': 8, 'Kentucky': 2, 'Nevada': 1, 'Texas': 3, 'Washington': 1}",1,True
-alaska airlines zihuatanejo,ZIH,Ixtapa-Zihuatanejo International Airport - Wikipedia,"{'Alaska': 6, 'California': 9, 'Colorado': 3}",0,False
-alaska land exploration,ANC,Ted Stevens Anchorage International Airport - Wikipedia,"{'Alaska': 193, 'California': 2, 'Colorado': 6, 'Guam': 1, 'Hawaii': 1, 'Illinois': 6, 'Indiana': 3, 'Kentucky': 4, 'Minnesota': 9, 'New York': 12, 'Oregon': 9, 'Puerto Rico': 2, 'Washington': 20}",0,True
-alaska seaplanes haines,JNU,Juneau International Airport - Wikipedia,"{'Alaska': 161, 'Washington': 3}",0,True
-albany international,ALB,Albany International Airport - Wikipedia,"{'Delaware': 3, 'Florida': 12, 'Georgia': 1, 'Illinois': 2, 'Kentucky': 2, 'Maryland': 1, 'Massachusetts': 19, 'Michigan': 1, 'New Jersey': 1, 'New York': 229, 'North Carolina': 2, 'Pennsylvania': 1, 'Vermont': 12, 'Washington': 37}",2,True
-alexandria aviation,AXN,Alexandria Municipal Airport - Wikipedia,"{'Minnesota': 86, 'Mississippi': 3, 'Wisconsin': 3}",1,True
-alpine,BZN,Bozeman Yellowstone International Airport - Wikipedia,"{'Alaska': 14, 'Montana': 76, 'New York': 5}",0,False
-als terminal,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 263, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,False
-amadeus terminal 2,SZG,Salzburg Airport - Wikipedia,{},0,False
-anacapa view estates heliport,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,True
-anaco,AAO,Anaco Airport - Wikipedia,{},1,False
-andrewsfield aerodrome,OBN,Oban Airport - Wikipedia,{},0,False
-andros town international,ASD,Andros Town International Airport - Wikipedia,{},3,False
-angelina county airport lfk,LFK,Angelina County Airport - Wikipedia,"{'Georgia': 3, 'Texas': 74}",2,True
-aniak,ANI,Aniak Airport - Wikipedia,{'Alaska': 46},1,True
-antlers municipal,ATE,Antlers Municipal Airport - Wikipedia,{'Oklahoma': 34},2,True
-appleton international,ATW,Appleton International Airport - Wikipedia,"{'Arizona': 1, 'Colorado': 1, 'Florida': 13, 'Georgia': 2, 'Illinois': 1, 'Indiana': 3, 'Michigan': 1, 'Minnesota': 6, 'Nevada': 1, 'New York': 1, 'Washington': 3, 'Wisconsin': 145}",2,True
-ardmore downtown executive,AHD,Ardmore Downtown Executive Airport - Wikipedia,{'Oklahoma': 40},3,True
-ardmore municipal,ADM,Ardmore Municipal Airport - Wikipedia,"{'California': 3, 'Georgia': 3, 'Oklahoma': 36}",2,True
-argyle airport-1c3,SVD,Argyle International Airport - Wikipedia,"{'New York': 6, 'Puerto Rico': 4, 'Virgin Islands': 11}",1,False
-arnold palmer regional,LBE,Arnold Palmer Regional Airport - Wikipedia,"{'Florida': 13, 'Indiana': 11, 'North Carolina': 1, 'Ohio': 8, 'Pennsylvania': 123, 'South Carolina': 1, 'Virginia': 6, 'Washington': 13, 'West Virginia': 3}",3,True
-asheville regional,AVL,Asheville Regional Airport - Wikipedia,"{'Florida': 9, 'Georgia': 2, 'Illinois': 1, 'New Jersey': 1, 'New York': 6, 'North Carolina': 39, 'Virginia': 2, 'Washington': 9}",2,True
-ashland lineville,MGM,Montgomery Regional Airport - Wikipedia,"{'Alabama': 80, 'Florida': 1, 'Illinois': 3, 'New York': 1, 'Washington': 12}",0,True
-atlanta intl,ORD,O'Hare International Airport - Wikipedia,"{'Alaska': 13, 'Arizona': 1, 'Arkansas': 4, 'California': 5, 'Colorado': 7, 'Florida': 14, 'Georgia': 1, 'Illinois': 81, 'Indiana': 19, 'Iowa': 11, 'Kansas': 13, 'Kentucky': 12, 'Massachusetts': 1, 'Michigan': 2, 'Minnesota': 1, 'Mississippi': 3, 'Nebraska': 2, 'New York': 22, 'Oklahoma': 2, 'Texas': 1, 'Virginia': 2, 'Washington': 37, 'West Virginia': 1, 'Wisconsin': 6}",0,False
-atlantic aviation aus,TYR,Tyler Pounds Regional Airport - Wikipedia,"{'Texas': 97, 'Washington': 3}",0,True
-atlantic aviation ril,RIL,Garfield County Regional Airport - Wikipedia,{'Colorado': 39},0,True
-atlantic city medical center heliport,IAH,George Bush Intercontinental Airport - Wikipedia,"{'Alaska': 10, 'Arkansas': 3, 'California': 2, 'Colorado': 4, 'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 9, 'Kentucky': 8, 'Louisiana': 5, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'Oklahoma': 2, 'Texas': 103, 'Washington': 26}",0,False
-atlantic municipal,AIO,Atlantic Municipal Airport - Wikipedia,"{'Iowa': 101, 'New Jersey': 1, 'Washington': 3}",2,True
-augusta regional,AGS,Augusta Regional Airport - Wikipedia,"{'Alabama': 3, 'Florida': 6, 'Georgia': 148, 'Illinois': 1, 'New York': 2, 'North Carolina': 1, 'Pennsylvania': 1, 'South Carolina': 2, 'Texas': 2, 'Washington': 8}",2,True
-augusta seaplane base m,BOS,Logan International Airport - Wikipedia,"{'Alaska': 12, 'California': 4, 'Connecticut': 13, 'Florida': 13, 'Georgia': 1, 'Hawaii': 5, 'Illinois': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 7, 'Maine': 7, 'Maryland': 1, 'Massachusetts': 185, 'New Hampshire': 8, 'New York': 18, 'North Carolina': 1, 'Pennsylvania': 1, 'Rhode Island': 5, 'Vermont': 12, 'Washington': 39}",0,False
-austin bergstrom international,AUS,Austin–Bergstrom International Airport - Wikipedia,"{'Alaska': 9, 'Arizona': 1, 'California': 5, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 3, 'Kentucky': 4, 'Nevada': 1, 'New York': 3, 'Texas': 253, 'Washington': 19}",1,True
-aviation america sw llc,FTW,Fort Worth Meacham International Airport - Wikipedia,"{'New Mexico': 2, 'New York': 1, 'Texas': 106}",0,False
-aérodrome,SBH,Gustaf III Airport - Wikipedia,{},0,False
-aérodrome de toussus le,TNF,Toussus-le-Noble Airport - Wikipedia,{'Alabama': 2},0,False
-aéroport de saint tropez,LTT,La Môle – Saint-Tropez Airport - Wikipedia,{},0,False
-aéroport de tuléar,TLE,Toliara Airport - Wikipedia,{},0,False
-b and s farms airfield mo13,MCI,Kansas City International Airport - Wikipedia,"{'Alaska': 10, 'Arizona': 1, 'California': 1, 'Colorado': 1, 'Delaware': 3, 'Florida': 4, 'Georgia': 1, 'Illinois': 2, 'Indiana': 6, 'Iowa': 2, 'Kansas': 314, 'Kentucky': 4, 'Minnesota': 1, 'Missouri': 78, 'Nevada': 1, 'New York': 5, 'Texas': 2, 'Washington': 16}",0,False
-b&l farms field 11fa,ROC,Greater Rochester International Airport - Wikipedia,"{'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Kentucky': 2, 'Maryland': 1, 'Massachusetts': 1, 'Michigan': 1, 'Minnesota': 1, 'New Jersey': 1, 'New York': 87, 'North Carolina': 1, 'Pennsylvania': 1, 'Washington': 22}",0,False
-bakken air,MOT,Minot International Airport - Wikipedia,"{'North Dakota': 25, 'Texas': 3, 'Washington': 2}",0,True
-baltimore,BWI,Baltimore/Washington International Airport - Wikipedia,"{'Alaska': 14, 'California': 1, 'Colorado': 1, 'Florida': 9, 'Georgia': 3, 'Illinois': 1, 'Indiana': 6, 'Kansas': 3, 'Kentucky': 8, 'Maryland': 197, 'Massachusetts': 1, 'Michigan': 1, 'New York': 4, 'North Carolina': 1, 'Ohio': 1, 'Oklahoma': 1, 'Pennsylvania': 10, 'Virginia': 5, 'Washington': 288}",0,False
-bankstown terminal carpark,SYD,Sydney Airport - Wikipedia,"{'Hawaii': 3, 'Kentucky': 2, 'New York': 3}",0,False
-barrie executive,YTZ,Billy Bishop Toronto City Airport - Wikipedia,"{'New Jersey': 2, 'Washington': 3}",0,False
-barton field,CVG,Cincinnati/Northern Kentucky International Airport - Wikipedia,"{'Alaska': 6, 'Arizona': 1, 'Colorado': 1, 'Florida': 8, 'Georgia': 1, 'Illinois': 3, 'Indiana': 2, 'Iowa': 2, 'Kansas': 6, 'Kentucky': 238, 'Minnesota': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 9, 'North Carolina': 1, 'Ohio': 18, 'Oregon': 2, 'Puerto Rico': 1, 'Tennessee': 3, 'Texas': 3, 'Washington': 17}",0,False
-bartow executive,BOW,Bartow Executive Airport - Wikipedia,{'Florida': 100},2,True
-bathurst island,BRT,Bathurst Island Airport - Wikipedia,{},2,False
-baton rouge metropolitan,BTR,Baton Rouge Metropolitan Airport - Wikipedia,"{'Florida': 2, 'Georgia': 1, 'Louisiana': 119, 'Mississippi': 2, 'New Jersey': 2, 'New York': 2, 'North Carolina': 1, 'Texas': 8, 'Washington': 3}",3,True
-baudette international,BDE,Baudette International Airport - Wikipedia,{'Minnesota': 65},2,True
-bauru,BAU,Bauru Airport - Wikipedia,{},1,False
-baxter county,WMH,Ozark Regional Airport - Wikipedia,"{'Arkansas': 37, 'Missouri': 1}",0,True
-bay city regional,ECP,Northwest Florida Beaches International Airport - Wikipedia,"{'Florida': 228, 'Georgia': 13, 'Illinois': 9, 'Kansas': 8, 'Maryland': 9, 'Missouri': 9, 'New York': 1, 'North Carolina': 2, 'Tennessee': 9, 'Texas': 36, 'Washington': 17}",0,False
-bay creek airport-4nc2,BHM,Birmingham–Shuttlesworth International Airport - Wikipedia,"{'Alabama': 138, 'Colorado': 9, 'Florida': 18, 'Georgia': 14, 'Illinois': 18, 'Kansas': 1, 'Louisiana': 1, 'New York': 4, 'North Carolina': 4, 'Pennsylvania': 4, 'Texas': 38, 'Washington': 13}",0,False
-baytown,HPY,Baytown Airport - Wikipedia,"{'Missouri': 3, 'Texas': 468}",1,True
-beach city 2d7,VPS,Destin–Fort Walton Beach Airport - Wikipedia,"{'Arkansas': 16, 'Florida': 97, 'Georgia': 10, 'Illinois': 12, 'Indiana': 8, 'Kansas': 8, 'Kentucky': 8, 'New Jersey': 3, 'New York': 3, 'North Carolina': 3, 'Ohio': 10, 'Oklahoma': 16, 'Texas': 20, 'Washington': 27}",1,False
-benin,BNI,Benin Airport - Wikipedia,{},1,False
-benito salas,NVA,Benito Salas Airport - Wikipedia,{'Florida': 2},2,False
-bert mooney,BTM,Bert Mooney Airport - Wikipedia,"{'California': 3, 'Montana': 66, 'New York': 2}",2,True
-bethel,BET,Bethel Airport - Wikipedia,{'Alaska': 43},1,True
-bettles btt,BTT,Bettles Airport - Wikipedia,{'Alaska': 49},1,True
-big spring mcmahon wrinkle,HCA,Big Spring McMahon–Wrinkle Airport - Wikipedia,"{'New York': 1, 'Texas': 36}",2,True
-bird dog field,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
-blue skies aviation,LEX,Blue Grass Airport - Wikipedia,"{'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Indiana': 3, 'Kentucky': 171, 'Michigan': 1, 'Mississippi': 3, 'New York': 6, 'North Carolina': 2, 'Pennsylvania': 1, 'Texas': 7, 'Virginia': 1, 'Washington': 17, 'West Virginia': 1, 'Wisconsin': 3}",1,False
-blue skies farm airport or,DEN,Denver International Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 1, 'Arkansas': 4, 'California': 2, 'Colorado': 99, 'Florida': 10, 'Georgia': 1, 'Idaho': 3, 'Illinois': 3, 'Indiana': 15, 'Iowa': 9, 'Kansas': 15, 'Kentucky': 14, 'Minnesota': 1, 'Nebraska': 9, 'Nevada': 1, 'New Mexico': 1, 'New York': 10, 'Oklahoma': 4, 'Oregon': 2, 'Texas': 2, 'Virginia': 6, 'Washington': 43, 'Wyoming': 3}",0,False
-bluefields bef,BEF,Bluefields Airport - Wikipedia,{'Georgia': 1},1,False
-blythe,BLH,Blythe Airport - Wikipedia,"{'Arizona': 1, 'California': 58, 'Colorado': 4, 'Washington': 5}",1,True
-bonaire international,BON,Flamingo International Airport - Wikipedia,{'Pennsylvania': 5},1,False
-borrego valley,BXS,Borrego Valley Airport - Wikipedia,"{'Arizona': 1, 'California': 30}",2,True
-boston logan international,BOS,Logan International Airport - Wikipedia,"{'Alaska': 12, 'California': 4, 'Connecticut': 13, 'Florida': 13, 'Georgia': 1, 'Hawaii': 5, 'Illinois': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 7, 'Maine': 7, 'Maryland': 1, 'Massachusetts': 185, 'New Hampshire': 8, 'New York': 18, 'North Carolina': 1, 'Pennsylvania': 1, 'Rhode Island': 5, 'Vermont': 12, 'Washington': 39}",2,True
-boulder municipal airport bdu,WBU,Boulder Municipal Airport - Wikipedia,{'Colorado': 23},2,True
-braidwood,YVR,Vancouver International Airport - Wikipedia,"{'Alaska': 7, 'Georgia': 1, 'Kansas': 3, 'Kentucky': 4, 'Missouri': 2, 'Washington': 15}",0,False
-brainerd lakes regional kbrd,BRD,Brainerd Lakes Regional Airport - Wikipedia,{'Minnesota': 81},3,True
-brandywine regional airport oqn,,Brandywine Airport - Wikipedia,{'Pennsylvania': 78},1,True
-brito,MCO,Orlando International Airport - Wikipedia,"{'Alaska': 7, 'California': 2, 'Colorado': 3, 'Delaware': 4, 'Florida': 284, 'Georgia': 1, 'Illinois': 3, 'Indiana': 15, 'Kansas': 9, 'Kentucky': 8, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 1, 'New Mexico': 1, 'New York': 13, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 35}",0,False
-brown field-9ga0,TPA,Tampa International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 10, 'Colorado': 10, 'Florida': 142, 'Georgia': 10, 'Illinois': 10, 'Indiana': 14, 'Kansas': 8, 'Kentucky': 10, 'Maryland': 10, 'Massachusetts': 10, 'Michigan': 10, 'New Jersey': 3, 'New York': 17, 'North Carolina': 3, 'Pennsylvania': 10, 'Puerto Rico': 1, 'Texas': 10, 'Washington': 37}",0,False
-brownsville south padre island international,BRO,Brownsville/South Padre Island International Airport - Wikipedia,"{'Kansas': 3, 'Missouri': 6, 'New York': 2, 'Oklahoma': 1, 'Texas': 111, 'Washington': 2}",3,True
-brownwood regional,BWD,Brownwood Regional Airport - Wikipedia,"{'Arkansas': 4, 'Nebraska': 1, 'New Mexico': 1, 'Oklahoma': 5, 'Pennsylvania': 1, 'Texas': 64}",2,True
-bruce campbell field,DXE,Bruce Campbell Field - Wikipedia,"{'Mississippi': 58, 'Texas': 1, 'Washington': 1}",3,True
-brunswick golden isles,BQK,Brunswick Golden Isles Airport - Wikipedia,"{'Florida': 1, 'Georgia': 48}",3,True
-btl,BTL,W. K. Kellogg Airport - Wikipedia,"{'California': 3, 'Michigan': 94}",0,True
-buchanan field,CCR,Buchanan Field Airport - Wikipedia,{'California': 54},2,True
-bullfrog basin airport u,BFG,Bullfrog Basin Airport - Wikipedia,{'Utah': 21},2,True
-burley municipal byi,BYI,Burley Municipal Airport - Wikipedia,{'Idaho': 66},2,True
-burns municipal,BNO,Burns Municipal Airport - Wikipedia,"{'Illinois': 3, 'Oregon': 72}",2,True
-cable creek ranch 96or,MIA,Miami International Airport - Wikipedia,"{'Arkansas': 2, 'California': 1, 'Florida': 230, 'Georgia': 1, 'Illinois': 1, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 14, 'New Jersey': 3, 'New York': 22, 'North Carolina': 3, 'Oklahoma': 1, 'Oregon': 3, 'Pennsylvania': 1, 'Tennessee': 3, 'Texas': 4, 'Virginia': 6, 'Washington': 30}",0,False
-cacique aramare,PYH,Cacique Aramare Airport - Wikipedia,{},2,False
-california flight academy,APC,Napa County Airport - Wikipedia,"{'California': 56, 'Washington': 1}",0,True
-california redwood coast humboldt county,ACV,Arcata–Eureka Airport - Wikipedia,"{'California': 63, 'Colorado': 1, 'Oregon': 7}",0,True
-camden haven airfield,PHL,Philadelphia International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 11, 'Arkansas': 2, 'California': 1, 'Colorado': 1, 'Connecticut': 3, 'Delaware': 39, 'Florida': 12, 'Georgia': 3, 'Illinois': 1, 'Indiana': 9, 'Kansas': 6, 'Kentucky': 8, 'Massachusetts': 1, 'Mississippi': 1, 'Montana': 2, 'New Jersey': 3, 'New York': 10, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 122, 'Texas': 1, 'Washington': 25}",0,False
-campbell airport c,PDX,Portland International Airport - Wikipedia,"{'Alaska': 41, 'Arizona': 9, 'California': 6, 'Colorado': 4, 'Hawaii': 7, 'Illinois': 4, 'Indiana': 5, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 2, 'Maine': 3, 'Minnesota': 1, 'Nevada': 1, 'New York': 10, 'Oregon': 202, 'Utah': 1, 'Washington': 33}",0,False
-cannes mandelieu,CEQ,Cannes – Mandelieu Airport - Wikipedia,{},2,False
-cape may county gas heliport,IAH,George Bush Intercontinental Airport - Wikipedia,"{'Alaska': 10, 'Arkansas': 3, 'California': 2, 'Colorado': 4, 'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 9, 'Kentucky': 8, 'Louisiana': 5, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'Oklahoma': 2, 'Texas': 103, 'Washington': 26}",0,False
-caracas,CCS,Simón Bolívar International Airport (Venezuela) - Wikipedia,"{'New York': 2, 'Puerto Rico': 2}",0,False
-carauari,CAF,Carauari Airport - Wikipedia,{},1,False
-cardinal bernadin gantin de cotonou international,COO,Cadjehoun Airport - Wikipedia,{},0,False
-catalina airport avx,AVX,Catalina Airport - Wikipedia,"{'California': 249, 'Colorado': 3}",1,True
-catalina lounge,GOV,Gove Airport - Wikipedia,{},0,False
-cdb 15-33,CDB,Cold Bay Airport - Wikipedia,"{'Alaska': 84, 'New York': 1}",0,True
-cedar city heliport,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
-cedar ridge airport-9is0,MCI,Kansas City International Airport - Wikipedia,"{'Alaska': 10, 'Arizona': 1, 'California': 1, 'Colorado': 1, 'Delaware': 3, 'Florida': 4, 'Georgia': 1, 'Illinois': 2, 'Indiana': 6, 'Iowa': 2, 'Kansas': 314, 'Kentucky': 4, 'Minnesota': 1, 'Missouri': 78, 'Nevada': 1, 'New York': 5, 'Texas': 2, 'Washington': 16}",0,False
-central coast jet center,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,True
-central nebraska regional,GRI,Central Nebraska Regional Airport - Wikipedia,"{'Arkansas': 1, 'Kansas': 5, 'Missouri': 1, 'Nebraska': 110, 'Wisconsin': 4}",3,True
-central wisconsin aviation,CWA,Central Wisconsin Airport - Wikipedia,"{'Illinois': 1, 'Michigan': 1, 'Minnesota': 1, 'Wisconsin': 163}",2,True
-centre county authority,SCE,University Park Airport - Wikipedia,"{'Florida': 2, 'Illinois': 1, 'Michigan': 1, 'Pennsylvania': 86, 'Virginia': 1, 'Washington': 11, 'Wisconsin': 3}",0,True
-cessnock,CES,Cessnock Airport - Wikipedia,{},1,False
-chanute martin johnson,CNU,Chanute Martin Johnson Airport - Wikipedia,{'Kansas': 52},3,True
-charles b. wheeler downtown,MKC,Charles B. Wheeler Downtown Airport - Wikipedia,"{'Kansas': 55, 'Minnesota': 3, 'Missouri': 59, 'Nebraska': 3, 'Nevada': 5}",4,True
-charlotte douglas international,CLT,Charlotte Douglas International Airport - Wikipedia,"{'Arizona': 1, 'Arkansas': 2, 'Florida': 5, 'Georgia': 3, 'Illinois': 3, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 7, 'North Carolina': 37, 'Ohio': 2, 'Oklahoma': 1, 'Pennsylvania': 4, 'South Carolina': 2, 'Texas': 1, 'Washington': 31}",3,True
-charlotte limousine car service transportation private chauffeur,BOS,Logan International Airport - Wikipedia,"{'Alaska': 12, 'California': 4, 'Connecticut': 13, 'Florida': 13, 'Georgia': 1, 'Hawaii': 5, 'Illinois': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 7, 'Maine': 7, 'Maryland': 1, 'Massachusetts': 185, 'New Hampshire': 8, 'New York': 18, 'North Carolina': 1, 'Pennsylvania': 1, 'Rhode Island': 5, 'Vermont': 12, 'Washington': 39}",0,False
-cherry capital,TVC,Cherry Capital Airport - Wikipedia,"{'Florida': 4, 'Georgia': 3, 'Michigan': 207, 'New York': 2, 'Washington': 4}",2,True
-cheyenne regional jerry olson field kcys,CYS,Cheyenne Regional Airport - Wikipedia,"{'Colorado': 1, 'Nevada': 5, 'New York': 1, 'Oklahoma': 1, 'Wyoming': 62}",2,True
-chickasha municipal,CHK,Chickasha Municipal Airport - Wikipedia,"{'Oklahoma': 40, 'Texas': 1, 'Washington': 1}",2,True
-childress municipal,CDS,Childress Municipal Airport - Wikipedia,"{'Texas': 48, 'Washington': 1}",2,True
-chippewa valley regional,EAU,Chippewa Valley Regional Airport - Wikipedia,"{'Kentucky': 3, 'Michigan': 7, 'Minnesota': 3, 'New York': 1, 'Wisconsin': 78}",3,True
-chitré alonso valderrama,CTD,Chitré Alonso Valderrama Airport - Wikipedia,{},3,False
-chuathbaluk airport-9a3,CHU,Chuathbaluk Airport - Wikipedia,{'Alaska': 68},1,True
-city of st petersburg: albert whitted,SPG,Albert Whitted Airport - Wikipedia,{'Florida': 103},2,True
-clermont ferrand auvergne,CFE,Clermont-Ferrand Auvergne Airport - Wikipedia,{},1,False
-clifford field-1co4,SAN,San Diego International Airport - Wikipedia,"{'Alabama': 3, 'Alaska': 43, 'Arizona': 5, 'California': 101, 'Colorado': 1, 'Georgia': 4, 'Hawaii': 11, 'Idaho': 3, 'Illinois': 1, 'Indiana': 6, 'Kansas': 5, 'Kentucky': 2, 'Minnesota': 3, 'Nevada': 1, 'New York': 5, 'Texas': 1, 'Washington': 18}",0,False
-cochise county,CWX,Cochise County Airport - Wikipedia,{'Arizona': 44},2,True
-coeur d'alene,COE,Coeur d'Alene Airport - Wikipedia,"{'Idaho': 71, 'Washington': 17}",2,True
-colonel hill,CRI,Colonel Hill Airport - Wikipedia,{},2,False
-colorado springs,COS,Colorado Springs Airport - Wikipedia,"{'Arizona': 10, 'California': 10, 'Colorado': 438, 'Florida': 10, 'Georgia': 10, 'Illinois': 13, 'Nevada': 10, 'Texas': 23, 'Utah': 10, 'Washington': 2}",2,True
-columbia metropolitan,CAE,Columbia Metropolitan Airport - Wikipedia,"{'Florida': 7, 'Georgia': 3, 'Illinois': 1, 'Indiana': 3, 'New Jersey': 2, 'New York': 14, 'North Carolina': 1, 'Pennsylvania': 1, 'South Carolina': 32, 'Texas': 2, 'Washington': 29, 'Wisconsin': 9}",2,True
-colville lake,YCK,Colville Lake/Tommy Kochon Aerodrome - Wikipedia,{},1,False
-command aviation,ORL,Orlando Executive Airport - Wikipedia,"{'Alabama': 1, 'Delaware': 1, 'Florida': 274, 'Georgia': 1, 'Massachusetts': 3, 'New Hampshire': 1, 'New Jersey': 2, 'New York': 2, 'North Carolina': 2, 'South Carolina': 1, 'Texas': 1, 'Virginia': 1, 'Washington': 5}",0,False
-conakry gbessia international,CKY,Conakry International Airport - Wikipedia,{},2,False
-concourse a,MIA,Miami International Airport - Wikipedia,"{'Arkansas': 2, 'California': 1, 'Florida': 230, 'Georgia': 1, 'Illinois': 1, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 14, 'New Jersey': 3, 'New York': 22, 'North Carolina': 3, 'Oklahoma': 1, 'Oregon': 3, 'Pennsylvania': 1, 'Tennessee': 3, 'Texas': 4, 'Virginia': 6, 'Washington': 30}",0,True
-coos bay sea planes,PDX,Portland International Airport - Wikipedia,"{'Alaska': 41, 'Arizona': 9, 'California': 6, 'Colorado': 4, 'Hawaii': 7, 'Illinois': 4, 'Indiana': 5, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 2, 'Maine': 3, 'Minnesota': 1, 'Nevada': 1, 'New York': 10, 'Oregon': 202, 'Utah': 1, 'Washington': 33}",0,True
-cordova municipal cku,CKU,Cordova Municipal Airport - Wikipedia,{'Alaska': 50},2,True
-cork,ORK,Cork Airport - Wikipedia,{},1,False
-coronel edmundo carvajal,XMS,Edmundo Carvajal Airport - Wikipedia,{},2,False
-corpus christi international,CRP,Corpus Christi International Airport - Wikipedia,"{'Florida': 2, 'Kansas': 2, 'Oklahoma': 2, 'Texas': 114}",3,True
-cortez municipal,CEZ,Cortez Municipal Airport - Wikipedia,"{'Arizona': 2, 'Colorado': 41, 'Texas': 1}",2,True
-cottonwood,CTW,Cottonwood Airport - Wikipedia,{'Arizona': 25},1,True
-crater lake klamath regional,LMT,Crater Lake–Klamath Regional Airport - Wikipedia,"{'Alaska': 3, 'California': 3, 'Illinois': 3, 'Oregon': 73}",2,True
-crawford county regional authority,MEJ,Port Meadville Airport - Wikipedia,{'Pennsylvania': 26},0,True
-creston municipal airport csq,CSQ,Creston Municipal Airport - Wikipedia,"{'Iowa': 99, 'Washington': 3}",2,True
-cross city cty,CTY,Cross City Airport - Wikipedia,{'Florida': 75},2,True
-csl,None,Cabo San Lucas International Airport - Wikipedia,"{'California': 21, 'Colorado': 3}",0,True
-cushing municipal,CUH,Cushing Municipal Airport - Wikipedia,{'Oklahoma': 31},2,True
-cyril e. king,STT,Cyril E. King Airport - Wikipedia,"{'Florida': 23, 'Georgia': 10, 'New Jersey': 3, 'New York': 13, 'North Carolina': 3, 'Pennsylvania': 10, 'Puerto Rico': 13, 'Virgin Islands': 37, 'Virginia': 9, 'Washington': 7}",3,True
-d j airport mi,DTW,Detroit Metropolitan Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 3, 'California': 1, 'Colorado': 1, 'Florida': 8, 'Georgia': 1, 'Illinois': 3, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Massachusetts': 1, 'Michigan': 142, 'Nevada': 1, 'New York': 11, 'Ohio': 5, 'Oklahoma': 1, 'Tennessee': 2, 'Texas': 1, 'Washington': 26, 'Wisconsin': 4}",0,True
-dallas love field,DAL,Dallas Love Field - Wikipedia,"{'Alabama': 4, 'Alaska': 17, 'Arizona': 2, 'Arkansas': 3, 'California': 7, 'Colorado': 8, 'Florida': 4, 'Georgia': 1, 'Illinois': 1, 'Indiana': 3, 'Kansas': 14, 'Louisiana': 4, 'Mississippi': 3, 'Missouri': 10, 'Nevada': 1, 'New Mexico': 4, 'New York': 9, 'North Carolina': 3, 'Ohio': 2, 'Oklahoma': 5, 'Texas': 138, 'Washington': 14}",3,True
-dane county regional,MSN,Dane County Regional Airport - Wikipedia,"{'Colorado': 1, 'Florida': 2, 'Georgia': 1, 'Illinois': 1, 'Indiana': 3, 'Iowa': 3, 'Michigan': 1, 'Minnesota': 1, 'New Jersey': 1, 'New York': 3, 'North Carolina': 1, 'Pennsylvania': 1, 'Texas': 1, 'Washington': 6, 'Wisconsin': 87}",3,True
-dare county regional mqi,MEO,Dare County Regional Airport - Wikipedia,"{'Massachusetts': 4, 'North Carolina': 36}",3,True
-darwin international,DRW,Darwin International Airport - Wikipedia,{},2,False
-daular,GYE,José Joaquín de Olmedo International Airport - Wikipedia,{'New York': 4},0,False
-dave's airport-0co1,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
-dayton international,DAY,Dayton International Airport - Wikipedia,"{'California': 1, 'Colorado': 1, 'Florida': 6, 'Georgia': 1, 'Illinois': 1, 'Kentucky': 7, 'Michigan': 1, 'Minnesota': 1, 'New York': 5, 'North Carolina': 1, 'Ohio': 76, 'Pennsylvania': 1, 'Texas': 1, 'Washington': 21}",2,True
-dcsc heliport,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
-deadhorse,SCC,Deadhorse Airport - Wikipedia,"{'Alaska': 104, 'Arizona': 2, 'Kansas': 2, 'Oklahoma': 2, 'Texas': 1}",1,True
-dean wings past,MKE,Milwaukee Mitchell International Airport - Wikipedia,"{'Alaska': 3, 'Arizona': 1, 'Colorado': 1, 'Florida': 7, 'Georgia': 1, 'Illinois': 9, 'Indiana': 3, 'Iowa': 2, 'Kansas': 3, 'Kentucky': 2, 'Michigan': 9, 'Minnesota': 1, 'Nevada': 1, 'New York': 4, 'North Carolina': 1, 'Oregon': 4, 'Texas': 1, 'Washington': 5, 'Wisconsin': 115}",0,False
-debrecen nemzetközi repülőtér,DEB,Debrecen International Airport - Wikipedia,{},1,False
-decatur jet center,HSV,Huntsville International Airport - Wikipedia,"{'Alabama': 87, 'Florida': 5, 'New York': 2, 'Texas': 4, 'Washington': 31}",0,False
-decorah municipal airport deh,DEH,Decorah Municipal Airport - Wikipedia,"{'Iowa': 96, 'Washington': 3}",2,True
-delaware county,MIE,Delaware County Regional Airport - Wikipedia,"{'Delaware': 70, 'Indiana': 100, 'Michigan': 3}",2,True
-delta municipal,DTA,Delta Municipal Airport - Wikipedia,{'Utah': 33},2,True
-delta private jets endeavor air,CVG,Cincinnati/Northern Kentucky International Airport - Wikipedia,"{'Alaska': 6, 'Arizona': 1, 'Colorado': 1, 'Florida': 8, 'Georgia': 1, 'Illinois': 3, 'Indiana': 2, 'Iowa': 2, 'Kansas': 6, 'Kentucky': 238, 'Minnesota': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 9, 'North Carolina': 1, 'Ohio': 18, 'Oregon': 2, 'Puerto Rico': 1, 'Tennessee': 3, 'Texas': 3, 'Washington': 17}",0,True
-denver international,DEN,Denver International Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 1, 'Arkansas': 4, 'California': 2, 'Colorado': 99, 'Florida': 10, 'Georgia': 1, 'Idaho': 3, 'Illinois': 3, 'Indiana': 15, 'Iowa': 9, 'Kansas': 15, 'Kentucky': 14, 'Minnesota': 1, 'Nebraska': 9, 'Nevada': 1, 'New Mexico': 1, 'New York': 10, 'Oklahoma': 4, 'Oregon': 2, 'Texas': 2, 'Virginia': 6, 'Washington': 43, 'Wyoming': 3}",2,True
-denver international b&c concourse,DEN,Denver International Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 1, 'Arkansas': 4, 'California': 2, 'Colorado': 99, 'Florida': 10, 'Georgia': 1, 'Idaho': 3, 'Illinois': 3, 'Indiana': 15, 'Iowa': 9, 'Kansas': 15, 'Kentucky': 14, 'Minnesota': 1, 'Nebraska': 9, 'Nevada': 1, 'New Mexico': 1, 'New York': 10, 'Oklahoma': 4, 'Oregon': 2, 'Texas': 2, 'Virginia': 6, 'Washington': 43, 'Wyoming': 3}",2,True
-denver town car,ASE,Aspen/Pitkin County Airport - Wikipedia,"{'Colorado': 63, 'Wisconsin': 3}",0,True
-des moines international,DSM,Des Moines International Airport - Wikipedia,"{'Arizona': 10, 'Colorado': 10, 'Florida': 6, 'Georgia': 10, 'Illinois': 13, 'Indiana': 3, 'Iowa': 112, 'Michigan': 10, 'Minnesota': 10, 'Missouri': 10, 'Nevada': 10, 'New York': 4, 'North Carolina': 3, 'Texas': 10, 'Washington': 11}",3,True
-des moines maintenance facility,DSM,Des Moines International Airport - Wikipedia,"{'Arizona': 10, 'Colorado': 10, 'Florida': 6, 'Georgia': 10, 'Illinois': 13, 'Indiana': 3, 'Iowa': 112, 'Michigan': 10, 'Minnesota': 10, 'Missouri': 10, 'Nevada': 10, 'New York': 4, 'North Carolina': 3, 'Texas': 10, 'Washington': 11}",2,True
-destin executive dts,DSI,Destin Executive Airport - Wikipedia,"{'Florida': 86, 'Tennessee': 1}",2,True
-destin florida,VPS,Destin–Fort Walton Beach Airport - Wikipedia,"{'Arkansas': 16, 'Florida': 97, 'Georgia': 10, 'Illinois': 12, 'Indiana': 8, 'Kansas': 8, 'Kentucky': 8, 'New Jersey': 3, 'New York': 3, 'North Carolina': 3, 'Ohio': 10, 'Oklahoma': 16, 'Texas': 20, 'Washington': 27}",0,True
-detroit metropolitan wayne county,DTW,Detroit Metropolitan Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 3, 'California': 1, 'Colorado': 1, 'Florida': 8, 'Georgia': 1, 'Illinois': 3, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Massachusetts': 1, 'Michigan': 142, 'Nevada': 1, 'New York': 11, 'Ohio': 5, 'Oklahoma': 1, 'Tennessee': 2, 'Texas': 1, 'Washington': 26, 'Wisconsin': 4}",2,True
-dfw,DFW,Dallas/Fort Worth International Airport - Wikipedia,"{'Alaska': 8, 'Arizona': 1, 'Arkansas': 8, 'California': 1, 'Colorado': 7, 'Florida': 8, 'Georgia': 1, 'Illinois': 5, 'Indiana': 6, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 16, 'Louisiana': 4, 'Nebraska': 2, 'Nevada': 1, 'New York': 12, 'Oklahoma': 4, 'Tennessee': 2, 'Texas': 227, 'Washington': 29}",0,True
-dfw international,DFW,Dallas/Fort Worth International Airport - Wikipedia,"{'Alaska': 8, 'Arizona': 1, 'Arkansas': 8, 'California': 1, 'Colorado': 7, 'Florida': 8, 'Georgia': 1, 'Illinois': 5, 'Indiana': 6, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 16, 'Louisiana': 4, 'Nebraska': 2, 'Nevada': 1, 'New York': 12, 'Oklahoma': 4, 'Tennessee': 2, 'Texas': 227, 'Washington': 29}",1,True
-dillon airport dln,DLN,Dillon Airport - Wikipedia,{'Montana': 52},1,True
-dodge center airport tob,-,Dodge Center Airport - Wikipedia,{'Minnesota': 48},2,True
-dodge city regional,DDC,Dodge City Regional Airport - Wikipedia,{'Kansas': 37},3,True
-dothan regional,DHN,Dothan Regional Airport - Wikipedia,"{'Alabama': 92, 'Maryland': 1, 'Ohio': 3, 'Texas': 1, 'Washington': 4}",2,True
-douglas charles,DOM,Douglas–Charles Airport - Wikipedia,{},0,False
-draughon miller central texas regional,TPL,Draughon–Miller Central Texas Regional Airport - Wikipedia,"{'Texas': 133, 'Washington': 1}",3,True
-dubbo aero club,DBO,Dubbo City Regional Airport - Wikipedia,{},1,False
-dulles jet center,IAD,Dulles International Airport - Wikipedia,"{'Alaska': 10, 'California': 7, 'Colorado': 1, 'Florida': 3, 'Georgia': 1, 'Illinois': 1, 'Indiana': 9, 'Kansas': 6, 'Kentucky': 2, 'Maryland': 12, 'New Jersey': 2, 'New York': 14, 'North Carolina': 1, 'Oklahoma': 1, 'Oregon': 4, 'Texas': 2, 'Virginia': 159, 'Washington': 356, 'West Virginia': 1, 'Wisconsin': 3}",1,False
-e350 transportation inc,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 263, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,False
-eagle airstrip,SBA,Santa Barbara Municipal Airport - Wikipedia,"{'Alaska': 21, 'Arizona': 1, 'California': 51, 'Colorado': 1, 'New York': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 1, 'Washington': 1, 'Wisconsin': 3}",0,False
-eagle county regional administration,EGE,Eagle County Regional Airport - Wikipedia,"{'California': 1, 'Colorado': 40, 'Florida': 1, 'Georgia': 1, 'Illinois': 1, 'New Jersey': 1, 'New York': 10, 'Texas': 2, 'Virginia': 1, 'Washington': 3}",3,True
-east coast flight training,DSA,Doncaster Sheffield Airport - Wikipedia,{'Florida': 2},0,False
-east hampton,HTO,East Hampton Airport - Wikipedia,{'New York': 34},2,True
-east texas regional,GGG,East Texas Regional Airport - Wikipedia,"{'California': 3, 'Texas': 118}",3,True
-eastern west virginia regional,MRB,Eastern WV Regional Airport - Wikipedia,"{'Virginia': 56, 'West Virginia': 34}",2,False
-easton state airport esw,ESW,Easton State Airport - Wikipedia,{'Washington': 52},2,True
-eduardo falla solano,SVI,Eduardo Falla Solano Airport - Wikipedia,{'Florida': 2},3,False
-edward g pitka sr gal,GAL,Edward G. Pitka Sr. Airport - Wikipedia,{'Alaska': 45},2,True
-edwards airport-9nc3,DCA,Ronald Reagan Washington National Airport - Wikipedia,"{'Alaska': 14, 'Arizona': 3, 'Arkansas': 2, 'California': 1, 'Connecticut': 1, 'District of Columbia': 7, 'Florida': 19, 'Georgia': 1, 'Illinois': 1, 'Indiana': 3, 'Kansas': 6, 'Kentucky': 4, 'Maryland': 7, 'Massachusetts': 1, 'Michigan': 1, 'Minnesota': 1, 'New York': 15, 'North Carolina': 1, 'Oklahoma': 2, 'Texas': 1, 'Virginia': 117, 'Washington': 486}",0,False
-eghr,QUG,Chichester/Goodwood Airport - Wikipedia,{},0,False
-ekwok airport kek,KEK,Ekwok Airport - Wikipedia,{'Alaska': 55},1,True
-el lencero,JAL,El Lencero Airport - Wikipedia,{'Colorado': 3},2,False
-el porvenir,PVE,El Porvenir Airport - Wikipedia,{},2,False
-elbert county 27a,CLT,Charlotte Douglas International Airport - Wikipedia,"{'Arizona': 1, 'Arkansas': 2, 'Florida': 5, 'Georgia': 3, 'Illinois': 3, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 7, 'North Carolina': 37, 'Ohio': 2, 'Oklahoma': 1, 'Pennsylvania': 4, 'South Carolina': 2, 'Texas': 1, 'Washington': 31}",0,False
-elko regional,EKO,Elko Regional Airport - Wikipedia,"{'Iowa': 1, 'Nevada': 53, 'New York': 3, 'Utah': 1}",2,True
-emerald,EMD,Emerald Airport - Wikipedia,{},1,False
-emmonak airport enm,EMK,Emmonak Airport - Wikipedia,{'Alaska': 91},1,True
-essex county,CDW,Essex County Airport - Wikipedia,"{'New Jersey': 35, 'New York': 19}",2,True
-ewr,EWR,Newark Liberty International Airport - Wikipedia,"{'Alaska': 17, 'Arkansas': 2, 'California': 3, 'Connecticut': 2, 'Delaware': 2, 'Florida': 11, 'Georgia': 1, 'Guam': 2, 'Illinois': 1, 'Indiana': 10, 'Kansas': 6, 'Kentucky': 10, 'Maine': 2, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 170, 'New York': 88, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 8, 'Texas': 1, 'Washington': 38}",0,True
-exuma international ggt,GGT,Exuma International Airport - Wikipedia,{},2,False
-ezeiza international,EZE,Ministro Pistarini International Airport - Wikipedia,"{'Guam': 2, 'New Jersey': 2, 'New York': 3, 'Washington': 2}",1,False
-faa flight services station,DTW,Detroit Metropolitan Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 3, 'California': 1, 'Colorado': 1, 'Florida': 8, 'Georgia': 1, 'Illinois': 3, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Massachusetts': 1, 'Michigan': 142, 'Nevada': 1, 'New York': 11, 'Ohio': 5, 'Oklahoma': 1, 'Tennessee': 2, 'Texas': 1, 'Washington': 26, 'Wisconsin': 4}",0,False
-fabio alberto león bentley,MVP,Fabio Alberto León Bentley Airport - Wikipedia,"{'Colorado': 1, 'Florida': 2}",4,False
-fallon municipal flx,FLX,Fallon Municipal Airport - Wikipedia,{'Nevada': 42},2,True
-fap captain david abensur rengifo international,PCL,FAP Captain David Abensur Rengifo International Airport - Wikipedia,{},6,False
-far field-65il,ANC,Ted Stevens Anchorage International Airport - Wikipedia,"{'Alaska': 193, 'California': 2, 'Colorado': 6, 'Guam': 1, 'Hawaii': 1, 'Illinois': 6, 'Indiana': 3, 'Kentucky': 4, 'Minnesota': 9, 'New York': 12, 'Oregon': 9, 'Puerto Rico': 2, 'Washington': 20}",0,False
-farnsworths air strip,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 263, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,True
-fergus falls municipal,FFM,Fergus Falls Municipal Airport - Wikipedia,{'Minnesota': 69},3,True
-fillmore municipal,FIL,Fillmore Municipal Airport - Wikipedia,{'Utah': 24},2,True
-flagstaff pulliam,FLG,Flagstaff Pulliam Airport - Wikipedia,"{'Alaska': 6, 'Arizona': 37, 'Colorado': 2, 'New Mexico': 4, 'Texas': 1, 'Utah': 1}",2,True
-flight deck grill,ATL,Hartsfield–Jackson Atlanta International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 9, 'Arkansas': 4, 'California': 1, 'Colorado': 7, 'Florida': 21, 'Georgia': 163, 'Idaho': 4, 'Illinois': 2, 'Indiana': 9, 'Iowa': 6, 'Kansas': 6, 'Kentucky': 6, 'Louisiana': 4, 'Maryland': 1, 'Massachusetts': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 3, 'Virginia': 1, 'Washington': 49}",0,False
-flightline first,NEW,Lakefront Airport - Wikipedia,"{'Louisiana': 54, 'Nebraska': 2, 'Ohio': 1}",0,True
-flughafen karlsruhe  baden baden,FKB,Karlsruhe/Baden-Baden Airport - Wikipedia,{},0,False
-flugplatz wiener neustadt ost,None,Wiener Neustadt East Airport - Wikipedia,{},2,False
-flyhobbs,HOB,Lea County Regional Airport - Wikipedia,"{'New Mexico': 31, 'Texas': 6}",0,True
-flying diamond airport-6az8,HNL,Daniel K. Inouye International Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 9, 'California': 32, 'Georgia': 1, 'Guam': 9, 'Hawaii': 263, 'Kentucky': 2, 'Massachusetts': 3, 'Nevada': 9, 'New York': 12, 'Oregon': 3, 'Washington': 26}",0,False
-flying m ranch airport-39co,SJC,San Jose International Airport - Wikipedia,"{'Alaska': 77, 'Arizona': 5, 'California': 130, 'Colorado': 2, 'Hawaii': 26, 'Indiana': 3, 'Missouri': 2, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'Oregon': 4, 'Tennessee': 3, 'Utah': 1, 'Washington': 7}",0,False
-flying veterans club of san francisco,PHX,Phoenix Sky Harbor International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 105, 'California': 13, 'Colorado': 8, 'Georgia': 1, 'Hawaii': 10, 'Illinois': 1, 'Indiana': 9, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Minnesota': 1, 'Missouri': 2, 'Nevada': 1, 'New Mexico': 2, 'New York': 10, 'Oklahoma': 2, 'Tennessee': 2, 'Texas': 3, 'Utah': 1, 'Washington': 22}",0,False
-flying x ranch airport-5al3,TPA,Tampa International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 10, 'Colorado': 10, 'Florida': 142, 'Georgia': 10, 'Illinois': 10, 'Indiana': 14, 'Kansas': 8, 'Kentucky': 10, 'Maryland': 10, 'Massachusetts': 10, 'Michigan': 10, 'New Jersey': 3, 'New York': 17, 'North Carolina': 3, 'Pennsylvania': 10, 'Puerto Rico': 1, 'Texas': 10, 'Washington': 37}",0,False
-fort lauderdale hollywood international,FLL,Fort Lauderdale–Hollywood International Airport - Wikipedia,"{'Alaska': 11, 'Florida': 241, 'Georgia': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 8, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 16, 'North Carolina': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Virginia': 3, 'Washington': 30}",2,True
-fort myers fl,RSW,Southwest Florida International Airport - Wikipedia,"{'Alaska': 5, 'Florida': 291, 'Georgia': 1, 'Illinois': 1, 'Indiana': 17, 'Kansas': 3, 'Kentucky': 6, 'Maryland': 1, 'Massachusetts': 1, 'Michigan': 1, 'Minnesota': 1, 'New Jersey': 1, 'New York': 8, 'North Carolina': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 30}",0,True
-fort stockton aviation,SCK,Stockton Metropolitan Airport - Wikipedia,"{'Arizona': 1, 'California': 60, 'Kentucky': 7, 'Nevada': 1, 'Texas': 1, 'Washington': 1}",1,False
-fort worth alliance,AFW,Fort Worth Alliance Airport - Wikipedia,"{'Alabama': 3, 'Indiana': 3, 'Kansas': 11, 'Mississippi': 3, 'New York': 1, 'Texas': 124}",3,True
-french valley,RBK,French Valley Airport - Wikipedia,"{'California': 56, 'Texas': 3}",2,True
-fresno chandler executive,FCH,Fresno Chandler Executive Airport - Wikipedia,{'California': 42},3,True
-fresno yosemite international,FAT,Fresno Yosemite International Airport - Wikipedia,"{'Alaska': 20, 'Arizona': 1, 'California': 160, 'Colorado': 1, 'Georgia': 1, 'Nevada': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 1, 'Washington': 1}",3,True
-friday west airport-1wa9,SEA,Seattle–Tacoma International Airport - Wikipedia,"{'Alaska': 74, 'Arizona': 1, 'California': 3, 'Colorado': 1, 'Florida': 2, 'Hawaii': 7, 'Illinois': 2, 'Indiana': 9, 'Kansas': 6, 'Kentucky': 8, 'Mississippi': 1, 'Nevada': 1, 'New York': 10, 'Oklahoma': 1, 'Oregon': 12, 'Washington': 153}",0,True
-friedman memorial,SUN,Friedman Memorial Airport - Wikipedia,"{'Alaska': 11, 'California': 2, 'Colorado': 1, 'Idaho': 53, 'Oregon': 1, 'Utah': 1, 'Washington': 1}",2,True
-front royal warren county,FRR,Front Royal–Warren County Airport - Wikipedia,{'Virginia': 47},2,True
-galion municipal kgqq,GQQ,Galion Municipal Airport - Wikipedia,{'Ohio': 37},2,True
-garbaharey airstrip,MGQ,Aden Adde International Airport - Wikipedia,{},0,False
-gates b1-b19,ATL,Hartsfield–Jackson Atlanta International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 9, 'Arkansas': 4, 'California': 1, 'Colorado': 7, 'Florida': 21, 'Georgia': 163, 'Idaho': 4, 'Illinois': 2, 'Indiana': 9, 'Iowa': 6, 'Kansas': 6, 'Kentucky': 6, 'Louisiana': 4, 'Maryland': 1, 'Massachusetts': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 3, 'Virginia': 1, 'Washington': 49}",0,False
-general mitchell international,MKE,Milwaukee Mitchell International Airport - Wikipedia,"{'Alaska': 3, 'Arizona': 1, 'Colorado': 1, 'Florida': 7, 'Georgia': 1, 'Illinois': 9, 'Indiana': 3, 'Iowa': 2, 'Kansas': 3, 'Kentucky': 2, 'Michigan': 9, 'Minnesota': 1, 'Nevada': 1, 'New York': 4, 'North Carolina': 1, 'Oregon': 4, 'Texas': 1, 'Washington': 5, 'Wisconsin': 115}",2,True
-george,GRJ,George Airport - Wikipedia,{},1,False
-george bush intercontinental,IAH,George Bush Intercontinental Airport - Wikipedia,"{'Alaska': 10, 'Arkansas': 3, 'California': 2, 'Colorado': 4, 'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 9, 'Kentucky': 8, 'Louisiana': 5, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'Oklahoma': 2, 'Texas': 103, 'Washington': 26}",3,True
-georgetown ogle,OGL,Eugene F. Correira International Airport - Wikipedia,{'South Dakota': 2},0,False
-gerald r. ford international,GRR,Gerald R. Ford International Airport - Wikipedia,"{'Colorado': 1, 'Florida': 14, 'Georgia': 2, 'Illinois': 2, 'Indiana': 3, 'Michigan': 148, 'Minnesota': 1, 'New York': 4, 'North Carolina': 1, 'Tennessee': 1, 'Texas': 1, 'Washington': 20, 'Wisconsin': 2, 'Wyoming': 1}",4,True
-gingrich,,Brandywine Airport - Wikipedia,{'Pennsylvania': 78},0,True
-girdwood airport aqy,AQY,Girdwood Airport - Wikipedia,"{'Alaska': 42, 'California': 2, 'Oklahoma': 4}",1,True
-glacier view estates,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
-global transporte,BOG,El Dorado International Airport - Wikipedia,"{'Florida': 9, 'Kentucky': 2, 'New York': 8, 'Puerto Rico': 1, 'Washington': 6}",0,False
-goa international,GOI,Dabolim Airport - Wikipedia,{},0,False
-golden triangle regional,GTR,Golden Triangle Regional Airport - Wikipedia,"{'Alabama': 3, 'Mississippi': 60, 'Tennessee': 1}",3,True
-graham,PGM,Port Graham Airport - Wikipedia,{'Alaska': 19},1,True
-grand canyon caverns,PGS,Grand Canyon Caverns Airport - Wikipedia,{'Arizona': 54},3,True
-grand forks international,GFK,Grand Forks International Airport - Wikipedia,"{'Michigan': 1, 'Minnesota': 1, 'Montana': 1, 'North Dakota': 41, 'South Dakota': 1}",3,True
-grand strand,CRE,Grand Strand Airport - Wikipedia,"{'New York': 2, 'South Carolina': 42, 'Washington': 1}",2,True
-grant airport-3ga0,ATL,Hartsfield–Jackson Atlanta International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 9, 'Arkansas': 4, 'California': 1, 'Colorado': 7, 'Florida': 21, 'Georgia': 163, 'Idaho': 4, 'Illinois': 2, 'Indiana': 9, 'Iowa': 6, 'Kansas': 6, 'Kentucky': 6, 'Louisiana': 4, 'Maryland': 1, 'Massachusetts': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 3, 'Virginia': 1, 'Washington': 49}",0,True
-grant oliver corporation,PIT,Pittsburgh International Airport - Wikipedia,"{'Alaska': 18, 'Arizona': 2, 'California': 3, 'Colorado': 1, 'Florida': 12, 'Georgia': 3, 'Illinois': 2, 'Indiana': 17, 'Kansas': 3, 'Massachusetts': 1, 'Michigan': 3, 'Nevada': 3, 'New Jersey': 1, 'New York': 14, 'North Carolina': 2, 'Ohio': 5, 'Oklahoma': 6, 'Pennsylvania': 90, 'Texas': 13, 'Virginia': 9, 'Washington': 23, 'West Virginia': 4}",0,True
-greeley weld county,GXY,Greeley–Weld County Airport - Wikipedia,{'Colorado': 34},1,True
-green acres airport-1a1,PVD,T. F. Green Airport - Wikipedia,"{'Connecticut': 13, 'Florida': 10, 'Georgia': 4, 'Illinois': 2, 'Kentucky': 2, 'Maine': 7, 'Maryland': 1, 'Massachusetts': 82, 'Michigan': 1, 'New Hampshire': 4, 'New York': 2, 'North Carolina': 1, 'Pennsylvania': 1, 'Rhode Island': 105, 'Vermont': 10, 'Washington': 17, 'Wisconsin': 3}",1,False
-greeneville municipal,GCY,Greeneville–Greene County Municipal Airport - Wikipedia,{'Tennessee': 62},1,True
-groningen eelde,GRQ,Groningen Airport Eelde - Wikipedia,{},2,False
-guernsey,GCI,Guernsey Airport - Wikipedia,{},1,False
-hamar,HMR,"Hamar Airport, Stafsberg - Wikipedia",{},1,False
-hangar 1,ATL,Hartsfield–Jackson Atlanta International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 9, 'Arkansas': 4, 'California': 1, 'Colorado': 7, 'Florida': 21, 'Georgia': 163, 'Idaho': 4, 'Illinois': 2, 'Indiana': 9, 'Iowa': 6, 'Kansas': 6, 'Kentucky': 6, 'Louisiana': 4, 'Maryland': 1, 'Massachusetts': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 3, 'Virginia': 1, 'Washington': 49}",0,False
-harry p williams memorial ptn,PTN,Harry P. Williams Memorial Airport - Wikipedia,"{'Louisiana': 33, 'Texas': 8}",3,True
-hart memorial 3r4,ATL,Hartsfield–Jackson Atlanta International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 9, 'Arkansas': 4, 'California': 1, 'Colorado': 7, 'Florida': 21, 'Georgia': 163, 'Idaho': 4, 'Illinois': 2, 'Indiana': 9, 'Iowa': 6, 'Kansas': 6, 'Kentucky': 6, 'Louisiana': 4, 'Maryland': 1, 'Massachusetts': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 3, 'Virginia': 1, 'Washington': 49}",0,False
-hawkins field,HKS,Hawkins Field (airport) - Wikipedia,"{'Alabama': 1, 'Mississippi': 113, 'Texas': 2, 'Washington': 2}",2,True
-hawks landing heliport,BDL,Bradley International Airport - Wikipedia,"{'Connecticut': 134, 'Florida': 19, 'Georgia': 1, 'Illinois': 1, 'Indiana': 3, 'Kentucky': 6, 'Maine': 10, 'Maryland': 1, 'Massachusetts': 28, 'Michigan': 1, 'Minnesota': 1, 'New Hampshire': 6, 'New York': 3, 'North Carolina': 1, 'Oklahoma': 3, 'Rhode Island': 3, 'Vermont': 10, 'Washington': 16}",0,False
-hazleton regional,HZL,Hazleton Regional Airport - Wikipedia,{'Pennsylvania': 25},2,True
-hebron,CVG,Cincinnati/Northern Kentucky International Airport - Wikipedia,"{'Alaska': 6, 'Arizona': 1, 'Colorado': 1, 'Florida': 8, 'Georgia': 1, 'Illinois': 3, 'Indiana': 2, 'Iowa': 2, 'Kansas': 6, 'Kentucky': 239, 'Minnesota': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 9, 'North Carolina': 1, 'Ohio': 18, 'Oregon': 2, 'Puerto Rico': 1, 'Tennessee': 3, 'Texas': 3, 'Washington': 17}",0,False
-hector international,FAR,Hector International Airport - Wikipedia,"{'Iowa': 3, 'Minnesota': 3, 'North Dakota': 25}",2,True
-helipad,LUA,Tenzing–Hillary Airport - Wikipedia,{},0,False
-helsinki hel,HEL,Helsinki Airport - Wikipedia,{'New York': 8},1,False
-hernando village air park,MEM,Memphis International Airport - Wikipedia,"{'Arkansas': 29, 'California': 1, 'Colorado': 4, 'Florida': 5, 'Georgia': 1, 'Illinois': 3, 'Indiana': 9, 'Iowa': 3, 'Kansas': 4, 'Kentucky': 6, 'Louisiana': 2, 'Michigan': 1, 'Minnesota': 1, 'Mississippi': 50, 'New York': 7, 'North Carolina': 1, 'Oklahoma': 1, 'Tennessee': 226, 'Texas': 4, 'Washington': 9}",0,False
-higuerote,HGE,Higuerote Airport - Wikipedia,{},1,False
-hobart sky ranch airport-3ho,none,Hobart Sky Ranch Airport - Wikipedia,{'Indiana': 38},3,True
-hoffman private 0ca5,SAN,San Diego International Airport - Wikipedia,"{'Alabama': 3, 'Alaska': 43, 'Arizona': 5, 'California': 101, 'Colorado': 1, 'Georgia': 4, 'Hawaii': 11, 'Idaho': 3, 'Illinois': 1, 'Indiana': 6, 'Kansas': 5, 'Kentucky': 2, 'Minnesota': 3, 'Nevada': 1, 'New York': 5, 'Texas': 1, 'Washington': 18}",0,True
-holsworthy military,SYD,Sydney Airport - Wikipedia,"{'Hawaii': 3, 'Kentucky': 2, 'New York': 3}",0,False
-hospital helipad b,TUS,Tucson International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 65, 'California': 6, 'Colorado': 1, 'Georgia': 1, 'Illinois': 1, 'Indiana': 8, 'Kentucky': 2, 'Nevada': 1, 'Texas': 3, 'Washington': 1}",0,False
-houma–terrebonne,HUM,Houma–Terrebonne Airport - Wikipedia,{'Louisiana': 49},1,True
-humberside,HUY,Humberside Airport - Wikipedia,{},1,False
-huntington tri state,HTS,Tri-State Airport - Wikipedia,"{'Florida': 8, 'Kentucky': 3, 'Ohio': 11, 'Virginia': 78, 'West Virginia': 42}",0,False
-iliamna airport ili,ILI,Iliamna Airport - Wikipedia,{'Alaska': 20},1,True
-illinois valley regional,VYS,Illinois Valley Regional Airport - Wikipedia,{'Illinois': 78},3,True
-immokalee regional,IMM,Immokalee Regional Airport - Wikipedia,"{'Florida': 89, 'Texas': 1, 'Washington': 1}",2,True
-imperatriz mayor renato moreira,IMP,Imperatriz Airport - Wikipedia,{},1,False
-indiana flight center terminal,IND,Indianapolis International Airport - Wikipedia,"{'Alaska': 4, 'Arizona': 1, 'California': 2, 'Colorado': 2, 'Delaware': 3, 'Florida': 16, 'Georgia': 2, 'Illinois': 1, 'Indiana': 366, 'Iowa': 2, 'Kansas': 6, 'Massachusetts': 1, 'Michigan': 4, 'Minnesota': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 7, 'North Carolina': 1, 'Ohio': 2, 'Tennessee': 1, 'Texas': 2, 'Washington': 14}",0,True
-ingeniero aeronáutico ambrosio l.v. taravella international,COR,Ingeniero Aeronáutico Ambrosio L.V. Taravella International Airport - Wikipedia,{},6,False
-invermere hosp heliport,COK,Cochin International Airport - Wikipedia,{},0,False
-iowa city municipal,IOW,Iowa City Municipal Airport - Wikipedia,"{'Iowa': 162, 'Mississippi': 1, 'Washington': 3}",3,True
-island express heliport in long beach,LGB,Long Beach Airport - Wikipedia,"{'Alaska': 4, 'Arizona': 1, 'California': 130, 'Hawaii': 11, 'Nevada': 1, 'New York': 5, 'Texas': 3, 'Utah': 1, 'Washington': 1}",2,True
-jabiru,JAB,Jabiru Airport - Wikipedia,{},1,False
-jacarepagua,RRJ,Jacarepaguá Airport - Wikipedia,{},0,False
-jandakot,JAD,Jandakot Airport - Wikipedia,{},1,False
-jerry tyler memorial airport-3tr,NLE,Jerry Tyler Memorial Airport - Wikipedia,{'Michigan': 90},3,True
-jfk,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 263, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,True
-john c. munro hamilton international,YHM,John C. Munro Hamilton International Airport - Wikipedia,"{'Kentucky': 4, 'New York': 2}",5,False
-john f. kennedy international,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 263, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",4,True
-john nichol's field,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,True
-john wayne,SNA,John Wayne Airport - Wikipedia,"{'Alaska': 25, 'Arizona': 9, 'California': 168, 'Colorado': 7, 'Illinois': 7, 'Nevada': 7, 'New York': 3, 'Texas': 8, 'Washington': 7}",2,True
-johnson creek airport-3u2,none,Johnson Creek Airport - Wikipedia,{'Idaho': 36},2,True
-jonesboro municipal,JBR,Jonesboro Municipal Airport - Wikipedia,"{'Alaska': 2, 'Arkansas': 41, 'Missouri': 1, 'Texas': 2}",2,True
-juancho e yrausquin,SAB,Juancho E. Yrausquin Airport - Wikipedia,{},2,False
-juhu,none,Juhu Aerodrome - Wikipedia,{},1,False
-k3 helipad,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 263, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,False
-kaduna international,KAD,Kaduna International Airport - Wikipedia,{},2,False
-kahului,OGG,Kahului Airport - Wikipedia,"{'Alaska': 12, 'California': 40, 'Hawaii': 169, 'Oregon': 10, 'Texas': 10, 'Washington': 10}",1,True
-kalaupapa airport lup,LUP,Kalaupapa Airport - Wikipedia,{'Hawaii': 102},1,True
-karluk,KYK,Karluk Airport - Wikipedia,{'Alaska': 37},1,True
-kassel airport general aviation,KSF,Kassel Airport - Wikipedia,{},1,False
-kazan,KZN,Kazan International Airport - Wikipedia,{},1,False
-kbur tower 118.7,BUR,Hollywood Burbank Airport - Wikipedia,"{'Alaska': 14, 'Arizona': 1, 'California': 127, 'Colorado': 1, 'Hawaii': 1, 'Indiana': 3, 'Massachusetts': 1, 'Nevada': 3, 'New York': 9, 'Oregon': 1, 'Pennsylvania': 1, 'Texas': 3, 'Utah': 1, 'Washington': 7}",0,True
-ken jernstedt airfield-4s2,MDJ,Madras Municipal Airport - Wikipedia,"{'Illinois': 3, 'Oregon': 104}",0,True
-kerrville municipal,ERV,Kerrville Municipal Airport - Wikipedia,"{'Texas': 56, 'Washington': 1}",2,True
-key west international,EYW,Key West International Airport - Wikipedia,"{'California': 1, 'Florida': 94, 'Georgia': 1, 'Illinois': 1, 'New Jersey': 1, 'New York': 5, 'North Carolina': 1, 'Texas': 1, 'Washington': 17}",3,True
-kickapoo downtown airport cwc,KIP,Kickapoo Downtown Airport - Wikipedia,{'Texas': 37},2,True
-king's airport-9or4,DEN,Denver International Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 1, 'Arkansas': 4, 'California': 2, 'Colorado': 99, 'Florida': 10, 'Georgia': 1, 'Idaho': 3, 'Illinois': 3, 'Indiana': 15, 'Iowa': 9, 'Kansas': 15, 'Kentucky': 14, 'Minnesota': 1, 'Nebraska': 9, 'Nevada': 1, 'New Mexico': 1, 'New York': 10, 'Oklahoma': 4, 'Oregon': 2, 'Texas': 2, 'Virginia': 6, 'Washington': 43, 'Wyoming': 3}",0,False
-kona international,KOA,Kona International Airport - Wikipedia,"{'Alaska': 8, 'Hawaii': 186}",2,True
-kpbi,PBI,Palm Beach International Airport - Wikipedia,"{'Florida': 203, 'Georgia': 1, 'Indiana': 8, 'Kentucky': 4, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 15, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 2, 'Texas': 1, 'Virginia': 3, 'Washington': 34}",0,True
-kuni,ATO,Gordon K. Bush Airport - Wikipedia,{'Ohio': 73},0,True
-kyles airport wa,LAS,McCarran International Airport - Wikipedia,"{'Alaska': 10, 'Arizona': 6, 'Arkansas': 2, 'California': 6, 'Colorado': 4, 'Georgia': 1, 'Hawaii': 8, 'Idaho': 3, 'Illinois': 1, 'Indiana': 12, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Minnesota': 1, 'Nebraska': 2, 'Nevada': 152, 'New Mexico': 1, 'New York': 9, 'Oklahoma': 2, 'Texas': 1, 'Utah': 1, 'Washington': 24}",0,False
-la grande lgd,LGD,La Grande/Union County Airport - Wikipedia,"{'Illinois': 3, 'Oregon': 91}",1,True
-la tuque,YLQ,La Tuque Airport - Wikipedia,{},2,False
-lake air,SLC,Salt Lake City International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 1, 'California': 3, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Idaho': 12, 'Indiana': 6, 'Kansas': 12, 'Kentucky': 4, 'Nevada': 1, 'New York': 10, 'Oklahoma': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 57, 'Washington': 21, 'Wyoming': 3}",1,True
-lake chelan airport s,DLS,Columbia Gorge Regional Airport - Wikipedia,"{'Illinois': 3, 'Oregon': 55, 'Washington': 78}",0,True
-lake las vegas,LAS,McCarran International Airport - Wikipedia,"{'Alaska': 10, 'Arizona': 6, 'Arkansas': 2, 'California': 6, 'Colorado': 4, 'Georgia': 1, 'Hawaii': 8, 'Idaho': 3, 'Illinois': 1, 'Indiana': 12, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Minnesota': 1, 'Nebraska': 2, 'Nevada': 152, 'New Mexico': 1, 'New York': 9, 'Oklahoma': 2, 'Texas': 1, 'Utah': 1, 'Washington': 24}",0,True
-lake ozark helicopters inc.,UIN,Quincy Regional Airport - Wikipedia,"{'Illinois': 76, 'Iowa': 2, 'Mississippi': 3, 'Missouri': 3}",0,False
-lake tahoe,TVL,Lake Tahoe Airport - Wikipedia,"{'California': 23, 'Nevada': 4}",2,True
-lakeland,ARV,Lakeland Airport - Wikipedia,"{'Florida': 1, 'Wisconsin': 71}",1,True
-lakewood heliport,LGB,Long Beach Airport - Wikipedia,"{'Alaska': 4, 'Arizona': 1, 'California': 130, 'Hawaii': 11, 'Nevada': 1, 'New York': 5, 'Texas': 3, 'Utah': 1, 'Washington': 1}",0,False
-lantana palm beach,LNA,Palm Beach County Park Airport - Wikipedia,"{'Delaware': 1, 'Florida': 80, 'Georgia': 1, 'Massachusetts': 3, 'New Hampshire': 1, 'New Jersey': 2, 'New York': 1, 'North Carolina': 2, 'South Carolina': 1, 'Virginia': 1, 'Washington': 2}",2,True
-laramie regional,LAR,Laramie Regional Airport - Wikipedia,"{'Colorado': 5, 'Wyoming': 48}",2,True
-larsen bay airport-2a3,KLN,Larsen Bay Airport - Wikipedia,{'Alaska': 33},2,True
-las concourse b,LAS,McCarran International Airport - Wikipedia,"{'Alaska': 10, 'Arizona': 6, 'Arkansas': 2, 'California': 6, 'Colorado': 4, 'Georgia': 1, 'Hawaii': 8, 'Idaho': 3, 'Illinois': 1, 'Indiana': 12, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Minnesota': 1, 'Nebraska': 2, 'Nevada': 152, 'New Mexico': 1, 'New York': 9, 'Oklahoma': 2, 'Texas': 1, 'Utah': 1, 'Washington': 24}",0,True
-lea county regional,HOB,Lea County Regional Airport - Wikipedia,"{'New Mexico': 31, 'Texas': 6}",3,True
-leadville lake county,LXV,Lake County Airport (Colorado) - Wikipedia,{'Colorado': 68},2,True
-leon's taxi and car service,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
-leonard thompson,MHH,Marsh Harbour Airport - Wikipedia,{'Florida': 4},0,False
-liberal,LBL,Liberal Mid-America Regional Airport - Wikipedia,{'Kansas': 42},1,True
-lihue,LIH,Lihue Airport - Wikipedia,"{'Alaska': 13, 'Hawaii': 84}",1,True
-little river airport fl,CLT,Charlotte Douglas International Airport - Wikipedia,"{'Arizona': 1, 'Arkansas': 2, 'Florida': 5, 'Georgia': 3, 'Illinois': 3, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 7, 'North Carolina': 37, 'Ohio': 2, 'Oklahoma': 1, 'Pennsylvania': 4, 'South Carolina': 2, 'Texas': 1, 'Washington': 31}",0,False
-london biggin hill bqh egkb,BQH,London Biggin Hill Airport - Wikipedia,{'Georgia': 3},3,False
-longs airport va,DCA,Ronald Reagan Washington National Airport - Wikipedia,"{'Alaska': 14, 'Arizona': 3, 'Arkansas': 2, 'California': 1, 'Connecticut': 1, 'District of Columbia': 7, 'Florida': 19, 'Georgia': 1, 'Illinois': 1, 'Indiana': 3, 'Kansas': 6, 'Kentucky': 4, 'Maryland': 7, 'Massachusetts': 1, 'Michigan': 1, 'Minnesota': 1, 'New York': 15, 'North Carolina': 1, 'Oklahoma': 2, 'Texas': 1, 'Virginia': 117, 'Washington': 486}",0,False
-los angeles international,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",3,True
-louis armstrong new orleans international,MSY,Louis Armstrong New Orleans International Airport - Wikipedia,"{'Alabama': 3, 'Alaska': 11, 'California': 2, 'Colorado': 1, 'Florida': 6, 'Georgia': 6, 'Hawaii': 1, 'Indiana': 6, 'Kansas': 3, 'Kentucky': 6, 'Louisiana': 109, 'New York': 12, 'North Carolina': 1, 'Tennessee': 5, 'Texas': 10, 'Vermont': 3, 'Washington': 20}",5,True
-louisville international,SDF,Louisville International Airport - Wikipedia,"{'Colorado': 1, 'Florida': 4, 'Georgia': 3, 'Illinois': 2, 'Indiana': 8, 'Iowa': 2, 'Kansas': 3, 'Kentucky': 131, 'Maryland': 1, 'Michigan': 1, 'New York': 5, 'North Carolina': 1, 'Ohio': 7, 'Oklahoma': 1, 'Tennessee': 2, 'Texas': 2, 'Washington': 15}",2,True
-lubbock preston smith international,LBB,Lubbock Preston Smith International Airport - Wikipedia,"{'Arizona': 1, 'Colorado': 2, 'Nevada': 1, 'New York': 1, 'Oklahoma': 4, 'Texas': 78, 'Washington': 2}",4,True
-m & m air services,STS,Charles M. Schulz–Sonoma County Airport - Wikipedia,"{'Alaska': 27, 'Arizona': 1, 'California': 60, 'Colorado': 1, 'Minnesota': 1, 'New York': 2, 'Oregon': 2, 'Texas': 1, 'Washington': 8}",0,False
-macon downtown,MAC,Macon Downtown Airport - Wikipedia,"{'Alabama': 1, 'Georgia': 63, 'Washington': 2}",2,True
-madera municipal,MAE,Madera Municipal Airport - Wikipedia,{'California': 31},2,True
-madison county sky park,TPA,Tampa International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 10, 'Colorado': 10, 'Florida': 142, 'Georgia': 10, 'Illinois': 10, 'Indiana': 14, 'Kansas': 8, 'Kentucky': 10, 'Maryland': 10, 'Massachusetts': 10, 'Michigan': 10, 'New Jersey': 3, 'New York': 17, 'North Carolina': 3, 'Pennsylvania': 10, 'Puerto Rico': 1, 'Texas': 10, 'Washington': 37}",0,False
-magic valley regional,TWF,Magic Valley Regional Airport - Wikipedia,"{'Alaska': 3, 'Idaho': 51}",3,True
-maiquetía “simon bolivar” international,CCS,Simón Bolívar International Airport (Venezuela) - Wikipedia,"{'New York': 2, 'Puerto Rico': 2}",1,False
-majors,GVT,Majors Airport - Wikipedia,"{'Iowa': 2, 'Texas': 54, 'Washington': 1}",1,True
-mammoth yosemite,MMH,Mammoth Yosemite Airport - Wikipedia,"{'Alaska': 5, 'California': 32, 'Nevada': 4}",2,True
-manhattan regional,MHK,Manhattan Regional Airport - Wikipedia,"{'Kansas': 68, 'Missouri': 1, 'Nevada': 1, 'New York': 3}",2,True
-mareeba aerodrome,PPP,Whitsunday Coast Airport - Wikipedia,{},0,False
-marina di campo,EBA,Marina di Campo Airport - Wikipedia,{},3,False
-marina municipal,OAR,Marina Municipal Airport - Wikipedia,{'California': 29},2,True
-marine city 76g,SWF,Stewart International Airport - Wikipedia,"{'Connecticut': 3, 'Florida': 5, 'Indiana': 3, 'Michigan': 1, 'New Jersey': 30, 'New York': 142, 'Pennsylvania': 4, 'Tennessee': 5, 'Texas': 3, 'Washington': 8, 'Wisconsin': 3}",0,False
-marion c17,IND,Indianapolis International Airport - Wikipedia,"{'Alaska': 4, 'Arizona': 1, 'California': 2, 'Colorado': 2, 'Delaware': 3, 'Florida': 16, 'Georgia': 2, 'Illinois': 1, 'Indiana': 366, 'Iowa': 2, 'Kansas': 6, 'Massachusetts': 1, 'Michigan': 4, 'Minnesota': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 7, 'North Carolina': 1, 'Ohio': 2, 'Tennessee': 1, 'Texas': 2, 'Washington': 14}",0,False
-marlborough,BHE,Woodbourne Airport - Wikipedia,{},0,False
-martin airport il,VPS,Destin–Fort Walton Beach Airport - Wikipedia,"{'Arkansas': 16, 'Florida': 97, 'Georgia': 10, 'Illinois': 12, 'Indiana': 8, 'Kansas': 8, 'Kentucky': 8, 'New Jersey': 3, 'New York': 3, 'North Carolina': 3, 'Ohio': 10, 'Oklahoma': 16, 'Texas': 20, 'Washington': 27}",0,False
-mason city municipal,MCW,Mason City Municipal Airport - Wikipedia,"{'Iowa': 118, 'Minnesota': 3, 'Washington': 3}",3,True
-mc gill airport-18ii,BGI,Grantley Adams International Airport - Wikipedia,"{'Indiana': 4, 'New York': 3, 'Texas': 1}",0,True
-mc grath airport mcg,MCG,McGrath Airport - Wikipedia,{'Alaska': 33},0,True
-mcdonald heliport,BQH,London Biggin Hill Airport - Wikipedia,{'Georgia': 3},0,True
-mears field pilot's lounge,OMK,Omak Airport - Wikipedia,"{'Minnesota': 4, 'Nebraska': 6, 'Oregon': 2, 'Washington': 209}",0,True
-mefford field,TLR,Mefford Field Airport - Wikipedia,"{'Alabama': 1, 'California': 48, 'Texas': 1, 'Washington': 1}",2,True
-mekoryuk,MYU,Mekoryuk Airport - Wikipedia,{'Alaska': 19},1,True
-memorial field,HOT,Memorial Field Airport - Wikipedia,"{'Alaska': 2, 'Arkansas': 41, 'Indiana': 1, 'Kansas': 1, 'Texas': 16}",2,True
-merced county castle,MER,Castle Airport - Wikipedia,{'California': 44},1,True
-merced regional,MCE,Merced Regional Airport - Wikipedia,"{'California': 73, 'Nevada': 3}",2,True
-mercedita ponce international,PSE,Mercedita International Airport - Wikipedia,"{'Florida': 15, 'Georgia': 2, 'New York': 12, 'Puerto Rico': 110}",2,True
-meridian aviation,MEI,Meridian Regional Airport - Wikipedia,"{'Alabama': 1, 'Georgia': 2, 'Maine': 3, 'Mississippi': 88, 'Tennessee': 3, 'Wisconsin': 3}",1,True
-mesquite metro airport hqz,,Greater Southwest International Airport - Wikipedia,"{'Arizona': 3, 'New York': 2, 'Texas': 115}",0,True
-meucon,VNE,Meucon Airport - Wikipedia,{'Alabama': 2},1,False
-miami international,MIA,Miami International Airport - Wikipedia,"{'Arkansas': 2, 'California': 1, 'Florida': 230, 'Georgia': 1, 'Illinois': 1, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 14, 'New Jersey': 3, 'New York': 22, 'North Carolina': 3, 'Oklahoma': 1, 'Oregon': 3, 'Pennsylvania': 1, 'Tennessee': 3, 'Texas': 4, 'Virginia': 6, 'Washington': 30}",2,True
-miami university airport oxd,OXD,Miami University Airport - Wikipedia,{'Ohio': 30},2,True
-michaels farms airport wv,PIT,Pittsburgh International Airport - Wikipedia,"{'Alaska': 18, 'Arizona': 2, 'California': 3, 'Colorado': 1, 'Florida': 12, 'Georgia': 3, 'Illinois': 2, 'Indiana': 17, 'Kansas': 3, 'Massachusetts': 1, 'Michigan': 3, 'Nevada': 3, 'New Jersey': 1, 'New York': 14, 'North Carolina': 2, 'Ohio': 5, 'Oklahoma': 6, 'Pennsylvania': 90, 'Texas': 13, 'Virginia': 9, 'Washington': 23, 'West Virginia': 4}",0,False
-mid florida air services airport x,PGD,Punta Gorda Airport (Florida) - Wikipedia,"{'Florida': 186, 'Illinois': 1, 'Indiana': 13, 'Iowa': 2, 'Kansas': 8, 'Kentucky': 7, 'New Jersey': 1, 'New York': 1, 'North Carolina': 1, 'Ohio': 2, 'Pennsylvania': 1, 'South Carolina': 2, 'Tennessee': 3}",0,True
-mid michigan limousine,LAN,Capital Region International Airport - Wikipedia,"{'Florida': 6, 'Indiana': 2, 'Kansas': 3, 'Kentucky': 4, 'Michigan': 502, 'Mississippi': 3, 'Nevada': 2, 'New York': 7, 'Ohio': 3, 'Pennsylvania': 3, 'South Carolina': 1, 'Washington': 46, 'Wisconsin': 9}",0,True
-midcoast regional,LIY,MidCoast Regional Airport at Wright Army Airfield - Wikipedia,"{'Alabama': 1, 'Georgia': 51, 'Washington': 2}",2,True
-middle peninsula regional,SBY,Salisbury–Ocean City–Wicomico Regional Airport - Wikipedia,"{'Delaware': 3, 'Maryland': 54, 'North Carolina': 2, 'Pennsylvania': 1, 'Virginia': 3, 'Washington': 14}",1,False
-middletown regional,MWO,Middletown Regional Airport - Wikipedia,{'Ohio': 35},2,True
-mildura pty ltd,MQL,Mildura Airport - Wikipedia,{},1,False
-million air st louis,STL,St. Louis Lambert International Airport - Wikipedia,"{'Alaska': 10, 'Arizona': 1, 'California': 1, 'Colorado': 1, 'Florida': 9, 'Georgia': 1, 'Hawaii': 4, 'Illinois': 20, 'Indiana': 10, 'Iowa': 2, 'Kansas': 8, 'Kentucky': 4, 'Michigan': 2, 'Minnesota': 1, 'Missouri': 129, 'Montana': 6, 'Nevada': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 10, 'Virginia': 1, 'Washington': 29}",1,True
-millville executive,MIV,Millville Executive Airport - Wikipedia,"{'Delaware': 27, 'New Jersey': 29, 'New York': 2, 'Pennsylvania': 1}",2,True
-minden tahoe,MEV,Minden–Tahoe Airport - Wikipedia,{'Nevada': 34},0,True
-mineral wells,MWL,Mineral Wells Airport - Wikipedia,"{'Texas': 66, 'Washington': 1}",2,True
-mitchell field,MKE,Milwaukee Mitchell International Airport - Wikipedia,"{'Alaska': 3, 'Arizona': 1, 'Colorado': 1, 'Florida': 7, 'Georgia': 1, 'Illinois': 9, 'Indiana': 3, 'Iowa': 2, 'Kansas': 3, 'Kentucky': 2, 'Michigan': 9, 'Minnesota': 1, 'Nevada': 1, 'New York': 4, 'North Carolina': 1, 'Oregon': 4, 'Texas': 1, 'Washington': 5, 'Wisconsin': 115}",1,True
-mitchell municipal,MHE,Mitchell Municipal Airport - Wikipedia,"{'New York': 1, 'South Dakota': 29, 'Washington': 1}",2,True
-modern aviation wilmington,MHT,Manchester–Boston Regional Airport - Wikipedia,"{'Connecticut': 17, 'Florida': 2, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kentucky': 2, 'Maine': 23, 'Maryland': 1, 'Massachusetts': 34, 'Michigan': 1, 'New Hampshire': 56, 'New Jersey': 1, 'New York': 6, 'North Carolina': 1, 'Ohio': 3, 'Pennsylvania': 4, 'Rhode Island': 6, 'Tennessee': 3, 'Vermont': 28, 'Washington': 33}",0,False
-molokai,MKK,Molokai Airport - Wikipedia,{'Hawaii': 83},1,True
-montague yreka,ROF,Montague Airport (California) - Wikipedia,{'California': 90},1,True
-montgomery gibbs executive,MYF,Montgomery-Gibbs Executive Airport - Wikipedia,"{'California': 32, 'Oklahoma': 5}",1,True
-monticello aviation,MXO,Monticello Regional Airport - Wikipedia,"{'Iowa': 96, 'Washington': 3}",1,True
-moorabbin,MBW,Moorabbin Airport - Wikipedia,{},1,False
-morris municipal airport c,CLT,Charlotte Douglas International Airport - Wikipedia,"{'Arizona': 1, 'Arkansas': 2, 'Florida': 5, 'Georgia': 3, 'Illinois': 3, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 7, 'North Carolina': 37, 'Ohio': 2, 'Oklahoma': 1, 'Pennsylvania': 4, 'South Carolina': 2, 'Texas': 1, 'Washington': 31}",0,False
-mount gambier ymtg,MGB,Mount Gambier Airport - Wikipedia,{},2,False
-mount hotham,MHU,Mount Hotham Airport - Wikipedia,{},2,False
-mountain bay air park inc,SFO,San Francisco International Airport - Wikipedia,"{'Alaska': 34, 'Arkansas': 2, 'California': 111, 'Colorado': 1, 'Guam': 3, 'Hawaii': 17, 'Illinois': 1, 'Indiana': 3, 'Kansas': 6, 'Kentucky': 6, 'Massachusetts': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 13, 'Oklahoma': 1, 'Oregon': 4, 'Pennsylvania': 4, 'Washington': 33}",0,False
-myrtle beach international,MYR,Myrtle Beach International Airport - Wikipedia,"{'Florida': 1, 'Georgia': 1, 'Illinois': 1, 'Indiana': 3, 'Kansas': 3, 'Kentucky': 2, 'Maryland': 1, 'Michigan': 1, 'New Jersey': 2, 'New York': 4, 'North Carolina': 3, 'Pennsylvania': 1, 'South Carolina': 102, 'Virginia': 2, 'Washington': 7, 'West Virginia': 1}",3,True
-n d ranch airport-51tx,IAH,George Bush Intercontinental Airport - Wikipedia,"{'Alaska': 10, 'Arkansas': 3, 'California': 2, 'Colorado': 4, 'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 9, 'Kentucky': 8, 'Louisiana': 5, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'Oklahoma': 2, 'Texas': 103, 'Washington': 26}",0,True
-naples,NAP,Naples International Airport - Wikipedia,"{'Alabama': 1, 'Florida': 1, 'Kentucky': 3, 'South Carolina': 2}",1,False
-narita international,NRT,Narita International Airport - Wikipedia,"{'Guam': 7, 'Hawaii': 6, 'Kentucky': 4, 'New York': 6}",2,False
-nas terminal,GYR,Phoenix Goodyear Airport - Wikipedia,"{'Arizona': 41, 'California': 3}",0,False
-nashville international,BNA,Nashville International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 7, 'Arkansas': 2, 'California': 1, 'Colorado': 1, 'Florida': 7, 'Georgia': 1, 'Illinois': 3, 'Indiana': 6, 'Iowa': 3, 'Kansas': 3, 'Kentucky': 2, 'Massachusetts': 1, 'Michigan': 1, 'New York': 10, 'North Carolina': 1, 'Oklahoma': 1, 'Tennessee': 150, 'Texas': 2, 'Washington': 12}",2,True
-ndjili international kinshasa,FIH,N'djili Airport - Wikipedia,{'Georgia': 5},0,False
-new concord regional terminal,USA,Concord Regional Airport - Wikipedia,"{'Florida': 13, 'Louisiana': 1, 'North Carolina': 22}",2,True
-new england helicopters inc,YYT,St. John's International Airport - Wikipedia,"{'Delaware': 1, 'Florida': 6, 'Georgia': 1, 'Massachusetts': 3, 'New Hampshire': 1, 'New Jersey': 2, 'New York': 1, 'North Carolina': 2, 'South Carolina': 1, 'Virginia': 1}",0,False
-new international terminal nnamdi azikiwe international,ABV,Nnamdi Azikiwe International Airport - Wikipedia,{},3,False
-new jersey highway authority administration building helispot,YQX,Gander International Airport - Wikipedia,"{'Delaware': 4, 'Florida': 6, 'Georgia': 1, 'Massachusetts': 3, 'New Hampshire': 1, 'New Jersey': 2, 'New York': 14, 'North Carolina': 2, 'South Carolina': 3, 'Virginia': 1}",0,True
-new orleans lakefront,NEW,Lakefront Airport - Wikipedia,"{'Louisiana': 54, 'Nebraska': 2, 'Ohio': 1}",1,True
-new plymouth,NPL,New Plymouth Airport - Wikipedia,{},2,False
-newtok airport ewu,WWT,Newtok Airport - Wikipedia,{'Alaska': 31},1,True
-nichols airport ia,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
-nome,OME,Nome Airport - Wikipedia,{'Alaska': 43},1,True
-norfolk international,ORF,Norfolk International Airport - Wikipedia,"{'Florida': 4, 'Kentucky': 4, 'Massachusetts': 1, 'New York': 10, 'North Carolina': 4, 'Virginia': 121, 'Washington': 31}",2,True
-norman manley intenational,KIN,Norman Manley International Airport - Wikipedia,"{'Florida': 1, 'New York': 5}",2,False
-north central missouri regional,BMI,Central Illinois Regional Airport - Wikipedia,"{'Colorado': 1, 'Florida': 3, 'Georgia': 1, 'Illinois': 193, 'Indiana': 2, 'Kentucky': 1, 'Minnesota': 1, 'Mississippi': 3, 'Missouri': 1, 'Texas': 1, 'Wisconsin': 1}",2,False
-north lakeland airport in,MIA,Miami International Airport - Wikipedia,"{'Arkansas': 2, 'California': 1, 'Florida': 230, 'Georgia': 1, 'Illinois': 1, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 14, 'New Jersey': 3, 'New York': 22, 'North Carolina': 3, 'Oklahoma': 1, 'Oregon': 3, 'Pennsylvania': 1, 'Tennessee': 3, 'Texas': 4, 'Virginia': 6, 'Washington': 30}",0,False
-north perry,HWO,North Perry Airport - Wikipedia,"{'Florida': 183, 'Virginia': 3}",2,True
-north texas regional,PNX,North Texas Regional Airport - Wikipedia,"{'New York': 1, 'Texas': 122}",3,True
-north west indiana air ii,SBN,South Bend International Airport - Wikipedia,"{'Arizona': 10, 'Delaware': 3, 'Florida': 36, 'Georgia': 10, 'Illinois': 10, 'Indiana': 170, 'Michigan': 21, 'Minnesota': 10, 'North Carolina': 3, 'Texas': 10, 'Washington': 9}",0,True
-northeast iowa regional,CCY,Northeast Iowa Regional Airport - Wikipedia,"{'Iowa': 160, 'Washington': 3}",3,True
-northern nevada medical center heliport,FAT,Fresno Yosemite International Airport - Wikipedia,"{'Alaska': 20, 'Arizona': 1, 'California': 160, 'Colorado': 1, 'Georgia': 1, 'Nevada': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 1, 'Washington': 1}",0,False
-northwest florida beaches international,ECP,Northwest Florida Beaches International Airport - Wikipedia,"{'Florida': 228, 'Georgia': 13, 'Illinois': 9, 'Kansas': 8, 'Maryland': 9, 'Missouri': 9, 'New York': 1, 'North Carolina': 2, 'Tennessee': 9, 'Texas': 36, 'Washington': 17}",4,True
-o.r. tambo international,JNB,O. R. Tambo International Airport - Wikipedia,"{'New York': 1, 'Washington': 3}",2,False
-oakland county international,PTK,Oakland County International Airport - Wikipedia,"{'California': 1, 'Michigan': 128}",3,True
-oakland international,OAK,Oakland International Airport - Wikipedia,"{'Alaska': 24, 'Arizona': 1, 'California': 146, 'Hawaii': 38, 'Idaho': 3, 'Indiana': 9, 'Kansas': 3, 'Kentucky': 2, 'Nevada': 1, 'New York': 1, 'Oregon': 1, 'Utah': 1, 'Washington': 4}",2,True
-ocean reef club airport-07fa,OCA,Ocean Reef Club Airport - Wikipedia,{'Florida': 70},3,True
-of san josé del guaviare,SJE,Jorge Enrique González Torres Airport - Wikipedia,{'Florida': 2},0,False
-ogden hinckley,OGD,Ogden-Hinckley Airport - Wikipedia,"{'Arizona': 1, 'New York': 2, 'Utah': 38}",0,True
-okeechobee jet center inc,TPA,Tampa International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 10, 'Colorado': 10, 'Florida': 142, 'Georgia': 10, 'Illinois': 10, 'Indiana': 14, 'Kansas': 8, 'Kentucky': 10, 'Maryland': 10, 'Massachusetts': 10, 'Michigan': 10, 'New Jersey': 3, 'New York': 17, 'North Carolina': 3, 'Pennsylvania': 10, 'Puerto Rico': 1, 'Texas': 10, 'Washington': 37}",0,True
-opa locka west historical,OPF,Miami-Opa Locka Executive Airport - Wikipedia,{'Florida': 90},1,True
-orange county,SNA,John Wayne Airport - Wikipedia,"{'Alaska': 25, 'Arizona': 9, 'California': 168, 'Colorado': 7, 'Illinois': 7, 'Nevada': 7, 'New York': 3, 'Texas': 8, 'Washington': 7}",0,False
-orlando apopka website,MCO,Orlando International Airport - Wikipedia,"{'Alaska': 7, 'California': 2, 'Colorado': 3, 'Delaware': 4, 'Florida': 284, 'Georgia': 1, 'Illinois': 3, 'Indiana': 15, 'Kansas': 9, 'Kentucky': 8, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 1, 'New Mexico': 1, 'New York': 13, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 35}",1,True
-orlando international,MCO,Orlando International Airport - Wikipedia,"{'Alaska': 7, 'California': 2, 'Colorado': 3, 'Delaware': 4, 'Florida': 284, 'Georgia': 1, 'Illinois': 3, 'Indiana': 15, 'Kansas': 9, 'Kentucky': 8, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 1, 'New Mexico': 1, 'New York': 13, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 35}",2,True
-orlando sanford international,SFB,Orlando Sanford International Airport - Wikipedia,"{'Arkansas': 4, 'Florida': 252, 'Illinois': 4, 'Indiana': 12, 'Iowa': 8, 'Kansas': 8, 'Kentucky': 7, 'Louisiana': 1, 'Michigan': 2, 'Nevada': 2, 'New Hampshire': 2, 'North Carolina': 2, 'Ohio': 1, 'Oklahoma': 4, 'Pennsylvania': 2, 'Tennessee': 1, 'Virginia': 4, 'West Virginia': 2}",3,True
-owosso community krnp,none,Owosso Community Airport - Wikipedia,"{'Michigan': 48, 'Nebraska': 3}",2,True
-page municipal,PGA,Page Municipal Airport - Wikipedia,"{'Arizona': 45, 'Utah': 6}",2,True
-palm beach county park lantana,LNA,Palm Beach County Park Airport - Wikipedia,"{'Delaware': 1, 'Florida': 80, 'Georgia': 1, 'Massachusetts': 3, 'New Hampshire': 1, 'New Jersey': 2, 'New York': 1, 'North Carolina': 2, 'South Carolina': 1, 'Virginia': 1, 'Washington': 2}",4,True
-palm springs international,PSP,Palm Springs International Airport - Wikipedia,"{'Alaska': 6, 'Arizona': 3, 'California': 53, 'Colorado': 1, 'Illinois': 1, 'Minnesota': 1, 'Nevada': 3, 'New York': 1, 'Oregon': 1, 'Texas': 6, 'Utah': 1, 'Washington': 2}",3,True
-pangborn memorial,EAT,Pangborn Memorial Airport - Wikipedia,"{'Alaska': 3, 'Washington': 84}",2,True
-pappy boyington field,COE,Coeur d'Alene Airport - Wikipedia,"{'Idaho': 71, 'Washington': 17}",0,True
-parker county airport wea,WEA,Parker County Airport - Wikipedia,"{'Oklahoma': 3, 'Texas': 63}",2,True
-parkes,PKE,Parkes Airport - Wikipedia,{},1,False
-payson,PJB,Payson Airport - Wikipedia,{'Arizona': 63},1,True
-peter prince field,TPA,Tampa International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 10, 'Colorado': 10, 'Florida': 142, 'Georgia': 10, 'Illinois': 10, 'Indiana': 14, 'Kansas': 8, 'Kentucky': 10, 'Maryland': 10, 'Massachusetts': 10, 'Michigan': 10, 'New Jersey': 3, 'New York': 17, 'North Carolina': 3, 'Pennsylvania': 10, 'Puerto Rico': 1, 'Texas': 10, 'Washington': 37}",0,True
-petersburg james a johnson,PSG,Petersburg James A. Johnson Airport - Wikipedia,{'Alaska': 47},3,True
-peterson field-7a9,COS,Colorado Springs Airport - Wikipedia,"{'Arizona': 10, 'California': 10, 'Colorado': 438, 'Florida': 10, 'Georgia': 10, 'Illinois': 13, 'Nevada': 10, 'Texas': 23, 'Utah': 10, 'Washington': 2}",0,False
-philadelphia international,PHL,Philadelphia International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 11, 'Arkansas': 2, 'California': 1, 'Colorado': 1, 'Connecticut': 3, 'Delaware': 39, 'Florida': 12, 'Georgia': 3, 'Illinois': 1, 'Indiana': 9, 'Kansas': 6, 'Kentucky': 8, 'Massachusetts': 1, 'Mississippi': 1, 'Montana': 2, 'New Jersey': 3, 'New York': 10, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 122, 'Texas': 1, 'Washington': 25}",2,True
-philip billard municipal,TOP,Philip Billard Municipal Airport - Wikipedia,{'Kansas': 31},3,True
-phoenix goodyear,GYR,Phoenix Goodyear Airport - Wikipedia,"{'Arizona': 41, 'California': 3}",2,False
-piedmont soaring society,ROA,Roanoke–Blacksburg Regional Airport - Wikipedia,"{'Alabama': 1, 'Florida': 6, 'Georgia': 1, 'Illinois': 1, 'Kentucky': 2, 'New York': 8, 'North Carolina': 7, 'Pennsylvania': 1, 'Tennessee': 2, 'Virginia': 81, 'Washington': 17, 'West Virginia': 1}",0,False
-pilot point,PIP,Pilot Point Airport - Wikipedia,{'Alaska': 21},2,True
-pinal airpark,AVW,Marana Regional Airport - Wikipedia,"{'Arizona': 84, 'Nevada': 3, 'New Mexico': 2}",0,True
-pitt greenville,PGV,Pitt–Greenville Airport - Wikipedia,"{'Georgia': 2, 'North Carolina': 31}",0,True
-pittsburgh butler regional airport formerly known as butler county,BTP,Pittsburgh-Butler Regional Airport - Wikipedia,"{'Indiana': 11, 'Ohio': 9, 'Pennsylvania': 127, 'Virginia': 6, 'Washington': 13, 'West Virginia': 3}",1,True
-plettenberg bay,PBZ,Plettenberg Bay Aerodrome - Wikipedia,{},2,False
-pocono mountains municipal,MPO,Pocono Mountains Municipal Airport - Wikipedia,{'Pennsylvania': 33},3,True
-port heiden,PTH,Port Heiden Airport - Wikipedia,{'Alaska': 41},2,True
-port of anacortes,OTS,Anacortes Airport - Wikipedia,{'Washington': 55},1,True
-porterville airport ptv,PTV,Porterville Municipal Airport - Wikipedia,{'California': 44},1,True
-posey field-1m4,MGM,Montgomery Regional Airport - Wikipedia,"{'Alabama': 80, 'Florida': 1, 'Illinois': 3, 'New York': 1, 'Washington': 12}",0,True
-prescott regional,PRC,Ernest A. Love Field - Wikipedia,"{'Alaska': 3, 'Arizona': 78, 'Nevada': 3, 'New Mexico': 4}",0,True
-provo air center,PVU,Provo Municipal Airport - Wikipedia,"{'Arizona': 2, 'California': 4, 'Utah': 126}",1,False
-pym plymouth municipal,PYM,Plymouth Municipal Airport (Massachusetts) - Wikipedia,{'Massachusetts': 101},2,True
-quad city international mli,MLI,Quad City International Airport - Wikipedia,"{'Florida': 4, 'Illinois': 195, 'Iowa': 59, 'Mississippi': 9}",3,True
-r m harris airport-4ga4,ATL,Hartsfield–Jackson Atlanta International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 9, 'Arkansas': 4, 'California': 1, 'Colorado': 7, 'Florida': 21, 'Georgia': 163, 'Idaho': 4, 'Illinois': 2, 'Indiana': 9, 'Iowa': 6, 'Kansas': 6, 'Kentucky': 6, 'Louisiana': 4, 'Maryland': 1, 'Massachusetts': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 3, 'Virginia': 1, 'Washington': 49}",0,True
-raleigh county memorial,BKW,Raleigh County Memorial Airport - Wikipedia,"{'North Carolina': 1, 'Ohio': 2, 'Virginia': 39, 'West Virginia': 23}",3,False
-raleigh durham international,RDU,Raleigh–Durham International Airport - Wikipedia,"{'Alaska': 10, 'Colorado': 1, 'Florida': 6, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 3, 'Kentucky': 2, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 15, 'North Carolina': 55, 'Texas': 1, 'Washington': 27}",1,True
-raleigh executive jetport,MCO,Orlando International Airport - Wikipedia,"{'Alaska': 7, 'California': 2, 'Colorado': 3, 'Delaware': 4, 'Florida': 284, 'Georgia': 1, 'Illinois': 3, 'Indiana': 15, 'Kansas': 9, 'Kentucky': 8, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 1, 'New Mexico': 1, 'New York': 13, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 35}",0,False
-range regional,HIB,Range Regional Airport - Wikipedia,{'Minnesota': 89},2,True
-ranger municipal airport f,IAH,George Bush Intercontinental Airport - Wikipedia,"{'Alaska': 10, 'Arkansas': 3, 'California': 2, 'Colorado': 4, 'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 9, 'Kentucky': 8, 'Louisiana': 5, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'Oklahoma': 2, 'Texas': 103, 'Washington': 26}",0,True
-rawlins municipal krwl,RWL,Rawlins Municipal Airport - Wikipedia,{'Wyoming': 46},2,True
-ray community,AZA,Phoenix–Mesa Gateway Airport - Wikipedia,"{'Alaska': 2, 'Arizona': 107, 'Arkansas': 2, 'Hawaii': 1, 'Idaho': 3, 'Illinois': 6, 'Iowa': 5, 'Kansas': 3, 'Kentucky': 2, 'Michigan': 3, 'Missouri': 2, 'Nebraska': 2, 'Nevada': 3, 'North Dakota': 3, 'South Dakota': 3, 'Utah': 1, 'Washington': 4}",0,False
-red lion airport n,PNE,Northeast Philadelphia Airport - Wikipedia,"{'Delaware': 5, 'Kentucky': 2, 'New Jersey': 1, 'Pennsylvania': 44, 'Washington': 1}",0,False
-reno tahoe international,RNO,Reno–Tahoe International Airport - Wikipedia,"{'Alaska': 5, 'Arizona': 1, 'California': 10, 'Colorado': 1, 'Michigan': 1, 'Minnesota': 3, 'Nevada': 59, 'New York': 4, 'Oregon': 3, 'Texas': 1, 'Utah': 1, 'Washington': 8}",1,True
-republic jet center,FRG,Republic Airport - Wikipedia,"{'Maryland': 1, 'New Jersey': 4, 'New York': 50}",1,True
-responsible parking,,Chennai International Airport - Wikipedia,{},0,False
-rhinelander–oneida county,RHI,Rhinelander–Oneida County Airport - Wikipedia,"{'New York': 1, 'Washington': 1, 'Wisconsin': 72}",2,True
-richard b. russell,RMG,Richard B. Russell Airport - Wikipedia,{'Georgia': 34},3,True
-richland airport rld,RLD,Richland Airport (Washington) - Wikipedia,"{'Montana': 1, 'Washington': 114}",1,True
-richmond municipal,RID,Richmond Municipal Airport - Wikipedia,"{'Delaware': 3, 'Indiana': 102, 'Michigan': 3}",2,True
-roberts hangars,CRW,Yeager Airport - Wikipedia,"{'Florida': 1, 'Georgia': 1, 'Illinois': 1, 'Kentucky': 3, 'North Carolina': 3, 'Pennsylvania': 1, 'South Carolina': 1, 'Texas': 1, 'Virginia': 59, 'Washington': 15, 'West Virginia': 34}",0,False
-rochester international,RST,Rochester International Airport - Wikipedia,"{'Arizona': 3, 'Florida': 3, 'Indiana': 3, 'Minnesota': 107, 'New York': 1, 'North Dakota': 1, 'Wisconsin': 2}",2,True
-roseburg regional,RBG,Roseburg Regional Airport - Wikipedia,"{'Illinois': 3, 'Oregon': 76}",2,True
-rosecrans memorial,STJ,Rosecrans Memorial Airport - Wikipedia,"{'Kansas': 10, 'Missouri': 51}",2,True
-royal newcastle aero club,MTL,Maitland Airport - Wikipedia,{},0,False
-runway,LHR,Heathrow Airport - Wikipedia,"{'Georgia': 1, 'New York': 8, 'Virginia': 3, 'Washington': 11}",0,False
-runway 2l/20r,SNA,John Wayne Airport - Wikipedia,"{'Alaska': 25, 'Arizona': 9, 'California': 168, 'Colorado': 7, 'Illinois': 7, 'Nevada': 7, 'New York': 3, 'Texas': 8, 'Washington': 7}",0,False
-runway 2r/20l,SNA,John Wayne Airport - Wikipedia,"{'Alaska': 25, 'Arizona': 9, 'California': 168, 'Colorado': 7, 'Illinois': 7, 'Nevada': 7, 'New York': 3, 'Texas': 8, 'Washington': 7}",0,False
-russell farms,DEN,Denver International Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 1, 'Arkansas': 4, 'California': 2, 'Colorado': 99, 'Florida': 10, 'Georgia': 1, 'Idaho': 3, 'Illinois': 3, 'Indiana': 15, 'Iowa': 9, 'Kansas': 15, 'Kentucky': 14, 'Minnesota': 1, 'Nebraska': 9, 'Nevada': 1, 'New Mexico': 1, 'New York': 10, 'Oklahoma': 4, 'Oregon': 2, 'Texas': 2, 'Virginia': 6, 'Washington': 43, 'Wyoming': 3}",0,False
-rwandair operations,KGL,Kigali International Airport - Wikipedia,{},0,False
-sacramento executive,SAC,Sacramento Executive Airport - Wikipedia,"{'California': 51, 'Nevada': 1, 'New York': 1}",2,True
-salem leckrone airport slo,SLO,Salem–Leckrone Airport - Wikipedia,{'Illinois': 31},0,True
-salt lake city international,SLC,Salt Lake City International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 1, 'California': 3, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Idaho': 12, 'Indiana': 6, 'Kansas': 12, 'Kentucky': 4, 'Nevada': 1, 'New York': 10, 'Oklahoma': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 57, 'Washington': 21, 'Wyoming': 3}",4,True
-san angelo regional,SJT,San Angelo Regional Airport - Wikipedia,"{'Colorado': 1, 'Texas': 63}",3,True
-san juan aviation,SJU,Luis Muñoz Marín International Airport - Wikipedia,"{'Florida': 43, 'Georgia': 10, 'Hawaii': 3, 'Kentucky': 4, 'Maryland': 10, 'Massachusetts': 10, 'New Jersey': 3, 'New York': 9, 'Pennsylvania': 10, 'Puerto Rico': 225, 'Virgin Islands': 5, 'Washington': 14}",0,False
-san pedro,SPR,John Greif II Airport - Wikipedia,{},0,False
-san sebastian,EAS,San Sebastián Airport - Wikipedia,{},1,False
-sanford aberdeen helipad,FSD,Sioux Falls Regional Airport - Wikipedia,"{'Arizona': 18, 'Colorado': 9, 'Florida': 22, 'Georgia': 9, 'Illinois': 9, 'Indiana': 6, 'Iowa': 5, 'Minnesota': 13, 'Nevada': 9, 'South Dakota': 34, 'Texas': 9}",0,True
-sanford seacoast regional,SFM,Sanford Seacoast Regional Airport - Wikipedia,"{'Florida': 1, 'Maine': 46, 'North Carolina': 1}",3,True
-santa marta,VRA,Juan Gualberto Gómez Airport - Wikipedia,"{'Florida': 3, 'Georgia': 1}",0,False
-sarasota bradenton international,SRQ,Sarasota–Bradenton International Airport - Wikipedia,"{'Florida': 198, 'Georgia': 10, 'Illinois': 10, 'Indiana': 8, 'Kentucky': 17, 'Louisiana': 3, 'Maine': 3, 'Massachusetts': 10, 'New Jersey': 3, 'New York': 14, 'North Carolina': 3, 'Ohio': 20, 'Texas': 2, 'Virginia': 9, 'Washington': 29}",1,True
-sba,SBA,Santa Barbara Municipal Airport - Wikipedia,"{'Alaska': 21, 'Arizona': 1, 'California': 51, 'Colorado': 1, 'New York': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 1, 'Washington': 1, 'Wisconsin': 3}",0,True
-searcy municipal,SRC,Searcy Municipal Airport - Wikipedia,{'Arkansas': 32},2,True
-seawind aviation,KTN,Ketchikan International Airport - Wikipedia,{'Alaska': 84},0,True
-seven lakes airport-62ga,TPA,Tampa International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 10, 'Colorado': 10, 'Florida': 142, 'Georgia': 10, 'Illinois': 10, 'Indiana': 14, 'Kansas': 8, 'Kentucky': 10, 'Maryland': 10, 'Massachusetts': 10, 'Michigan': 10, 'New Jersey': 3, 'New York': 17, 'North Carolina': 3, 'Pennsylvania': 10, 'Puerto Rico': 1, 'Texas': 10, 'Washington': 37}",0,False
-seville,SVQ,Seville Airport - Wikipedia,{'Rhode Island': 2},1,False
-shafter minter field,MIT,Shafter Airport - Wikipedia,"{'California': 56, 'Texas': 1, 'Washington': 1}",1,True
-shannons pond seaplane base,DLG,Dillingham Airport - Wikipedia,"{'Alaska': 135, 'Hawaii': 1}",0,True
-shawnee field-1i3,FLL,Fort Lauderdale–Hollywood International Airport - Wikipedia,"{'Alaska': 11, 'Florida': 241, 'Georgia': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 8, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 16, 'North Carolina': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Virginia': 3, 'Washington': 30}",0,False
-shawnee regional,SNL,Shawnee Regional Airport - Wikipedia,{'Oklahoma': 42},2,True
-shenandoah valley regional,SHD,Shenandoah Valley Regional Airport - Wikipedia,"{'Florida': 1, 'Virginia': 103, 'Washington': 16}",3,True
-sheriffs station heliport,FAT,Fresno Yosemite International Airport - Wikipedia,"{'Alaska': 20, 'Arizona': 1, 'California': 160, 'Colorado': 1, 'Georgia': 1, 'Nevada': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 1, 'Washington': 1}",0,True
-signature flight support atl hartsfield jackson atlanta international,SAV,Savannah/Hilton Head International Airport - Wikipedia,"{'Arizona': 1, 'California': 1, 'Florida': 2, 'Georgia': 83, 'Indiana': 3, 'Kentucky': 2, 'New York': 8, 'Puerto Rico': 2, 'South Carolina': 19, 'Texas': 1, 'Washington': 11}",1,True
-signature flight support bct boca raton,BCT,Boca Raton Airport - Wikipedia,{'Florida': 113},2,True
-signature flight support gso piedmont triad international,GSO,Piedmont Triad International Airport - Wikipedia,"{'Alabama': 1, 'Florida': 1, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kentucky': 2, 'Michigan': 1, 'New Jersey': 1, 'New York': 9, 'North Carolina': 87, 'Pennsylvania': 1, 'Texas': 1, 'Virginia': 6, 'Washington': 20}",3,True
-signature flight support pwk chicago executive,PWK,Chicago Executive Airport - Wikipedia,"{'Illinois': 56, 'Indiana': 1, 'Kansas': 1, 'Kentucky': 3, 'Michigan': 3, 'Wisconsin': 1}",2,True
-signature flight support sea seattle tacoma int'l,SBA,Santa Barbara Municipal Airport - Wikipedia,"{'Alaska': 21, 'Arizona': 1, 'California': 51, 'Colorado': 1, 'New York': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 1, 'Washington': 1, 'Wisconsin': 3}",0,False
-silver lake airport mi,MCO,Orlando International Airport - Wikipedia,"{'Alaska': 7, 'California': 2, 'Colorado': 3, 'Delaware': 4, 'Florida': 284, 'Georgia': 1, 'Illinois': 3, 'Indiana': 15, 'Kansas': 9, 'Kentucky': 8, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 1, 'New Mexico': 1, 'New York': 13, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 35}",0,False
-skagit regional,MVW,Skagit Regional Airport - Wikipedia,{'Washington': 105},2,True
-skagway sgy,SGY,Skagway Airport - Wikipedia,{'Alaska': 41},1,True
-sky acres -44n,BNA,Nashville International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 7, 'Arkansas': 2, 'California': 1, 'Colorado': 1, 'Florida': 7, 'Georgia': 1, 'Illinois': 3, 'Indiana': 6, 'Iowa': 3, 'Kansas': 3, 'Kentucky': 2, 'Massachusetts': 1, 'Michigan': 1, 'New York': 10, 'North Carolina': 1, 'Oklahoma': 1, 'Tennessee': 150, 'Texas': 2, 'Washington': 12}",0,False
-sky harbor term 2,TUS,Tucson International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 65, 'California': 6, 'Colorado': 1, 'Georgia': 1, 'Illinois': 1, 'Indiana': 8, 'Kentucky': 2, 'Nevada': 1, 'Texas': 3, 'Washington': 1}",0,True
-skylark field,GRK,Killeen–Fort Hood Regional Airport - Wikipedia,{'Texas': 64},0,True
-smith county airport ms,MEM,Memphis International Airport - Wikipedia,"{'Arkansas': 29, 'California': 1, 'Colorado': 4, 'Florida': 5, 'Georgia': 1, 'Illinois': 3, 'Indiana': 9, 'Iowa': 3, 'Kansas': 4, 'Kentucky': 6, 'Louisiana': 2, 'Michigan': 1, 'Minnesota': 1, 'Mississippi': 50, 'New York': 7, 'North Carolina': 1, 'Oklahoma': 1, 'Tennessee': 226, 'Texas': 4, 'Washington': 9}",0,False
-smyrna airport-38n,MCO,Orlando International Airport - Wikipedia,"{'Alaska': 7, 'California': 2, 'Colorado': 3, 'Delaware': 4, 'Florida': 284, 'Georgia': 1, 'Illinois': 3, 'Indiana': 15, 'Kansas': 9, 'Kentucky': 8, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 1, 'New Mexico': 1, 'New York': 13, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 35}",0,False
-snn,SNN,Shannon Airport - Wikipedia,"{'California': 1, 'New Jersey': 2, 'New York': 19, 'Virginia': 4}",0,False
-soldotna airport sxq,SXQ,Soldotna Airport - Wikipedia,"{'Alaska': 22, 'Puerto Rico': 1}",1,True
-south arkansas regional,ELD,South Arkansas Regional Airport at Goodwin Field - Wikipedia,"{'Alaska': 2, 'Arkansas': 107, 'Texas': 3}",3,True
-south bend international,SBN,South Bend International Airport - Wikipedia,"{'Arizona': 10, 'Delaware': 3, 'Florida': 36, 'Georgia': 10, 'Illinois': 10, 'Indiana': 170, 'Michigan': 21, 'Minnesota': 10, 'North Carolina': 3, 'Texas': 10, 'Washington': 9}",3,True
-south florida air tours,TPA,Tampa International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 10, 'Colorado': 10, 'Florida': 142, 'Georgia': 10, 'Illinois': 10, 'Indiana': 14, 'Kansas': 8, 'Kentucky': 10, 'Maryland': 10, 'Massachusetts': 10, 'Michigan': 10, 'New Jersey': 3, 'New York': 17, 'North Carolina': 3, 'Pennsylvania': 10, 'Puerto Rico': 1, 'Texas': 10, 'Washington': 37}",0,True
-south huntsville,HSV,Huntsville International Airport - Wikipedia,"{'Alabama': 87, 'Florida': 5, 'New York': 2, 'Texas': 4, 'Washington': 31}",1,True
-south jersey regional,LLY,South Jersey Regional Airport - Wikipedia,{'New Jersey': 35},3,True
-south naknek,WSN,South Naknek Airport - Wikipedia,{'Alaska': 19},2,True
-southern seaplane inc.,BCS,Southern Seaplane Airport - Wikipedia,{'Louisiana': 35},2,True
-southwest florida international,RSW,Southwest Florida International Airport - Wikipedia,"{'Alaska': 5, 'Florida': 291, 'Georgia': 1, 'Illinois': 1, 'Indiana': 17, 'Kansas': 3, 'Kentucky': 6, 'Maryland': 1, 'Massachusetts': 1, 'Michigan': 1, 'Minnesota': 1, 'New Jersey': 1, 'New York': 8, 'North Carolina': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 30}",3,True
-southwest georgia regional,ABY,Southwest Georgia Regional Airport - Wikipedia,"{'Georgia': 127, 'Texas': 1, 'Washington': 1}",3,True
-southwest wyoming regional krks,RKS,Southwest Wyoming Regional Airport - Wikipedia,{'Wyoming': 81},3,True
-spanish fork,SPK,Spanish Fork-Springville Airport - Wikipedia,{'Utah': 63},1,True
-sparta miller,TVC,Cherry Capital Airport - Wikipedia,"{'Florida': 4, 'Georgia': 3, 'Michigan': 207, 'New York': 2, 'Washington': 4}",0,True
-spence airport mul,MUL,Spence Airport - Wikipedia,"{'Alabama': 3, 'Georgia': 24}",1,True
-spirit lake municipal,RTL,Spirit Lake Municipal Airport - Wikipedia,"{'Iowa': 112, 'Washington': 3}",3,True
-springfield branson national,SGF,Springfield–Branson National Airport - Wikipedia,"{'Arizona': 9, 'Colorado': 9, 'Florida': 22, 'Georgia': 9, 'Illinois': 9, 'Kentucky': 2, 'Missouri': 52, 'Nevada': 9, 'North Carolina': 2, 'Texas': 18}",1,True
-spruce creek runway,DAB,Daytona Beach International Airport - Wikipedia,"{'Florida': 88, 'Georgia': 1, 'Maine': 3, 'New York': 15, 'North Carolina': 1, 'Washington': 3}",0,True
-st clair county airport plr,PLR,St. Clair County Airport - Wikipedia,"{'Alabama': 63, 'Michigan': 1}",2,True
-st. clair county international kphn,PHN,St. Clair County International Airport - Wikipedia,"{'Alabama': 3, 'Michigan': 98}",4,True
-st. gallen–altenrhein,ACH,St. Gallen–Altenrhein Airport - Wikipedia,{},2,False
-st. landry parish,OPL,St. Landry Parish Airport - Wikipedia,{'Louisiana': 16},3,True
-st. marys municipal,STQ,St. Marys Municipal Airport - Wikipedia,{'Pennsylvania': 22},3,True
-st. paul downtown,STP,St. Paul Downtown Airport - Wikipedia,"{'Minnesota': 96, 'Mississippi': 7}",3,True
-statesville regional,LEX,Blue Grass Airport - Wikipedia,"{'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Indiana': 3, 'Kentucky': 171, 'Michigan': 1, 'Mississippi': 3, 'New York': 6, 'North Carolina': 2, 'Pennsylvania': 1, 'Texas': 7, 'Virginia': 1, 'Washington': 17, 'West Virginia': 1, 'Wisconsin': 3}",0,False
-stauning vestjylland,STA,Stauning Vestjylland Airport - Wikipedia,{},2,False
-stella maris,SML,Stella Maris Airport - Wikipedia,{},2,False
-steward,ISP,Long Island MacArthur Airport - Wikipedia,"{'Florida': 14, 'Georgia': 1, 'Maryland': 1, 'Massachusetts': 2, 'New Jersey': 2, 'New York': 48, 'North Carolina': 1, 'Ohio': 3, 'Pennsylvania': 3, 'South Carolina': 1, 'Washington': 25}",0,False
-stewart field-95in,IDI,Indiana County–Jimmy Stewart Airport - Wikipedia,"{'Indiana': 68, 'Ohio': 6, 'Pennsylvania': 131, 'Virginia': 6, 'Washington': 8, 'West Virginia': 3}",1,False
-still pond,YYT,St. John's International Airport - Wikipedia,"{'Delaware': 1, 'Florida': 6, 'Georgia': 1, 'Massachusetts': 3, 'New Hampshire': 1, 'New Jersey': 2, 'New York': 1, 'North Carolina': 2, 'South Carolina': 1, 'Virginia': 1}",0,False
-stinson municipal,SSF,Stinson Municipal Airport - Wikipedia,"{'Mississippi': 1, 'Texas': 50}",2,True
-stony river 2,SRV,Stony River Airport - Wikipedia,{'Alaska': 29},2,True
-storm lake,SLB,Storm Lake Municipal Airport - Wikipedia,"{'Iowa': 120, 'Washington': 3}",2,True
-strang airpark,DEN,Denver International Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 1, 'Arkansas': 4, 'California': 2, 'Colorado': 99, 'Florida': 10, 'Georgia': 1, 'Idaho': 3, 'Illinois': 3, 'Indiana': 15, 'Iowa': 9, 'Kansas': 15, 'Kentucky': 14, 'Minnesota': 1, 'Nebraska': 9, 'Nevada': 1, 'New Mexico': 1, 'New York': 10, 'Oklahoma': 4, 'Oregon': 2, 'Texas': 2, 'Virginia': 6, 'Washington': 43, 'Wyoming': 3}",0,False
-stratford aerodrome,LHR,Heathrow Airport - Wikipedia,"{'Georgia': 1, 'New York': 8, 'Virginia': 3, 'Washington': 11}",0,False
-streamline heliport,LGB,Long Beach Airport - Wikipedia,"{'Alaska': 4, 'Arizona': 1, 'California': 130, 'Hawaii': 11, 'Nevada': 1, 'New York': 5, 'Texas': 3, 'Utah': 1, 'Washington': 1}",0,False
-stuttgart municipal,SGT,Stuttgart Municipal Airport - Wikipedia,"{'Arkansas': 49, 'Texas': 3}",2,True
-sun aviation inc.,ORD,O'Hare International Airport - Wikipedia,"{'Alaska': 13, 'Arizona': 1, 'Arkansas': 4, 'California': 5, 'Colorado': 7, 'Florida': 14, 'Georgia': 1, 'Illinois': 81, 'Indiana': 19, 'Iowa': 11, 'Kansas': 13, 'Kentucky': 12, 'Massachusetts': 1, 'Michigan': 2, 'Minnesota': 1, 'Mississippi': 3, 'Nebraska': 2, 'New York': 22, 'Oklahoma': 2, 'Texas': 1, 'Virginia': 2, 'Washington': 37, 'West Virginia': 1, 'Wisconsin': 6}",0,False
-sunport,FMN,Four Corners Regional Airport - Wikipedia,"{'Colorado': 7, 'New Mexico': 23, 'New York': 1}",0,True
-surat thani international urt,URT,Surat Thani International Airport - Wikipedia,{},3,False
-surprise airstrip,SNA,John Wayne Airport - Wikipedia,"{'Alaska': 25, 'Arizona': 9, 'California': 168, 'Colorado': 7, 'Illinois': 7, 'Nevada': 7, 'New York': 3, 'Texas': 8, 'Washington': 7}",0,False
-swanson 2w3,CID,The Eastern Iowa Airport - Wikipedia,"{'Arizona': 1, 'Colorado': 1, 'Florida': 5, 'Georgia': 1, 'Illinois': 1, 'Indiana': 3, 'Iowa': 187, 'Kansas': 3, 'Kentucky': 2, 'Michigan': 1, 'Minnesota': 1, 'North Carolina': 1, 'Texas': 2, 'Washington': 3}",0,False
-tac air txk,TXK,Texarkana Regional Airport - Wikipedia,"{'Arkansas': 41, 'Texas': 9}",0,True
-tacoma narrows,TIW,Tacoma Narrows Airport - Wikipedia,{'Washington': 63},2,True
-talkeetna airport tka,TKA,Talkeetna Airport - Wikipedia,{'Alaska': 54},1,True
-talladega municipal asn,ASN,Talladega Municipal Airport - Wikipedia,{'Alabama': 64},2,True
-taos aviation services,TSM,Taos Regional Airport - Wikipedia,"{'California': 2, 'New Mexico': 25}",1,True
-tari,TIZ,Tari Airport - Wikipedia,{},1,False
-tavernaero park,ATL,Hartsfield–Jackson Atlanta International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 9, 'Arkansas': 4, 'California': 1, 'Colorado': 7, 'Florida': 21, 'Georgia': 163, 'Idaho': 4, 'Illinois': 2, 'Indiana': 9, 'Iowa': 6, 'Kansas': 6, 'Kentucky': 6, 'Louisiana': 4, 'Maryland': 1, 'Massachusetts': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 3, 'Virginia': 1, 'Washington': 49}",0,False
-taylor airport tyl,TYZ,Taylor Airport (Arizona) - Wikipedia,{'Arizona': 79},1,True
-ted stevens anchorage international,ANC,Ted Stevens Anchorage International Airport - Wikipedia,"{'Alaska': 193, 'California': 2, 'Colorado': 6, 'Guam': 1, 'Hawaii': 1, 'Illinois': 6, 'Indiana': 3, 'Kentucky': 4, 'Minnesota': 9, 'New York': 12, 'Oregon': 9, 'Puerto Rico': 2, 'Washington': 20}",4,True
-telfair wheeler airport mqw,MQW,Telfair–Wheeler Airport - Wikipedia,{'Georgia': 27},0,True
-terminal ama,AMA,Rick Husband Amarillo International Airport - Wikipedia,"{'Arkansas': 1, 'Colorado': 3, 'Florida': 2, 'Indiana': 1, 'Kansas': 5, 'Louisiana': 3, 'New York': 3, 'Ohio': 1, 'Oklahoma': 4, 'Texas': 93, 'Washington': 2}",0,True
-teslin,YZW,Teslin Airport - Wikipedia,{},1,False
-texas a&m flight test station,DFW,Dallas/Fort Worth International Airport - Wikipedia,"{'Alaska': 8, 'Arizona': 1, 'Arkansas': 8, 'California': 1, 'Colorado': 7, 'Florida': 8, 'Georgia': 1, 'Illinois': 5, 'Indiana': 6, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 16, 'Louisiana': 4, 'Nebraska': 2, 'Nevada': 1, 'New York': 12, 'Oklahoma': 4, 'Tennessee': 2, 'Texas': 227, 'Washington': 29}",0,True
-the eastern iowa,CID,The Eastern Iowa Airport - Wikipedia,"{'Arizona': 1, 'Colorado': 1, 'Florida': 5, 'Georgia': 1, 'Illinois': 1, 'Indiana': 3, 'Iowa': 187, 'Kansas': 3, 'Kentucky': 2, 'Michigan': 1, 'Minnesota': 1, 'North Carolina': 1, 'Texas': 2, 'Washington': 3}",3,True
-the farmville regional,ROA,Roanoke–Blacksburg Regional Airport - Wikipedia,"{'Alabama': 1, 'Florida': 6, 'Georgia': 1, 'Illinois': 1, 'Kentucky': 2, 'New York': 8, 'North Carolina': 7, 'Pennsylvania': 1, 'Tennessee': 2, 'Virginia': 81, 'Washington': 17, 'West Virginia': 1}",1,True
-the ohio state university,OSU,Ohio State University Airport - Wikipedia,"{'Delaware': 3, 'Michigan': 4, 'Ohio': 268}",3,True
-thief river falls regional,TVF,Thief River Falls Regional Airport - Wikipedia,"{'Iowa': 1, 'Minnesota': 81}",4,True
-thompson airstrip,PPG,Pago Pago International Airport - Wikipedia,"{'American Samoa': 133, 'California': 4, 'Hawaii': 14}",0,False
-threshold aviation group,CNO,Chino Airport - Wikipedia,"{'California': 54, 'Texas': 4, 'Washington': 1}",0,True
-tok junction,TKJ,Tok Junction Airport - Wikipedia,{'Alaska': 33},2,True
-tonasket,OMK,Omak Airport - Wikipedia,"{'Minnesota': 4, 'Nebraska': 6, 'Oregon': 2, 'Washington': 209}",0,True
-toronto buttonville municipal,YKZ,Buttonville Municipal Airport - Wikipedia,{},2,False
-tract c a mesa airstrip,,Stapleton International Airport - Wikipedia,"{'Colorado': 66, 'Idaho': 3, 'Kansas': 1, 'New York': 3, 'Oregon': 3, 'Texas': 5, 'Utah': 1, 'Washington': 1}",0,True
-truckee tahoe,TKF,Truckee Tahoe Airport - Wikipedia,"{'California': 26, 'Nevada': 8}",2,True
-tucson international,TUS,Tucson International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 65, 'California': 6, 'Colorado': 1, 'Georgia': 1, 'Illinois': 1, 'Indiana': 8, 'Kentucky': 2, 'Nevada': 1, 'Texas': 3, 'Washington': 1}",2,True
-tullahoma regional,THA,Tullahoma Regional Airport - Wikipedia,{'Tennessee': 37},2,True
-tunica utm  kuta,UTM,Tunica Municipal Airport - Wikipedia,"{'Arkansas': 1, 'Iowa': 3, 'Maine': 3, 'Mississippi': 49, 'Nevada': 3, 'New Jersey': 2, 'Ohio': 3, 'Tennessee': 4}",1,True
-twentynine palms,TNP,Twentynine Palms Airport - Wikipedia,"{'California': 35, 'Texas': 4, 'Washington': 1}",2,True
-umeå,UME,Umeå Airport - Wikipedia,{},1,False
-unified aircraft services,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 168, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
-us departures terminal,AUH,Abu Dhabi International Airport - Wikipedia,"{'New York': 8, 'Washington': 3}",0,False
-valday avia aerodrom,LED,Pulkovo Airport - Wikipedia,{'Washington': 3},0,False
-vashon municipal airport-2s1,OMK,Omak Airport - Wikipedia,"{'Minnesota': 4, 'Nebraska': 6, 'Oregon': 2, 'Washington': 209}",0,True
-venice municipal,VNC,Venice Municipal Airport - Wikipedia,{'Florida': 75},2,True
-vermilion regional,DNV,Vermilion Regional Airport - Wikipedia,"{'Illinois': 99, 'Mississippi': 3}",2,True
-vernal regional,VEL,Vernal Regional Airport - Wikipedia,"{'Arizona': 3, 'Colorado': 2, 'Utah': 38}",2,True
-vicksburg municipal,JAN,Jackson–Medgar Wiley Evers International Airport - Wikipedia,"{'Colorado': 1, 'Florida': 2, 'Georgia': 1, 'Illinois': 1, 'Kentucky': 2, 'Louisiana': 4, 'Mississippi': 199, 'New York': 2, 'North Carolina': 1, 'Texas': 5, 'Washington': 13}",0,True
-victoria regional,VCT,Victoria Regional Airport - Wikipedia,{'Texas': 77},2,True
-virgin gorda,VIJ,Virgin Gorda Airport - Wikipedia,{'Virgin Islands': 11},2,False
-virginia tech montgomery executive,BCB,Virginia Tech Montgomery Executive Airport - Wikipedia,"{'Maryland': 2, 'Virginia': 254, 'Washington': 3}",4,True
-walker municipal,DAY,Dayton International Airport - Wikipedia,"{'California': 1, 'Colorado': 1, 'Florida': 6, 'Georgia': 1, 'Illinois': 1, 'Kentucky': 7, 'Michigan': 1, 'Minnesota': 1, 'New York': 5, 'North Carolina': 1, 'Ohio': 76, 'Pennsylvania': 1, 'Texas': 1, 'Washington': 21}",0,False
-walterio airstrip,PUJ,Punta Cana International Airport - Wikipedia,"{'New York': 4, 'Puerto Rico': 6, 'Washington': 8}",0,False
-wanaka,WKA,Wanaka Airport - Wikipedia,{},1,False
-waterbury oxford,OXC,Waterbury–Oxford Airport - Wikipedia,"{'Connecticut': 66, 'New York': 2}",0,True
-waukesha county,UES,Waukesha County Airport - Wikipedia,{'Wisconsin': 90},2,True
-wausau downtown,AUW,Wausau Downtown Airport - Wikipedia,{'Wisconsin': 120},2,True
-waycross ware county,AYS,Waycross–Ware County Airport - Wikipedia,"{'Alabama': 1, 'Florida': 3, 'Georgia': 60, 'Louisiana': 1, 'New York': 1, 'North Carolina': 1, 'Tennessee': 1, 'Washington': 3}",1,True
-weather perry foley,MCO,Orlando International Airport - Wikipedia,"{'Alaska': 7, 'California': 2, 'Colorado': 3, 'Delaware': 4, 'Florida': 284, 'Georgia': 1, 'Illinois': 3, 'Indiana': 15, 'Kansas': 9, 'Kentucky': 8, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 1, 'New Mexico': 1, 'New York': 13, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 35}",0,True
-welcome field,SAN,San Diego International Airport - Wikipedia,"{'Alabama': 3, 'Alaska': 43, 'Arizona': 5, 'California': 101, 'Colorado': 1, 'Georgia': 4, 'Hawaii': 11, 'Idaho': 3, 'Illinois': 1, 'Indiana': 6, 'Kansas': 5, 'Kentucky': 2, 'Minnesota': 3, 'Nevada': 1, 'New York': 5, 'Texas': 1, 'Washington': 18}",0,False
-wenatchee valley airbase,ALW,Walla Walla Regional Airport - Wikipedia,"{'Alaska': 7, 'Florida': 3, 'Oregon': 3, 'Washington': 93}",0,True
-wendover,ENV,Wendover Airport - Wikipedia,"{'Alabama': 3, 'Alaska': 3, 'American Samoa': 2, 'Arizona': 3, 'Arkansas': 3, 'California': 3, 'Colorado': 3, 'Connecticut': 3, 'Delaware': 3, 'District of Columbia': 1, 'Florida': 3, 'Georgia': 3, 'Guam': 3, 'Hawaii': 3, 'Idaho': 3, 'Illinois': 3, 'Indiana': 3, 'Iowa': 3, 'Kansas': 3, 'Kentucky': 3, 'Louisiana': 3, 'Maine': 3, 'Maryland': 3, 'Massachusetts': 3, 'Michigan': 3, 'Minnesota': 3, 'Mississippi': 3, 'Missouri': 3, 'Montana': 3, 'Nebraska': 3, 'Nevada': 9, 'New Hampshire': 2, 'New Jersey': 2, 'New Mexico': 2, 'New York': 2, 'North Carolina': 2, 'North Dakota': 2, 'Northern Mariana Islands': 2, 'Ohio': 3, 'Oklahoma': 3, 'Oregon': 3, 'Pennsylvania': 3, 'Puerto Rico': 2, 'Rhode Island': 2, 'South Carolina': 2, 'South Dakota': 2, 'Tennessee': 3, 'Texas': 3, 'Utah': 147, 'Vermont': 3, 'Virgin Islands': 2, 'Virginia': 6, 'Washington': 8, 'West Virginia': 2, 'Wisconsin': 3, 'Wyoming': 3}",1,True
-west houston,IWS,West Houston Airport - Wikipedia,{'Texas': 56},2,True
-west wind aviation inc,IFP,Laughlin/Bullhead International Airport - Wikipedia,"{'Arizona': 43, 'California': 5, 'Colorado': 5, 'Minnesota': 2, 'Nevada': 10, 'Texas': 1}",0,False
-west woodward airport kwwr,WWR,West Woodward Airport - Wikipedia,{'Oklahoma': 57},2,True
-western air freeport passenger terminal,NAS,Lynden Pindling International Airport - Wikipedia,"{'New York': 3, 'Washington': 12}",0,False
-western jet aviation inc,HNL,Daniel K. Inouye International Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 9, 'California': 32, 'Georgia': 1, 'Guam': 9, 'Hawaii': 263, 'Kentucky': 2, 'Massachusetts': 3, 'Nevada': 9, 'New York': 12, 'Oregon': 3, 'Washington': 26}",0,False
-western nebraska regional,BFF,Western Nebraska Regional Airport - Wikipedia,"{'Alabama': 1, 'Nebraska': 127, 'Wyoming': 4}",3,True
-western sydney international nancy bird walton,none,Western Sydney Airport - Wikipedia,{},2,False
-wetumpka city,MGM,Montgomery Regional Airport - Wikipedia,"{'Alabama': 80, 'Florida': 1, 'Illinois': 3, 'New York': 1, 'Washington': 12}",0,True
-wheeling ohio county,HLG,Wheeling Ohio County Airport - Wikipedia,"{'Indiana': 7, 'Ohio': 61, 'Pennsylvania': 72, 'Virginia': 52, 'Washington': 9, 'West Virginia': 27}",3,False
-white county landing field,TPA,Tampa International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 10, 'Colorado': 10, 'Florida': 142, 'Georgia': 10, 'Illinois': 10, 'Indiana': 14, 'Kansas': 8, 'Kentucky': 10, 'Maryland': 10, 'Massachusetts': 10, 'Michigan': 10, 'New Jersey': 3, 'New York': 17, 'North Carolina': 3, 'Pennsylvania': 10, 'Puerto Rico': 1, 'Texas': 10, 'Washington': 37}",0,False
-wilkes barre scranton international,AVP,Wilkes-Barre/Scranton International Airport - Wikipedia,"{'Kansas': 1, 'Kentucky': 2, 'New York': 2, 'Pennsylvania': 104, 'Washington': 11, 'Wyoming': 5}",1,True
-william creek aerodrome,ACF,Archerfield Airport - Wikipedia,"{'Alabama': 1, 'Washington': 2}",0,False
-williston basin international,XWA,Williston Basin International Airport - Wikipedia,"{'Colorado': 1, 'Minnesota': 1, 'North Dakota': 34}",3,True
-willow,WOW,Willow Airport - Wikipedia,{'Alaska': 22},1,True
-willows glenn county,WLW,Willows-Glenn County Airport - Wikipedia,{'California': 48},1,True
-wilson air center chattanooga,CHA,Chattanooga Metropolitan Airport - Wikipedia,"{'California': 1, 'Florida': 2, 'Georgia': 3, 'Illinois': 1, 'Michigan': 1, 'New Jersey': 1, 'New York': 4, 'North Carolina': 1, 'Tennessee': 110, 'Texas': 1, 'Washington': 6}",1,True
-winchester regional okv,WGO,Winchester Regional Airport - Wikipedia,{'Virginia': 55},2,True
-wing south airpark,YNG,Youngstown–Warren Regional Airport - Wikipedia,"{'Florida': 6, 'Mississippi': 1, 'New York': 2, 'Ohio': 52, 'South Carolina': 2}",0,False
-winston field snk,SNK,Winston Field Airport - Wikipedia,{'Texas': 24},2,True
-wittman osh,OSH,Wittman Regional Airport - Wikipedia,"{'Michigan': 1, 'Wisconsin': 77}",1,True
-wolf lake,BIL,Billings Logan International Airport - Wikipedia,"{'Alaska': 9, 'Arizona': 1, 'Colorado': 1, 'Illinois': 1, 'Massachusetts': 1, 'Minnesota': 1, 'Montana': 96, 'Nevada': 1, 'New York': 2, 'North Dakota': 2, 'Oregon': 1, 'Texas': 1, 'Utah': 1, 'Washington': 2}",0,False
-wood county authority,PKB,Mid-Ohio Valley Regional Airport - Wikipedia,"{'New York': 2, 'North Carolina': 1, 'Ohio': 76, 'Pennsylvania': 5, 'Virginia': 54, 'West Virginia': 36}",0,True
-yerington municipal,EYR,Yerington Municipal Airport - Wikipedia,{'Nevada': 54},2,True
-yuba county,MYV,Yuba County Airport - Wikipedia,"{'Alabama': 1, 'California': 56}",2,True
-yuma international,YUM,Yuma International Airport - Wikipedia,"{'Arizona': 43, 'New York': 1}",2,True
-zoomer field-1ll8,SAN,San Diego International Airport - Wikipedia,"{'Alabama': 3, 'Alaska': 43, 'Arizona': 5, 'California': 101, 'Colorado': 1, 'Georgia': 4, 'Hawaii': 11, 'Idaho': 3, 'Illinois': 1, 'Indiana': 6, 'Kansas': 5, 'Kentucky': 2, 'Minnesota': 3, 'Nevada': 1, 'New York': 5, 'Texas': 1, 'Washington': 18}",0,False
-zumbi dos palmares international,MCZ,Zumbi dos Palmares International Airport - Wikipedia,{},4,False
-аэрапорт брэст,BQT,Brest Airport - Wikipedia,{},0,False
+PVT,DEL,Indira Gandhi International Airport - Wikipedia,"{'Hawaii': 2, 'New York': 3, 'Washington': 3}",0,True
+Private,CQM ,Ciudad Real International Airport - Wikipedia,{'New York': 2},0,True
+DEN,DEN,Denver International Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 1, 'Arkansas': 4, 'California': 2, 'Colorado': 99, 'Florida': 10, 'Georgia': 1, 'Idaho': 3, 'Illinois': 3, 'Indiana': 15, 'Iowa': 9, 'Kansas': 15, 'Kentucky': 14, 'Minnesota': 1, 'Nebraska': 9, 'Nevada': 1, 'New Mexico': 1, 'New York': 10, 'Oklahoma': 4, 'Oregon': 2, 'Texas': 2, 'Virginia': 6, 'Washington': 43, 'Wyoming': 3}",0,True
+Todd's Airport,EWR,Newark Liberty International Airport - Wikipedia,"{'Alaska': 17, 'Arkansas': 2, 'California': 3, 'Connecticut': 2, 'Delaware': 2, 'Florida': 11, 'Georgia': 1, 'Guam': 2, 'Illinois': 1, 'Indiana': 10, 'Kansas': 6, 'Kentucky': 10, 'Maine': 2, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 170, 'New York': 88, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 8, 'Texas': 1, 'Washington': 38}",0,False
+Farmers Field,ACK,Nantucket Memorial Airport - Wikipedia,"{'Massachusetts': 61, 'New Jersey': 1, 'New York': 18, 'North Carolina': 1, 'Washington': 15}",0,False
+Kaiser's Strip,,Swan Island Municipal Airport - Wikipedia,"{'Idaho': 3, 'Illinois': 3, 'Oregon': 143, 'Utah': 3, 'Washington': 6}",0,True
+Sun Private,LAS,McCarran International Airport - Wikipedia,"{'Alaska': 10, 'Arizona': 6, 'Arkansas': 2, 'California': 6, 'Colorado': 4, 'Georgia': 1, 'Hawaii': 8, 'Idaho': 3, 'Illinois': 1, 'Indiana': 12, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Minnesota': 1, 'Nebraska': 2, 'Nevada': 152, 'New Mexico': 1, 'New York': 9, 'Oklahoma': 2, 'Texas': 1, 'Utah': 1, 'Washington': 24}",0,False
+Lake Goodwin,IAH,George Bush Intercontinental Airport - Wikipedia,"{'Alaska': 10, 'Arkansas': 3, 'California': 2, 'Colorado': 4, 'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 9, 'Kentucky': 8, 'Louisiana': 5, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'Oklahoma': 2, 'Texas': 103, 'Washington': 26}",0,False
+Private field,LGA,LaGuardia Airport - Wikipedia,"{'Alaska': 5, 'Arkansas': 4, 'Colorado': 1, 'Florida': 15, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 6, 'Kentucky': 4, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 36, 'New York': 164, 'North Carolina': 1, 'Oklahoma': 1, 'Texas': 4, 'Washington': 41}",0,False
+Jensen Airfield,CVG,Cincinnati/Northern Kentucky International Airport - Wikipedia,"{'Alaska': 6, 'Arizona': 1, 'Colorado': 1, 'Florida': 8, 'Georgia': 1, 'Illinois': 3, 'Indiana': 2, 'Iowa': 2, 'Kansas': 6, 'Kentucky': 239, 'Minnesota': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 9, 'North Carolina': 1, 'Ohio': 18, 'Oregon': 2, 'Puerto Rico': 1, 'Tennessee': 3, 'Texas': 3, 'Washington': 17}",0,False
+Jackson Lake,JAC,Jackson Hole Airport - Wikipedia,"{'Alaska': 12, 'California': 2, 'Colorado': 1, 'Georgia': 1, 'Illinois': 1, 'Massachusetts': 1, 'Minnesota': 1, 'New Jersey': 1, 'New York': 7, 'Texas': 3, 'Utah': 1, 'Washington': 2, 'Wyoming': 39}",1,False
+Atmautulak,ATT,Atmautluak Airport - Wikipedia,{'Alaska': 37},0,True
+Fresno - Yosemite Intl,FAT,Fresno Yosemite International Airport - Wikipedia,"{'Alaska': 20, 'Arizona': 1, 'California': 160, 'Colorado': 1, 'Georgia': 1, 'Nevada': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 1, 'Washington': 1}",3,True
+Unknown,LGB,Long Beach Airport - Wikipedia,"{'Alaska': 4, 'Arizona': 1, 'California': 130, 'Hawaii': 11, 'Nevada': 1, 'New York': 5, 'Texas': 3, 'Utah': 1, 'Washington': 1}",0,False
+Beluga Lake,HOM,Homer Airport - Wikipedia,"{'Alaska': 33, 'Minnesota': 3}",0,True
+R & D Farms,ATL,Hartsfield–Jackson Atlanta International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 9, 'Arkansas': 4, 'California': 1, 'Colorado': 7, 'Florida': 21, 'Georgia': 163, 'Idaho': 4, 'Illinois': 2, 'Indiana': 9, 'Iowa': 6, 'Kansas': 6, 'Kentucky': 6, 'Louisiana': 4, 'Maryland': 1, 'Massachusetts': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 3, 'Virginia': 1, 'Washington': 49}",0,False
+TRADING BAY AIRPORT,SFO,San Francisco International Airport - Wikipedia,"{'Alaska': 34, 'Arkansas': 2, 'California': 111, 'Colorado': 1, 'Guam': 3, 'Hawaii': 17, 'Illinois': 1, 'Indiana': 3, 'Kansas': 6, 'Kentucky': 6, 'Massachusetts': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 13, 'Oklahoma': 1, 'Oregon': 4, 'Pennsylvania': 4, 'Washington': 33}",0,False
+Port Alsworth,PTA,Port Alsworth Airport - Wikipedia,{'Alaska': 24},2,True
+Off Airport,LHR,Heathrow Airport - Wikipedia,"{'Georgia': 1, 'New York': 8, 'Virginia': 3, 'Washington': 11}",0,False
+Shaw Island Airport,BOS,Logan International Airport - Wikipedia,"{'Alaska': 12, 'California': 4, 'Connecticut': 13, 'Florida': 13, 'Georgia': 1, 'Hawaii': 5, 'Illinois': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 7, 'Maine': 7, 'Maryland': 1, 'Massachusetts': 187, 'New Hampshire': 8, 'New York': 18, 'North Carolina': 1, 'Pennsylvania': 1, 'Rhode Island': 5, 'Vermont': 12, 'Washington': 39}",0,False
+Remote Landing Zone,SYD,Sydney Airport - Wikipedia,"{'Hawaii': 3, 'Kentucky': 2, 'New York': 2}",0,True
+Umpqua Sky Park,RBG,Roseburg Regional Airport - Wikipedia,"{'Illinois': 3, 'Oregon': 76}",0,True
+Farm field,CHA,Chattanooga Metropolitan Airport - Wikipedia,"{'California': 1, 'Florida': 2, 'Georgia': 3, 'Illinois': 1, 'Michigan': 1, 'New Jersey': 1, 'New York': 4, 'North Carolina': 1, 'Tennessee': 110, 'Texas': 1, 'Washington': 6}",0,False
+Choctaw Field,TPA,Tampa International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 10, 'Colorado': 10, 'Florida': 142, 'Georgia': 10, 'Illinois': 10, 'Indiana': 14, 'Kansas': 8, 'Kentucky': 10, 'Maryland': 10, 'Massachusetts': 10, 'Michigan': 10, 'New Jersey': 3, 'New York': 17, 'North Carolina': 3, 'Pennsylvania': 10, 'Puerto Rico': 1, 'Texas': 10, 'Washington': 37}",0,True
+Dry Bay,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 170, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
+NOT LISTED,SEA,Seattle–Tacoma International Airport - Wikipedia,"{'Alaska': 74, 'Arizona': 1, 'California': 3, 'Colorado': 1, 'Florida': 2, 'Hawaii': 7, 'Illinois': 2, 'Indiana': 9, 'Kansas': 6, 'Kentucky': 8, 'Mississippi': 1, 'Nevada': 1, 'New York': 10, 'Oklahoma': 1, 'Oregon': 12, 'Washington': 153}",0,False
+Scott Field  (Private),JAN,Jackson–Medgar Wiley Evers International Airport - Wikipedia,"{'Colorado': 1, 'Florida': 2, 'Georgia': 1, 'Illinois': 1, 'Kentucky': 2, 'Louisiana': 4, 'Mississippi': 199, 'New York': 2, 'North Carolina': 1, 'Texas': 5, 'Washington': 13}",0,False
+Donlin Creek Airstrip,UTO,Indian Mountain LRRS Airport - Wikipedia,{'Alaska': 58},0,True
+PORT ALSWORTH,PTA,Port Alsworth Airport - Wikipedia,{'Alaska': 24},2,True
+SHANNON'S AIRSTRIP,BOS,Logan International Airport - Wikipedia,"{'Alaska': 12, 'California': 4, 'Connecticut': 13, 'Florida': 13, 'Georgia': 1, 'Hawaii': 5, 'Illinois': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 7, 'Maine': 7, 'Maryland': 1, 'Massachusetts': 187, 'New Hampshire': 8, 'New York': 18, 'North Carolina': 1, 'Pennsylvania': 1, 'Rhode Island': 5, 'Vermont': 12, 'Washington': 39}",0,False
+Air Jordan Airport,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 264, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,False
+THREE MILE LAKE,SLC,Salt Lake City International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 1, 'California': 3, 'Colorado': 4, 'Georgia': 1, 'Idaho': 12, 'Indiana': 6, 'Kansas': 12, 'Kentucky': 4, 'Nevada': 1, 'New York': 10, 'Oklahoma': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 57, 'Washington': 21, 'Wyoming': 3}",1,False
+MILLER CREEK,MKE,Milwaukee Mitchell International Airport - Wikipedia,"{'Alaska': 3, 'Arizona': 1, 'Colorado': 1, 'Florida': 7, 'Georgia': 1, 'Illinois': 9, 'Indiana': 3, 'Iowa': 2, 'Kansas': 3, 'Kentucky': 2, 'Michigan': 9, 'Minnesota': 1, 'Nevada': 1, 'New York': 4, 'North Carolina': 1, 'Oregon': 4, 'Texas': 1, 'Washington': 5, 'Wisconsin': 115}",0,False
+Redder Airport,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 264, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,False
+PRIVATE AG STRIP,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 170, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
+PIERCE AGRICULTURAL FIELD,SEA,Seattle–Tacoma International Airport - Wikipedia,"{'Alaska': 74, 'Arizona': 1, 'California': 3, 'Colorado': 1, 'Florida': 2, 'Hawaii': 7, 'Illinois': 2, 'Indiana': 9, 'Kansas': 6, 'Kentucky': 8, 'Mississippi': 1, 'Nevada': 1, 'New York': 10, 'Oklahoma': 1, 'Oregon': 12, 'Washington': 153}",0,False
+BRADLEY SKY RANCH,IAH,George Bush Intercontinental Airport - Wikipedia,"{'Alaska': 10, 'Arkansas': 3, 'California': 2, 'Colorado': 4, 'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 9, 'Kentucky': 8, 'Louisiana': 5, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'Oklahoma': 2, 'Texas': 103, 'Washington': 26}",0,False
+JENSEN AIRFIELD,CVG,Cincinnati/Northern Kentucky International Airport - Wikipedia,"{'Alaska': 6, 'Arizona': 1, 'Colorado': 1, 'Florida': 8, 'Georgia': 1, 'Illinois': 3, 'Indiana': 2, 'Iowa': 2, 'Kansas': 6, 'Kentucky': 239, 'Minnesota': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 9, 'North Carolina': 1, 'Ohio': 18, 'Oregon': 2, 'Puerto Rico': 1, 'Tennessee': 3, 'Texas': 3, 'Washington': 17}",0,False
+OPEN PASTURE AREA,SFO,San Francisco International Airport - Wikipedia,"{'Alaska': 34, 'Arkansas': 2, 'California': 111, 'Colorado': 1, 'Guam': 3, 'Hawaii': 17, 'Illinois': 1, 'Indiana': 3, 'Kansas': 6, 'Kentucky': 6, 'Massachusetts': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 13, 'Oklahoma': 1, 'Oregon': 4, 'Pennsylvania': 4, 'Washington': 33}",0,True
+SWIFT PRIVATE AIRSTRIP,SJU,Luis Muñoz Marín International Airport - Wikipedia,"{'Florida': 43, 'Georgia': 10, 'Hawaii': 3, 'Kentucky': 4, 'Maryland': 10, 'Massachusetts': 10, 'New Jersey': 3, 'New York': 9, 'Pennsylvania': 10, 'Puerto Rico': 225, 'Virgin Islands': 5, 'Washington': 14}",0,False
+THOMPSON STRIP,SNA,John Wayne Airport - Wikipedia,"{'Alaska': 25, 'Arizona': 9, 'California': 168, 'Colorado': 7, 'Illinois': 7, 'Nevada': 7, 'New York': 3, 'Texas': 8, 'Washington': 7}",0,True
+STEPHENS AIRFIELD,GSO,Piedmont Triad International Airport - Wikipedia,"{'Alabama': 1, 'Florida': 1, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kentucky': 2, 'Michigan': 1, 'New Jersey': 1, 'New York': 9, 'North Carolina': 87, 'Pennsylvania': 1, 'Texas': 1, 'Virginia': 6, 'Washington': 20}",0,False
+PILOTS PASTURE,SBA,Santa Barbara Municipal Airport - Wikipedia,"{'Alaska': 21, 'Arizona': 1, 'California': 52, 'Colorado': 1, 'New York': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 1, 'Washington': 1, 'Wisconsin': 3}",0,False
+EAGLE,EAA,Eagle Airport - Wikipedia,"{'Alaska': 41, 'Colorado': 1}",1,True
+GARRISON FIELD,BNA,Nashville International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 7, 'Arkansas': 2, 'California': 1, 'Colorado': 1, 'Florida': 7, 'Georgia': 1, 'Illinois': 3, 'Indiana': 6, 'Iowa': 3, 'Kansas': 3, 'Kentucky': 2, 'Massachusetts': 1, 'Michigan': 1, 'New York': 10, 'North Carolina': 1, 'Oklahoma': 1, 'Tennessee': 150, 'Texas': 2, 'Washington': 12}",0,False
+STUART WEST,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 170, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
+SHANNON'S POND,DLG,Dillingham Airport - Wikipedia,"{'Alaska': 135, 'Hawaii': 1}",0,True
+FLAGSTAFF PULLIAM,FLG,Flagstaff Pulliam Airport - Wikipedia,"{'Alaska': 6, 'Arizona': 37, 'Colorado': 2, 'New Mexico': 4, 'Texas': 1, 'Utah': 1}",2,True
+PRIVATE CROP DUSTER STRIP,FUL,Fullerton Municipal Airport - Wikipedia,"{'Arizona': 1, 'California': 62, 'Nevada': 1, 'Utah': 1}",0,True
+DIRT ROAD (OFF AIRPORT),ATL,Hartsfield–Jackson Atlanta International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 9, 'Arkansas': 4, 'California': 1, 'Colorado': 7, 'Florida': 21, 'Georgia': 163, 'Idaho': 4, 'Illinois': 2, 'Indiana': 9, 'Iowa': 6, 'Kansas': 6, 'Kentucky': 6, 'Louisiana': 4, 'Maryland': 1, 'Massachusetts': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 3, 'Virginia': 1, 'Washington': 49}",0,False
+CRANE ISLAND (PRIVATE),YTZ,Billy Bishop Toronto City Airport - Wikipedia,"{'New Jersey': 2, 'Washington': 3}",0,True
+HALLER AIRPORT,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 170, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
+RINEAR (PRIVATE),SJU,Luis Muñoz Marín International Airport - Wikipedia,"{'Florida': 43, 'Georgia': 10, 'Hawaii': 3, 'Kentucky': 4, 'Maryland': 10, 'Massachusetts': 10, 'New Jersey': 3, 'New York': 9, 'Pennsylvania': 10, 'Puerto Rico': 225, 'Virgin Islands': 5, 'Washington': 14}",0,False
+NORTHEAST PHILADELPHIA,PNE,Northeast Philadelphia Airport - Wikipedia,"{'Delaware': 5, 'Kentucky': 2, 'New Jersey': 1, 'Pennsylvania': 44, 'Washington': 1}",2,True
+LAFAYETTE LANDINGS,LFT,Lafayette Regional Airport - Wikipedia,"{'Florida': 3, 'Georgia': 1, 'Louisiana': 48, 'New York': 1, 'Texas': 28, 'Washington': 1}",1,False
+NORTH FORK AIRPORT,MSP,Minneapolis–Saint Paul International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 1, 'Arkansas': 2, 'California': 2, 'Colorado': 1, 'Florida': 11, 'Georgia': 1, 'Idaho': 4, 'Illinois': 1, 'Indiana': 9, 'Iowa': 9, 'Kansas': 9, 'Kentucky': 10, 'Minnesota': 142, 'Mississippi': 6, 'Nebraska': 3, 'Nevada': 1, 'New York': 5, 'North Dakota': 2, 'Oklahoma': 1, 'South Dakota': 2, 'Texas': 1, 'Washington': 42, 'Wisconsin': 5}",0,False
+TAYLOR MOUNTAIN STRIP,PUW,Pullman–Moscow Regional Airport - Wikipedia,"{'Alaska': 11, 'Idaho': 22, 'Washington': 74}",0,False
+QB ONE,AZA,Phoenix–Mesa Gateway Airport - Wikipedia,"{'Alaska': 2, 'Arizona': 107, 'Arkansas': 2, 'Hawaii': 1, 'Idaho': 3, 'Illinois': 6, 'Iowa': 5, 'Kansas': 3, 'Kentucky': 2, 'Michigan': 3, 'Missouri': 2, 'Nebraska': 2, 'Nevada': 3, 'North Dakota': 3, 'South Dakota': 3, 'Utah': 1, 'Washington': 4}",0,False
+CLARK FIELD,LAS,McCarran International Airport - Wikipedia,"{'Alaska': 10, 'Arizona': 6, 'Arkansas': 2, 'California': 6, 'Colorado': 4, 'Georgia': 1, 'Hawaii': 8, 'Idaho': 3, 'Illinois': 1, 'Indiana': 12, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Minnesota': 1, 'Nebraska': 2, 'Nevada': 152, 'New Mexico': 1, 'New York': 9, 'Oklahoma': 2, 'Texas': 1, 'Utah': 1, 'Washington': 24}",0,False
+SINCLAIR,NAN,Nadi International Airport - Wikipedia,"{'Alabama': 1, 'Washington': 2}",0,True
+KOLIGANEK,KGK,Koliganek Airport - Wikipedia,{'Alaska': 19},1,True
+LIBERTY FIELD,EWR,Newark Liberty International Airport - Wikipedia,"{'Alaska': 17, 'Arkansas': 2, 'California': 3, 'Connecticut': 2, 'Delaware': 2, 'Florida': 11, 'Georgia': 1, 'Guam': 2, 'Illinois': 1, 'Indiana': 10, 'Kansas': 6, 'Kentucky': 10, 'Maine': 2, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 170, 'New York': 88, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 8, 'Texas': 1, 'Washington': 38}",1,False
+THOMPSON AIRPORT,DTW,Detroit Metropolitan Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 3, 'California': 1, 'Colorado': 1, 'Florida': 8, 'Georgia': 1, 'Illinois': 3, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Massachusetts': 1, 'Michigan': 142, 'Nevada': 1, 'New York': 11, 'Ohio': 5, 'Oklahoma': 1, 'Tennessee': 2, 'Texas': 1, 'Washington': 26, 'Wisconsin': 4}",0,True
+STOYAHUK,KNW,New Stuyahok Airport - Wikipedia,{'Alaska': 19},0,True
+LEMHI COUNTY,SMN,Lemhi County Airport - Wikipedia,{'Idaho': 48},2,True
+B&G FARMS,YYZ,Toronto Pearson International Airport - Wikipedia,"{'Florida': 4, 'Indiana': 6, 'Kansas': 3, 'Kentucky': 4, 'Maryland': 1, 'Michigan': 6, 'New York': 12, 'Ohio': 3, 'Washington': 12}",0,False
+PORTAGE CREEK,PCA,Portage Creek Airport - Wikipedia,{'Alaska': 30},2,True
+FINCH [PRIVATE],YYZ,Toronto Pearson International Airport - Wikipedia,"{'Florida': 4, 'Indiana': 6, 'Kansas': 3, 'Kentucky': 4, 'Maryland': 1, 'Michigan': 6, 'New York': 12, 'Ohio': 3, 'Washington': 12}",0,False
+JUNEAU INTL,ANC,Ted Stevens Anchorage International Airport - Wikipedia,"{'Alaska': 193, 'California': 2, 'Colorado': 6, 'Guam': 1, 'Hawaii': 1, 'Illinois': 6, 'Indiana': 3, 'Kentucky': 4, 'Minnesota': 9, 'New York': 13, 'Oregon': 9, 'Puerto Rico': 2, 'Washington': 20}",0,True
+SARASOTA/BRADENTON,SRQ,Sarasota–Bradenton International Airport - Wikipedia,"{'Florida': 198, 'Georgia': 10, 'Illinois': 10, 'Indiana': 8, 'Kentucky': 17, 'Louisiana': 3, 'Maine': 3, 'Massachusetts': 10, 'New Jersey': 3, 'New York': 14, 'North Carolina': 3, 'Ohio': 20, 'Texas': 2, 'Virginia': 9, 'Washington': 29}",0,True
+PRIVATE HELIPAD,TUS,Tucson International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 65, 'California': 6, 'Colorado': 1, 'Georgia': 1, 'Illinois': 1, 'Indiana': 8, 'Kentucky': 2, 'Nevada': 1, 'Texas': 3, 'Washington': 1}",0,False
+MORNING STAR,DFW,Dallas/Fort Worth International Airport - Wikipedia,"{'Alaska': 8, 'Arizona': 1, 'Arkansas': 8, 'California': 1, 'Colorado': 7, 'Florida': 8, 'Georgia': 1, 'Illinois': 5, 'Indiana': 6, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 16, 'Louisiana': 4, 'Nebraska': 2, 'Nevada': 1, 'New York': 12, 'Oklahoma': 4, 'Tennessee': 2, 'Texas': 227, 'Washington': 29}",0,False
+SPIRIT LAKE,SLC,Salt Lake City International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 1, 'California': 3, 'Colorado': 4, 'Georgia': 1, 'Idaho': 12, 'Indiana': 6, 'Kansas': 12, 'Kentucky': 4, 'Nevada': 1, 'New York': 10, 'Oklahoma': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 57, 'Washington': 21, 'Wyoming': 3}",1,False
+SAN JOSE INTL,SFO,San Francisco International Airport - Wikipedia,"{'Alaska': 34, 'Arkansas': 2, 'California': 111, 'Colorado': 1, 'Guam': 3, 'Hawaii': 17, 'Illinois': 1, 'Indiana': 3, 'Kansas': 6, 'Kentucky': 6, 'Massachusetts': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 13, 'Oklahoma': 1, 'Oregon': 4, 'Pennsylvania': 4, 'Washington': 33}",1,True
+UNKNOWN,LGB,Long Beach Airport - Wikipedia,"{'Alaska': 4, 'Arizona': 1, 'California': 130, 'Hawaii': 11, 'Nevada': 1, 'New York': 5, 'Texas': 3, 'Utah': 1, 'Washington': 1}",0,False
+SAYER FARMS,BNA,Nashville International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 7, 'Arkansas': 2, 'California': 1, 'Colorado': 1, 'Florida': 7, 'Georgia': 1, 'Illinois': 3, 'Indiana': 6, 'Iowa': 3, 'Kansas': 3, 'Kentucky': 2, 'Massachusetts': 1, 'Michigan': 1, 'New York': 10, 'North Carolina': 1, 'Oklahoma': 1, 'Tennessee': 150, 'Texas': 2, 'Washington': 12}",0,False
+PRIVATE,CQM ,Ciudad Real International Airport - Wikipedia,{'New York': 2},0,True
+WILKE FIELD,ORD,O'Hare International Airport - Wikipedia,"{'Alaska': 13, 'Arizona': 1, 'Arkansas': 4, 'California': 5, 'Colorado': 7, 'Florida': 14, 'Georgia': 1, 'Illinois': 81, 'Indiana': 19, 'Iowa': 11, 'Kansas': 13, 'Kentucky': 12, 'Massachusetts': 1, 'Michigan': 2, 'Minnesota': 1, 'Mississippi': 3, 'Nebraska': 2, 'New York': 22, 'Oklahoma': 2, 'Texas': 1, 'Virginia': 2, 'Washington': 37, 'West Virginia': 1, 'Wisconsin': 6}",0,False
+RAPID CITY REGIONAL,RAP,Rapid City Regional Airport - Wikipedia,"{'Arizona': 2, 'Colorado': 1, 'Illinois': 1, 'Minnesota': 1, 'Nevada': 1, 'New Jersey': 1, 'North Carolina': 1, 'South Dakota': 22, 'Texas': 1, 'Utah': 1}",3,True
+NEAR KATMAI,AKN,King Salmon Airport - Wikipedia,{'Alaska': 41},0,True
+MONTGOMERY FIELD,MYF,Montgomery-Gibbs Executive Airport - Wikipedia,"{'California': 32, 'Oklahoma': 5}",0,True
+UNIVERSITY PARK,SCE,University Park Airport - Wikipedia,"{'Florida': 2, 'Illinois': 1, 'Michigan': 1, 'Pennsylvania': 86, 'Virginia': 1, 'Washington': 11, 'Wisconsin': 3}",2,True
+BRADLEY LAKE,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 170, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
+HARTSFIELD INTL.,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 264, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,False
+BLAIR LAKES LANDING STRIP,MCO,Orlando International Airport - Wikipedia,"{'Alaska': 7, 'California': 2, 'Colorado': 3, 'Delaware': 4, 'Florida': 284, 'Georgia': 1, 'Illinois': 3, 'Indiana': 15, 'Kansas': 9, 'Kentucky': 8, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 1, 'New Mexico': 1, 'New York': 13, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 35}",0,False
+CURLES NECK FARM,RIC,Richmond International Airport - Wikipedia,"{'Florida': 5, 'Georgia': 1, 'Illinois': 1, 'Indiana': 3, 'Kentucky': 4, 'Massachusetts': 1, 'New Jersey': 2, 'New York': 19, 'North Carolina': 1, 'Pennsylvania': 1, 'Texas': 1, 'Virginia': 91, 'Washington': 29}",0,True
+SHULTZ (PRIVATE),IND,Indianapolis International Airport - Wikipedia,"{'Alaska': 4, 'Arizona': 1, 'California': 2, 'Colorado': 2, 'Delaware': 3, 'Florida': 16, 'Georgia': 2, 'Illinois': 1, 'Indiana': 366, 'Iowa': 2, 'Kansas': 6, 'Massachusetts': 1, 'Michigan': 4, 'Minnesota': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 7, 'North Carolina': 1, 'Ohio': 2, 'Tennessee': 1, 'Texas': 2, 'Washington': 14}",0,False
+JONES FLYING SERVICE,MSY,Louis Armstrong New Orleans International Airport - Wikipedia,"{'Alabama': 3, 'Alaska': 11, 'California': 2, 'Colorado': 1, 'Florida': 6, 'Georgia': 6, 'Hawaii': 1, 'Indiana': 6, 'Kansas': 3, 'Kentucky': 6, 'Louisiana': 109, 'New York': 12, 'North Carolina': 1, 'Tennessee': 5, 'Texas': 10, 'Vermont': 3, 'Washington': 20}",0,False
+HUNT AIRPORT,MDW,Midway International Airport - Wikipedia,"{'Arizona': 1, 'California': 1, 'Colorado': 1, 'Florida': 9, 'Georgia': 1, 'Illinois': 93, 'Indiana': 10, 'Kansas': 4, 'Kentucky': 2, 'Maryland': 2, 'Minnesota': 1, 'Mississippi': 3, 'Nevada': 1, 'New York': 3, 'Oklahoma': 1, 'Pennsylvania': 1, 'Texas': 2, 'Washington': 24, 'Wisconsin': 1}",0,False
+DIRT ROAD,GCW,Grand Canyon West Airport - Wikipedia,{'Arizona': 39},0,True
+SHAW ISLAND AIRPORT,BOS,Logan International Airport - Wikipedia,"{'Alaska': 12, 'California': 4, 'Connecticut': 13, 'Florida': 13, 'Georgia': 1, 'Hawaii': 5, 'Illinois': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 7, 'Maine': 7, 'Maryland': 1, 'Massachusetts': 187, 'New Hampshire': 8, 'New York': 18, 'North Carolina': 1, 'Pennsylvania': 1, 'Rhode Island': 5, 'Vermont': 12, 'Washington': 39}",0,False
+LAFAYETTE,LFT,Lafayette Regional Airport - Wikipedia,"{'Florida': 3, 'Georgia': 1, 'Louisiana': 48, 'New York': 1, 'Texas': 28, 'Washington': 1}",1,False
+STANDIFORD FIELD,SDF,Louisville International Airport - Wikipedia,"{'Colorado': 1, 'Florida': 4, 'Georgia': 3, 'Illinois': 2, 'Indiana': 8, 'Iowa': 2, 'Kansas': 3, 'Kentucky': 131, 'Maryland': 1, 'Michigan': 1, 'New York': 5, 'North Carolina': 1, 'Ohio': 7, 'Oklahoma': 1, 'Tennessee': 2, 'Texas': 2, 'Washington': 15}",0,True
+COLLIER STRIP,MCO,Orlando International Airport - Wikipedia,"{'Alaska': 7, 'California': 2, 'Colorado': 3, 'Delaware': 4, 'Florida': 284, 'Georgia': 1, 'Illinois': 3, 'Indiana': 15, 'Kansas': 9, 'Kentucky': 8, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 1, 'New Mexico': 1, 'New York': 13, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 35}",0,False
+PLOWED FIELD,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 170, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,True
+GREATER ROCHESTER INT'L,ROC,Greater Rochester International Airport - Wikipedia,"{'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Kentucky': 2, 'Maryland': 1, 'Massachusetts': 1, 'Michigan': 1, 'Minnesota': 1, 'New Jersey': 1, 'New York': 87, 'North Carolina': 1, 'Pennsylvania': 1, 'Washington': 22}",2,True
+MARTIN STATE,MTN,Martin State Airport - Wikipedia,"{'Georgia': 2, 'Maryland': 73, 'Virginia': 3, 'Washington': 25}",2,True
+BULLHEAD CITY,IFP,Laughlin/Bullhead International Airport - Wikipedia,"{'Arizona': 43, 'California': 5, 'Colorado': 5, 'Minnesota': 2, 'Nevada': 10, 'Texas': 1}",0,True
+WAIMEA,MUE,Waimea-Kohala Airport - Wikipedia,{'Hawaii': 119},0,True
+BOISE,BOI,Boise Airport - Wikipedia,"{'Alaska': 25, 'Arizona': 1, 'California': 2, 'Colorado': 1, 'Idaho': 93, 'Minnesota': 1, 'Montana': 7, 'Nevada': 2, 'New York': 2, 'Oklahoma': 2, 'Oregon': 10, 'Utah': 7, 'Washington': 10, 'Wisconsin': 5, 'Wyoming': 3}",1,True
+SANTA MONICA,SMO,Santa Monica Airport - Wikipedia,"{'California': 76, 'New York': 1}",2,True
+TONOPAH,TPH,Tonopah Airport - Wikipedia,{'Nevada': 42},1,True
+INDIAN CREEK,AZA,Phoenix–Mesa Gateway Airport - Wikipedia,"{'Alaska': 2, 'Arizona': 107, 'Arkansas': 2, 'Hawaii': 1, 'Idaho': 3, 'Illinois': 6, 'Iowa': 5, 'Kansas': 3, 'Kentucky': 2, 'Michigan': 3, 'Missouri': 2, 'Nebraska': 2, 'Nevada': 3, 'North Dakota': 3, 'South Dakota': 3, 'Utah': 1, 'Washington': 4}",0,False
+H MARKER LAKE,MKE,Milwaukee Mitchell International Airport - Wikipedia,"{'Alaska': 3, 'Arizona': 1, 'Colorado': 1, 'Florida': 7, 'Georgia': 1, 'Illinois': 9, 'Indiana': 3, 'Iowa': 2, 'Kansas': 3, 'Kentucky': 2, 'Michigan': 9, 'Minnesota': 1, 'Nevada': 1, 'New York': 4, 'North Carolina': 1, 'Oregon': 4, 'Texas': 1, 'Washington': 5, 'Wisconsin': 115}",0,False
+BROTHERS WELCOME,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 264, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,False
+KENDALL-TAMIAMI,TMB,Miami Executive Airport - Wikipedia,"{'Florida': 77, 'Ohio': 6}",0,True
+SCOTTSDALE,SCF,Scottsdale Airport - Wikipedia,"{'Arizona': 80, 'Nevada': 3, 'New Mexico': 2, 'Texas': 1, 'Washington': 1}",1,True
+REID HILLVIEW,RHV,Reid–Hillview Airport - Wikipedia,{'California': 34},0,True
+MAURY COUNTY,MRC,Maury County Airport - Wikipedia,{'Tennessee': 43},2,True
+BERMUDA DUNES,UDD,Bermuda Dunes Airport - Wikipedia,{'California': 24},2,True
+ANN ARBOR,ARB,Ann Arbor Municipal Airport - Wikipedia,"{'Michigan': 94, 'Washington': 1}",2,True
+KENNEDY,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 264, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",1,False
+FIRE LAKE,SLC,Salt Lake City International Airport - Wikipedia,"{'Alaska': 11, 'Arizona': 1, 'California': 3, 'Colorado': 4, 'Georgia': 1, 'Idaho': 12, 'Indiana': 6, 'Kansas': 12, 'Kentucky': 4, 'Nevada': 1, 'New York': 10, 'Oklahoma': 1, 'Oregon': 1, 'Texas': 1, 'Utah': 57, 'Washington': 21, 'Wyoming': 3}",1,False
+CLEVELAND-HOPKINS INTL,YYZ,Toronto Pearson International Airport - Wikipedia,"{'Florida': 4, 'Indiana': 6, 'Kansas': 3, 'Kentucky': 4, 'Maryland': 1, 'Michigan': 6, 'New York': 12, 'Ohio': 3, 'Washington': 12}",0,False
+PENSACOLA REGIONAL,PNS,Pensacola International Airport - Wikipedia,"{'Florida': 123, 'Georgia': 12, 'Illinois': 10, 'Kansas': 8, 'North Carolina': 3, 'Pennsylvania': 10, 'Tennessee': 10, 'Texas': 30, 'Virginia': 10, 'Washington': 15}",1,True
+FORT LAUDERDALE EXECUTIVE,FXE,Fort Lauderdale Executive Airport - Wikipedia,"{'Florida': 187, 'Virginia': 3}",3,True
+TORRANCE MUNIC.,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 170, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,True
+PORT COLUMBUS,CMH,John Glenn Columbus International Airport - Wikipedia,"{'Alaska': 10, 'Colorado': 1, 'Florida': 9, 'Georgia': 1, 'Illinois': 2, 'Nevada': 1, 'New Mexico': 2, 'New York': 9, 'North Carolina': 1, 'Ohio': 84, 'Oklahoma': 3, 'Pennsylvania': 3, 'Texas': 1, 'Washington': 19}",1,True
+HAYNARD AIR TERMINAL,HWD,Hayward Executive Airport - Wikipedia,"{'California': 104, 'Nevada': 3, 'Utah': 3}",0,True
+PINAL AIRPARK,AVW,Marana Regional Airport - Wikipedia,"{'Arizona': 86, 'Nevada': 3, 'New Mexico': 2}",0,True
+MONTAUK,MTP,Montauk Airport - Wikipedia,{'New York': 35},1,True
+JONES PRIVATE,SJU,Luis Muñoz Marín International Airport - Wikipedia,"{'Florida': 43, 'Georgia': 10, 'Hawaii': 3, 'Kentucky': 4, 'Maryland': 10, 'Massachusetts': 10, 'New Jersey': 3, 'New York': 9, 'Pennsylvania': 10, 'Puerto Rico': 225, 'Virgin Islands': 5, 'Washington': 14}",0,False
+TODDS,EWR,Newark Liberty International Airport - Wikipedia,"{'Alaska': 17, 'Arkansas': 2, 'California': 3, 'Connecticut': 2, 'Delaware': 2, 'Florida': 11, 'Georgia': 1, 'Guam': 2, 'Illinois': 1, 'Indiana': 10, 'Kansas': 6, 'Kentucky': 10, 'Maine': 2, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 170, 'New York': 88, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 8, 'Texas': 1, 'Washington': 38}",0,False
+PRICE FIELD,ATL,Hartsfield–Jackson Atlanta International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 9, 'Arkansas': 4, 'California': 1, 'Colorado': 7, 'Florida': 21, 'Georgia': 163, 'Idaho': 4, 'Illinois': 2, 'Indiana': 9, 'Iowa': 6, 'Kansas': 6, 'Kentucky': 6, 'Louisiana': 4, 'Maryland': 1, 'Massachusetts': 1, 'New York': 15, 'Oklahoma': 2, 'Texas': 3, 'Virginia': 1, 'Washington': 49}",0,False
+BUSHNELL,MCO,Orlando International Airport - Wikipedia,"{'Alaska': 7, 'California': 2, 'Colorado': 3, 'Delaware': 4, 'Florida': 284, 'Georgia': 1, 'Illinois': 3, 'Indiana': 15, 'Kansas': 9, 'Kentucky': 8, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 1, 'New Mexico': 1, 'New York': 13, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Washington': 35}",0,True
+MIAMI INTERNATIONAL,MIA,Miami International Airport - Wikipedia,"{'Arkansas': 2, 'California': 1, 'Florida': 230, 'Georgia': 1, 'Illinois': 1, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 14, 'New Jersey': 3, 'New York': 22, 'North Carolina': 3, 'Oklahoma': 1, 'Oregon': 3, 'Pennsylvania': 1, 'Tennessee': 3, 'Texas': 4, 'Virginia': 6, 'Washington': 30}",2,True
+GALENA BAY,FAI,Fairbanks International Airport - Wikipedia,"{'Alaska': 147, 'Colorado': 9, 'Illinois': 9, 'Minnesota': 9, 'New York': 3, 'Washington': 9}",0,True
+COLLEGE PARK,CGS,College Park Airport - Wikipedia,"{'Maryland': 168, 'New York': 5, 'North Carolina': 1, 'Rhode Island': 2, 'Virginia': 3, 'Washington': 42}",2,True
+CRANE ISLAND,YTZ,Billy Bishop Toronto City Airport - Wikipedia,"{'New Jersey': 2, 'Washington': 3}",0,True
+BYRON,none,Byron Airport - Wikipedia,{'California': 47},1,True
+NAS PENSACOLA,CEW,Bob Sikes Airport - Wikipedia,{'Florida': 63},0,True
+TRI-STATE STEUBEN COUNTY,ANQ,Tri-State Steuben County Airport - Wikipedia,"{'Delaware': 3, 'Indiana': 98, 'Michigan': 3}",3,True
+ELLIOT FIELD,CUB,Jim Hamilton–L.B. Owens Airport - Wikipedia,{'South Carolina': 31},0,True
+MORRISON,PBI,Palm Beach International Airport - Wikipedia,"{'Florida': 203, 'Georgia': 1, 'Indiana': 8, 'Kentucky': 4, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 15, 'North Carolina': 1, 'Oklahoma': 1, 'Pennsylvania': 1, 'Puerto Rico': 2, 'Texas': 1, 'Virginia': 3, 'Washington': 34}",0,False
+GRAVEL BAR,BTI,Barter Island LRRS Airport - Wikipedia,{'Alaska': 75},0,True
+SALMOM LAKE,AKN,King Salmon Airport - Wikipedia,{'Alaska': 41},0,True
+FRENCH VALLEY,RBK,French Valley Airport - Wikipedia,"{'California': 56, 'Texas': 3}",2,True
+PARADISE VALLEY,LAS,McCarran International Airport - Wikipedia,"{'Alaska': 10, 'Arizona': 6, 'Arkansas': 2, 'California': 6, 'Colorado': 4, 'Georgia': 1, 'Hawaii': 8, 'Idaho': 3, 'Illinois': 1, 'Indiana': 12, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Minnesota': 1, 'Nebraska': 2, 'Nevada': 152, 'New Mexico': 1, 'New York': 9, 'Oklahoma': 2, 'Texas': 1, 'Utah': 1, 'Washington': 24}",0,True
+BOSTON INT'L,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 264, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,False
+BURNS JUNCTION,BNO,Burns Municipal Airport - Wikipedia,"{'Illinois': 3, 'Oregon': 72}",1,True
+LAKE POWELL,BFG,Bullfrog Basin Airport - Wikipedia,{'Utah': 21},0,True
+MAJOR,DTW,Detroit Metropolitan Airport - Wikipedia,"{'Alaska': 12, 'Arizona': 3, 'California': 1, 'Colorado': 1, 'Florida': 8, 'Georgia': 1, 'Illinois': 3, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Massachusetts': 1, 'Michigan': 142, 'Nevada': 1, 'New York': 11, 'Ohio': 5, 'Oklahoma': 1, 'Tennessee': 2, 'Texas': 1, 'Washington': 26, 'Wisconsin': 4}",0,False
+BROOKHAVENS,WSH,Brookhaven Airport - Wikipedia,"{'New Jersey': 2, 'New York': 41, 'Washington': 1}",0,True
+NYAC,ZNC,Nyac Airport - Wikipedia,{'Alaska': 46},1,True
+BEAR CREEK NO. 1,BCC,Bear Creek 3 Airport - Wikipedia,{'Alaska': 40},2,True
+FT COLLINS/LOVELAND,FNL,Northern Colorado Regional Airport - Wikipedia,"{'Colorado': 133, 'Illinois': 3, 'Nevada': 3, 'Texas': 1}",0,True
+CONCRETE MUNICIPAL,RNT,Renton Municipal Airport - Wikipedia,"{'Virginia': 3, 'Washington': 79}",1,True
+JUMP WEST,WYS,Yellowstone Airport - Wikipedia,"{'Idaho': 3, 'Montana': 69, 'Utah': 1, 'Wyoming': 3}",0,False
+DANIEL FIELD,DNL,Daniel Field - Wikipedia,"{'Alabama': 2, 'Georgia': 157, 'Kentucky': 5, 'Louisiana': 3, 'Michigan': 3, 'North Carolina': 5, 'Pennsylvania': 3, 'South Carolina': 4, 'Texas': 6}",2,True
+PARADISE,LAS,McCarran International Airport - Wikipedia,"{'Alaska': 10, 'Arizona': 6, 'Arkansas': 2, 'California': 6, 'Colorado': 4, 'Georgia': 1, 'Hawaii': 8, 'Idaho': 3, 'Illinois': 1, 'Indiana': 12, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 6, 'Minnesota': 1, 'Nebraska': 2, 'Nevada': 152, 'New Mexico': 1, 'New York': 9, 'Oklahoma': 2, 'Texas': 1, 'Utah': 1, 'Washington': 24}",0,False
+TRAVIS AFB,SAV,Savannah/Hilton Head International Airport - Wikipedia,"{'Arizona': 1, 'California': 1, 'Florida': 2, 'Georgia': 83, 'Indiana': 3, 'Kentucky': 2, 'New York': 8, 'Puerto Rico': 2, 'South Carolina': 19, 'Texas': 1, 'Washington': 11}",0,False
+IDAHO COUNTY,IDH,Idaho County Airport - Wikipedia,{'Idaho': 73},2,True
+E.A. LOVE FIELD,,Greater Southwest International Airport - Wikipedia,"{'Arizona': 3, 'New York': 2, 'Texas': 115}",0,False
+LONG BEACH,LGB,Long Beach Airport - Wikipedia,"{'Alaska': 4, 'Arizona': 1, 'California': 130, 'Hawaii': 11, 'Nevada': 1, 'New York': 5, 'Texas': 3, 'Utah': 1, 'Washington': 1}",2,True
+U OF A AG STRIP,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 170, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
+CABLE,CCB,Cable Airport - Wikipedia,"{'Arizona': 1, 'California': 45, 'Nevada': 1, 'Texas': 3}",1,True
+FT. LAUDERDALE INT'L,FLL,Fort Lauderdale–Hollywood International Airport - Wikipedia,"{'Alaska': 11, 'Florida': 241, 'Georgia': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 8, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 16, 'North Carolina': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Virginia': 3, 'Washington': 30}",0,True
+NATOMAS FIELD,SMF,Sacramento International Airport - Wikipedia,"{'Alaska': 19, 'Arizona': 1, 'California': 80, 'Colorado': 1, 'Hawaii': 12, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 2, 'North Carolina': 1, 'Oregon': 1, 'Texas': 1, 'Washington': 9}",0,True
+OHIO RIVER,LUK,Cincinnati Municipal Lunken Airport - Wikipedia,"{'Alaska': 3, 'Arizona': 3, 'Florida': 1, 'Georgia': 1, 'Illinois': 1, 'Indiana': 2, 'Kentucky': 28, 'Montana': 2, 'New Jersey': 1, 'New York': 1, 'North Carolina': 1, 'Ohio': 92, 'Virginia': 1, 'Washington': 9}",0,False
+GWINNETT COUNTY,LZU,Gwinnett County Airport - Wikipedia,"{'Georgia': 43, 'New York': 1}",2,True
+WALKER STRIP,YQG,Windsor International Airport - Wikipedia,"{'Georgia': 1, 'Michigan': 5}",0,False
+AG STRIP,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 170, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,True
+HEALY LAKE,HKB,Healy Lake Airport - Wikipedia,{'Alaska': 38},2,True
+CENTER ISLAND,CWS,Center Island Airport - Wikipedia,{'Washington': 64},2,True
+OHIO STATE UNIVERSITY,OSU,Ohio State University Airport - Wikipedia,"{'Delaware': 3, 'Michigan': 4, 'Ohio': 268}",3,True
+EXCURSION INLET,EXI,Excursion Inlet Seaplane Base - Wikipedia,{'Alaska': 69},2,True
+ED'S,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 264, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,False
+DILLINGHAM,DLG,Dillingham Airport - Wikipedia,"{'Alaska': 135, 'Hawaii': 1}",1,True
+HOUSTON HELICOPTER,IAH,George Bush Intercontinental Airport - Wikipedia,"{'Alaska': 10, 'Arkansas': 3, 'California': 2, 'Colorado': 4, 'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 9, 'Kentucky': 8, 'Louisiana': 5, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'Oklahoma': 2, 'Texas': 103, 'Washington': 26}",0,True
+PRIVATE FIELD,LGA,LaGuardia Airport - Wikipedia,"{'Alaska': 5, 'Arkansas': 4, 'Colorado': 1, 'Florida': 15, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 6, 'Kentucky': 4, 'Massachusetts': 1, 'Michigan': 1, 'New Jersey': 36, 'New York': 164, 'North Carolina': 1, 'Oklahoma': 1, 'Texas': 4, 'Washington': 41}",0,False
+SKY MEADOWS,BFL,Meadows Field Airport - Wikipedia,"{'Alabama': 2, 'Arizona': 1, 'California': 85, 'Colorado': 1, 'Florida': 3, 'Texas': 2, 'Washington': 1}",1,False
+FARM FIELD,BNA,Nashville International Airport - Wikipedia,"{'Alabama': 2, 'Alaska': 7, 'Arkansas': 2, 'California': 1, 'Colorado': 1, 'Florida': 7, 'Georgia': 1, 'Illinois': 3, 'Indiana': 6, 'Iowa': 3, 'Kansas': 3, 'Kentucky': 2, 'Massachusetts': 1, 'Michigan': 1, 'New York': 10, 'North Carolina': 1, 'Oklahoma': 1, 'Tennessee': 150, 'Texas': 2, 'Washington': 12}",0,False
+ALEXANDER FIELD,ISW,South Wood County Airport - Wikipedia,{'Wisconsin': 93},0,True
+FORT HILL,FLL,Fort Lauderdale–Hollywood International Airport - Wikipedia,"{'Alaska': 11, 'Florida': 241, 'Georgia': 1, 'Indiana': 12, 'Kansas': 3, 'Kentucky': 8, 'Maryland': 1, 'Massachusetts': 1, 'New Jersey': 1, 'New York': 16, 'North Carolina': 1, 'Pennsylvania': 1, 'Puerto Rico': 1, 'Texas': 1, 'Virginia': 3, 'Washington': 30}",1,False
+GALLUP,GUP,Gallup Municipal Airport - Wikipedia,{'New Mexico': 20},1,True
+CHEYENNE,CYS,Cheyenne Regional Airport - Wikipedia,"{'Colorado': 1, 'Nevada': 5, 'New York': 1, 'Oklahoma': 1, 'Wyoming': 62}",1,True
+INDIANAPOLIS INT'L,IND,Indianapolis International Airport - Wikipedia,"{'Alaska': 4, 'Arizona': 1, 'California': 2, 'Colorado': 2, 'Delaware': 3, 'Florida': 16, 'Georgia': 2, 'Illinois': 1, 'Indiana': 371, 'Iowa': 2, 'Kansas': 6, 'Massachusetts': 1, 'Michigan': 4, 'Minnesota': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 7, 'North Carolina': 1, 'Ohio': 2, 'Tennessee': 1, 'Texas': 2, 'Washington': 14}",1,True
+CLEARWATER EXECUTIVE,PIE,St. Pete–Clearwater International Airport - Wikipedia,"{'Florida': 122, 'Illinois': 3, 'Indiana': 14, 'Iowa': 4, 'Kansas': 4, 'Kentucky': 4, 'Michigan': 7, 'Missouri': 1, 'New York': 6, 'North Carolina': 3, 'Ohio': 2, 'Oklahoma': 1, 'Pennsylvania': 2, 'South Carolina': 2, 'Tennessee': 2, 'Virginia': 1, 'Washington': 2}",0,True
+FT. LAUDERDALE EXEC,FXE,Fort Lauderdale Executive Airport - Wikipedia,"{'Florida': 187, 'Virginia': 3}",1,True
+RENO CANNON,RNO,Reno–Tahoe International Airport - Wikipedia,"{'Alaska': 5, 'Arizona': 1, 'California': 10, 'Colorado': 1, 'Michigan': 1, 'Minnesota': 3, 'Nevada': 59, 'New York': 4, 'Oregon': 3, 'Texas': 1, 'Utah': 1, 'Washington': 8}",0,True
+SOUTHERLAND,AUS,Austin–Bergstrom International Airport - Wikipedia,"{'Alaska': 9, 'Arizona': 1, 'California': 5, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 3, 'Kentucky': 4, 'Nevada': 1, 'New York': 3, 'Texas': 253, 'Washington': 19}",0,False
+BARBOUR INSLAND,LAX,Los Angeles International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 35, 'Arizona': 3, 'Arkansas': 4, 'California': 170, 'Colorado': 4, 'Florida': 2, 'Georgia': 1, 'Hawaii': 9, 'Idaho': 3, 'Illinois': 1, 'Indiana': 15, 'Iowa': 3, 'Kansas': 9, 'Kentucky': 8, 'Maryland': 1, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'North Carolina': 1, 'Ohio': 3, 'Oklahoma': 3, 'Pennsylvania': 2, 'Texas': 9, 'Utah': 1, 'Washington': 43}",0,False
+OCEAN SHORES,SBY,Salisbury–Ocean City–Wicomico Regional Airport - Wikipedia,"{'Delaware': 3, 'Maryland': 54, 'North Carolina': 2, 'Pennsylvania': 1, 'Virginia': 3, 'Washington': 14}",0,False
+FIELD,SAN,San Diego International Airport - Wikipedia,"{'Alabama': 3, 'Alaska': 43, 'Arizona': 5, 'California': 101, 'Colorado': 1, 'Georgia': 4, 'Hawaii': 11, 'Idaho': 3, 'Illinois': 1, 'Indiana': 6, 'Kansas': 5, 'Kentucky': 2, 'Minnesota': 3, 'Nevada': 1, 'New York': 5, 'Texas': 1, 'Washington': 18}",0,False
+JACKSONVILLE INT'L,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 264, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,False
+YORK AIRPORT,JFK,John F. Kennedy International Airport - Wikipedia,"{'Alabama': 1, 'Alaska': 16, 'Arizona': 3, 'California': 2, 'Florida': 7, 'Georgia': 1, 'Hawaii': 16, 'Indiana': 9, 'Kentucky': 8, 'Massachusetts': 11, 'Mississippi': 1, 'Nevada': 1, 'New Jersey': 56, 'New York': 264, 'Ohio': 1, 'Oregon': 2, 'Pennsylvania': 2, 'Puerto Rico': 1, 'Washington': 44, 'Wisconsin': 1}",0,False
+CHEYENNE MUNICIPAL,CYS,Cheyenne Regional Airport - Wikipedia,"{'Colorado': 1, 'Nevada': 5, 'New York': 1, 'Oklahoma': 1, 'Wyoming': 62}",1,True
+WINTER HAVEN'S GILBERT,GIF,Winter Haven's Gilbert Airport - Wikipedia,{'Florida': 105},3,True
+MIAMI INT'L,MIA,Miami International Airport - Wikipedia,"{'Arkansas': 2, 'California': 1, 'Florida': 230, 'Georgia': 1, 'Illinois': 1, 'Indiana': 9, 'Iowa': 3, 'Kansas': 6, 'Kentucky': 14, 'New Jersey': 3, 'New York': 22, 'North Carolina': 3, 'Oklahoma': 1, 'Oregon': 3, 'Pennsylvania': 1, 'Tennessee': 3, 'Texas': 4, 'Virginia': 6, 'Washington': 30}",1,True
+PACE FIELD,LUK,Cincinnati Municipal Lunken Airport - Wikipedia,"{'Alaska': 3, 'Arizona': 3, 'Florida': 1, 'Georgia': 1, 'Illinois': 1, 'Indiana': 2, 'Kentucky': 28, 'Montana': 2, 'New Jersey': 1, 'New York': 1, 'North Carolina': 1, 'Ohio': 92, 'Virginia': 1, 'Washington': 9}",0,False
+REDBIRD,RBD,Dallas Executive Airport - Wikipedia,{'Texas': 52},0,True
+KIPNUK,KPN,Kipnuk Airport - Wikipedia,{'Alaska': 45},1,True
+MACON MUNICIPAL,MCN,Middle Georgia Regional Airport - Wikipedia,"{'Florida': 3, 'Georgia': 164, 'Hawaii': 1, 'Mississippi': 2, 'Washington': 11}",0,False
+SKWENTNA,SKW,Skwentna Airport - Wikipedia,{'Alaska': 31},1,True
+WESTERLY STATE,WST,Westerly State Airport - Wikipedia,"{'New York': 1, 'Rhode Island': 28, 'Washington': 7}",2,True
+BUSH,IAH,George Bush Intercontinental Airport - Wikipedia,"{'Alaska': 10, 'Arkansas': 3, 'California': 2, 'Colorado': 4, 'Florida': 9, 'Georgia': 1, 'Illinois': 1, 'Indiana': 6, 'Kansas': 9, 'Kentucky': 8, 'Louisiana': 5, 'Nevada': 1, 'New Jersey': 1, 'New York': 10, 'Oklahoma': 2, 'Texas': 103, 'Washington': 26}",1,False

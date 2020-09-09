@@ -135,16 +135,29 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
     all_dfs = pd.concat(all_dfs, axis = 1)
     all_dfs.index = all_dfs.index.rename('tracon_month')
 
-    all_dfs['year'] = all_dfs.index.map(lambda x: int(x.split()[1].split("/")[0]))
-    all_dfs['month'] = all_dfs.index.map(lambda x: int(x.split()[1].split("/")[1]))
+    def to_year(x):
+        try:
+            return int(float(x.split()[1].split("/")[0]))
+        except:
+            return np.nan
+    def to_month(x):
+        try:
+            return int(float(x.split()[1].split("/")[1]))
+        except:
+            return np.nan
+
+
+    all_dfs['year'] = all_dfs.index.map(to_year)
+    all_dfs['month'] = all_dfs.index.map(to_month)
 
     year_month_gb = all_dfs[['year', 'month', f'{col}_wc']].groupby(['year', 'month']).sum().reset_index()
     all_dfs[f'{col}_wc_all'], all_dfs[f'{col}_wc_out'] = np.nan, np.nan
 
     for idx, row in year_month_gb.iterrows():
         all_dfs.loc[(all_dfs['year'] == row['year']) & (all_dfs['month'] == row['month']), f'{col}_wc_all'] \
-                = row['narrative_wc']
+                = row[f'{col}_wc']
     all_dfs[f'{col}_wc_out'] = all_dfs[f'{col}_wc_all'] - all_dfs[f'{col}_wc']
+    all_dfs[f'{col}_wc_prop'] = all_dfs[f'{col}_wc'] / all_dfs[f'{col}_wc_all']
     all_dfs.drop(['year', 'month'], axis = 1, inplace = True)
 
     all_dfs.to_csv(f'results/tracon_month_{col}.csv', index = True)
