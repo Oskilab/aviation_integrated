@@ -1,8 +1,0 @@
-#!/bin/bash
-echo ============ Cleaning airport codes/names and creating dictionaries... ===========
-python name_code_clean.py
-echo ======= Finished cleaning airport codes/names and creating dictionaries... =======
-
-echo =============== Merging Data and Filling in Missing codes/names ... ==============
-python merge_data.py
-echo ========== Finished Merging Data and Filling in Missing codes/names ... ==========
