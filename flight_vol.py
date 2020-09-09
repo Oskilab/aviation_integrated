@@ -61,6 +61,7 @@ for idx, row in tqdm(part2.iterrows(), total = part2.shape[0]):
     facility_dict[row['Date']] = idx
     id_to_idx[code] = facility_dict
 
+embed()
 # combine the two csvs
 res = pd.read_csv('results/airport_month_events.csv', index_col = 0)
 num_cols = part2.columns.shape[0]

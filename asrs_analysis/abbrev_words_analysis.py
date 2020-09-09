@@ -76,7 +76,10 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     sel = fn.index.map(lambda x: x not in eng_stopwords and not d.check(x) and x not in cities)
     fn.loc[sel, 'abrev'] = 1
     fn.loc[sel, 'tag'] = 'neg_nonword'
+<<<<<<< HEAD
 
+=======
+>>>>>>> b2499e582979f464ad0e31c4ff047a1f8ba8b6e2
     summary_dict[summary_cols[2]] = fn.loc[sel, 0].sum() # neg nonword unprocessed
     summary_dict[summary_cols[3]] = fn[sel].shape[0] # unique neg nonword unprocessed
 

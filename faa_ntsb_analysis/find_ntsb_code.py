@@ -76,19 +76,6 @@ def process_ntsb_name(x):
 # num_na = (full[' Airport Code '] == '').sum()
 # print('vol match', coverage(full[' Airport Code '].apply(lambda x: x in vol_tracons).sum(), \
 #         full.shape[0]), f'na codes {num_na}')
-# def get_city(x):
-#     x_split = x.split(", ")
-#     if len(x_split) != 2:
-#         return np.nan
-#     else:
-#         return x_split[0].lower().strip()
-# def get_state(x):
-#     x_split = x.split(", ")
-#     if len(x_split) != 2:
-#         return np.nan
-#     else:
-#         state_str = x_split[1].strip()
-#         return us_state_abbrev.get(state_str, state_str)
 
 all_full_states = set(us_state_abbrev.values())
 # process airport name
@@ -217,6 +204,7 @@ full[' Longitude '] = full[' Longitude '].apply(conv_to_float)
 # look at rows with missing latitude/longitude and see if there's only 1 matching airport
 # in the wikipedia database in that location
 wiki_tables = load_full_wiki(us_only = False)
+# wiki_tables = load_full_wiki(us_only = False)
 # lat_lon_missing = (empty_lat | empty_lon) & empty_code_sel
 # city_state_country = full.loc[lat_lon_missing, \
 #         ['eventcity', 'event_fullstate', 'event_country']].drop_duplicates()
@@ -292,7 +280,6 @@ if create_backup:
             res, found_ct = search_wac_row(idx, full, row)
         except HTTPError as exception:
             errors[idx] = exception
-            continue
         ct += found_ct
 
         if res is not None:
