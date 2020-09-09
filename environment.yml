@@ -1,0 +1,32 @@
+name: aviation_integrated
+channels:
+  - defaults
+dependencies:
+  - python=3.7
+  - jupyterlab
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - nltk
+  - autopep8
+  - joblib
+  - tqdm
+  - gensim
+  - cython
+  - ipython
+  - ipython_genutils
+  - pip
+  - pip:
+      - ftfy
+      - disjoint_set
+      - us
+      - geonamescache
+      - wordsegment
+      - uszipcode
+      - spellchecker
+      - pyenchant
+      - beautifulsoup4
+      - urllib3
+      - requests
