@@ -216,25 +216,13 @@ pats = [r3, r1, r2, r4, r5]
 grps = [2, 2, 1, 1, 1]
 mispelled_dict = neg_nonword_to_mispelled_dict()
 
-    for char in '[!"#$&\'()*+,:;<=>?@[\\]^_`{|}~/-]\.%':
-        if char == '.':
-            str_series = str_series.str.replace(r"(?<!\d)\.(?!\d)", ' ')
-        elif char == '/':
-            str_series = str_series.str.replace(r"(?<!\d)\/(?!\d)", ' ')
-        else:
-            str_series = str_series.str.replace(char, ' ')
 def convert_to_words(row, col = 'narrative', replace_dict = {}):
     # replace_dict.update(mispelled_dict)
     s = row[col]
     if isinstance(s, float) and np.isnan(s):
         s = ''
     for char in '[!"#$&\'()*+,:;<=>?@[\\]^_`{|}~/-]\.%':
-        if char == '.':
-            s = s.str.replace(r"(?<!\d)\.(?!\d)", ' ')
-        elif char == '/':
-            s = s.str.replace(r"(?<!\d)\/(?!\d)", ' ')
-        else:
-            s = s.str.replace(char, ' ')
+        s = s.replace(char, ' ')
     res = np.array(re.split('[( | ;|\. |\.$]', s))
     res = res[res != ''].flatten()
     fin = []
