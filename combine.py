@@ -9,6 +9,15 @@ ifr_vfr_dict = {
     'general': 'gen',
     'overflight': 'ovrflt'
 }
+def censored_data(pd, mon_range):
+    if mon_range == np.inf:
+        return pd
+    for col in pd.columns:
+        if ('trcn' in col or 'liwc' in col or 'LIWC' in col \
+                or 'ct' in col):
+            sel = (pd['year'] == 1988) & (pd['month'] <= mon_range)
+            pd.loc[sel, col] = np.nan
+    return pd
 
 def rename_cols(pd, month_range_str):
     except_cols = set(['year', 'month', 'tracon_key'])
@@ -52,10 +61,16 @@ for col in ['narrative']:
             return split_x[0]
 
     def get_year(x):
-        return int(str(x).split()[-1].split("/")[0])
+        try:
+            return int(float(str(x).split()[-1].split("/")[0]))
+        except ValueError:
+            return np.nan
 
     def get_month(x):
-        return int(str(x).split()[-1].split("/")[1])
+        try:
+            return int(float(str(x).split()[-1].split("/")[1]))
+        except ValueError:
+            return np.nan
 
 
     # preprocess liwc_df
@@ -140,8 +155,15 @@ for col in ['narrative']:
         print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
         print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
         res = pd.DataFrame.from_dict({idx: row for idx, row in enumerate(final_rows)}, orient = 'index')
+
+        # post-processing
         res = rename_cols(res, month_range_str)
+        res = censored_data(res, n_month)
         res.set_index(['tracon_key', 'year', 'month'], inplace = True)
+        for col in res.columns:
+            if 'faa_incidents' in col or 'ntsb_incidents' in col or 'ntsb_accidents' in col:
+                res[col] = res[col].fillna(0)
+
         all_res.append(res)
         # res.to_csv(f'results/final_dataset_{col}_{n_month}mon.csv')
 all_res = pd.concat(all_res, ignore_index = False, axis = 1)
