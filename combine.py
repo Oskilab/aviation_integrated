@@ -1,6 +1,7 @@
 import pandas as pd, numpy as np
 from IPython import embed
 from tqdm import tqdm
+from itertools import product
 """
 Combines ASRS data with FAA/NTSB, LIWC and Doc2Vec datasets
 """
@@ -9,18 +10,10 @@ ifr_vfr_dict = {
     'general': 'gen',
     'overflight': 'ovrflt'
 }
-def censored_data(pd, mon_range):
-    if mon_range == np.inf:
-        return pd
-    for col in pd.columns:
-        if ('trcn' in col or 'liwc' in col or 'LIWC' in col \
-                or 'ct' in col):
-            sel = (pd['year'] == 1988) & (pd['month'] <= mon_range)
-            pd.loc[sel, col] = np.nan
-    return pd
 
-def rename_cols(pd, month_range_str):
-    except_cols = set(['year', 'month', 'tracon_key'])
+num_time_periods = (2020 - 1988) * 12
+def rename_cols_dict(pd, month_range_str, skip_cols = []):
+    except_cols = set(['year', 'month', 'tracon_key'] + skip_cols)
     rename_dict = {'airport_code': 'tracon_key'}
     for col in pd.columns:
         if col == 'airport_code':
@@ -31,14 +24,19 @@ def rename_cols(pd, month_range_str):
             start_str = ''.join([ifr_vfr_dict.get(x, x) for x in split_col[1].split()])
             end_str = '_'.join([ifr_vfr_dict.get(x, x) for x in split_col[0].split()])
             new_col = f'{start_str}_{end_str}'
-            # rename_dict[col] = 
         elif 'Local' in col:
             split_col = col.lower().split()
             new_col = f'{split_col[1]}_{split_col[0]}'
         if new_col not in except_cols and not new_col.endswith(month_range_str):
             new_col += "_" + month_range_str
+
+        new_col = new_col.replace(" ", "_").replace("narrative", "narr").lower()
+        new_col = new_col.replace("\t", "_")
         rename_dict[col] = new_col
-    return pd.rename(rename_dict, axis = 1)
+    return rename_dict
+
+def rename_cols(pd, month_range_str, skip_cols = []):
+    return pd.rename(rename_cols_dict(pd, month_range_str, skip_cols), axis = 1)
 
 all_res = []
 # for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
@@ -49,9 +47,11 @@ for col in ['narrative']:
 
     # ntsb/faa incident dataset + volume
     airport_month_events = pd.read_csv('results/combined_vol_incident.csv', index_col = 0)
+    ame_cols = list(airport_month_events.columns)
 
     # liwc counts
-    liwc_df = pd.read_csv(f'asrs_analysis/results/liwc_tracon_month_{col}_counts.csv',index_col = 0, header = [1])
+    liwc_df = pd.read_csv(f'asrs_analysis/results/liwc_tracon_month_{col}_counts.csv', \
+            index_col = 0, header = [1])
 
     def get_tracon(x):
         split_x = str(x).split()
@@ -61,16 +61,10 @@ for col in ['narrative']:
             return split_x[0]
 
     def get_year(x):
-        try:
-            return int(float(str(x).split()[-1].split("/")[0]))
-        except ValueError:
-            return np.nan
+        return int(str(x).split()[-1].split("/")[0])
 
     def get_month(x):
-        try:
-            return int(float(str(x).split()[-1].split("/")[1]))
-        except ValueError:
-            return np.nan
+        return int(str(x).split()[-1].split("/")[1])
 
 
     # preprocess liwc_df
@@ -108,8 +102,9 @@ for col in ['narrative']:
                     
     asrs_orig = asrs.merge(liwc_df.drop(['tracon', 'month', 'year'], axis = 1), on = 'tracon_month')
 
-    num_months = [1, 3, 6, 12, np.inf]
-    for n_month in num_months:
+    # num_months = [1, 3, 6, 12, np.inf]
+    num_months = [1, 3]
+    for month_idx, n_month in enumerate(num_months):
         month_range_str = f'{n_month}m'
         if num_months == np.inf:
             month_range_str = 'am'
@@ -121,6 +116,8 @@ for col in ['narrative']:
 
         # combine with doc2vec 
         asrs = asrs.merge(d2v_tm, on = 'tracon_month', how = 'outer')
+
+
 
         # this creates a dictionary from year/month -> pd.DataFrame of all the rows in 
         # the ASRS dataset within the month range (utilizing n_month)
@@ -147,26 +144,48 @@ for col in ['narrative']:
 
                 if searched.shape[0] > 0:
                     cumulative = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis = 1).sum()
-                    final_rows.append(pd.concat([row, cumulative], axis = 0))
+                    if month_idx == 0:
+                        final_rows.append(pd.concat([row, cumulative], axis = 0))
+                    else:
+                        final_rows.append(cumulative)
                 else:
-                    final_rows.append(pd.concat([row, pd.Series(index = asrs.columns.drop(\
-                            ['tracon_month', 'tracon', 'year', 'month']))], axis = 0))
+                    if month_idx == 0:
+                        final_rows.append(pd.concat([row, pd.Series(index = asrs.columns.drop(\
+                                ['tracon_month', 'tracon', 'year', 'month']))], axis = 0))
+                    else:
+                        final_rows.append(pd.Series(index = asrs.columns.drop(\
+                                ['tracon_month', 'tracon', 'year', 'month'])), axis = 0)
+
+        cols = final_rows[0].index
+        empty_row = pd.Series(index = cols)
+
+        unique_codes = airport_month_events['airport_code'].unique()
+        all_combs = set()
+        for idx, row in airport_month_events[['airport_code', 'year', 'month']].drop_duplicates() \
+                .iterrows():
+            code, mon, year = row['airport_code'], row['month'], row['year']
+            all_combs.add((code, mon, year))
+
+        total = unique_codes.shape[0] * num_time_periods
+        for code_mon_yr in tqdm(product(unique_codes, range(1, 13), range(1988, 2020)), \
+                total = total, desc = "missing tracon_month"):
+            if code_mon_yr not in all_combs:
+                code, month, year = code_mon_yr
+                e_r = empty_row.copy()
+                e_r['tracon_key'] = code
+                e_r['year'] = year
+                e_r['month'] = month
+                final_rows.append(e_r)
 
         print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
         print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
         res = pd.DataFrame.from_dict({idx: row for idx, row in enumerate(final_rows)}, orient = 'index')
-
-        # post-processing
-        res = rename_cols(res, month_range_str)
-        res = censored_data(res, n_month)
+        res = rename_cols(res, month_range_str, skip_cols = ame_cols)
         res.set_index(['tracon_key', 'year', 'month'], inplace = True)
-        for col in res.columns:
-            if 'faa_incidents' in col or 'ntsb_incidents' in col or 'ntsb_accidents' in col:
-                res[col] = res[col].fillna(0)
-
         all_res.append(res)
         # res.to_csv(f'results/final_dataset_{col}_{n_month}mon.csv')
 all_res = pd.concat(all_res, ignore_index = False, axis = 1)
+embed()
 all_res.to_csv('results/final_dataset.csv')
 coverage = all_res.isna().sum()
 coverage['total rows'] = all_res.shape[0]
