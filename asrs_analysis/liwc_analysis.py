@@ -28,7 +28,7 @@ def to_month(x):
         return int(float(x.split()[1].split("/")[1]))
     except:
         return np.nan
-def generate_proportions(fin_df):
+def generate_proportions(fin_df, tqdm_desc = "generate props"):
     fin_df['year'] = fin_df.index.map(to_year)
     fin_df['month'] = fin_df.index.map(to_month)
 
@@ -38,15 +38,16 @@ def generate_proportions(fin_df):
         if col1 != 'year' and col1 != 'month':
             fin_df[col1, col2.replace("_ct", "_prop")] = np.nan
     ym_df = fin_df[[('year', ''), ('month', '')]].drop_duplicates()
-    for idx, row in tqdm(ym_df.iterrows(), total = ym_df.shape[0]):
+    for idx, row in tqdm(ym_df.iterrows(), total = ym_df.shape[0], desc = tqdm_desc):
         year, month = row['year', ''], row['month', '']
         if pd.isna(year) or pd.isna(month):
             continue
         sel = (fin_df['year', ''] == year) & (fin_df['month', ''] == month)
         for col1, col2 in orig_cols:
-            if col != 'year' and col1 != 'month':
+            if col1 != 'year' and col1 != 'month':
                 fin_df.loc[sel, (col1, col2.replace("_ct", "_prop"))] = \
-                         fin_df.loc[sel, (col1, col2)] / fin_df_grouped.loc[year, month]
+                         fin_df.loc[sel, (col1, col2)] / \
+                         fin_df_grouped.loc[(year, month), (col1, col2)]
     fin_df.drop([('year', ''), ('month', '')], axis = 1, inplace = True)
     return fin_df
 
@@ -100,7 +101,7 @@ def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict):
                 group_to_set[liwc_group]) for key, ctr in key_ctr}, orient = 'index',\
                 columns = [f"liwc_{liwc_group}_ct"])
     fin_df = pd.concat(all_df, axis = 1)
-    fin_df = generate_proportions(fin_df)
+    fin_df = generate_proportions(fin_df, "generate props w/o replace")
 
     # with replace
     all_df = {}
@@ -109,7 +110,7 @@ def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict):
                 group_to_set[liwc_group]) for key, ctr in key_ctr_replace}, orient = 'index',\
                 columns = [f"LIWC_{liwc_group}_flfrm_ct"])
     fin_df_replace = pd.concat(all_df, axis = 1)
-    fin_df_replace = generate_proportions(fin_df_replace)
+    fin_df_replace = generate_proportions(fin_df_replace, "generate props w/replace")
 
     fin = pd.concat([fin_df, fin_df_replace], axis = 1)
     fin.to_csv(f'results/liwc_tracon_month_{col}_counts.csv')
