@@ -8,7 +8,7 @@ from common_funcs import load_full_wiki, match_using_name_loc, search_wiki_airpo
 from selenium_funcs import check_code, search_city
 import requests, pandas as pd, urllib.request as request, pickle
 import re, numpy as np, pickle
-page_google, search_wiki = False, True
+page_google, search_wiki = False, False
 match, create_backup = False, False
 load_backupset = True
 key = 'AIzaSyCR9FRYW-Y7JJbo4hU682rn6kJaUA5ABUc'
@@ -39,6 +39,7 @@ full[' Airport Name '] = full[' Airport Name '].str.replace("N/A", "")
 # dates
 full['year'] = full[' Event Date '].str.split("/").apply(lambda x: x[2]).apply(int)
 full['month'] = full[' Event Date '].str.split("/").apply(lambda x: x[0]).apply(int)
+full['day'] = full[' Event Date '].str.split("/").apply(lambda x: x[1]).apply(int)
 print('full dataset size', full.shape[0])
 full = full.loc[(full['year'] >= 1988) & (full['year'] < 2020), :]
 full = full.reset_index().drop('index', axis = 1)
@@ -392,7 +393,7 @@ def match_via_wac(full, matched_set, not_matched_set):
         else:
             not_matched_set.add(code)
 
-full['found_code'] = 0
+full['found_code_ntsb'] = 0
 if match:
     # see if the codes are matched in wikipedia table
     wiki_tables = load_full_wiki(us_only = False)
@@ -416,7 +417,10 @@ if match:
 else:
     matched_set = pickle.load(open('results/ntsb_matched_set.pckl', 'rb'))
 
-full.loc[full[' Airport Code '].apply(lambda x: x in matched_set), 'found_code'] = 1
+full.loc[full[' Airport Code '].apply(lambda x: x in matched_set), 'found_code_ntsb'] = 1
+
+tracon_date = pd.DataFrame(full.groupby(['day', 'month', 'year', ' Airport Code ']).size())
+tracon_date.to_csv('results/tracon_date_ntsb.csv')
 """
 Save results
 """
