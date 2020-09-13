@@ -1,4 +1,4 @@
-import pandas as pd, numpy as np
+import pandas as pd, numpy as np, re
 from IPython import embed
 from tqdm import tqdm
 from itertools import product
@@ -37,6 +37,76 @@ def rename_cols_dict(pd, month_range_str, skip_cols = []):
 
 def rename_cols(pd, month_range_str, skip_cols = []):
     return pd.rename(rename_cols_dict(pd, month_range_str, skip_cols), axis = 1)
+
+
+def reorder_cols(pd):
+    import re
+    def tuple_to_column(tuple_input):
+        fin_str = "_".join(tuple_input)
+        return re.sub('_{2,}', '_', fin_str)
+    # currently missing airport_name after tracon_key
+    # missing dataset after faa_incidents
+    cols = ['tracon_key', 'year', 'month', 'ntsb_accidents', \
+            'ntsb_incidents', 'faa_incidents', 'state', 'region', \
+            'ddso_service_area', 'class', 'tower_operations', 'airport_operations', \
+            'total_operations']
+    # volume columns
+    flight_types = ['aircarrier', 'airtaxi', 'genaviation', 'military', 'total']
+    itr_ovr = ['itinir', 'ovrflt']
+    ifr_vfr = ['ifr', 'vfr']
+
+    vol_cols = list(map(\
+            tuple_to_column, product(flight_types, ifr_vfr, itr_ovr)\
+            ))
+    vol_cols = vol_cols[:10] + ['military_local', 'civil_local', 'total_local'] + \
+            vol_cols[10:]
+    cols = cols + vol_cols
+
+    # wc columns
+    text_columns = ['narr', 'syn', 'call', 'narrsyn', 'all']
+    wc = ['avg_wc', 'wc']
+    sel = ['', 'all', 'out', 'prop']
+    time_windows = ['1m', '3m', '6m', '12m', 'atime']
+    wc_cols = list(map(\
+            tuple_to_column, product(text_columns, wc, sel, time_windows)\
+            ))
+    cols = cols + wc_cols
+
+    # trcn columns (d2v)
+    cols = cols + [col for col in pd.columns if 'trcn' in col]
+
+    # some other ct columns
+    ct_cols = ['pos_nwrd', 'pos_nwrd_unq', 'abrvs_no_ovrcnt', 'abrevs_no_ovrcnt_unq']
+    ct_cols = list(map(\
+            tuple_to_column, product(ct_cols, text_columns, time_windows)\
+            ))
+    cols = cols + ct_cols
+
+    # aviation dicts
+    aviation = ['nasa', 'faa', 'casa', 'iata', 'hand', 'hand2']
+    unique = ['unq', '']
+    sel = ['', 'prop']
+    aviation_cols = list(map(\
+            tuple_to_column, product(aviation, unique, sel, time_windows)\
+            ))
+    cols = cols + aviation_cols
+
+    # liwc cols
+    liwc = ['liwc']
+    liwc_pat = re.compile('liwc_([a-z]{1,})_ct_1m')
+    liwc_cat = []
+    for col in pd.columns:
+        pat_res = liwc_pat.match(col)
+        if pat_res is not None:
+            liwc_cat.append(pat_res.group(1))
+    flfrm = ['', 'flfrm']
+    sel = ['ct', 'prop']
+    liwc_cols = list(map(\
+            tuple_to_column, product(liwc, liwc_cat, flfrm, sel, time_windows)\
+            ))
+    cols = cols + liwc_cols
+    return pd.loc[:, [x for x in cols if x in pd.columns]]
+
 
 all_res = []
 # for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
@@ -190,6 +260,7 @@ for col in ['narrative']:
         embed()
         res = res.loc[:,~res.columns.duplicated()]
         res.set_index(['tracon_key', 'year', 'month'], inplace = True)
+        res = reorder_cols(res)
         all_res.append(res)
         # res.to_csv(f'results/final_dataset_{col}_{n_month}mon.csv')
 all_res = pd.concat(all_res, ignore_index = False, axis = 1)

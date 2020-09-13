@@ -67,7 +67,7 @@ for idx in (~liwc.loc[3].isna().to_numpy()).nonzero()[0]:
 
 all_pds = load_asrs(load_saved = True)
 
-def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict):
+def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict, col):
     index_to_counter_replace, index_to_counter = {}, {}
     for i in tqdm(range(df_grouped.shape[0])):
         index_id = df_grouped.loc[i, sel_cols[0]]
@@ -99,7 +99,7 @@ def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict):
     for liwc_group in group_to_set.keys():
         all_df[liwc_group]  = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, \
                 group_to_set[liwc_group]) for key, ctr in key_ctr}, orient = 'index',\
-                columns = [f"liwc_{liwc_group}_ct"])
+                columns = [f"liwc_{liwc_group}_{col}_ct"])
     fin_df = pd.concat(all_df, axis = 1)
     fin_df = generate_proportions(fin_df, "generate props w/o replace")
 
@@ -108,7 +108,7 @@ def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict):
     for liwc_group in group_to_set.keys():
         all_df[liwc_group]  = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, \
                 group_to_set[liwc_group]) for key, ctr in key_ctr_replace}, orient = 'index',\
-                columns = [f"LIWC_{liwc_group}_flfrm_ct"])
+                columns = [f"LIWC_{liwc_group}_flfrm_{col}_ct"])
     fin_df_replace = pd.concat(all_df, axis = 1)
     fin_df_replace = generate_proportions(fin_df_replace, "generate props w/replace")
 
@@ -116,6 +116,10 @@ def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict):
     fin.to_csv(f'results/liwc_tracon_month_{col}_counts.csv')
 
 dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'iata']
+
+abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
+        'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
+        'callback': 'call'}
 
 sel = ['tracon_code', 'year', 'month']
 tmp = all_pds[sel].groupby(sel).count().reset_index()
@@ -132,4 +136,4 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                 replace_dict[row['acronym']] = dict_fullform
                 break
 
-    analyze_tracon_period(tmp, sel, all_pds, group_to_set, replace_dict)
+    analyze_tracon_period(tmp, sel, all_pds, group_to_set, replace_dict, abev_col_dict[col])

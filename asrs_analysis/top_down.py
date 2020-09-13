@@ -130,6 +130,7 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         cts = cts.add_prefix(f"{dict_name}_")
         cts.to_csv(f'results/tracon_month_{col}_{dict_name}.csv')
         all_dfs.append(cts)
+    # TODO: update dictionary code to have proportions
 
     # concatenate the dataframe of each counts together and save
     all_dfs = pd.concat(all_dfs, axis = 1)
