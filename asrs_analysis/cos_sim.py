@@ -108,13 +108,6 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         all_combs = set(all_pds[['tracon_code', 'year', 'month']].apply(lambda x: (x[0], x[1], x[2]), axis = 1))
         unique_ntsb_faa_codes = pickle.load(open('../results/unique_airport_code_ntsb_faa.pckl' ,'rb'))
 
-        # total = unique_ntsb_faa_codes.shape[0] * num_time_periods
-        # for code_mon_yr in tqdm(product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)), \
-        #         total = total, desc = "d2v on missing tracon_month"):
-        #     if code_mon_yr not in all_combs:
-        #         code, month, year = code_mon_yr
-        #         index_to_d2v[code] = total_dict[month, year]
-
 
         for idx, row in tqdm(tracon_month_unique.iterrows(), total = tracon_month_unique.shape[0], \
                 desc = f"{col} analysis {month_range}mon"):
