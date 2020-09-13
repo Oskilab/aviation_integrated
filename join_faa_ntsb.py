@@ -22,6 +22,34 @@ faa_df = pd.read_csv('faa_ntsb_analysis/results/FAA_AIDS_full_processed.csv')
 faa_df.rename({'tracon_code': 'airport_code'}, axis = 1, inplace = True)
 faa_df['dataset'] = 'faa'
 
+# find overlap
+def create_tracon_dict(pd, col = 'tracon_code'):
+    pd = pd.loc[~pd[col].isna(), :].copy()
+    pd.set_index(['day', 'year', 'month', col], inplace = True)
+    pd = pd.to_dict(orient = 'index')
+    return pd, set(pd.keys())
+
+ntsb_tracon_date = pd.read_csv('faa_ntsb_analysis/results/tracon_date_ntsb.csv')
+ntsb_td_dict, ntsb_td_set = create_tracon_dict(ntsb_tracon_date, col = ' Airport Code ')
+
+faa_tracon_date = pd.read_csv('faa_ntsb_analysis/results/tracon_date_faa.csv')
+faa_td_dict, faa_td_set = create_tracon_dict(faa_tracon_date, col = 'tracon_code')
+
+overlap = ntsb_td_set.intersection(faa_td_set)
+overlap_records, overlap_nums = [], []
+for key in overlap:
+    num_ntsb, num_faa = ntsb_td_dict[key]['0'], faa_td_dict[key]['0']
+
+    overlap_records.append(key)
+    overlap_nums.append(min(num_ntsb, num_faa))
+
+overlap = pd.DataFrame.from_records(overlap_records, \
+        columns = ['day', 'year', 'month', 'tracon_code'])
+overlap['num'] = overlap_nums
+
+overlap = overlap.drop('day', axis = 1)\
+        .groupby(['year', 'month', 'tracon_code'], as_index = False).sum()
+
 # old code
 # ntsb.rename({'airportcode_new': 'airport_code', 'airportname_new': 'airport_name', \
 #         ' Investigation Type _ Accident ': 'ntsb_accidents', \
@@ -60,11 +88,17 @@ index_cols = ['airport_code', 'year', 'month']
 ntsb.set_index(index_cols, inplace = True)
 faa_df.set_index(index_cols, inplace = True)
 
-
 # combine and save
 fin_df = pd.concat([ntsb, faa_df], axis = 0, sort = False).groupby(level = list(range(3))).sum()
 fin_df.reset_index(inplace = True)
 fin_df.loc[fin_df['airport_code'] == 'nan', 'airport_code'] = np.nan
+
+fin_df['faa_ntsb_overlap'] = 0
+for idx, row in overlap.iterrows():
+    sel = (fin_df['airport_code'] == row['tracon_code']) & \
+            (fin_df['year'] == row['year']) & \
+            (fin_df['month'] == row['month'])
+    fin_df.loc[sel, 'faa_ntsb_overlap'] = row['num']
 
 assert(fin_df.drop_duplicates(index_cols).shape[0] == fin_df.shape[0])
 

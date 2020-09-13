@@ -11,7 +11,7 @@ import pandas as pd, numpy as np, re, ssl, pickle, os
 import urllib.request as request
 coverage = namedtuple('coverage', ['part', 'total'])
 query_wiki, perform_name_matching = False, True
-create_backup, check_codes = False, True
+create_backup, check_codes = False, False
 wac_load = True
 
 # if check_codes and not os.path.exists('results/matched_set_faa.pckl'):
@@ -54,6 +54,18 @@ def get_year(date):
             return year + 2000
     except ValueError:
         return np.nan
+
+def get_day(date):
+    split_date = date.split("-")
+    if len(split_date) != 3:
+        return np.nan
+    day_str = split_date[0]
+    try:
+        day = int(day_str)
+        return day
+    except ValueError:
+        return np.nan
+
 # load datasets
 full = load_faa_data()
 print('total original number of rows', full.shape[0])
@@ -61,6 +73,7 @@ print('total original number of rows', full.shape[0])
 # filter on date
 full['month'] = full['localeventdate'].apply(get_month)
 full['year'] = full['localeventdate'].apply(get_year)
+full['day'] = full['localeventdate'].apply(get_day)
 full = full.loc[(full['year'] >= 1988) & (full['year'] < 2020)].copy()
 print('number of rows, filtered by date', full.shape[0])
 
@@ -263,7 +276,7 @@ print('non empty tracon code rows', full.loc[~full['tracon_code'].isna()].shape[
 """
 Double check that codes are in wikipedia or airnav
 """
-full['found_code'] = 0
+full['found_code_faa'] = 0
 if check_codes:
     # match with wiki
     wiki_tables = load_full_wiki(us_only = False)
@@ -296,7 +309,7 @@ if check_codes:
 else:
     matched_set = pickle.load(open('results/matched_set_faa.pckl', 'rb'))
 
-full.loc[full['tracon_code'].apply(lambda x: x in matched_set), 'found_code'] = 1
+full.loc[full['tracon_code'].apply(lambda x: x in matched_set), 'found_code_faa'] = 1
 
 """
 Get results
@@ -309,7 +322,8 @@ full['tracon_code'] = full['tracon_code'].fillna('nan')
 # num_na = (full['tracon_code'] == 'nan').sum()
 # print('vol match', coverage(full['tracon_code'].apply(lambda x: x in vol_tracons).sum(), \
 #         full.shape[0]), f'na codes {num_na}')
-# embed()
+tracon_date = pd.DataFrame(full.groupby(['day', 'month', 'year', 'tracon_code']).size())
+tracon_date.to_csv('results/tracon_date_faa.csv')
 
 cols = ['tracon_code', 'month', 'year', 'eventtype']
 full = full[cols].groupby(cols[:-1]).count().rename({cols[-1]: 'faa_incidents'}, axis = 1).reset_index()
