@@ -146,8 +146,8 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                 # same to all tracon
                 avg_d2v, num_comp = calculate_avg_comp2(same_tracon, all_tracon, cos_res, \
                         overlap = len(same_tracon))
-                d2v_dict[f'trcn_invout{"_flfrm" if replace else ""}_{abrev_col}_{mr_str}'] = avg_d2v
-                d2v_dict[f'trcn_invout{"_flfrm" if replace else ""}_ct_{abrev_col}_{mr_str}'] = num_comp
+                d2v_dict[f'trcn_invall{"_flfrm" if replace else ""}_{abrev_col}_{mr_str}'] = avg_d2v
+                d2v_dict[f'trcn_invall{"_flfrm" if replace else ""}_ct_{abrev_col}_{mr_str}'] = num_comp
 
                 # all to all tracon
                 avg_d2v, num_comp = calculate_avg_comp2(all_tracon, all_tracon, cos_res, \

@@ -17,8 +17,8 @@ The first file is a dataframe consisting of words that we've categorized as `neg
 The second file is a dataframe consisting of airport names that we weren't able to programmatically match to a specific airport code. This dataframe includes airport codes that we filled in manually.
 
 Requirements for each file
-1. `dictionaries/combined_neg_nonword_handcode2.csv`: must have the columns: `add_to_realworld_dictionary` `add_to_airport` `mispelled_word_fix`.
-2. `datasets/not_matched_full_v1.csv`: the 7th column must include the corresponding tracon\_code that was filled in.
+1. `asrs_analysis/dictionaries/combined_neg_nonword_handcode2.csv`: must have the columns: `add_to_realworld_dictionary` `add_to_airport` `mispelled_word_fix`.
+2. `faa_ntsb_analysis/datasets/not_matched_full_v1.csv`: the 7th column must include the corresponding tracon\_code that was filled in.
 
 
 ## Overall Pipeline
@@ -73,20 +73,31 @@ This dataset includes information on incidents/accidents that occurred and the r
 **Purpose**: take the FAA/NTSB incident/accident data and fill in the tracon\_code information (for the rows that are missing) as well as save some backup files for potential use in the future. Most importantly, this also creates a dataframe of tracon_months and the number of ntsb/faa incidents and accidents that occured within that tracon_month
 
 **Input**:
-<!-- * `NTSB_airportcode.csv`: all airport codes in NTSB dataset and their corresponding frequencies -->
-<!-- * `NTSB_airportname.csv`: all airport names in NTSB dataset and their corresponding frequencies -->
 * `NTSB_AviationData_new.txt`: all incidents/accident data from NTSB dataset 
 * `airports.csv`: scraped from wikipedia
 * `FAA_AIDS_full.csv`: the main FAA incident/accident dataset
-* `FAA_AIDS_airports.csv`: the airport codes found in the FAA dataset, and their corresponding frequencies
+* `FAA_AIDS_addition.csv`: the second portion of FAA incident/accident dataset
 * `worldcities.csv`: list of worldcities and their corresponding latitudes/longitudes. This was downloaded from this [website](https://simplemaps.com/data/world-cities)
+* `us_state_abbrev.csv`: dataframe from state abbreviation to full capitalized (only first letter) state name
 
 **Output**:
-* `NTSB_AIDS_full_output_new.csv`: for each tracon_month, calculate the number of ntsb_incidents and ntsb_accidents
-* `faa_incidents.csv`: the faa_incidents organized via tracon_month.
+* Main outputs:
+    * `NTSB_AIDS_full_processed.csv`: for each tracon_month, calculate the number of ntsb_incidents and ntsb_accidents
+    * `FAA_AIDS_full_processed.csv`: the faa_incidents organized via tracon_month.
+* Ancillary outputs:
+    * `backup_ntsb.csv`: latitude/longitudes mapping to nearest airports to latitude/longitudes (utilizing world-airport-codes website). Currently not used, but may be used in the future. Note that only some rows have latitude/longitude data
+    * `ntsb_wiki_search_found.csv`: result of searching the given airport name in NTSB dataset on wikipedia.
+    * `discarded_ntsb.csv`: rows of NTSB dataset that are discarded. Currently we are only utilizing the rows with non-empty airport name or airport code
+    * `tracon_date_ntsb.csv`: dataframe of day, month, year, and tracon\_code, and the number of times that combination shows up in the NTSB dataset. This is used later to deal with overlapping results b/w NTSB and FAA.
+    * `backup_faa.csv`: if the airportname is nan, then we look at city names. We combine this with a list of downloaded worldcities (and their corresponding latitude/longitude), to create a list of potential airports
+    * `matched_using_name.csv`: dataframe of faa airport names (and their locations), and their matches using a table of airports using wikipedia. The creation of this dataframe occurs when airport names have unknown tracon\_code and we fill it in via searching the table from wikipedia (all columns that come from wikipedia table start with `wiki_`)
+    * `wiki_search_found.csv`: dataframe of airport names and their corresponding airport\_codes that was calculated via querying wikipedia (not using wikipedia table)
+    * `tracon_date_faa.csv`: dataframe of day, month, year, and tracon\_code, and the number of times that combination shows up in the FAA dataset. This is used later to deal with overlapping results b/w NTSB and FAA.
 
 **Methodology**:
-Cleaning is accomplished by removing whitespace, lowercasing, etc. If an airport code is not found in airports.csv, then a slightly adjusted version is tried (removing first letter). Missing airport_code and airport_names are filled in utilizing latitude/longitude information. For more info: read the `README.md` found in the directory
+The NTSB dataset already has the field ` Airport Code ` inside the dataset, so we utilize this field as the tracon\_code. However, if the field is missing, we utilize the geographic information (` Latitude `, ` Longitude `) fields to search on world-airports.com for nearby airports. Then, if the ` Airport Name ` is non-empty and the ` Airport Code ` is empty, then the name is searched on tables scraped from wikipedia and the code is filled in using the wikipedia table information.
+
+However, the FAA dataset does not have any airport codes, so these have to be found via various methods. We utilize the `eventairport` field (or name of airport) to match with tables scraped from wikipedia. If that doesn't work, then we try querying wikipedia directly utilizing the airport names. Some others are hand-coded via `faa_ntsb_analysis/datasets/not_matched_full_v1.csv`.
 
 **Running**:
 ```
@@ -95,30 +106,24 @@ python find_faa_code.py
 python find_ntsb_code.py
 cd ../
 ```
-### (4) Cleaning FAA Data (faa)
-**Purpose**: Take the FAA incident/accident data, clean the airportname and airportcodes, and create a dataframe of tracon_months and the number of faa incidents and accidents that occured within that tracon_month
+### (2) Joining the FAA/NTSB datasets (join\_faa\_ntsb.py)
+**Purpose**: merges the two datasets created by the previous two steps (`aviation_data_huiyi/` and `faa/` subdirectories)
 
 **Input**:
-* `FAA_AIDS_full.csv`: the main FAA incident/accident dataset
-* `FAA_AIDS_airports.csv`: the airport codes found in the FAA dataset, and their corresponding frequencies
-
+* `NTSB_AIDS_full_processed.csv`: result from previous step
+* `FAA_AIDS_full_processed`: result from previous step
 **Output**:
-* `faa_incidents.csv`: the faa_incidents organized via tracon_month.
-
-**Methodology**:
-We perform some basic cleaning steps (stripping, etc.) and ensure that the airport codes are found in the IATA.org website (by querying programmatically).
+* `Airport_month_events.csv`: organized by tracon_month. Each row has the number of faa_incidents, ntsb_accidents, ntsb_incidents, tracon_month, and a `dataset` field indicating which dataset the row came from.
 
 **Running**:
 ```
-cd faa
-python clean_data.py
-cd ../
+python join_faa_ntsb.py
 ```
 ### (3) Preprocessing ASRS Dataset
 **Purpose**: extract tracon codes from the ASRS dataset (not provided) into new columns utilizing the `atcadvisory` column. The following section repeats information found in `preprocess_asrs/README.md`.
 
 **Input**: all paths are from `preprocess_asrs/` as root.
-* `datasets/ASRS 1988-2019.csv` full traffic control data (not provided)
+* `datasets/ASRS Data/*.csv` full traffic control data (not provided)
 * `datasets/wiki_code.csv` this is a dataframe scrapped from [wikipedia](https://en.wikipedia.org/wiki/List_of_airports_by_IATA_airport_code:_A)
 * `datasets/tracon_code.csv`: this is a dataframe scrapped from [faa](https://www.faa.gov/about/office_org/headquarters_offices/ato/service_units/air_traffic_services/tracon/)
 
@@ -147,9 +152,9 @@ cd ../
 * Dictionaries: `FAA.csv`, `CASA.csv`, `IATA_IACO.csv`, `hand_code.csv`, `nasa_abbr.csv`, and `LIWC2015-dictionary-poster-unlocked.xlsx` 
 
 **Output**:
-* `total_cts_tagged_{narrative|synopsis|combined}.csv`: this is a dataframe where each row represents a word. Columns include a ct (number of occurences in dataset), a tag (categorization of the word), the fullform version of the abbreviation (for each dictionary i.e iata_fullform, nasa_fullform, etc.) and whether or not we consider the word to be an abbreviation. If a fullform does not exist, then it’s left blank
-* A csv for each tag (pos_stopword, neg_nonword, etc. see future slides): subset of total\_cts\_tagged_{...}.
-* `{unique_|}abrev_bar_plot_{narrative|synopsis|combined}.png`: bar plot of tag breakdown. If the first selection is ‘unique_’, then we only look at unique words (not total counts)
+* `total_cts_tagged_{narrative|synopsis|combined|callback|narrative_synopsis_combined}.csv`: this is a dataframe where each row represents a word. Columns include a ct (number of occurences in dataset), a tag (categorization of the word), the fullform version of the abbreviation (for each dictionary i.e iata_fullform, nasa_fullform, etc.) and whether or not we consider the word to be an abbreviation. If a fullform does not exist, then it’s left blank
+* A csv for each tag (pos\_stopword, neg\_nonword, etc. see future slides): subset of total\_cts\_tagged_{...}.
+* `{unique_|}abrev\_bar\_plot_{narrative|synopsis|combined|callback|narrative_synopsis\_combined}.png`: bar plot of tag breakdown. If the first selection is ‘unique_’, then we only look at unique words (not total counts)
 
 **Methodology**:
 * We utilized dictionaries from CASA, FAA, NASA, and IATA (of known aviation abbreviations and their full-forms) as well as a hand-coded dictionary. All words that were found in the ASRS dataset and in the aviation dictionaries are marked immediately as abbreviations. However, some of these abbreviations were just common English words, so we utilized an English dictionary to filter out false-positives
@@ -160,6 +165,8 @@ cd ../
 * We categorized all words that was found in the dataset regardless of whether or not they were marked as abbreviations
     * Neg_stopword: word that was not found in an aviation dictionary, and is a known English stopword (from nltk stopwords)
     * Neg_nonword: word that was not found in an aviation dictionary, nor the English dictionary
+    * Neg_word_hand2: neg-nonwords that we manually coded to be negwords again (this is done through a handcoded dataframe (see above)
+    * Neg_airport: neg-nonwords that turned out to be airports (see handcoded dataframe)
     * Neg_nonword_city_exception: a neg_nonword that was also part of a name of a US city
         * Ex.: ‘York’ from New York
     * Neg_nonalpha_abrev:  a neg_nonword with non-alphanumeric characters (these are not marked as abbreviations)
@@ -180,17 +187,19 @@ cd ../
 
 **Input**: 
 * `ASRS 1988-2019_extracted.csv`: main dataset
-* `total_cts_tagged_{narrative|synopsis|combined}.csv`: dataframe consisting of number of times each words show up as well as a categorization of each word (explained in prev slide)
+* `total_cts_tagged_{narrative|synopsis|combined|callback|narrative_synopsis_combined}.csv`: dataframe consisting of number of times each words show up as well as a categorization of each word (explained in prev slide)
 * Dictionaries: `FAA.csv`, `CASA.csv`, `IATA_IACO.csv`, `hand_code.csv`, `nasa_abbr.csv`, and `LIWC2015-dictionary-poster-unlocked.xlsx` 
 
 **Output**:
-* `tracon_month_{narrative|synopsis|combined}.csv`: dataframe consisting of tracon_months and their associated counts 
+* `tracon_month_{narrative|synopsis|combined|callback|narrative_synopsis_combined}.csv`: dataframe consisting of tracon_months and their associated counts 
     * List of columns
         * `tracon_month` (this is the index)
-        * `pos_nonword_{ct|unique_ct}`: the number of times the tag `pos_nonword` shows up in the tracon_month
+        * `pos_nwrd_{ct|unique_ct}`: the number of times the tag `pos_nonword` shows up in the tracon_month
             * If unique, the number of unique `pos_nonword`s that show up in the tracon_month
-        * `all_abrevs_no_overcount_{ct|unique_ct}`: the number of times all abbreviations show up in the tracon_month.
+        * `abrvs_no_ovrcnt_{ct|unique_ct}`: the number of times all abbreviations show up in the tracon_month.
         * `{casa|faa|iata|nasa|hand}_{ct|unique_ct}`: the number of times abbreviations show up for each given dictionary
+        * `{narr|syn|narrsyn|all}\_{avg_wc|wc}`: number of words in given tracon_month for that particular column (narrative/synopsis/etc). avg\_wc refers to average word count per observation within the tracon\_month
+        * `{narr|syn|narrsyn|all}\_wc_{out|all|prop}`: if the selection is out, then it's the word count outside the given tracon but within that year/month time period. If the selection is all, then it's the word count for all tracons within the year/month time period. If the selection is prop, then the field is the proportion of word counts within the given tracon\_month compared to all word counts within the same time period
 
 **Running**:
 ```
@@ -204,17 +213,23 @@ cd ../
 
 **Input**:
 * `ASRS 1988-2019_extracted.csv`: Main dataset
-* `total_cts_tagged_{narrative|synopsis|combined}.csv` from abbrev analysis
+* `total_cts_tagged_{narrative|synopsis|combined|callback|narrative_synopsis_combined}.csv` from abbrev analysis
 
 **Output**:
-* `d2v_tracon_month_{narrative|synopsis|combined}_{1|3|6|12|inf}mon.csv`: this is the result of creating doc2vec representations of the columns (narrative, synopsis, combined of ASRS dataset), and comparing these vectors to each other utilizing the cosine\_similarity metric. Each row represents a `tracon_month`: an airport_code or tracon_code paired with a year and month. The `{1|3|6|12|inf}` selection indicates over what time period is compared. For instance, if we are looking at a particular row in the ASRS dataset with a date of January 2011, and if the selection is 1 month, the doc2vec numbers are calculated over December 2010. If the selection is 3 months, then the doc2vec numbers are calculated over October - November of 2010.
-    * Column format: `d2v_{cos_sim|num_comp}{|_other_tracon|_all_tracon}{_replace|}`
-        * `{cos_sim|num_comp}`: `cos_sim` means the number given is an average cosine_similarity metric over some qualifiers (see other selections) whereas `num_comp` is the number of comparisons made in the average cosine similarity metric.
-        * `{|_other_tracon|_all_tracon}`: if this selection is blank, then the comparisons are made over the given tracon and year/month. For instance, if the given tracon/year/month is SFO/January/2011, then the cos_sim number is calculated to be the average cosine similarity of pairwise doc2vec vectors (calculated via the narrative/synopsis/combined column) during January 2011 of the SFO tracon/airport. If the selection is `_other_tracon`, then the comparisons are made during January 2011 to all other tracons except SFO. If the selection is `_all_tracon`, then the comparisons are made to all tracons during January 2011.
-        * `{_replace|}`: if the selection has `replace` then the doc2vec calculations occurred after replacing all abbreviations (found in this repository TO-DO) are replaced with their fullforms. If the selection is blank, then no such replacement is done.
+* `d2v_tracon_month_{narrative|synopsis|combined|callback|narrative_synopsis_combined}_{1|3|6|12|inf}mon.csv`: this is the result of creating doc2vec representations of the columns (narrative, synopsis, combined of ASRS dataset), and comparing these vectors to each other utilizing the cosine\_similarity metric. Each row represents a `tracon_month`: an airport_code or tracon_code paired with a year and month. The `{1|3|6|12|inf}` selection indicates over what time period is compared. For instance, if we are looking at a particular row in the ASRS dataset with a date of January 2011, and if the selection is 1 month, the doc2vec numbers are calculated over December 2010. If the selection is 3 months, then the doc2vec numbers are calculated over October - November of 2010.
+    * Column format: `trcn_{|outinvout|all|invall}{|flfrm}{|ct}_{narr|syn|all|narrsyn}_{1|3|6|12|a}m`
+        * `{|out|invout|all|invall}`: no selection means that the field is calculated over given tracon\_month (January 2011, SFO)
+            * out: cosine similarity comparisons are between vectors within the same time period (but not within the given tracon, SFO)
+            * invout: cosine similarity comparisons are done between vectors within the tracon\_month and vectors within the same time period (January 2011) that come from a different tracon (not SFO)
+            * all: cosine similarity comparisons are between all vectors within the same time period (i.e January 2011)
+            * invall: cosine similarity comparisons are done between vectors within the tracon\_month (Jan. 2011 SFO) and all vectors within the given time period (January 2011)
+        * `{|flfrm}`: no selection indicates that abbreviations are not expanded and flfrm indicates that the abbreviations are replaced by their full form
+        * `{|ct}`: no selection means that the given field is the average cosine similarity number, whereas ct indicates that the field is the number of comparisons made
+        * `{narr|syn|all|narrsyn}`: which field is used
+        * `{1|3|6|12|a}`: the time period used. a indicates all time and the numbers indicate number of months
     * Examples: we will use the same example as above with the date of January 2011 in SFO.
-        * `d2v_cos_sim_other_tracon`: this is the average cosine similarity calculated between pairwise comparisons of doc2vec vectors from the reports made in January 2011 in SFO to all reports made in January 2011 in tracons/airports outside of SFO.
-        * `d2v_num_comp_all_tracon_replace`: this is the number of comparisons made between doc2vec vectors from the reports made in January 2011 in SFO to all reports made in Junary 2011.
+        * `trcn_invout_narr_1m`: this is the average cosine similarity calculated between pairwise comparisons of doc2vec vectors from the reports made in January 2011 in SFO to all reports made in January 2011 in tracons/airports outside of SFO (using the narrative column).
+        * `trcn_invout_flfrm_ct`: this is the number of comparisons made between doc2vec vectors from the reports made in January 2011 in SFO to all reports made in Junary 2011.
 
 **Running**:
 ```
@@ -230,7 +245,7 @@ cd ../
 * `LIWC2015-dictionary-poster-unlocked.xlsx`: LIWC dictionary
 
 **Output**:
-`liwc_tracon_month_{narrative|synopsis|combined}.csv`: LIWC is a categorization of some number of words (for instance common adverbs, family related words, swear words, etc.). This csv takes each `tracon_month` from the ASRS dataset and counts how many of each category was used during that `tracon_month`.
+`liwc_tracon_month_{narrative|synopsis|combined|callback|narrative_synopsis_combined}.csv`: LIWC is a categorization of some number of words (for instance common adverbs, family related words, swear words, etc.). This csv takes each `tracon_month` from the ASRS dataset and counts how many of each category was used during that `tracon_month`.
 
 **Running**:
 ```
@@ -239,22 +254,8 @@ python liwc_analysis.py
 cd ../
 ```
 
-### (5) Joining the FAA/NTSB datasets (join\_faa\_ntsb.py)
-**Purpose**: merges the two datasets created by the previous two steps (`aviation_data_huiyi/` and `faa/` subdirectories)
 
-**Input**:
-* `NTSB_AIDS_full_output_new.csv`: result from previous step
-* `faa_incidents.csv`: result from previous step
-
-**Output**:
-* `Airport_month_events.csv`: organized by tracon_month. Each row has the number of faa_incidents, ntsb_accidents, ntsb_incidents, tracon_month, and a `dataset` field indicating which dataset the row came from.
-
-**Running**:
-```
-python join_faa_ntsb.py
-```
-
-### (6) Merging with Volume Data (flight\_vol.py)
+### (5) Merging with Volume Data (flight\_vol.py)
 **Purpose**: combine faa/ntsb accident/incident data from the volume data from this [link](https://aspm.faa.gov/opsnet/sys/tower.asp). Merged on same tracon_month.
 
 **Input**:
@@ -272,20 +273,20 @@ python join_faa_ntsb.py
 python flight_vol.py
 ```
 
-### (7) Joining All Datasets (combine.py)
+### (6) Joining All Datasets (combine.py)
 **Purpose**: combine asrs dataset, d2v dataset, liwc dataset, faa/ntsb incident/accident, volume data all together
 
 **Input**:
-* `tracon_month_{narrative|synopsis|combined}.csv`: processed ASRS dataset
+* `tracon_month_{narrative|synopsis|combined|callback|narrative_synopsis_combined}.csv`: processed ASRS dataset
 * `combined_vol_data.py`: combined faa/ntsb incident/accident data with volume data
-* `liwc_tracon_month_{narrative|synopsis|combined}.csv`: dataframe of tracon_months and their corresponding liwc category counts
-* `d2v_tracon_month_{narrative|synopsis|combined}_{1|3|6|12|inf}mon.csv`: doc2vec cosine similarity output
+* `liwc_tracon_month_{narrative|synopsis|combined|callback|narrative_synopsis_combined}.csv`: dataframe of tracon_months and their corresponding liwc category counts
+* `d2v_tracon_month_{narrative|synopsis|combined|callback|narrative_synopsis_combined}_{1|3|6|12|inf}mon.csv`: doc2vec cosine similarity output
 
 **Output**:
-* `final_dataset_{1|3|6|12|inf}mon.csv`: combined dataset with all relevant information
+* `final_dataset.csv`: combined dataset with all relevant information. For full description of all the columns, see the google drive dictionary.
 
 **Methodology**:
-* We take each row from `combined_vol_incident.csv` and combine the corresponding d2v row, liwc row, and row from `tracon_month_{narrative|synopsis|combined}.csv` (processed ASRS dataset). They’re combined starting on the month before the given month of `combined_vol_incident.csv` (see below)
+* We take each row from `combined_vol_incident.csv` and combine the corresponding d2v row, liwc row, and row from `tracon_month_{narrative|synopsis|combined|callback|narrative_synopsis_combined}.csv` (processed ASRS dataset). They’re combined starting on the month before the given month of `combined_vol_incident.csv` (see below)
     * Let’s say that the row from `combined_vol_incident.csv` has a tracon_month of SFO on January 2011
     * If the month_range is 1, then the rows from LIWC, D2V, and processed ASRS dataset that has a tracon_month of SFO on December 2010 are joined with that of SFO on January 2011
     * If the month range is 12, then the rows from LIWC, D2V, and processed ASRS dataset has a tracon_month of SFO from January 2010 to December 2010
