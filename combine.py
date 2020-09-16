@@ -131,10 +131,16 @@ for col in ['narrative']:
             return split_x[0]
 
     def get_year(x):
-        return int(str(x).split()[-1].split("/")[0])
+        try:
+            return int(float(str(x).split()[-1].split("/")[0]))
+        except ValueError:
+            return np.nan
 
     def get_month(x):
-        return int(str(x).split()[-1].split("/")[1])
+        try:
+            return int(float(str(x).split()[-1].split("/")[1]))
+        except ValueError:
+            return np.nan
 
 
     # preprocess liwc_df
@@ -177,7 +183,7 @@ for col in ['narrative']:
     for month_idx, n_month in enumerate(num_months):
         month_range_str = f'{n_month}m'
         if num_months == np.inf:
-            month_range_str = 'am'
+            month_range_str = 'atime'
         asrs = asrs_orig.copy()
 
         d2v_tm = pd.read_csv(f'./asrs_analysis/results/d2v_tracon_month_{col}_{n_month}mon.csv', index_col = 0)
@@ -187,12 +193,11 @@ for col in ['narrative']:
         # combine with doc2vec 
         asrs = asrs.merge(d2v_tm, on = 'tracon_month', how = 'outer')
 
-
         # this creates a dictionary from year/month -> pd.DataFrame of all the rows in 
         # the ASRS dataset within the month range (utilizing n_month)
         # ex.: January 2011, w/ n_month = 1 -> pd.DataFrame of all rows in ASRS in December 2010
         tracon_month_dict = {}
-        month_year_df = airport_month_events[['month', 'year']].drop_duplicates()
+        month_year_df = airport_month_events.iloc[:1000,:][['month', 'year']].drop_duplicates()
         for idx, date_row in tqdm(month_year_df.iterrows(), total = month_year_df.shape[0], desc = \
                 f"Creating year/month dictionary {n_month}mon"):
             code = ' '.join([str(date_row['month']), str(date_row['year'])])
@@ -203,7 +208,8 @@ for col in ['narrative']:
         # ASRS). This utilizes the dictionary created above
         final_rows = []
         asrs_covered_ind = set()
-        for idx, row in tqdm(airport_month_events.iterrows(), total = airport_month_events.shape[0], desc = \
+        # for idx, row in tqdm(airport_month_events.iloc[:1000].iterrows(), total = airport_month_events.shape[0], desc = \
+        for idx, row in tqdm(airport_month_events.iloc[:1000].iterrows(), total = 1000, desc = \
                 f"Combining ASRS {n_month}mon"):
             code = ' '.join([str(row['month']), str(row['year'])])
             if code in tracon_month_dict:
@@ -251,6 +257,8 @@ for col in ['narrative']:
         res = pd.DataFrame.from_dict({idx: row for idx, row in enumerate(final_rows)}, orient = 'index')
         res = rename_cols(res, month_range_str, skip_cols = ame_cols)
 
+        embed()
+        res = res.loc[:,~res.columns.duplicated()]
         res.set_index(['tracon_key', 'year', 'month'], inplace = True)
         res = reorder_cols(res)
         all_res.append(res)
