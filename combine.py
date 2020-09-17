@@ -2,6 +2,7 @@ import pandas as pd, numpy as np, re
 from IPython import embed
 from tqdm import tqdm
 from itertools import product
+import argparse
 """
 Combines ASRS data with FAA/NTSB, LIWC and Doc2Vec datasets
 """
@@ -10,6 +11,12 @@ ifr_vfr_dict = {
     'general': 'gen',
     'overflight': 'ovrflt'
 }
+
+parser = argparse.ArgumentParser(description='Analyze abbreviations.')
+parser.add_argument('-t', action = 'store_true')
+args = parser.parse_args()
+
+test = args.t
 
 num_time_periods = (2020 - 1988) * 12
 def rename_cols_dict(pd, month_range_str, skip_cols = []):
@@ -117,6 +124,8 @@ for col in ['narrative']:
 
     # ntsb/faa incident dataset + volume
     airport_month_events = pd.read_csv('results/combined_vol_incident.csv', index_col = 0)
+    if test:
+        airport_month_events = airport_month_events.iloc[:1000, :]
     ame_cols = list(airport_month_events.columns)
 
     # liwc counts
@@ -197,7 +206,7 @@ for col in ['narrative']:
         # the ASRS dataset within the month range (utilizing n_month)
         # ex.: January 2011, w/ n_month = 1 -> pd.DataFrame of all rows in ASRS in December 2010
         tracon_month_dict = {}
-        month_year_df = airport_month_events.iloc[:1000,:][['month', 'year']].drop_duplicates()
+        month_year_df = airport_month_events[['month', 'year']].drop_duplicates()
         for idx, date_row in tqdm(month_year_df.iterrows(), total = month_year_df.shape[0], desc = \
                 f"Creating year/month dictionary {n_month}mon"):
             code = ' '.join([str(date_row['month']), str(date_row['year'])])
@@ -209,7 +218,8 @@ for col in ['narrative']:
         final_rows = []
         asrs_covered_ind = set()
         # for idx, row in tqdm(airport_month_events.iloc[:1000].iterrows(), total = airport_month_events.shape[0], desc = \
-        for idx, row in tqdm(airport_month_events.iloc[:1000].iterrows(), total = 1000, desc = \
+        for idx, row in tqdm(airport_month_events.iterrows(), \
+                total = airport_month_events.shape[0], desc = \
                 f"Combining ASRS {n_month}mon"):
             code = ' '.join([str(row['month']), str(row['year'])])
             if code in tracon_month_dict:

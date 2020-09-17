@@ -4,10 +4,17 @@ This repository processes the ASRS dataset by extracting the tracon information.
 
 
 ## Running The Repository
-First, you will need to upload, the ASRS dataset and place it in the folder `preprocess_asrs/datasets/`. We've excluded the file because of storage reasons (git LFS). After that, you simply need to run the following command.
+First, you will need to upload, the ASRS dataset and place it in the folder `preprocess_asrs/datasets/`. We've excluded the file because of storage reasons (git LFS). Furthermore, you will need to add the files `faa_ntsb_analysis/datasets/NTSB_AviationData_new.txt`,`faa_ntsb_analysis/datasets/FAA_AIDS_full.txt`, `faa_ntsb_analysis/FAA_AIDS_addition.csv`.
+
+After that, you simply need to run the following command.
 ```
 bash -e ./run_all
 ```
+If you are running this locally, then run:
+```
+bash -e ./run_all -t
+```
+`-t` stands for test. This will only select a subset of the data to analyze in the most computationally expensive parts of the pipeline
 
 ## A Note about Handcoded Files
 Currently there are two handcoded files that are a part of the pipeline and they should be placed in `dictionaries/combined_neg_nonword_handcode2.csv` and `datasets/not_matched_full_v1.csv`. 
@@ -60,7 +67,7 @@ The subdirectory `faa_ntsb_analysis` deal with cleaning the NTSB and FAA acciden
 | ADY | Alldays Airport | 1991 | 7 | 1.0 | 0.0 | 0.0 | ntsb |
 | NNB | Santa Ana Island | 1997 | 10 | 0.0 | 0.0 | 1.0 | faa |
 
-The original datasets are saved in `faa_ntsb_analysis/datasets/NTSB_AIDS_full.txt` and `faa_ntsb_analysis/datasets/FAA_AIDS_full.txt`. The columns of interest for the NTSB dataset are `Investigation Type` (incident or accident), `Event Date`, `Airport Code`, and `Airport Name`, wherease in the FAA dataset they are `eventairport`, `eventtype` (incident or accident), and `localeventdate` (airport code is looked up via a script) found in the `faa/` subdirectory.
+The original datasets are saved in `faa_ntsb_analysis/datasets/NTSB_AviationData_new.txt`,`faa_ntsb_analysis/datasets/FAA_AIDS_full.txt`, `faa_ntsb_analysis/FAA_AIDS_addition.csv`. The columns of interest for the NTSB dataset are `Investigation Type` (incident or accident), `Event Date`, `Airport Code`, and `Airport Name`, wherease in the FAA dataset they are `eventairport`, `eventtype` (incident or accident), and `localeventdate` (airport code is looked up via a script) found in the `faa/` subdirectory.
 
 ### FAA Volume Dataset
 This dataset was queried from the following [link](https://aspm.faa.gov/opsnet/sys/tower.asp) and the data includes the number of flights from a given airport/facility at any year/month as well as the types of flights that occurred. These datasets are saved in `datasets/WEB-Report-*`. This data is not processed in any way and is simply joined with the rest of the data.

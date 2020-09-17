@@ -1,32 +1,32 @@
 ,atcadvisory,firstpass,removed_firstpass
-1352,CTAF `; Center ZJX,"[('Center', 'ZJX', '')]",CTAF ` 
-6193,UNICOM LAX Special Flight Rules,"[('UNICOM', 'LAX', '')]", Special Flight Rules
-6830,Tower SFO.Tower; UNICOM SFO RAMP,"[('Tower', 'SFO', '.Tower'), ('UNICOM', 'SFO', '')]",  RAMP
-6914,CTAF Airshow Control; CTAF Air Show Control,"[('CTAF', 'Airshow', ''), ('CTAF', 'Air', '')]", Control  Show Control
-6993,UNICOM GROVE CITY,"[('UNICOM', 'GROVE', '')]", CITY
-7764,CTAF 150; CTAF MHR; UNICOM 148.30; UNICOM 159,"[('CTAF', '150', ''), ('CTAF', 'MHR', ''), ('UNICOM', '148', ''), ('UNICOM', '159', '')]",  .30 
-17340,Tower ZZZ; Tower ZZZ1,"[('Tower', 'ZZZ', ''), ('Tower', 'ZZZ1', '')]", 1
-24154,CTAF dm;; CTAF DNL,"[('CTAF', 'dm', ''), ('CTAF', 'DNL', '')]",; 
-37034,TRACON N(0,[],TRACON N(0
-51415,Tower ZZZ; Tower ZZZ1,"[('Tower', 'ZZZ', ''), ('Tower', 'ZZZ1', '')]", 1
-53311,Center ZBW; Military Facility ZBW CAPE; TRACON PVD,"[('Center', 'ZBW', ''), ('Military Facility', 'ZBW', ''), ('TRACON', 'PVD', '')]",  CAPE 
-54180,Center ZAN; FSS JNU RDO,"[('Center', 'ZAN', ''), ('FSS', 'JNU', '')]",  RDO
-63768,CTAF +; TRACON D01.TRACON,"[('TRACON', 'D01', '.TRACON')]",CTAF + 
-65616,UNICOM I-23,[],UNICOM I-23
-67646,CTAF 08A; UNICOM 0; CTAF 08A,"[('CTAF', '08A', ''), ('CTAF', '08A', '')]", UNICOM 0 
-74871,Tower HOU&,"[('Tower', 'HOU', '')]",&
-75158,Center MJZS; Tower V. C. BIRD,"[('Center', 'MJZS', '')]", Tower V. C. BIRD
-79644,CTAF DVO/NOT; CTAF DVO/NOT,"[('CTAF', 'DVO', ''), ('CTAF', 'DVO', '')]",/NOT /NOT
-94942,CTAF 36U (Heber); CTAF LGU,"[('CTAF', '36U', ''), ('CTAF', 'LGU', '')]", (Heber) 
-96234,Tower MSP.Tower; UNICOM Local FBO,"[('Tower', 'MSP', '.Tower'), ('UNICOM', 'Local', '')]",  FBO
-130942,UNICOM BAY BRIDGE,"[('UNICOM', 'BAY', '')]", BRIDGE
-134699,UNICOM 122.9,"[('UNICOM', '122', '')]",.9
-135934,TRACON ZZZ; TRACON ZZZZ,"[('TRACON', 'ZZZ', ''), ('TRACON', 'ZZZZ', '')]", Z
-146291,CTAF 155; CTAF RAP; UNICOM 998.00; UNICOM 159,"[('CTAF', '155', ''), ('CTAF', 'RAP', ''), ('UNICOM', '998', ''), ('UNICOM', '159', '')]",  .00 
-146572,CTAF 155; CTAF LEE; UNICOM 123.14; UNICOM 159,"[('CTAF', '155', ''), ('CTAF', 'LEE', ''), ('UNICOM', '123', ''), ('UNICOM', '159', '')]",  .14 
-157034,TRACON O,[],TRACON O
-172557,Military Facility USAF ACFT; TRACON ANC,"[('Military Facility', 'USAF', ''), ('TRACON', 'ANC', '')]", ACFT 
-191375,Center ZHU; Military Facility RIDGE CTRL,"[('Center', 'ZHU', ''), ('Military Facility', 'RIDGE', '')]",  CTRL
-224431,CTAF OTX 1,"[('CTAF', 'OTX', '')]", 1
-229062,CTAF 155; CTAF RAP; UNICOM 159; UNICOM 998.00,"[('CTAF', '155', ''), ('CTAF', 'RAP', ''), ('UNICOM', '159', ''), ('UNICOM', '998', '')]",   .00
-229354,CTAF 155; CTAF LEE; UNICOM 159; UNICOM 123.14,"[('CTAF', '155', ''), ('CTAF', 'LEE', ''), ('UNICOM', '159', ''), ('UNICOM', '123', '')]",   .14
+1984,CTAF +; TRACON D01.TRACON,"[('TRACON', 'D01', '.TRACON')]",CTAF + 
+3832,UNICOM I-23,[],UNICOM I-23
+45687,CTAF 155; CTAF RAP; UNICOM 159; UNICOM 998.00,"[('CTAF', '155', ''), ('CTAF', 'RAP', ''), ('UNICOM', '159', ''), ('UNICOM', '998', '')]",   .00
+45979,CTAF 155; CTAF LEE; UNICOM 159; UNICOM 123.14,"[('CTAF', '155', ''), ('CTAF', 'LEE', ''), ('UNICOM', '159', ''), ('UNICOM', '123', '')]",   .14
+62249,CTAF `; Center ZJX,"[('Center', 'ZJX', '')]",CTAF ` 
+79555,TRACON N(0,[],TRACON N(0
+92946,UNICOM BAY BRIDGE,"[('UNICOM', 'BAY', '')]", BRIDGE
+98600,CTAF DVO/NOT; CTAF DVO/NOT,"[('CTAF', 'DVO', ''), ('CTAF', 'DVO', '')]",/NOT /NOT
+102829,CTAF OTX 1,"[('CTAF', 'OTX', '')]", 1
+109547,CTAF 08A; UNICOM 0; CTAF 08A,"[('CTAF', '08A', ''), ('CTAF', '08A', '')]", UNICOM 0 
+115112,UNICOM 122.9,"[('UNICOM', '122', '')]",.9
+116347,TRACON ZZZ; TRACON ZZZZ,"[('TRACON', 'ZZZ', ''), ('TRACON', 'ZZZZ', '')]", Z
+124888,Center ZHU; Military Facility RIDGE CTRL,"[('Center', 'ZHU', ''), ('Military Facility', 'RIDGE', '')]",  CTRL
+145018,CTAF 155; CTAF RAP; UNICOM 998.00; UNICOM 159,"[('CTAF', '155', ''), ('CTAF', 'RAP', ''), ('UNICOM', '998', ''), ('UNICOM', '159', '')]",  .00 
+145299,CTAF 155; CTAF LEE; UNICOM 123.14; UNICOM 159,"[('CTAF', '155', ''), ('CTAF', 'LEE', ''), ('UNICOM', '123', ''), ('UNICOM', '159', '')]",  .14 
+166894,Tower ZZZ; Tower ZZZ1,"[('Tower', 'ZZZ', ''), ('Tower', 'ZZZ1', '')]", 1
+168853,UNICOM LAX Special Flight Rules,"[('UNICOM', 'LAX', '')]", Special Flight Rules
+169490,Tower SFO.Tower; UNICOM SFO RAMP,"[('Tower', 'SFO', '.Tower'), ('UNICOM', 'SFO', '')]",  RAMP
+169574,CTAF Airshow Control; CTAF Air Show Control,"[('CTAF', 'Airshow', ''), ('CTAF', 'Air', '')]", Control  Show Control
+169653,UNICOM GROVE CITY,"[('UNICOM', 'GROVE', '')]", CITY
+170424,CTAF 150; CTAF MHR; UNICOM 148.30; UNICOM 159,"[('CTAF', '150', ''), ('CTAF', 'MHR', ''), ('UNICOM', '148', ''), ('UNICOM', '159', '')]",  .30 
+182879,Center ZBW; Military Facility ZBW CAPE; TRACON PVD,"[('Center', 'ZBW', ''), ('Military Facility', 'ZBW', ''), ('TRACON', 'PVD', '')]",  CAPE 
+183748,Center ZAN; FSS JNU RDO,"[('Center', 'ZAN', ''), ('FSS', 'JNU', '')]",  RDO
+194436,Tower ZZZ; Tower ZZZ1,"[('Tower', 'ZZZ', ''), ('Tower', 'ZZZ1', '')]", 1
+204889,Tower HOU&,"[('Tower', 'HOU', '')]",&
+205176,Center MJZS; Tower V. C. BIRD,"[('Center', 'MJZS', '')]", Tower V. C. BIRD
+207702,TRACON O,[],TRACON O
+210556,CTAF 36U (Heber); CTAF LGU,"[('CTAF', '36U', ''), ('CTAF', 'LGU', '')]", (Heber) 
+211848,Tower MSP.Tower; UNICOM Local FBO,"[('Tower', 'MSP', '.Tower'), ('UNICOM', 'Local', '')]",  FBO
+223302,Military Facility USAF ACFT; TRACON ANC,"[('Military Facility', 'USAF', ''), ('TRACON', 'ANC', '')]", ACFT 
+229708,CTAF dm;; CTAF DNL,"[('CTAF', 'dm', ''), ('CTAF', 'DNL', '')]",; 
