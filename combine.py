@@ -19,10 +19,19 @@ args = parser.parse_args()
 test = args.t
 
 num_time_periods = (2020 - 1988) * 12
-def rename_cols_dict(pd, month_range_str, skip_cols = []):
+def rename_cols_dict(df, month_range_str, skip_cols = []):
+    """
+    Create a renaming dictionary on the given output dataframe
+    @param: df (pd.DataFrame) output dataframe
+    @param: month_range_str(str) '1m', '3m', ... '12m', 'atime'
+        Represents what time range you are looking at
+    @param: skip_cols (list of str) list of columns that we will not add
+        the month_range_str to
+    @returns: dict[orig_name] -> new_name
+    """
     except_cols = set(['year', 'month', 'tracon_key'] + skip_cols)
     rename_dict = {'airport_code': 'tracon_key'}
-    for col in pd.columns:
+    for col in df.columns:
         if col == 'airport_code':
             continue
         new_col = col
@@ -42,17 +51,44 @@ def rename_cols_dict(pd, month_range_str, skip_cols = []):
         rename_dict[col] = new_col
     return rename_dict
 
-def rename_cols(pd, month_range_str, skip_cols = []):
-    return pd.rename(rename_cols_dict(pd, month_range_str, skip_cols), axis = 1)
+def rename_cols(df, month_range_str, skip_cols = []):
+    """
+    Renames the columns of the  output dataframe
+    @param: df (pd.DataFrame) output dataframe
+    @param: month_range_str(str) '1m', '3m', ... '12m', 'am'
+        Represents what time range you are looking at
+    @param: skip_cols (list of str) which columns to skip
+    @returns: renamed dataframe
+    """
+    return df.rename(rename_cols_dict(df, month_range_str, skip_cols), axis = 1)
 
+def tuple_to_column(tuple_input):
+    """
+    Returns a string representation of the tuple_input by joining on underscores,
+    however some of the elements of the tuple may be empty so some postprocesing is
+    performed
+    @param: tuple_input (tuple of str) the strings you want to join
+    @returns joined_input (str)
+    """
+    fin_str = "_".join(tuple_input)
+    return re.sub('_{2,}', '_', fin_str)
 
-def reorder_cols(pd):
-    import re
-    def tuple_to_column(tuple_input):
-        fin_str = "_".join(tuple_input)
-        return re.sub('_{2,}', '_', fin_str)
-    # currently missing airport_name after tracon_key
-    # missing dataset after faa_incidents
+def generate_cartesian_prod_columns(args):
+    """
+    Helper function that creates a list of columns given a list of lists, each list
+    representing the possible parts of the str
+        Ex: args = [['a', 'b'], ['c', 'd']] -> ['a_c', 'a_d', 'b_c', 'b_d']
+    @param: args (list of lists)
+    @returns list of column names
+    """
+    return list(map(tuple_to_column, product(*args)))
+
+def reorder_cols(df):
+    """
+    This reorders the columns of the final output
+    @param: df (pd.DataFrame) final output
+    @returns: re-ordered df (pd.DataFrame)
+    """
     cols = ['tracon_key', 'year', 'month', 'ntsb_accidents', \
             'ntsb_incidents', 'faa_incidents', 'state', 'region', \
             'ddso_service_area', 'class', 'tower_operations', 'airport_operations', \
@@ -62,9 +98,7 @@ def reorder_cols(pd):
     itr_ovr = ['itinir', 'ovrflt']
     ifr_vfr = ['ifr', 'vfr']
 
-    vol_cols = list(map(\
-            tuple_to_column, product(flight_types, ifr_vfr, itr_ovr)\
-            ))
+    vol_cols = generate_cartesian_prod_columns([flight_types, ifr_vfr, itr_ovr])
     vol_cols = vol_cols[:10] + ['military_local', 'civil_local', 'total_local'] + \
             vol_cols[10:]
     cols = cols + vol_cols
@@ -74,45 +108,52 @@ def reorder_cols(pd):
     wc = ['avg_wc', 'wc']
     sel = ['', 'all', 'out', 'prop']
     time_windows = ['1m', '3m', '6m', '12m', 'atime']
-    wc_cols = list(map(\
-            tuple_to_column, product(text_columns, wc, sel, time_windows)\
-            ))
+    wc_cols = generate_cartesian_prod_columns([text_columns, wc, sel, time_windows])
     cols = cols + wc_cols
 
     # trcn columns (d2v)
-    cols = cols + [col for col in pd.columns if 'trcn' in col]
+    cols = cols + [col for col in df.columns if 'trcn' in col]
 
     # some other ct columns
     ct_cols = ['pos_nwrd', 'pos_nwrd_unq', 'abrvs_no_ovrcnt', 'abrevs_no_ovrcnt_unq']
-    ct_cols = list(map(\
-            tuple_to_column, product(ct_cols, text_columns, time_windows)\
-            ))
+    ct_cols = generate_cartesian_prod_columns([ct_cols, text_columns, time_windows])
     cols = cols + ct_cols
 
     # aviation dicts
     aviation = ['nasa', 'faa', 'casa', 'iata', 'hand', 'hand2']
     unique = ['unq', '']
     sel = ['', 'prop']
-    aviation_cols = list(map(\
-            tuple_to_column, product(aviation, unique, sel, time_windows)\
-            ))
+
+    aviation_cols = generate_cartesian_prod_columns([aviation, unique, sel, time_windows])
     cols = cols + aviation_cols
 
     # liwc cols
     liwc = ['liwc']
     liwc_pat = re.compile('liwc_([a-z]{1,})_ct_1m')
     liwc_cat = []
-    for col in pd.columns:
+    for col in df.columns:
         pat_res = liwc_pat.match(col)
         if pat_res is not None:
             liwc_cat.append(pat_res.group(1))
     flfrm = ['', 'flfrm']
     sel = ['ct', 'prop']
-    liwc_cols = list(map(\
-            tuple_to_column, product(liwc, liwc_cat, flfrm, sel, time_windows)\
-            ))
+    liwc_cols = generate_cartesian_prod_columns([liwc, liwc_cat, flfrm, sel, time_windows])
     cols = cols + liwc_cols
-    return pd.loc[:, [x for x in cols if x in pd.columns]]
+
+    return df.loc[:, [x for x in cols if x in df.columns]]
+
+def unique_tracon_month_set(df):
+    """
+    Returns a set of all unique tracon_months within df dataset
+    @param: df (pd.DataFrame)
+    """
+    unique_codes = df['airport_code'].unique()
+    all_combs = set()
+    for idx, row in df[['airport_code', 'year', 'month']].drop_duplicates() \
+            .iterrows():
+        code, mon, year = row['airport_code'], row['month'], row['year']
+        all_combs.add((code, mon, year))
+    return all_combs
 
 
 all_res = []
@@ -168,17 +209,17 @@ for col in ['narrative']:
     def num_months_between(month1, year1, month2, year2):
         return (year2 - year1) * 12 + month2 - month1
 
-    """
-    This returns a function to be applied row-wise on a dataframe. The inner function, when
-    applied, returns a pandas series that finds which rows are within a month range. If
-    the FAA/NTSB incident tracon_month occurs in January 2011, then the inner function finds
-    all the rows that are within num_months months before January 2011.
-    @param: month1 (int) 1-12
-    @param: year1 (int)
-    @param: num_months (int)
-    @returns: function(row) that returns a pandas Series selecting the correct rows
-    """
     def generate_compare(month1, year1, num_months = 1): # accident date
+        """
+        This returns a function to be applied row-wise on a dataframe. The inner function, when
+        applied, returns a pandas series that finds which rows are within a month range. If
+        the FAA/NTSB incident tracon_month occurs in January 2011, then the inner function finds
+        all the rows that are within num_months months before January 2011.
+        @param: month1 (int) 1-12
+        @param: year1 (int)
+        @param: num_months (int)
+        @returns: function(row) that returns a pandas Series selecting the correct rows
+        """
         def inner_func(row):
             month2, year2 = row['month'], row['year']
             n_m = num_months_between(month1, year1, month2, year2)
@@ -187,8 +228,7 @@ for col in ['narrative']:
                     
     asrs_orig = asrs.merge(liwc_df.drop(['tracon', 'month', 'year'], axis = 1), on = 'tracon_month')
 
-    # num_months = [1, 3, 6, 12, np.inf]
-    num_months = [1, 3]
+    num_months = [1, 3, 6, 12]
     for month_idx, n_month in enumerate(num_months):
         month_range_str = f'{n_month}m'
         if num_months == np.inf:
@@ -217,7 +257,6 @@ for col in ['narrative']:
         # ASRS). This utilizes the dictionary created above
         final_rows = []
         asrs_covered_ind = set()
-        # for idx, row in tqdm(airport_month_events.iloc[:1000].iterrows(), total = airport_month_events.shape[0], desc = \
         for idx, row in tqdm(airport_month_events.iterrows(), \
                 total = airport_month_events.shape[0], desc = \
                 f"Combining ASRS {n_month}mon"):
@@ -241,15 +280,13 @@ for col in ['narrative']:
                         final_rows.append(pd.Series(index = asrs.columns.drop(\
                                 ['tracon_month', 'tracon', 'year', 'month'])), axis = 0)
 
+        # the following code will add empty rows for tracon_month combinations that 
+        # do not appear in the dataset (although the tracon_code) appears in the dataset.
         cols = final_rows[0].index
         empty_row = pd.Series(index = cols)
-
+        
+        all_combs = unique_tracon_month_set(airport_month_events)
         unique_codes = airport_month_events['airport_code'].unique()
-        all_combs = set()
-        for idx, row in airport_month_events[['airport_code', 'year', 'month']].drop_duplicates() \
-                .iterrows():
-            code, mon, year = row['airport_code'], row['month'], row['year']
-            all_combs.add((code, mon, year))
 
         total = unique_codes.shape[0] * num_time_periods
         for code_mon_yr in tqdm(product(unique_codes, range(1, 13), range(1988, 2020)), \
@@ -264,18 +301,18 @@ for col in ['narrative']:
 
         print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
         print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
+
+        # generate dataset and perform some preprocessing
         res = pd.DataFrame.from_dict({idx: row for idx, row in enumerate(final_rows)}, orient = 'index')
         res = rename_cols(res, month_range_str, skip_cols = ame_cols)
 
-        embed()
         res = res.loc[:,~res.columns.duplicated()]
         res.set_index(['tracon_key', 'year', 'month'], inplace = True)
         res = reorder_cols(res)
         all_res.append(res)
-        # res.to_csv(f'results/final_dataset_{col}_{n_month}mon.csv')
 all_res = pd.concat(all_res, ignore_index = False, axis = 1)
-embed()
 all_res.to_csv('results/final_dataset.csv')
+
 coverage = all_res.isna().sum()
 coverage['total rows'] = all_res.shape[0]
 coverage.to_csv('results/final_coverage.csv')
