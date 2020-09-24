@@ -97,8 +97,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         other_info['num_multiple_reports'] = any_col_has_multiple_reports.sum()
         other_info['num_observations'] = asrs.shape[0]
         other_info['num_callbacks'] = asrs['contains_callback'].sum()
-        other_info[f'{col}_wc'] = asrs[f'{col}_wc'].sum()
-        other_info[f'{col}_avg_wc'] = asrs[f'{col}_wc'].mean()
+        other_info[f'{abrev_col}_wc'] = asrs[f'{col}_wc'].sum()
+        other_info[f'{abrev_col}_avg_wc'] = asrs[f'{col}_wc'].mean()
 
         # this is redundant (occurs in preprocess_helper.py)
         asrs[col] = asrs[col].str.lower()
@@ -151,14 +151,14 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
     all_dfs['year'] = all_dfs.index.map(to_year)
     all_dfs['month'] = all_dfs.index.map(to_month)
 
-    year_month_gb = all_dfs[['year', 'month', f'{col}_wc']].groupby(['year', 'month']).sum().reset_index()
-    all_dfs[f'{col}_wc_all'], all_dfs[f'{col}_wc_out'] = np.nan, np.nan
+    year_month_gb = all_dfs[['year', 'month', f'{abrev_col}_wc']].groupby(['year', 'month']).sum().reset_index()
+    all_dfs[f'{abrev_col}_wc_all'], all_dfs[f'{abrev_col}_wc_out'] = np.nan, np.nan
 
     for idx, row in year_month_gb.iterrows():
-        all_dfs.loc[(all_dfs['year'] == row['year']) & (all_dfs['month'] == row['month']), f'{col}_wc_all'] \
-                = row[f'{col}_wc']
-    all_dfs[f'{col}_wc_out'] = all_dfs[f'{col}_wc_all'] - all_dfs[f'{col}_wc']
-    all_dfs[f'{col}_wc_prop'] = all_dfs[f'{col}_wc'] / all_dfs[f'{col}_wc_all']
+        all_dfs.loc[(all_dfs['year'] == row['year']) & (all_dfs['month'] == row['month']), f'{abrev_col}_wc_all'] \
+                = row[f'{abrev_col}_wc']
+    all_dfs[f'{abrev_col}_wc_out'] = all_dfs[f'{abrev_col}_wc_all'] - all_dfs[f'{abrev_col}_wc']
+    all_dfs[f'{abrev_col}_wc_prop'] = all_dfs[f'{abrev_col}_wc'] / all_dfs[f'{abrev_col}_wc_all']
     all_dfs.drop(['year', 'month'], axis = 1, inplace = True)
 
     all_dfs.to_csv(f'results/tracon_month_{col}.csv', index = True)
