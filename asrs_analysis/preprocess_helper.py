@@ -5,7 +5,8 @@ from tqdm import tqdm
 
 coverage = namedtuple('coverage', ['part', 'total'])
 
-def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False):
+def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False, \
+        test = False):
     if load_saved:
         return pd.read_csv('results/asrs_extracted_processed.csv')
 
@@ -116,8 +117,9 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
     asrs['combined'] = asrs['combined'].str.lower()
 
     # TODO: remove this, only doing this so it doesn't destroy my laptop
-    np.random.seed(42)
-    asrs = asrs.loc[np.random.choice(asrs.index, 1000), :].copy()
+    if test:
+        np.random.seed(42)
+        asrs = asrs.loc[np.random.choice(asrs.index, 1000), :].copy()
 
     total = asrs.shape[0]
     asrs = tracon_analysis(asrs)

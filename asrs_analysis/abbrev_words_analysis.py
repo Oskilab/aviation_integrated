@@ -7,6 +7,14 @@ from preprocess_helper import load_asrs, create_counter, load_dictionaries
 from preprocess_helper import neg_nonword_to_neg_word_set, neg_nonword_to_airport_set, \
         potential_words_from_negnw
 from bs4 import BeautifulSoup
+import argparse
+
+parser = argparse.ArgumentParser(description='Analyze abbreviations.')
+parser.add_argument('-t', action = 'store_true')
+args = parser.parse_args()
+
+test = args.t
+print('abbrev_words_analysis test', test)
 
 # get list of cities
 with open('datasets/List_of_United_States_cities_by_population') as wiki_cities:
@@ -32,7 +40,7 @@ for x in cities:
 cities = set(cities_words)
 
 aviation_dicts = load_dictionaries() # see preprocess helper
-asrs = load_asrs(load_saved = False) # see preprocess helper
+asrs = load_asrs(load_saved = False, test = test) # see preprocess helper
 negnw_to_negw = neg_nonword_to_neg_word_set()
 negnw_to_airport = neg_nonword_to_airport_set()
 

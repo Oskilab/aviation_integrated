@@ -1,6 +1,19 @@
 #!/bin/bash
+test_var=false
+if [ -z "$1" ]; then
+    test_var=false
+else
+    if [ $1 = '-t' ] ; then
+        test_var=true
+    fi
+fi
+
 echo ================ Analyzing Abbreviations ================
-python abbrev_words_analysis.py
+if $test_var; then
+    python abbrev_words_analysis.py -t
+else
+    python abbrev_words_analysis.py
+fi
 printf "========== Finished Analyzing Abbreviations =============\n\n"
 
 echo ============= Creating Abbreviations Counts =============

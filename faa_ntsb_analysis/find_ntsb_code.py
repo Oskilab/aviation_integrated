@@ -26,8 +26,6 @@ strip_cols = [' Airport Code ' , ' Airport Name ', ' Latitude ', ' Longitude ']
 for col in strip_cols:
     full[col] = full[col].str.strip()
 
-embed()
-1/0
 # process airport code
 invalid_codes = ['n/a', 'none', 'na']
 for inv_code in invalid_codes:
