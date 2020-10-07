@@ -109,6 +109,6 @@ dnf = pd.DataFrame(rows_dnf)
 all_rows = pd.DataFrame(rows)
 
 # save csvs
-all_rows.to_csv('results/combined_vol_incident.csv')
+all_rows.to_csv('results/combined_vol_incident.csv', index = False)
 cnf.to_csv('results/nf_codes.csv')
 dnf.to_csv('results/nf_dates.csv')

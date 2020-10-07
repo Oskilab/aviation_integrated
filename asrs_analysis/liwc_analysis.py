@@ -67,7 +67,7 @@ for idx in (~liwc.loc[3].isna().to_numpy()).nonzero()[0]:
 
 all_pds = load_asrs(load_saved = True)
 
-def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict, abrev_col):
+def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict, col, abrev_col):
     index_to_counter_replace, index_to_counter = {}, {}
     for i in tqdm(range(df_grouped.shape[0])):
         index_id = df_grouped.loc[i, sel_cols[0]]
@@ -136,4 +136,4 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                 replace_dict[row['acronym']] = dict_fullform
                 break
 
-    analyze_tracon_period(tmp, sel, all_pds, group_to_set, replace_dict, abrev_col_dict[col])
+    analyze_tracon_period(tmp, sel, all_pds, group_to_set, replace_dict, col, abrev_col_dict[col])

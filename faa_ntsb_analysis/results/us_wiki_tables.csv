@@ -3172,7 +3172,7 @@
 3170,Zielona Góra Airport,Mar-Oct,IEG,EPZG,"Zielona Góra, Poland",UTC+01:00,zielona góra,,Poland
 3171,Iejima Airport,,IEJ,RORE,"Iejima, Okinawa, Japan",UTC+09:00,iejima,Okinawa,Japan
 3172,Riesa–Göhlis Airfield,Mar-Oct,IES,EDAU,"Riesa, Saxony, Germany",UTC+01:00,riesa,Saxony,Germany
-3173,Kyiv International Airport (Zhuliany),Mar-Oct,IEV,UKKK,"Kiev, Ukraine",UTC+02:00,kiev,,Ukraine
+3173,Kyiv International Airport (Zhuliany),Mar-Oct,IEV,UKKK,"Kyiv, Ukraine",UTC+02:00,kyiv,,Ukraine
 3174,Iowa Falls Municipal Airport,Mar-Nov,IFA,KIFA,"Iowa Falls, Iowa, United States",UTC−06:00,iowa falls,Iowa,United States
 3175,Iffley Airport,,IFF,YIFY,"Iffley, Queensland, Australia",UTC+10:00,iffley,Queensland,Australia
 3176,Hesa Air Base[1],Mar-Sep,IFH,OIFE,"Shahin Shahr, Iran",UTC+03:30,shahin shahr,,Iran
@@ -3596,7 +3596,7 @@
 3594,Kabwum Airport,,KBM,AYKB,"Kabwum, Papua New Guinea",UTC+10:00,kabwum,,Papua New Guinea
 3595,Tunta Airport,,KBN,FZWT,"Kabinda, Democratic Republic of the Congo",UTC+01:00,kabinda,,Democratic Republic of the Congo
 3596,Kabalo Airport,,KBO,FZRM,"Kabalo, Democratic Republic of the Congo",UTC+02:00,kabalo,,Democratic Republic of the Congo
-3597,Boryspil International Airport,Mar–Oct,KBP,UKBB,"Kiev, Ukraine",UTC+02:00,kiev,,Ukraine
+3597,Boryspil International Airport,Mar–Oct,KBP,UKBB,"Kyiv, Ukraine",UTC+02:00,kyiv,,Ukraine
 3598,Kasungu Airport,,KBQ,FWKG,"Kasungu, Malawi",UTC+02:00,kasungu,,Malawi
 3599,Sultan Ismail Petra Airport,,KBR,WMKC,"Kota Bharu, Kelantan, Malaysia",UTC+08:00,kota bharu,Kelantan,Malaysia
 3600,Bo Airport,,KBS,GFBO,"Bo, Sierra Leone",UTC±00:00,bo,,Sierra Leone
@@ -5549,7 +5549,7 @@
 5547,Long Seridan Airport[1],,ODN,WBGI,"Long Seridan, Sarawak, Malaysia",,long seridan,Sarawak,Malaysia
 5548,Bodaybo Airport[1],,ODO,UIKB,"Bodaybo, Irkutsk Oblast, Russia",,bodaybo,Irkutsk Oblast,Russia
 5549,Ord River Airport[1],,ODR,YORV,"Ord River, Western Australia, Australia",,ord river,Western Australia,Australia
-5550,Odessa International Airport,,ODS,UKOO,"Odessa, Ukraine",,odessa,,Ukraine
+5550,Odesa International Airport,,ODS,UKOO,"Odessa, Ukraine",,odessa,,Ukraine
 5551,A.J. Eisenberg Airport (FAA: OKH),,ODW,KOKH,"Oak Harbor, Washington, United States",,oak harbor,Washington,United States
 5552,Oudomsay Airport,,ODY,VLOS,"Muang Xay (Oudomxai), Laos",,muang xay (oudomxai),,Laos
 5553,Oecusse Airport,,OEC,WPOC,"Oecussi, East Timor",,oecussi,,East Timor

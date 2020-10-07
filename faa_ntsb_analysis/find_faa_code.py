@@ -307,9 +307,13 @@ if check_codes:
     print('wiki + airnav matched', ct)
     pickle.dump(matched_set, open('results/matched_set_faa.pckl', 'wb'))
 else:
-    matched_set = pickle.load(open('results/matched_set_faa.pckl', 'rb'))
+    if False:
+        matched_set = pickle.load(open('results/matched_set_faa.pckl', 'rb'))
 
-full.loc[full['tracon_code'].apply(lambda x: x in matched_set), 'found_code_faa'] = 1
+# TODO: you need to rerun this while also checking codes. I neglected to add this to the
+# github so this file is lost. Takes a while to run.
+
+# full.loc[full['tracon_code'].apply(lambda x: x in matched_set), 'found_code_faa'] = 1
 
 """
 Get results
