@@ -109,17 +109,18 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                 d2v1 = np.vstack([d2v_model.docvecs[x] for x in all_tracon])
                 cos_res_tracon_dict[code] = cosine_similarity(d2v1, d2v1)
 
+        # add empty rows to tracon_month_unique
+        tracon_month_unique_copy = tracon_month_unique.copy()
+        for tracon, month, year in tqdm(product(unique_faa_codes, range(1, 13), range(1988, 2020)), \
+                desc = 'adding empty rows'):
+            if (tracon, month, year) not in all_combs:
+                tracon_month_unique_copy.append(pd.Series((tracon, month, year), columns = ['tracon_code', \
+                        'month', 'year']))
 
         index_to_d2v  = {}
-        tracon_month_unique = all_pds[['tracon_code', 'month', 'year']].drop_duplicates()
-        all_combs = set(tracon_month_unique.apply(lambda x: (x[0], x[1], x[2]), axis = 1))
-
-        # TODO: check that this pickle file is automatically being generated in pipeline
-        unique_code_fn = '../results/unique_airport_code_ntsb_faa.pckl'
-        unique_ntsb_faa_codes = pickle.load(open(unique_code_fn, 'rb'))
 
         # actually generate d2v cosine analysis data
-        for idx, row in tqdm(tracon_month_unique.iterrows(), total = tracon_month_unique.shape[0], \
+        for idx, row in tqdm(tracon_month_unique_copy.iterrows(), total = tracon_month_unique.shape[0], \
                 desc = f"{col} analysis {month_range}mon"):
             index_id = f"{row['tracon_code']} {row['year']}/{row['month']}"
             code = ' '.join([str(row['month']), str(row['year'])])
@@ -210,6 +211,13 @@ def generate_duplicated_idx(all_pds, field, mult_col, report_num = 1):
 dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'iata']
 all_pds = all_pds.reset_index().drop('index', axis = 1)
 
+tracon_month_unique = all_pds[['tracon_code', 'month', 'year']].drop_duplicates()
+all_combs = set(tracon_month_unique.apply(lambda x: (x[0], x[1], x[2]), axis = 1))
+
+# TODO: check that this pickle file is automatically being generated in pipeline
+unique_code_fn = '../results/unique_airport_code_ntsb_faa.pckl'
+unique_ntsb_faa_codes = pickle.load(open(unique_code_fn, 'rb'))
+
 # deal with multiple reports
 for mult_col in ['narrative', 'callback']:
     for r_d in [load_replace_dictionary(mult_col), {}]:
@@ -224,10 +232,6 @@ for mult_col in ['narrative', 'callback']:
             # note duplicated code, TODO: fix
             field1 = row[f'{mult_col}_report1']
             if field1 not in set_of_docs and not pd.isna(field1):
-                # dup_idx = [f'{index} 1' for index in \
-                #         all_pds.loc[all_pds[f'{mult_col}_report1'] == field1, :].index]
-                # dup_idx += [f'{index} 2' for index in \
-                #         all_pds.loc[all_pds[f'{mult_col}_report2'] == field1, :].index]
                 dup_idx = generate_duplicated_idx(all_pds, field1, mult_col, field1)
                 doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report1', r_d))
                 docs.append(TaggedDocument(doc_str, dup_idx))
@@ -235,10 +239,6 @@ for mult_col in ['narrative', 'callback']:
 
             field2 = row[f'{mult_col}_report2']
             if field2 not in set_of_docs and not pd.isna(field2):
-                # dup_idx = [f'{index} 2' for index in \
-                #         all_pds.loc[all_pds[f'{mult_col}_report2'] == field2, :].index]
-                # dup_idx += [f'{index} 1' for index in \
-                #         all_pds.loc[all_pds[f'{mult_col}_report1'] == field2, :].index]
                 dup_idx = generate_duplicated_idx(all_pds, field2, mult_col, field2)
                 doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report2', r_d))
                 docs.append(TaggedDocument(doc_str, dup_idx))

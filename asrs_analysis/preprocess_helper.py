@@ -116,7 +116,6 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
         asrs[f'{col}_report2'] = asrs[f'{col}_report2'].replace(np.nan, '').str.lower()
     asrs['combined'] = asrs['combined'].str.lower()
 
-    # TODO: remove this, only doing this so it doesn't destroy my laptop
     if test:
         np.random.seed(42)
         asrs = asrs.loc[np.random.choice(asrs.index, 1000), :].copy()
