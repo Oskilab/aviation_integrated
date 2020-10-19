@@ -7,6 +7,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 from itertools import product
 import pandas as pd, numpy as np, re, pickle
 
+parser = argparse.ArgumentParser(description='Analyze abbreviations.')
+parser.add_argument('-t', action = 'store_true')
+args = parser.parse_args()
+
+test = args.t
 num_time_periods = (2020 - 1988) * 12
 all_pds = load_asrs(load_saved = True)
 
@@ -109,18 +114,10 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                 d2v1 = np.vstack([d2v_model.docvecs[x] for x in all_tracon])
                 cos_res_tracon_dict[code] = cosine_similarity(d2v1, d2v1)
 
-        # add empty rows to tracon_month_unique
-        tracon_month_unique_copy = tracon_month_unique.copy()
-        for tracon, month, year in tqdm(product(unique_faa_codes, range(1, 13), range(1988, 2020)), \
-                desc = 'adding empty rows'):
-            if (tracon, month, year) not in all_combs:
-                tracon_month_unique_copy.append(pd.Series((tracon, month, year), columns = ['tracon_code', \
-                        'month', 'year']))
-
         index_to_d2v  = {}
 
         # actually generate d2v cosine analysis data
-        for idx, row in tqdm(tracon_month_unique_copy.iterrows(), total = tracon_month_unique.shape[0], \
+        for idx, row in tqdm(tracon_month_unique.iterrows(), total = tracon_month_unique.shape[0], \
                 desc = f"{col} analysis {month_range}mon"):
             index_id = f"{row['tracon_code']} {row['year']}/{row['month']}"
             code = ' '.join([str(row['month']), str(row['year'])])
@@ -218,6 +215,21 @@ all_combs = set(tracon_month_unique.apply(lambda x: (x[0], x[1], x[2]), axis = 1
 unique_code_fn = '../results/unique_airport_code_ntsb_faa.pckl'
 unique_ntsb_faa_codes = pickle.load(open(unique_code_fn, 'rb'))
 
+if test:
+    top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+    unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
+            0, unique_ntsb_faa_codes)
+
+added_rows = {'tracon_code': [], 'month': [], 'year':[]}
+for tracon, month, year in tqdm(product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)), \
+        desc = 'adding empty rows', total = num_time_periods * unique_ntsb_faa_codes.shape[0]):
+    if (tracon, month, year) not in all_combs:
+        added_rows['tracon_code'].append(tracon)
+        added_rows['month'].append(month)
+        added_rows['year'].append(year)
+
+tracon_month_unique = tracon_month_unique.append(pd.DataFrame.from_dict(added_rows))
+
 # deal with multiple reports
 for mult_col in ['narrative', 'callback']:
     for r_d in [load_replace_dictionary(mult_col), {}]:
@@ -257,7 +269,6 @@ for mult_col in ['narrative', 'callback']:
 
 
 for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
-# for col in ['narrative']:
     month_range_dict = {}
     for r_d in [load_replace_dictionary(col), {}]:
         # creating tagged documents
