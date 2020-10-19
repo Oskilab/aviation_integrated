@@ -17,7 +17,7 @@ parser.add_argument('-t', action = 'store_true')
 args = parser.parse_args()
 
 test = args.t
-skip_empty = True
+skip_empty = False
 
 num_time_periods = (2020 - 1988) * 12
 def rename_cols_dict(df, month_range_str, skip_cols = []):
@@ -197,6 +197,8 @@ if test:
 #         .iterrows():
 #     code, mon, year = row['airport_code'], row['month'], row['year']
 #     all_combs.add((code, mon, year))
+
+unique_codes = airport_month_events['airport_code'].unique()
 all_combs = unique_tracon_month_set(airport_month_events)
 
 missing_tracons = None
@@ -282,7 +284,6 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
 
         # combine with doc2vec 
         asrs = asrs.merge(d2v_tm, on = 'tracon_month', how = 'outer')
-        # asrs = asrs.iloc[:1000]
 
         # this creates a dictionary from year/month -> pd.DataFrame of all the rows in 
         # the ASRS dataset within the month range (utilizing n_month)
@@ -365,10 +366,13 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         print(res.shape)
         # res = reorder_cols(res)
         all_res.append(res)
-all_res = pd.concat(all_res, ignore_index = False, axis = 1)
-all_res = reorder_cols(all_res)
-all_res.to_csv('results/final_dataset.csv')
+try:
+    all_res = pd.concat(all_res, ignore_index = False, axis = 1)
+    all_res = reorder_cols(all_res)
+    all_res.to_csv('results/final_dataset.csv')
 
-coverage = all_res.isna().sum()
-coverage['total rows'] = all_res.shape[0]
-coverage.to_csv('results/final_coverage.csv')
+    coverage = all_res.isna().sum()
+    coverage['total rows'] = all_res.shape[0]
+    coverage.to_csv('results/final_coverage.csv')
+except ValueError:
+    embed()
