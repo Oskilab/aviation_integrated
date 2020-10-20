@@ -5,7 +5,7 @@ from tqdm import tqdm
 from preprocess_helper import *
 from sklearn.metrics.pairwise import cosine_similarity
 from itertools import product
-import pandas as pd, numpy as np, re, pickle
+import pandas as pd, numpy as np, re, pickle, argparse
 
 parser = argparse.ArgumentParser(description='Analyze abbreviations.')
 parser.add_argument('-t', action = 'store_true')
