@@ -269,7 +269,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
             return n_m > 0 and n_m <= num_months
         return inner_func
                     
-    asrs_orig = asrs.merge(liwc_df.drop(['tracon', 'month', 'year'], axis = 1), on = 'tracon_month')
+    asrs_orig = asrs.merge(liwc_df.drop(['tracon', 'month', 'year'], axis = 1), on = 'tracon_month', \
+            how = 'outer')
 
     num_months = [1, 3, 6, 12]
     for month_idx, n_month in enumerate(num_months):
