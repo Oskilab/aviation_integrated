@@ -40,7 +40,11 @@ printf "================================= ASRS Analysis ========================
 cd ../
 
 echo ==================== Combine FAA/NTSB Data with Volume Data ====================
-python flight_vol.py
+if $test_var; then
+    python flight_vol.py -t
+else
+    python flight_vol.py
+fi
 printf "==================== Combine FAA/NTSB Data with Volume Data ====================\n\n"
 
 

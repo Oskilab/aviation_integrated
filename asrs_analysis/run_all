@@ -17,7 +17,11 @@ fi
 printf "========== Finished Analyzing Abbreviations =============\n\n"
 
 echo ============= Creating Abbreviations Counts =============
-python top_down.py
+if $test_var; then
+    python top_down.py -t
+else
+    python top_down.py
+fi
 printf "============= Finished Abbreviations Counts =============\n\n"
 
 echo ==================== Analyzing LIWC ====================

@@ -113,6 +113,8 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             if len(all_tracon) >= 1:
                 d2v1 = np.vstack([d2v_model.docvecs[x] for x in all_tracon])
                 cos_res_tracon_dict[code] = cosine_similarity(d2v1, d2v1)
+            else:
+                cos_res_tracon_dict[code] = np.zeros((0, 0))
 
         index_to_d2v  = {}
 
@@ -122,58 +124,58 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             index_id = f"{row['tracon_code']} {row['year']}/{row['month']}"
             code = ' '.join([str(row['month']), str(row['year'])])
 
-            if code in cos_res_tracon_dict:
-                cos_res = cos_res_tracon_dict[code]
-                searched = tracon_month_dict[code] # all rows with time period
-                re_indexed_search = searched.drop_duplicates(col).reset_index()
-                same_tracon = re_indexed_search.loc[ \
-                        re_indexed_search['tracon_code'] == row['tracon_code'], :].index
-                other_tracon = re_indexed_search.loc[ \
-                        re_indexed_search['tracon_code'] != row['tracon_code'], :].index
-                all_tracon = re_indexed_search.index
+            # if code in cos_res_tracon_dict:
+            cos_res = cos_res_tracon_dict[code]
+            searched = tracon_month_dict[code] # all rows with time period
+            re_indexed_search = searched.drop_duplicates(col).reset_index()
+            same_tracon = re_indexed_search.loc[ \
+                    re_indexed_search['tracon_code'] == row['tracon_code'], :].index
+            other_tracon = re_indexed_search.loc[ \
+                    re_indexed_search['tracon_code'] != row['tracon_code'], :].index
+            all_tracon = re_indexed_search.index
 
-                d2v_dict = {}
+            d2v_dict = {}
 
-                # same to same tracon
-                avg_d2v, num_comp = calculate_avg_comp2(same_tracon, same_tracon, cos_res, \
-                        overlap = len(same_tracon), same = True)
-                d2v_dict[f'trcn{col_type1}'] = avg_d2v
-                d2v_dict[f'trcn{col_type2}'] = num_comp
+            # same to same tracon
+            avg_d2v, num_comp = calculate_avg_comp2(same_tracon, same_tracon, cos_res, \
+                    overlap = len(same_tracon), same = True)
+            d2v_dict[f'trcn{col_type1}'] = avg_d2v
+            d2v_dict[f'trcn{col_type2}'] = num_comp
 
-                # same to other tracon
-                avg_d2v, num_comp = calculate_avg_comp2(same_tracon, other_tracon, cos_res)
-                d2v_dict[f'trcn_invout{col_type1}'] = avg_d2v
-                d2v_dict[f'trcn_invout{col_type2}'] = num_comp
+            # same to other tracon
+            avg_d2v, num_comp = calculate_avg_comp2(same_tracon, other_tracon, cos_res)
+            d2v_dict[f'trcn_invout{col_type1}'] = avg_d2v
+            d2v_dict[f'trcn_invout{col_type2}'] = num_comp
 
-                # other to other tracon
-                avg_d2v, num_comp = calculate_avg_comp2(other_tracon, other_tracon, cos_res, \
-                        overlap = len(other_tracon), same = True)
-                d2v_dict[f'trcn_out{col_type1}'] = avg_d2v
-                d2v_dict[f'trcn_out{col_type2}'] = num_comp
+            # other to other tracon
+            avg_d2v, num_comp = calculate_avg_comp2(other_tracon, other_tracon, cos_res, \
+                    overlap = len(other_tracon), same = True)
+            d2v_dict[f'trcn_out{col_type1}'] = avg_d2v
+            d2v_dict[f'trcn_out{col_type2}'] = num_comp
 
-                # same to all tracon
-                avg_d2v, num_comp = calculate_avg_comp2(same_tracon, all_tracon, cos_res, \
-                        overlap = len(same_tracon))
-                d2v_dict[f'trcn_invall{col_type1}'] = avg_d2v
-                d2v_dict[f'trcn_invall{col_type2}'] = num_comp
+            # same to all tracon
+            avg_d2v, num_comp = calculate_avg_comp2(same_tracon, all_tracon, cos_res, \
+                    overlap = len(same_tracon))
+            d2v_dict[f'trcn_invall{col_type1}'] = avg_d2v
+            d2v_dict[f'trcn_invall{col_type2}'] = num_comp
 
-                # all to all tracon
-                avg_d2v, num_comp = calculate_avg_comp2(all_tracon, all_tracon, cos_res, \
-                        overlap = len(all_tracon), same = True)
-                d2v_dict[f'trcn_all{col_type1}'] = avg_d2v
-                d2v_dict[f'trcn_all{col_type2}'] = \
-                        num_comp
+            # all to all tracon
+            avg_d2v, num_comp = calculate_avg_comp2(all_tracon, all_tracon, cos_res, \
+                    overlap = len(all_tracon), same = True)
+            d2v_dict[f'trcn_all{col_type1}'] = avg_d2v
+            d2v_dict[f'trcn_all{col_type2}'] = \
+                    num_comp
 
-                # b/w report1 and report2
-                if col == 'narrative' or col == 'callback': # only those with mult reports
-                    this_tracon = searched.loc[searched['tracon_code'] == row['tracon_code'], :].copy()
-                    this_tracon.drop_duplicates([f'{col}_report1', f'{col}_report2'], inplace = True)
-                    d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
-                            this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean()
-                    d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
-                            this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count()
+            # b/w report1 and report2
+            if col == 'narrative' or col == 'callback': # only those with mult reports
+                this_tracon = searched.loc[searched['tracon_code'] == row['tracon_code'], :].copy()
+                this_tracon.drop_duplicates([f'{col}_report1', f'{col}_report2'], inplace = True)
+                d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
+                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean()
+                d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
+                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count()
 
-                index_to_d2v[index_id] = pd.Series(d2v_dict)
+            index_to_d2v[index_id] = pd.Series(d2v_dict)
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
         month_range_dict[month_range] = month_range_dict.get(month_range, []) + [fin]
 
@@ -214,11 +216,22 @@ all_combs = set(tracon_month_unique.apply(lambda x: (x[0], x[1], x[2]), axis = 1
 # TODO: check that this pickle file is automatically being generated in pipeline
 unique_code_fn = '../results/unique_airport_code_ntsb_faa.pckl'
 unique_ntsb_faa_codes = pickle.load(open(unique_code_fn, 'rb'))
+unique_codes = set(unique_ntsb_faa_codes)
+
+asrs_added_tracons = []
+for tracon_code in tracon_month_unique['tracon_code'].unique():
+    if tracon_code not in unique_codes:
+        asrs_added_tracons.append(tracon_code)
+
+unique_ntsb_faa_codes = np.hstack([unique_ntsb_faa_codes, np.array(asrs_added_tracons)])
 
 if test:
+    # if we're testing only utilize the airport codes from this wikipedia file
     top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
     unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
             0, unique_ntsb_faa_codes)
+    tracon_month_unique = tracon_month_unique.loc[\
+            tracon_month_unique['tracon_code'].apply(lambda x: x in top_50_iata)]
 
 added_rows = {'tracon_code': [], 'month': [], 'year':[]}
 for tracon, month, year in tqdm(product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)), \

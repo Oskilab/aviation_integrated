@@ -4,9 +4,16 @@ from IPython import embed
 from tqdm import tqdm
 from collections import Counter
 from preprocess_helper import *
+import argparse, pickle
+from itertools import product
 
+num_time_periods = (2020 - 1988) * 12
 liwc = pd.read_excel('dictionaries/LIWC2015-dictionary-poster-unlocked.xlsx').iloc[3:]
 # asrs = pd.read_csv('datasets/ASRS 1988-2019_extracted.csv')
+parser = argparse.ArgumentParser(description='Analyze abbreviations.')
+parser.add_argument('-t', action = 'store_true')
+args = parser.parse_args()
+test = args.t
 
 def convert_ctr_to_series(counter, word_dict = {}):
     # word_dict = copy.copy(word_dict)
@@ -28,6 +35,10 @@ def to_month(x):
         return int(float(x.split()[1].split("/")[1]))
     except:
         return np.nan
+def add_dates(df):
+    df['year'] = df.index.map(to_year)
+    df['month'] = df.index.map(to_month)
+    return df
 def generate_proportions(fin_df, tqdm_desc = "generate props"):
     fin_df['year'] = fin_df.index.map(to_year)
     fin_df['month'] = fin_df.index.map(to_month)
@@ -113,6 +124,47 @@ def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict, 
     fin_df_replace = generate_proportions(fin_df_replace, "generate props w/replace")
 
     fin = pd.concat([fin_df, fin_df_replace], axis = 1)
+    fin = add_dates(fin)
+
+    # add in missing rows
+    unique_code_fn = '../results/unique_airport_code_ntsb_faa.pckl'
+    unique_ntsb_faa_codes = pickle.load(open(unique_code_fn, 'rb'))
+    unique_codes = set(unique_ntsb_faa_codes)
+
+    if test:
+        top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+        fin = fin.loc[fin.index.map(lambda x: x.split()[0] in top_50_iata)]
+        unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
+                0, unique_ntsb_faa_codes)
+
+    all_combs = set()
+    for idx, row in fin.iterrows():
+        tracon = idx.split()[0]
+        year = row['year']['']
+        month = row['month']['']
+        try:
+            all_combs.add((tracon, year, month))
+        except:
+            embed()
+            1/0
+
+    asrs_added_tracons = []
+    for tracon_code in fin.index.map(lambda x:x.split()[0]).unique():
+        if tracon_code not in unique_codes:
+            asrs_added_tracons.append(tracon_code)
+
+    unique_ntsb_faa_codes = np.hstack([unique_ntsb_faa_codes, np.array(asrs_added_tracons)])
+
+    new_output = {}
+    for tracon, month, year in tqdm(product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)), \
+            desc = 'adding empty rows', total = num_time_periods * unique_ntsb_faa_codes.shape[0]):
+        if (tracon, year, month) not in all_combs:
+            index = f'{tracon} {year}/{month}'
+            new_output[index] = pd.Series(index = fin.columns)
+
+    fin = fin.append(pd.DataFrame.from_dict(new_output, orient = 'index'))
+    fin.drop(['year', 'month'], axis = 1, inplace = True)
+
     fin.to_csv(f'results/liwc_tracon_month_{col}_counts.csv')
 
 dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'iata']
