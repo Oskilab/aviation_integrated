@@ -1,10 +1,17 @@
 from IPython import embed
 from tqdm import tqdm
+from itertools import product
 from collections import Counter
 from preprocess_helper import *
 
 import pandas as pd, numpy as np, re
 import argparse, pickle, copy
+num_time_periods = (2020 - 1988) * 12
+
+parser = argparse.ArgumentParser(description='Analyze abbreviations.')
+parser.add_argument('-t', action = 'store_true')
+args = parser.parse_args()
+test = args.t
 def convert_ctr_to_series(counter, abrev_set = set(), abrev_col = 'narr'):
     """
     This converts a collections.Counter object to a pd.Series object. The collections.Counter
@@ -164,6 +171,39 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                 = row[f'{abrev_col}_wc']
     all_dfs[f'{abrev_col}_wc_out'] = all_dfs[f'{abrev_col}_wc_all'] - all_dfs[f'{abrev_col}_wc']
     all_dfs[f'{abrev_col}_wc_prop'] = all_dfs[f'{abrev_col}_wc'] / all_dfs[f'{abrev_col}_wc_all']
-    all_dfs.drop(['year', 'month'], axis = 1, inplace = True)
 
+    # add in missing rows
+    unique_code_fn = '../results/unique_airport_code_ntsb_faa.pckl'
+    unique_ntsb_faa_codes = pickle.load(open(unique_code_fn, 'rb'))
+    unique_codes = set(unique_ntsb_faa_codes)
+
+    if test:
+        top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+        all_dfs = all_dfs.loc[all_dfs.index.map(lambda x: x.split()[0] in top_50_iata)]
+        unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
+                0, unique_ntsb_faa_codes)
+
+    all_combs = set()
+    for idx, row in all_dfs.iterrows():
+        tracon = idx.split()[0]
+        year = row['year']
+        month = row['month']
+        all_combs.add((tracon, year, month))
+
+    asrs_added_tracons = []
+    for tracon_code in all_dfs.index.map(lambda x:x.split()[0]).unique():
+        if tracon_code not in unique_codes:
+            asrs_added_tracons.append(tracon_code)
+
+    unique_ntsb_faa_codes = np.hstack([unique_ntsb_faa_codes, np.array(asrs_added_tracons)])
+
+    new_output = {}
+    for tracon, month, year in tqdm(product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)), \
+            desc = 'adding empty rows', total = num_time_periods * unique_ntsb_faa_codes.shape[0]):
+        if (tracon, year, month) not in all_combs:
+            index = f'{tracon} {year}/{month}'
+            new_output[index] = pd.Series(index = all_dfs.columns)
+
+    all_dfs = all_dfs.append(pd.DataFrame.from_dict(new_output, orient = 'index'))
+    all_dfs.drop(['year', 'month'], axis = 1, inplace = True)
     all_dfs.to_csv(f'results/tracon_month_{col}.csv', index = True)

@@ -1,12 +1,20 @@
 import pandas as pd, numpy as np, re, os
+import argparse
 from tqdm import tqdm
 from IPython import embed
 from collections import namedtuple
+from itertools import product
 coverage = namedtuple('coverage', ['part', 'total'])
 """
 Combines flight volume data (WEB-Report-*) with airport_month_events, which is the processed
 FAA/NTSB incident/accident data
 """
+num_time_periods = (2020 - 1988) * 12
+
+parser = argparse.ArgumentParser(description='Add Flight volume.')
+parser.add_argument('-t', action = 'store_true')
+args = parser.parse_args()
+test = args.t
 
 tracon_fns = ['51547', '49612', '29844', '52212', '81669', '22012']
 tracon_fns = set([f'WEB-Report-{x}.csv' for x in tracon_fns])
@@ -106,8 +114,25 @@ print(coverage(res.shape[0] - missing_code - num_zzz, res.shape[0] - date_nf_ct 
 
 cnf = pd.DataFrame(rows_cnf)
 dnf = pd.DataFrame(rows_dnf)
-all_rows = pd.DataFrame(rows)
 
+all_rows = pd.DataFrame(rows)
+if test:
+    top_50_iata = set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+    all_rows = all_rows.loc[all_rows['airport_code'].apply(lambda x: x.split()[0] in top_50_iata)]
+
+all_combs = set()
+for idx, row in all_rows.iterrows():
+    all_combs.add((row['airport_code'], row['year'], row['month']))
+
+unique_codes = all_rows['airport_code'].unique()
+new_rows = []
+for tracon, month, year in tqdm(product(unique_codes, range(1, 13), range(1988, 2020)), \
+        desc = 'adding empty rows', total = num_time_periods * unique_codes.shape[0]):
+    if (tracon, year, month) not in all_combs:
+        index = f'{tracon} {year}/{month}'
+        new_rows.append(pd.Series(index = all_rows.columns))
+
+all_rows = all_rows.append(pd.DataFrame.from_records(new_rows))
 # save csvs
 all_rows.to_csv('results/combined_vol_incident.csv', index = False)
 cnf.to_csv('results/nf_codes.csv')

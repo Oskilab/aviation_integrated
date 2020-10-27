@@ -2,7 +2,9 @@ import pandas as pd, numpy as np, re
 from IPython import embed
 from tqdm import tqdm
 from itertools import product
+from helper import get_tracon, get_year, get_month, tracon_month_split, fill_with_empty
 import argparse
+from collections import Counter
 """
 Combines ASRS data with FAA/NTSB, LIWC and Doc2Vec datasets
 """
@@ -12,7 +14,7 @@ ifr_vfr_dict = {
     'overflight': 'ovrflt'
 }
 
-parser = argparse.ArgumentParser(description='Analyze abbreviations.')
+parser = argparse.ArgumentParser(description='Combine ASRS data w/FAA/NTSB/LIWC/D2V.')
 parser.add_argument('-t', action = 'store_true')
 args = parser.parse_args()
 
@@ -182,59 +184,38 @@ def unique_tracon_month_set(df):
         all_combs.add((code, mon, year))
     return all_combs
 
-
-
 # ntsb/faa incident dataset + volume
 airport_month_events = pd.read_csv('results/combined_vol_incident.csv')
 ame_cols = list(airport_month_events.columns)
 if test:
-    airport_month_events = airport_month_events.iloc[:1000, :]
+    # airport_month_events = airport_month_events.iloc[:1000, :]
+    top_50_iata = set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+    airport_month_events['airport_code'] = airport_month_events['airport_code'].astype(str)
+    airport_month_events = airport_month_events.loc[\
+            airport_month_events['airport_code'].apply(lambda x: x.split()[0] in top_50_iata)]
 
-# for missing tracon codes
-# unique_codes = airport_month_events['airport_code'].unique()
-# all_combs = set()
-# for idx, row in airport_month_events[['airport_code', 'year', 'month']].drop_duplicates() \
-#         .iterrows():
-#     code, mon, year = row['airport_code'], row['month'], row['year']
-#     all_combs.add((code, mon, year))
+airport_month_events = fill_with_empty(airport_month_events, 'airport_code')
 
-unique_codes = airport_month_events['airport_code'].unique()
+tracon_nar = pd.read_csv('asrs_analysis/results/tracon_month_narrative.csv', index_col = 0)
+asrs_codes = tracon_nar.index.map(get_tracon).unique()
+
+unique_codes = np.hstack((airport_month_events['airport_code'].unique(), asrs_codes))
 all_combs = unique_tracon_month_set(airport_month_events)
+for tracon_month in tracon_nar.index:
+    trac, month, year = tracon_month_split(tracon_month)
+    if (trac, month, year) not in all_combs:
+        all_combs.add((trac, month, year))
 
 missing_tracons = None
 all_res = []
 for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
-# for col in ['narrative']:
     print('col', col)
     # asrs
-    tracon_nar = pd.read_csv(f'asrs_analysis/results/tracon_month_{col}.csv', index_col = 0)
-
-    # ntsb/faa incident dataset + volume
-    # airport_month_events = pd.read_csv('results/combined_vol_incident.csv')
+    asrs = pd.read_csv(f'asrs_analysis/results/tracon_month_{col}.csv', index_col = 0)
 
     # liwc counts
     liwc_df = pd.read_csv(f'asrs_analysis/results/liwc_tracon_month_{col}_counts.csv', \
             index_col = 0, header = [1])
-
-    def get_tracon(x):
-        split_x = str(x).split()
-        if len(split_x) > 2:
-            return " ".join(split_x[:-1])
-        else:
-            return split_x[0]
-
-    def get_year(x):
-        try:
-            return int(float(str(x).split()[-1].split("/")[0]))
-        except ValueError:
-            return np.nan
-
-    def get_month(x):
-        try:
-            return int(float(str(x).split()[-1].split("/")[1]))
-        except ValueError:
-            return np.nan
-
 
     # preprocess liwc_df
     liwc_df['tracon'] = pd.Series(liwc_df.index.map(get_tracon), index = liwc_df.index)
@@ -243,10 +224,12 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
     liwc_df = liwc_df.reset_index().rename({'index':'tracon_month'}, axis = 1)
 
     # preprocess asrs
-    asrs = tracon_nar.reset_index()
-    asrs['tracon'] = pd.Series(tracon_nar.index.map(get_tracon))
-    asrs['month'] = pd.Series(tracon_nar.index.map(get_month))
-    asrs['year'] = pd.Series(tracon_nar.index.map(get_year))
+    asrs['tracon'] = asrs.index.map(get_tracon)
+    asrs['month'] = asrs.index.map(get_month)
+    asrs['year'] = asrs.index.map(get_year)
+
+    asrs = asrs.reset_index().rename({'index':'tracon_month'}, axis = 1)
+
     dicts = ['casa', 'faa', 'hand', 'iata_iaco', 'nasa']
 
     def num_months_between(month1, year1, month2, year2):
@@ -352,7 +335,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
 
         # generate dataset and perform some preprocessing
-        res = pd.DataFrame.from_dict({idx: row for idx, row in enumerate(final_rows)}, orient = 'index')
+        res = pd.DataFrame.from_dict({idx: row for idx, row in \
+                enumerate(final_rows)}, orient = 'index')
 
         # post-processing
         res = rename_cols(res, month_range_str, skip_cols = ame_cols)
@@ -367,13 +351,10 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         print(res.shape)
         # res = reorder_cols(res)
         all_res.append(res)
-try:
-    all_res = pd.concat(all_res, ignore_index = False, axis = 1)
-    all_res = reorder_cols(all_res)
-    all_res.to_csv('results/final_dataset.csv')
+all_res = pd.concat(all_res, ignore_index = False, axis = 0)
+all_res = reorder_cols(all_res)
+all_res.to_csv('results/final_dataset.csv')
 
-    coverage = all_res.isna().sum()
-    coverage['total rows'] = all_res.shape[0]
-    coverage.to_csv('results/final_coverage.csv')
-except ValueError:
-    embed()
+coverage = all_res.isna().sum()
+coverage['total rows'] = all_res.shape[0]
+coverage.to_csv('results/final_coverage.csv')
