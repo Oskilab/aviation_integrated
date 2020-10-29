@@ -177,11 +177,12 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
     unique_ntsb_faa_codes = pickle.load(open(unique_code_fn, 'rb'))
     unique_codes = set(unique_ntsb_faa_codes)
 
-    if test:
-        top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
-        all_dfs = all_dfs.loc[all_dfs.index.map(lambda x: x.split()[0] in top_50_iata)]
-        unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
-                0, unique_ntsb_faa_codes)
+    top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+    all_dfs = all_dfs.loc[all_dfs.index.map(lambda x: x.split()[0] in top_50_iata)]
+
+    # if test:
+    unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
+            0, unique_ntsb_faa_codes)
 
     all_combs = set()
     for idx, row in all_dfs.iterrows():
