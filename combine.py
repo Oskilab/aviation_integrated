@@ -187,12 +187,12 @@ def unique_tracon_month_set(df):
 # ntsb/faa incident dataset + volume
 airport_month_events = pd.read_csv('results/combined_vol_incident.csv')
 ame_cols = list(airport_month_events.columns)
-if test:
+# if test:
     # airport_month_events = airport_month_events.iloc[:1000, :]
-    top_50_iata = set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
-    airport_month_events['airport_code'] = airport_month_events['airport_code'].astype(str)
-    airport_month_events = airport_month_events.loc[\
-            airport_month_events['airport_code'].apply(lambda x: x.split()[0] in top_50_iata)]
+top_50_iata = set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+airport_month_events['airport_code'] = airport_month_events['airport_code'].astype(str)
+airport_month_events = airport_month_events.loc[\
+        airport_month_events['airport_code'].apply(lambda x: x.split()[0] in top_50_iata)]
 
 airport_month_events = fill_with_empty(airport_month_events, 'airport_code')
 
@@ -264,10 +264,13 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
 
         d2v_tm = pd.read_csv(f'./asrs_analysis/results/d2v_tracon_month_{col}_{n_month}mon.csv', index_col = 0)
         d2v_tm.index = d2v_tm.index.rename('tracon_month')
-        d2v_tm.reset_index(inplace = True) 
+        # d2v_tm['tracon'] = d2v_tm.index.map(get_tracon)
+        # d2v_tm['year'] = d2v_tm.index.map(get_year)
+        # d2v_tm['month'] = d2v_tm.index.map(get_month)
+        # d2v_tm.reset_index(inplace = True) 
 
         # combine with doc2vec 
-        asrs = asrs.merge(d2v_tm, on = 'tracon_month', how = 'outer')
+        # asrs = asrs.merge(d2v_tm, on = 'tracon_month', how = 'outer')
 
         # this creates a dictionary from year/month -> pd.DataFrame of all the rows in 
         # the ASRS dataset within the month range (utilizing n_month)
@@ -284,10 +287,17 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         # ASRS). This utilizes the dictionary created above
         final_rows = []
         asrs_covered_ind = set()
+        ct = 0
         for idx, row in tqdm(airport_month_events.iterrows(), \
                 total = airport_month_events.shape[0], desc = \
                 f"Combining ASRS {n_month}mon"):
             code = ' '.join([str(row['month']), str(row['year'])])
+            d2v_code = f'{row["airport_code"]} {row["year"]}/{row["month"]} '
+            try:
+                assert(d2v_code in d2v_tm.index)
+            except:
+                ct += 1
+                continue
             if code in tracon_month_dict:
                 searched = tracon_month_dict[code]
                 searched = searched.loc[searched['tracon'] == row['airport_code'], :]
@@ -298,38 +308,40 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                 if searched.shape[0] > 0:
                     cumulative = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis = 1).sum()
                     if month_idx == 0:
-                        final_rows.append(pd.concat([row, cumulative], axis = 0))
+                        final_rows.append(pd.concat([row, cumulative, d2v_tm.loc[d2v_code]], axis = 0))
                     else:
-                        final_rows.append(pd.concat([tr_yr_mon, cumulative], axis = 0))
+                        final_rows.append(pd.concat([tr_yr_mon, cumulative, d2v_tm.loc[d2v_code]], axis = 0))
                 else:
                     if month_idx == 0:
                         final_rows.append(pd.concat([row, pd.Series(index = asrs.columns.drop(\
                                 ['tracon_month', 'tracon', 'year', 'month']), \
-                                dtype = 'float64')], axis = 0))
+                                dtype = 'float64'), d2v_tm.loc[d2v_code]], axis = 0))
                     else:
                         final_rows.append(pd.concat([tr_yr_mon, pd.Series(index = asrs.columns.drop(\
                                 ['tracon_month', 'tracon', 'year', 'month']), \
-                                dtype = 'float64')], axis = 0))
+                                dtype = 'float64'), d2v_tm.loc[d2v_code]], axis = 0))
 
         # the following code will add empty rows for tracon_month combinations that 
         # do not appear in the dataset (although the tracon_code) appears in the dataset.
-        cols = final_rows[0].index
-        if missing_tracons is None and not skip_empty:
-            missing_tracons = []
-            empty_row = pd.Series(index = cols, dtype = 'float64')
-
-            total = unique_codes.shape[0] * num_time_periods
-            for code_mon_yr in tqdm(product(unique_codes, range(1, 13), range(1988, 2020)), \
-                    total = total, desc = "missing tracon_month"):
-                if code_mon_yr not in all_combs:
-                    code, month, year = code_mon_yr
-                    e_r = empty_row.copy()
-                    e_r['airport_code'] = code
-                    e_r['year'] = year
-                    e_r['month'] = month
-                    missing_tracons.append(e_r)
-
-            final_rows += missing_tracons
+        # cols = final_rows[0].index
+        # if missing_tracons is None and not skip_empty:
+        #     missing_tracons = []
+        #     empty_row = pd.Series(index = cols, dtype = 'float64')
+        #
+        #     total = unique_codes.shape[0] * num_time_periods
+        #     for code_mon_yr in tqdm(product(unique_codes, range(1, 13), range(1988, 2020)), \
+        #             total = total, desc = "missing tracon_month"):
+        #         if code_mon_yr not in all_combs:
+        #             code, month, year = code_mon_yr
+        #             e_r = empty_row.copy()
+        #             e_r['airport_code'] = code
+        #             e_r['year'] = year
+        #             e_r['month'] = month
+        #             missing_tracons.append(e_r)
+        #
+        #     final_rows += missing_tracons
+        print(ct)
+        embed()
 
         print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
         print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])

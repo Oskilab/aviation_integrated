@@ -13,7 +13,7 @@ args = parser.parse_args()
 
 test = args.t
 num_time_periods = (2020 - 1988) * 12
-all_pds = load_asrs(load_saved = True)
+all_pds = load_asrs(load_saved = False)
 
 def num_months_between(month1, year1, month2, year2):
     return (year2 - year1) * 12 + month2 - month1
@@ -163,8 +163,7 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             avg_d2v, num_comp = calculate_avg_comp2(all_tracon, all_tracon, cos_res, \
                     overlap = len(all_tracon), same = True)
             d2v_dict[f'trcn_all{col_type1}'] = avg_d2v
-            d2v_dict[f'trcn_all{col_type2}'] = \
-                    num_comp
+            d2v_dict[f'trcn_all{col_type2}'] = num_comp
 
             # b/w report1 and report2
             if col == 'narrative' or col == 'callback': # only those with mult reports
