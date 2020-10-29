@@ -242,6 +242,28 @@ for tracon, month, year in tqdm(product(unique_ntsb_faa_codes, range(1, 13), ran
 
 tracon_month_unique = tracon_month_unique.append(pd.DataFrame.from_dict(added_rows))
 
+
+def create_docs(row):
+    field1 = row[f'{mult_col}_report1']
+    if not pd.isna(field1):
+        dup_idx = generate_duplicated_idx(all_pds, field1, mult_col, field1)
+        doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report1', r_d))
+        # fin.append(TaggedDocument(doc_str, dup_idx))
+        return TaggedDocument(doc_str, dup_idx)
+    else:
+        return None
+
+def create_docs2(row):
+    field2 = row[f'{mult_col}_report2']
+    if not pd.isna(field2):
+        dup_idx = generate_duplicated_idx(all_pds, field2, mult_col, field2)
+        doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report2', r_d))
+        # fin.append(TaggedDocument(doc_str, dup_idx))
+        return TaggedDocument(doc_str, dup_idx)
+    else:
+        return None
+
+from itertools import chain
 # all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
 # deal with multiple reports
 for mult_col in ['narrative', 'callback']:
