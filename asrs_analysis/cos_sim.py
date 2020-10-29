@@ -13,7 +13,7 @@ args = parser.parse_args()
 
 test = args.t
 num_time_periods = (2020 - 1988) * 12
-all_pds = load_asrs(load_saved = False)
+all_pds = load_asrs(load_saved = True)
 
 def num_months_between(month1, year1, month2, year2):
     return (year2 - year1) * 12 + month2 - month1
@@ -242,6 +242,28 @@ for tracon, month, year in tqdm(product(unique_ntsb_faa_codes, range(1, 13), ran
 
 tracon_month_unique = tracon_month_unique.append(pd.DataFrame.from_dict(added_rows))
 
+
+def create_docs(row):
+    field1 = row[f'{mult_col}_report1']
+    if not pd.isna(field1):
+        dup_idx = generate_duplicated_idx(all_pds, field1, mult_col, field1)
+        doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report1', r_d))
+        # fin.append(TaggedDocument(doc_str, dup_idx))
+        return TaggedDocument(doc_str, dup_idx)
+    else:
+        return None
+
+def create_docs2(row):
+    field2 = row[f'{mult_col}_report2']
+    if not pd.isna(field2):
+        dup_idx = generate_duplicated_idx(all_pds, field2, mult_col, field2)
+        doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report2', r_d))
+        # fin.append(TaggedDocument(doc_str, dup_idx))
+        return TaggedDocument(doc_str, dup_idx)
+    else:
+        return None
+
+from itertools import chain
 # all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
 # deal with multiple reports
 for mult_col in ['narrative', 'callback']:
@@ -251,23 +273,26 @@ for mult_col in ['narrative', 'callback']:
         all_pds[cos_col_name] = np.nan
 
         # creating list of tagged documents
-        docs, set_of_docs = [], set()
-        for idx, row in tqdm(all_pds.iterrows(), total = all_pds.shape[0], desc = 'creating' + \
-                f' documents for {mult_col}{" replace" if replace else ""}'):
-            # note duplicated code, TODO: fix
-            field1 = row[f'{mult_col}_report1']
-            if field1 not in set_of_docs and not pd.isna(field1):
-                dup_idx = generate_duplicated_idx(all_pds, field1, mult_col, field1)
-                doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report1', r_d))
-                docs.append(TaggedDocument(doc_str, dup_idx))
-                set_of_docs.add(field1)
-
-            field2 = row[f'{mult_col}_report2']
-            if field2 not in set_of_docs and not pd.isna(field2):
-                dup_idx = generate_duplicated_idx(all_pds, field2, mult_col, field2)
-                doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report2', r_d))
-                docs.append(TaggedDocument(doc_str, dup_idx))
-                set_of_docs.add(field2)
+        docs = []
+        tqdm.pandas(desc = 'creating docs for {mult_col}')
+        res1 = all_pds.progress_apply(create_docs, axis = 1)
+        res2 = all_pds.progress_apply(create_docs2, axis = 1)
+        # for idx, row in tqdm(all_pds.iterrows(), total = all_pds.shape[0], desc = 'creating' + \
+        #         f' documents for {mult_col}{" replace" if replace else ""}'):
+        #     # note duplicated code, TODO: fix
+        #     field1 = row[f'{mult_col}_report1']
+        #     if not pd.isna(field1):
+        #         dup_idx = generate_duplicated_idx(all_pds, field1, mult_col, field1)
+        #         doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report1', r_d))
+        #         docs.append(TaggedDocument(doc_str, dup_idx))
+        #
+        #     field2 = row[f'{mult_col}_report2']
+        #     if not pd.isna(field2) and field2 != field1:
+        #         dup_idx = generate_duplicated_idx(all_pds, field2, mult_col, field2)
+        #         doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report2', r_d))
+        #         docs.append(TaggedDocument(doc_str, dup_idx))
+        docs = list(res1.values) + list(res2.values)
+        docs = [x for x in docs if x is not None]
 
         # train doc2vec
         model = Doc2Vec(docs, vector_size = 20, window = 3)
