@@ -225,13 +225,13 @@ for tracon_code in tracon_month_unique['tracon_code'].unique():
 
 unique_ntsb_faa_codes = np.hstack([unique_ntsb_faa_codes, np.array(asrs_added_tracons)])
 
-if test:
-    # if we're testing only utilize the airport codes from this wikipedia file
-    top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
-    unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
-            0, unique_ntsb_faa_codes)
-    tracon_month_unique = tracon_month_unique.loc[\
-            tracon_month_unique['tracon_code'].apply(lambda x: x in top_50_iata)]
+# if test:
+# if we're testing only utilize the airport codes from this wikipedia file
+top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
+        0, unique_ntsb_faa_codes)
+tracon_month_unique = tracon_month_unique.loc[\
+    tracon_month_unique['tracon_code'].apply(lambda x: x in top_50_iata)]
 
 added_rows = {'tracon_code': [], 'month': [], 'year':[]}
 for tracon, month, year in tqdm(product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)), \
@@ -243,6 +243,7 @@ for tracon, month, year in tqdm(product(unique_ntsb_faa_codes, range(1, 13), ran
 
 tracon_month_unique = tracon_month_unique.append(pd.DataFrame.from_dict(added_rows))
 
+all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
 # deal with multiple reports
 for mult_col in ['narrative', 'callback']:
     for r_d in [load_replace_dictionary(mult_col), {}]:

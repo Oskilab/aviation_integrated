@@ -131,11 +131,11 @@ def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict, 
     unique_ntsb_faa_codes = pickle.load(open(unique_code_fn, 'rb'))
     unique_codes = set(unique_ntsb_faa_codes)
 
-    if test:
-        top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
-        fin = fin.loc[fin.index.map(lambda x: x.split()[0] in top_50_iata)]
-        unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
-                0, unique_ntsb_faa_codes)
+    # if test:
+    top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+    fin = fin.loc[fin.index.map(lambda x: x.split()[0] in top_50_iata)]
+    unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
+            0, unique_ntsb_faa_codes)
 
     all_combs = set()
     for idx, row in fin.iterrows():
@@ -173,6 +173,8 @@ abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
         'callback': 'call'}
 
+top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
 sel = ['tracon_code', 'year', 'month']
 tmp = all_pds[sel].groupby(sel).count().reset_index()
 for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
