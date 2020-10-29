@@ -243,7 +243,7 @@ for tracon, month, year in tqdm(product(unique_ntsb_faa_codes, range(1, 13), ran
 
 tracon_month_unique = tracon_month_unique.append(pd.DataFrame.from_dict(added_rows))
 
-all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
+# all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
 # deal with multiple reports
 for mult_col in ['narrative', 'callback']:
     for r_d in [load_replace_dictionary(mult_col), {}]:
