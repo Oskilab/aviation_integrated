@@ -242,41 +242,12 @@ for tracon, month, year in tqdm(product(unique_ntsb_faa_codes, range(1, 13), ran
 
 tracon_month_unique = tracon_month_unique.append(pd.DataFrame.from_dict(added_rows))
 
-
-def create_docs(row):
-    field1 = row[f'{mult_col}_report1']
-    if not pd.isna(field1):
-        dup_idx = generate_duplicated_idx(all_pds, field1, mult_col, field1)
-        doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report1', r_d))
-        # fin.append(TaggedDocument(doc_str, dup_idx))
-        return TaggedDocument(doc_str, dup_idx)
-    else:
-        return None
-
-def create_docs2(row):
-    field2 = row[f'{mult_col}_report2']
-    if not pd.isna(field2):
-        dup_idx = generate_duplicated_idx(all_pds, field2, mult_col, field2)
-        doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report2', r_d))
-        # fin.append(TaggedDocument(doc_str, dup_idx))
-        return TaggedDocument(doc_str, dup_idx)
-    else:
-        return None
-
 from itertools import chain
 # all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
 # deal with multiple reports
 for mult_col in ['narrative', 'callback']:
-    # report_to_idx = {}
-    # for field in all_pds[f'{mult_col}_report1'].unique():
-    #     report_to_idx[field] = report_to_idx.get(field, [])\
-    #             .extend(list(all_pds[all_pds[f'{mult_col}_report1'] == field].index))
-    # for field in all_pds[f'{mult_col}_report2'].unique():
-    #     report_to_idx[field] = report_to_idx.get(field, []).\
-    #             extend(list(all_pds[all_pds[f'{mult_col}_report2'] == field].index))
-
     reps = np.hstack((all_pds[f'{mult_col}_report1'].unique(), all_pds[f'{mult_col}_report2'].unique()))
-    reps = np.unique([str(x) for x in reps if not pd.isna(x)])
+    reps = reps.astype(str)
 
     for r_d in [load_replace_dictionary(mult_col), {}]:
         replace = len(r_d) > 0
@@ -289,32 +260,15 @@ for mult_col in ['narrative', 'callback']:
         ct = 0
         for field in tqdm(reps, total = reps.shape[0], desc = 'creating' + \
                 f' documents for {mult_col}{" replace" if replace else ""}'):
-            # note duplicated code, TODO: fix
-            # field1 = row[f'{mult_col}_report1']
-            # if field1 not in set_of_docs and not pd.isna(field1):
-            #     dup_idx = generate_duplicated_idx(all_pds, field1, mult_col, field1)
-            #     doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report1', r_d))
-            #     docs.append(TaggedDocument(doc_str, dup_idx))
-            #     set_of_docs.add(field1)
-            #
-            # field2 = row[f'{mult_col}_report2']
-            # if field2 not in set_of_docs and not pd.isna(field2):
-            #     dup_idx = generate_duplicated_idx(all_pds, field2, mult_col, field2)
-            #     doc_str = ' '.join(convert_to_words(row, f'{mult_col}_report2', r_d))
-            #     docs.append(TaggedDocument(doc_str, dup_idx))
-            #     set_of_docs.add(field2)
-            doc_to_idx[field] = ct
-            docs.append(TaggedDocument(field, [ct]))
-            ct += 1
+            if field not in doc_to_idx:
+                doc_to_idx[field] = ct
+                docs.append(TaggedDocument(field, [ct]))
+                ct += 1
 
         # train doc2vec
         model = Doc2Vec(docs, vector_size = 20, window = 3)
         only_mult_rep_df = all_pds.loc[all_pds[f'{mult_col}_multiple_reports'], :]
         for idx, row in only_mult_rep_df.iterrows():
-            # if row[f'{mult_col}_report1'] == row[f'{mult_col}_report2']:
-            #     vec1, vec2 = model.docvecs[f'{idx} 1'], model.docvecs[f'{idx} 1']
-            # else:
-            #     vec1, vec2 = model.docvecs[f'{idx} 1'], model.docvecs[f'{idx} 2']
             vec1 = model.docvecs[doc_to_idx[row[f'{mult_col}_report1']]]
             vec2 = model.docvecs[doc_to_idx[row[f'{mult_col}_report2']]]
 
