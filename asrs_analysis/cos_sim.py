@@ -34,6 +34,25 @@ def generate_compare(month1, year1, num_months = 1): # accident date
         n_m = num_months_between(month1, year1, month2, year2)
         return n_m > 0 and n_m <= num_months
     return inner_func
+
+def generate_compare_npy(year1, month1, num_months = 1):
+    def inner_func(arr):
+        year2, month2 = arr
+        n_m = num_months_between(month1, year1, month2, year2)
+        return n_m > 0 and n_m <= num_months
+    return inner_func
+
+def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_months = 1):
+    fn = generate_compare_npy(year1, month1, num_months)
+    sel = np.apply_along_axis(fn, 1, yr_mth)
+
+    idx_of_sel = sel.nonzero()[0]
+    if len(idx_of_sel) == 0:
+        return []
+    start = yr_mth_idx[idx_of_sel[0]]
+    end = yr_mth_idx[idx_of_sel[-1]] + yr_mth_cts[idx_of_sel[-1]]
+    return list(range(start, end))
+
 def calculate_avg_comp(list_idx1, list_idx2, d2v_model, overlap = 0, same = False):
     if len(list_idx1) == 1 and len(list_idx2) == 1 and same:
         return np.nan, np.nan
@@ -92,6 +111,10 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
 
     all_pds = all_pds[['tracon_code', 'year', 'month', col] + mult_rep_cols]
     all_pds.sort_values(['year', 'month', 'tracon_code'], inplace = True)
+
+    yr_mth, yr_mth_idx, yr_mth_ct = np.unique(all_pds.values[:, [1, 2]].astype(int), \
+            axis = 0, return_index=True, return_counts=True)
+
     abrev_col = abrev_col_dict[col]
     for month_range in [1, 3, 6, 12]:
         mr_str = str(month_range)
@@ -109,16 +132,18 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         unique_info = {}
         for month, year in tqdm(product(range(1, 13), range(1988, 2020)), total = num_time_periods, \
                 desc = f"{col} dict creation {month_range}mon"):
-            code = ' '.join([str(month), str(year)])
+            code = ' '.join([str(int(month)), str(int(year))])
 
             # select only the rows within the month range
             compare_func = generate_compare(month, year, num_months = month_range)
-            tracon_month_dict[code] = all_pds.loc[all_pds.apply(compare_func, axis = 1), :].copy()\
-                    .drop_duplicates(col)
+            yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month))
+            tracon_month_dict[code] = all_pds.iloc[yr_mth_sel_idx, :].copy().drop_duplicates(col)
+            # tracon_month_dict[code] = all_pds.loc[all_pds.apply(compare_func, axis = 1), :].copy()\
+            #         .drop_duplicates(col)
             unique_info[code] = np.unique(tracon_month_dict[code].values.astype(str)[:, 0], \
                     return_index=True, return_counts=True)
 
-            all_tracon = list(tracon_month_dict[code].drop_duplicates(col)[col])
+            all_tracon = list(tracon_month_dict[code][col])
 
             if len(all_tracon) >= 1:
                 d2v1 = np.vstack([d2v_model.docvecs[field_dict[x]] for x in all_tracon])
@@ -132,7 +157,7 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         for idx, row in tqdm(tracon_month_unique.iterrows(), total = tracon_month_unique.shape[0], \
                 desc = f"{col} analysis {month_range}mon"):
             index_id = f"{row['tracon_code']} {row['year']}/{row['month']}"
-            code = ' '.join([str(row['month']), str(row['year'])])
+            code = ' '.join([str(int(row['month'])), str(int(row['year']))])
 
             # if code in cos_res_tracon_dict:
             cos_res = cos_res_tracon_dict[code]
