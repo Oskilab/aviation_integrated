@@ -78,7 +78,7 @@ def calculate_avg_comp2(list_idx1, list_idx2, cos_res, overlap = 0, same = False
 abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
         'callback': 'call'}
-def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col = ""):
+def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col = "", field_dict = {}):
     """
     @param: all_pds(pd.DataFrame) should be the full asrs dataset
     @param: d2v_model (gensim.models.doc2vec) model that was trained on full dataset
@@ -86,6 +86,8 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
     @param: month_range_dict (dict): month_range (1/3/6/12/inf) -> list of dataframes
         where each dataframe has the relevant doc2vec comparison info
     """
+    all_pds = all_pds[['tracon_code', 'year', 'month', col]]
+    all_pds.sort_values(['year', 'month', 'tracon_code'], inplace = True)
     abrev_col = abrev_col_dict[col]
     for month_range in [1, 3, 6, 12]:
         mr_str = str(month_range)
@@ -100,18 +102,22 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
 
         # generate dictionaries for caching
         tracon_month_dict, cos_res_tracon_dict = {}, {}
+        unique_info = {}
         for month, year in tqdm(product(range(1, 13), range(1988, 2020)), total = num_time_periods, \
                 desc = f"{col} dict creation {month_range}mon"):
             code = ' '.join([str(month), str(year)])
 
             # select only the rows within the month range
             compare_func = generate_compare(month, year, num_months = month_range)
-            tracon_month_dict[code] = all_pds.loc[all_pds.apply(compare_func, axis = 1), :].copy()
+            tracon_month_dict[code] = all_pds.loc[all_pds.apply(compare_func, axis = 1), :].copy()\
+                    .drop_duplicates(col)
+            unique_info[code] = np.unique(tracon_month_dict[code].values.astype(str)[:, 0], \
+                    return_index=True, return_counts=True)
 
-            all_tracon = list(tracon_month_dict[code].drop_duplicates(col).index)
+            all_tracon = list(tracon_month_dict[code].drop_duplicates(col)[col])
 
             if len(all_tracon) >= 1:
-                d2v1 = np.vstack([d2v_model.docvecs[x] for x in all_tracon])
+                d2v1 = np.vstack([d2v_model.docvecs[field_dict[x]] for x in all_tracon])
                 cos_res_tracon_dict[code] = cosine_similarity(d2v1, d2v1)
             else:
                 cos_res_tracon_dict[code] = np.zeros((0, 0))
@@ -127,12 +133,27 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             # if code in cos_res_tracon_dict:
             cos_res = cos_res_tracon_dict[code]
             searched = tracon_month_dict[code] # all rows with time period
-            re_indexed_search = searched.drop_duplicates(col).reset_index()
-            same_tracon = re_indexed_search.loc[ \
-                    re_indexed_search['tracon_code'] == row['tracon_code'], :].index
-            other_tracon = re_indexed_search.loc[ \
-                    re_indexed_search['tracon_code'] != row['tracon_code'], :].index
-            all_tracon = re_indexed_search.index
+            unq_codes, unq_idx, unq_cts = unique_info[code]
+
+            trcn_code = row['tracon_code'] 
+            idx_of_code = np.searchsorted(unq_codes, trcn_code)
+            if idx_of_code >= unq_codes.shape[0] or unq_codes[idx_of_code] != trcn_code:
+                same_tracon = []
+                other_tracon = list(range(searched.shape[0]))
+            else:
+                start, end = unq_idx[idx_of_code], unq_idx[idx_of_code] + unq_cts[idx_of_code]
+                same_tracon = list(range(start, end))
+                other_tracon = list(range(0, start)) + list(range(end, searched.shape[0]))
+
+            all_tracon = list(range(searched.shape[0]))
+
+            # need to find ct -> idx within cos_res_tracon_dict
+            # same_tracon 
+            # same_tracon = re_indexed_search.loc[ \
+            #         re_indexed_search['tracon_code'] == row['tracon_code'], col]
+            # other_tracon = re_indexed_search.loc[ \
+            #         re_indexed_search['tracon_code'] != row['tracon_code'], col]
+            # all_tracon = re_indexed_search
 
             d2v_dict = {}
 
@@ -166,13 +187,13 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             d2v_dict[f'trcn_all{col_type2}'] = num_comp
 
             # b/w report1 and report2
-            if col == 'narrative' or col == 'callback': # only those with mult reports
-                this_tracon = searched.loc[searched['tracon_code'] == row['tracon_code'], :].copy()
-                this_tracon.drop_duplicates([f'{col}_report1', f'{col}_report2'], inplace = True)
-                d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
-                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean()
-                d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
-                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count()
+            # if col == 'narrative' or col == 'callback': # only those with mult reports
+            #     this_tracon = searched.loc[searched['tracon_code'] == row['tracon_code'], :].copy()
+            #     this_tracon.drop_duplicates([f'{col}_report1', f'{col}_report2'], inplace = True)
+            #     d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
+            #             this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean()
+            #     d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
+            #             this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count()
 
             index_to_d2v[index_id] = pd.Series(d2v_dict)
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
@@ -244,7 +265,7 @@ tracon_month_unique = tracon_month_unique.append(pd.DataFrame.from_dict(added_ro
 
 from itertools import chain
 # all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
-# deal with multiple reports
+# deal with multiple reports. 
 for mult_col in ['narrative', 'callback']:
     reps = np.hstack((all_pds[f'{mult_col}_report1'].unique(), all_pds[f'{mult_col}_report2'].unique()))
     reps = reps.astype(str)
@@ -279,25 +300,24 @@ for mult_col in ['narrative', 'callback']:
 for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
     month_range_dict = {}
     for r_d in [load_replace_dictionary(col), {}]:
+        reps = all_pds[col].unique()
         # creating tagged documents
-        docs, set_of_docs = [], set()
-        for idx, row in all_pds.iterrows():
-            if row[col] not in set_of_docs:
+        docs, doc_to_idx = [], {}
+        ct = 0
+        for field in reps:
+            if field not in doc_to_idx:
                 # preprocess document
-                np_res = convert_to_words(row, col, r_d)
+                np_res = convert_to_words(field, replace_dict=r_d)
                 doc_str = ' '.join(np_res)
 
-                all_idx = list(all_pds.loc[all_pds[col] == row[col]].index)
-                docs.append(TaggedDocument(doc_str, all_idx))
-
-                # to remove duplicates
-                set_of_docs.add(row[col])
-
+                doc_to_idx[field] = ct
+                docs.append(TaggedDocument(doc_str, [ct]))
+                ct += 1
         # train doc2vec
         print('training doc2vec models. This can take a while...')
         model = Doc2Vec(docs, vector_size = 20, window = 3)
 
-        analyze_d2v(all_pds, model, len(r_d) > 0, month_range_dict, col = col)
+        analyze_d2v(all_pds, model, len(r_d) > 0, month_range_dict, col = col, field_dict = doc_to_idx)
 
     for month_range in month_range_dict.keys():
         res = pd.concat(month_range_dict[month_range], axis = 1)

@@ -219,7 +219,10 @@ mispelled_dict = neg_nonword_to_mispelled_dict()
 
 def convert_to_words(row, col = 'narrative', replace_dict = {}):
     # replace_dict.update(mispelled_dict)
-    s = row[col]
+    if not isinstance(row, str):
+        s = row[col]
+    else:
+        s = row
     if isinstance(s, float) and np.isnan(s):
         s = ''
     for char in '[!"#$&\'()*+,:;<=>?@[\\]^_`{|}~/-]\.%':
