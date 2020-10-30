@@ -105,10 +105,11 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
     @param: month_range_dict (dict): month_range (1/3/6/12/inf) -> list of dataframes
         where each dataframe has the relevant doc2vec comparison info
     """
-    mult_rep_cols = [f'{col}_report1',f'{col}_report2', \
-            f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}',
-            f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}']
-
+    # mult_rep_cols = [f'{col}_report1',f'{col}_report2', \
+    #         f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}',
+    #         f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}']
+    #
+    mult_rep_cols = []
     all_pds = all_pds[['tracon_code', 'year', 'month', col] + mult_rep_cols]
     all_pds.sort_values(['year', 'month', 'tracon_code'], inplace = True)
 
@@ -207,12 +208,12 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             d2v_dict[f'trcn_all{col_type2}'] = num_comp
 
             # b/w report1 and report2
-            if col == 'narrative' or col == 'callback': # only those with mult reports
-                this_tracon = searched.iloc[same_tracon, :]
-                d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
-                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean()
-                d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
-                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count()
+            # if col == 'narrative' or col == 'callback': # only those with mult reports
+            #     this_tracon = searched.iloc[same_tracon, :]
+            #     d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
+            #             this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean()
+            #     d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
+            #             this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count()
 
             index_to_d2v[index_id] = pd.Series(d2v_dict)
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
@@ -273,8 +274,7 @@ tracon_month_unique = tracon_month_unique.loc[\
     tracon_month_unique['tracon_code'].apply(lambda x: x in top_50_iata)]
 
 added_rows = {'tracon_code': [], 'month': [], 'year':[]}
-for tracon, month, year in tqdm(product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)), \
-        desc = 'adding empty rows', total = num_time_periods * unique_ntsb_faa_codes.shape[0]):
+for tracon, month, year in product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)): 
     if (tracon, month, year) not in all_combs:
         added_rows['tracon_code'].append(tracon)
         added_rows['month'].append(month)
@@ -315,7 +315,6 @@ for mult_col in ['narrative', 'callback']:
             cos_sim = cosine_similarity(vec1.reshape(1, 20), vec2.reshape(1, 20))
             all_pds.loc[idx, cos_col_name] = cos_sim[0, 0]
 
-
 for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
     month_range_dict = {}
     for r_d in [load_replace_dictionary(col), {}]:
@@ -323,7 +322,7 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         # creating tagged documents
         docs, doc_to_idx = [], {}
         ct = 0
-        for field in reps:
+        for field in tqdm(reps):
             if field not in doc_to_idx:
                 # preprocess document
                 np_res = convert_to_words(field, replace_dict=r_d)
