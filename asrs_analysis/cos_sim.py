@@ -2,7 +2,7 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from IPython import embed
 from collections import Counter
 from tqdm import tqdm
-from preprocess_helper import *
+from asrs_analysis.preprocess_helper import *
 from sklearn.metrics.pairwise import cosine_similarity
 from itertools import product
 import pandas as pd, numpy as np, re, pickle, argparse

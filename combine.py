@@ -1,10 +1,12 @@
-import pandas as pd, numpy as np, re
 from IPython import embed
 from tqdm import tqdm
 from itertools import product
 from helper import get_tracon, get_year, get_month, tracon_month_split, fill_with_empty
-import argparse
+# from asrs_analysis.cos_sim import year_month_indices
 from collections import Counter
+import pandas as pd, numpy as np, re
+import argparse
+
 """
 Combines ASRS data with FAA/NTSB, LIWC and Doc2Vec datasets
 """
@@ -13,6 +15,24 @@ ifr_vfr_dict = {
     'general': 'gen',
     'overflight': 'ovrflt'
 }
+
+def generate_compare_npy(year1, month1, num_months = 1):
+    def inner_func(arr):
+        year2, month2 = arr
+        n_m = num_months_between(month1, year1, month2, year2)
+        return n_m > 0 and n_m <= num_months
+    return inner_func
+
+def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_months = 1):
+    fn = generate_compare_npy(year1, month1, num_months)
+    sel = np.apply_along_axis(fn, 1, yr_mth)
+
+    idx_of_sel = sel.nonzero()[0]
+    if len(idx_of_sel) == 0:
+        return []
+    start = yr_mth_idx[idx_of_sel[0]]
+    end = yr_mth_idx[idx_of_sel[-1]] + yr_mth_cts[idx_of_sel[-1]]
+    return list(range(start, end))
 
 parser = argparse.ArgumentParser(description='Combine ASRS data w/FAA/NTSB/LIWC/D2V.')
 parser.add_argument('-t', action = 'store_true')
@@ -188,7 +208,7 @@ def unique_tracon_month_set(df):
 airport_month_events = pd.read_csv('results/combined_vol_incident.csv')
 ame_cols = list(airport_month_events.columns)
 # if test:
-    # airport_month_events = airport_month_events.iloc[:1000, :]
+#     airport_month_events = airport_month_events.iloc[:1000, :]
 top_50_iata = set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
 airport_month_events['airport_code'] = airport_month_events['airport_code'].astype(str)
 airport_month_events = airport_month_events.loc[\
@@ -254,6 +274,10 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                     
     asrs_orig = asrs.merge(liwc_df.drop(['tracon', 'month', 'year'], axis = 1), on = 'tracon_month', \
             how = 'outer')
+    asrs_orig.sort_values(['year', 'month', 'tracon'], inplace=True)
+
+    yr_mth, yr_mth_idx, yr_mth_ct = np.unique(asrs_orig[['year', 'month']].values.astype(int), \
+            axis = 0, return_index=True, return_counts=True)
 
     num_months = [1, 3, 6, 12]
     for month_idx, n_month in enumerate(num_months):
@@ -264,24 +288,24 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
 
         d2v_tm = pd.read_csv(f'./asrs_analysis/results/d2v_tracon_month_{col}_{n_month}mon.csv', index_col = 0)
         d2v_tm.index = d2v_tm.index.rename('tracon_month')
-        # d2v_tm['tracon'] = d2v_tm.index.map(get_tracon)
-        # d2v_tm['year'] = d2v_tm.index.map(get_year)
-        # d2v_tm['month'] = d2v_tm.index.map(get_month)
-        # d2v_tm.reset_index(inplace = True) 
-
-        # combine with doc2vec 
-        # asrs = asrs.merge(d2v_tm, on = 'tracon_month', how = 'outer')
 
         # this creates a dictionary from year/month -> pd.DataFrame of all the rows in 
         # the ASRS dataset within the month range (utilizing n_month)
         # ex.: January 2011, w/ n_month = 1 -> pd.DataFrame of all rows in ASRS in December 2010
         tracon_month_dict = {}
+        unique_info = {}
         month_year_df = airport_month_events[['month', 'year']].drop_duplicates()
         for idx, date_row in tqdm(month_year_df.iterrows(), total = month_year_df.shape[0], desc = \
                 f"Creating year/month dictionary {n_month}mon"):
-            code = ' '.join([str(date_row['month']), str(date_row['year'])])
-            compare_func = generate_compare(date_row['month'], date_row['year'], num_months = n_month)
-            tracon_month_dict[code] = asrs.loc[asrs.apply(compare_func, axis = 1), :].copy()
+            month, year = int(date_row['month']), int(date_row['year'])
+            code = ' '.join([str(month), str(year)])
+
+            yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month))
+            tracon_month_dict[code] = asrs.iloc[yr_mth_sel_idx, :].copy()
+            unique_info[code] = np.unique(tracon_month_dict[code]['tracon'].values.astype(str), \
+                    return_index=True, return_counts=True)
+            # compare_func = generate_compare(date_row['month'], date_row['year'], num_months = n_month)
+            # tracon_month_dict[code] = asrs.loc[asrs.apply(compare_func, axis = 1), :].copy()
 
         # combines ASRS with incident/accident dataset (note d2v + liwc have already been merged to
         # ASRS). This utilizes the dictionary created above
@@ -291,12 +315,23 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         for idx, row in tqdm(airport_month_events.iterrows(), \
                 total = airport_month_events.shape[0], desc = \
                 f"Combining ASRS {n_month}mon"):
-            code = ' '.join([str(row['month']), str(row['year'])])
+            code = ' '.join([str(int(row['month'])), str(int(row['year']))])
             d2v_code = f'{row["airport_code"]} {row["year"]}/{row["month"]}'
             assert(d2v_code in d2v_tm.index)
             if code in tracon_month_dict:
                 searched = tracon_month_dict[code]
-                searched = searched.loc[searched['tracon'] == row['airport_code'], :]
+                unq_codes, unq_idx, unq_cts = unique_info[code]
+
+                trcn_code = row['airport_code']
+                idx_of_code = np.searchsorted(unq_codes, trcn_code)
+                if idx_of_code >= unq_codes.shape[0] or unq_codes[idx_of_code] != trcn_code:
+                    same_tracon = []
+                else:
+                    start, end = unq_idx[idx_of_code], unq_idx[idx_of_code] + unq_cts[idx_of_code]
+                    same_tracon = list(range(start, end))
+
+                # searched = searched.loc[searched['tracon'] == row['airport_code'], :]
+                searched = searched.iloc[same_tracon, :]
                 asrs_covered_ind.update(searched.index)
 
                 tr_yr_mon = row[['airport_code', 'year', 'month']]
@@ -318,27 +353,7 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                                 dtype = 'float64'), d2v_tm.loc[d2v_code]], axis = 0))
             else:
                 ct += 1
-
-        # the following code will add empty rows for tracon_month combinations that 
-        # do not appear in the dataset (although the tracon_code) appears in the dataset.
-        # cols = final_rows[0].index
-        # if missing_tracons is None and not skip_empty:
-        #     missing_tracons = []
-        #     empty_row = pd.Series(index = cols, dtype = 'float64')
-        #
-        #     total = unique_codes.shape[0] * num_time_periods
-        #     for code_mon_yr in tqdm(product(unique_codes, range(1, 13), range(1988, 2020)), \
-        #             total = total, desc = "missing tracon_month"):
-        #         if code_mon_yr not in all_combs:
-        #             code, month, year = code_mon_yr
-        #             e_r = empty_row.copy()
-        #             e_r['airport_code'] = code
-        #             e_r['year'] = year
-        #             e_r['month'] = month
-        #             missing_tracons.append(e_r)
-        #
-        #     final_rows += missing_tracons
-
+        print('ct', ct)
         print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
         print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
 
