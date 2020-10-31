@@ -292,12 +292,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                 total = airport_month_events.shape[0], desc = \
                 f"Combining ASRS {n_month}mon"):
             code = ' '.join([str(row['month']), str(row['year'])])
-            d2v_code = f'{row["airport_code"]} {row["year"]}/{row["month"]} '
-            try:
-                assert(d2v_code in d2v_tm.index)
-            except:
-                ct += 1
-                continue
+            d2v_code = f'{row["airport_code"]} {row["year"]}/{row["month"]}'
+            assert(d2v_code in d2v_tm.index)
             if code in tracon_month_dict:
                 searched = tracon_month_dict[code]
                 searched = searched.loc[searched['tracon'] == row['airport_code'], :]
@@ -320,6 +316,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                         final_rows.append(pd.concat([tr_yr_mon, pd.Series(index = asrs.columns.drop(\
                                 ['tracon_month', 'tracon', 'year', 'month']), \
                                 dtype = 'float64'), d2v_tm.loc[d2v_code]], axis = 0))
+            else:
+                ct += 1
 
         # the following code will add empty rows for tracon_month combinations that 
         # do not appear in the dataset (although the tracon_code) appears in the dataset.
@@ -340,8 +338,6 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         #             missing_tracons.append(e_r)
         #
         #     final_rows += missing_tracons
-        print(ct)
-        embed()
 
         print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
         print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
@@ -361,12 +357,14 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         res = res.loc[:,~res.columns.duplicated()]
         res.set_index(['tracon_key', 'year', 'month'], inplace = True)
         print(res.shape)
-        # res = reorder_cols(res)
         all_res.append(res)
-all_res = pd.concat(all_res, ignore_index = False, axis = 0)
-all_res = reorder_cols(all_res)
-all_res.to_csv('results/final_dataset.csv')
+try:
+    all_res = pd.concat(all_res, ignore_index = False, axis = 1)
+    all_res = reorder_cols(all_res)
+    all_res.to_csv('results/final_dataset.csv')
 
-coverage = all_res.isna().sum()
-coverage['total rows'] = all_res.shape[0]
-coverage.to_csv('results/final_coverage.csv')
+    coverage = all_res.isna().sum()
+    coverage['total rows'] = all_res.shape[0]
+    coverage.to_csv('results/final_coverage.csv')
+except:
+    embed()

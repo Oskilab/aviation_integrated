@@ -116,9 +116,9 @@ cnf = pd.DataFrame(rows_cnf)
 dnf = pd.DataFrame(rows_dnf)
 
 all_rows = pd.DataFrame(rows)
-if test:
-    top_50_iata = set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
-    all_rows = all_rows.loc[all_rows['airport_code'].apply(lambda x: x.split()[0] in top_50_iata)]
+# if test:
+top_50_iata = set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+all_rows = all_rows.loc[all_rows['airport_code'].apply(lambda x: x.split()[0] in top_50_iata)]
 
 all_combs = set()
 for idx, row in all_rows.iterrows():

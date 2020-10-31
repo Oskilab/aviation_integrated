@@ -105,11 +105,13 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
     @param: month_range_dict (dict): month_range (1/3/6/12/inf) -> list of dataframes
         where each dataframe has the relevant doc2vec comparison info
     """
-    mult_rep_cols = [f'{col}_report1',f'{col}_report2', \
-            f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}',
-            f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}']
+    if col == 'narrative' or col == 'callback': # only those with mult reports
+        mult_rep_cols = [f'{col}_report1',f'{col}_report2', \
+                f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}',
+                f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}']
+    else:
+        mult_rep_cols = []
 
-    # mult_rep_cols = []
     all_pds = all_pds[['tracon_code', 'year', 'month', col] + mult_rep_cols]
     all_pds.sort_values(['year', 'month', 'tracon_code'], inplace = True)
 
@@ -211,9 +213,9 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             if col == 'narrative' or col == 'callback': # only those with mult reports
                 this_tracon = searched.iloc[same_tracon, :]
                 d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
-                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean()
+                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean().iloc[0]
                 d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
-                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count()
+                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count().iloc[0]
 
             index_to_d2v[index_id] = pd.Series(d2v_dict)
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
