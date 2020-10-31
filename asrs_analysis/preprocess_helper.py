@@ -1,14 +1,25 @@
-import pandas as pd, re, numpy as np
 from IPython import embed
 from collections import Counter, namedtuple
 from tqdm import tqdm
+import pandas as pd
+import re
+import numpy as np
+import os
+
+start_path = os.getcwd()
+start_path_split = start_path.split("/")
+if start_path_split[-1] != 'asrs_analysis':
+    if os.path.exists(f'{start_path}/asrs_analysis'):
+        start_path += '/asrs_analysis'
+    else:
+        raise ValueError(f"wrong cwd {start_path}")
 
 coverage = namedtuple('coverage', ['part', 'total'])
 
-def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False, \
+def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load_saved = False, \
         test = False):
     if load_saved:
-        return pd.read_csv('results/asrs_extracted_processed.csv')
+        return pd.read_csv(f'{start_path}/results/asrs_extracted_processed.csv')
 
     asrs = pd.read_csv(path)
 
@@ -127,36 +138,36 @@ def load_asrs(path = 'datasets/ASRS 1988-2019_extracted.csv', load_saved = False
     total = asrs.shape[0]
     asrs = asrs.loc[(asrs['year'] >= 1988) & (asrs['year'] < 2020)]
     print(coverage(asrs.shape[0], total))
-    asrs.to_csv('results/asrs_extracted_processed.csv')
+    asrs.to_csv(f'{start_path}/results/asrs_extracted_processed.csv')
     return asrs
 
 def load_dictionaries():
     # casa
-    casa = pd.read_csv('dictionaries/CASA.csv') # Fullform4
+    casa = pd.read_csv(f'{start_path}/dictionaries/CASA.csv') # Fullform4
     casa = casa[["acronym", "Fullform4"]].copy().rename({"Fullform4": "casa_fullform"}, axis = 1)
     casa['acronym'] = casa['acronym'].str.replace('\(.+\)', '')
 
     # faa
-    faa = pd.read_csv('dictionaries/FAA.csv') # Fullform1
+    faa = pd.read_csv(f'{start_path}/dictionaries/FAA.csv') # Fullform1
     faa = faa[["acronym", "Fullform1"]].copy().rename({"Fullform1": "faa_fullform"}, axis = 1)
 
     # iata_iaco
-    iata_iaco = pd.read_csv('dictionaries/IATA_IACO.csv', encoding = 'cp437') # Fullform5
+    iata_iaco = pd.read_csv(f'{start_path}/dictionaries/IATA_IACO.csv', encoding = 'cp437') # Fullform5
     iata_iaco = iata_iaco[["acronym", "Fullform5"]].copy().rename({"Fullform5": "iata_fullform"}, axis = 1)
     iata_iaco = iata_iaco[~iata_iaco['acronym'].isna()]
 
     # nasa
-    nasa = pd.read_csv('dictionaries/nasa_abbr.csv') # Fullform7
+    nasa = pd.read_csv(f'{start_path}/dictionaries/nasa_abbr.csv') # Fullform7
     nasa = nasa[["acronym", "Fullform7"]].copy().rename({"Fullform7": "nasa_fullform"}, axis = 1)
     nasa.drop_duplicates(["acronym"], inplace = True, keep = 'first')
 
     # hand_code
-    hand_code = pd.read_csv('dictionaries/hand_code.csv')
+    hand_code = pd.read_csv(f'{start_path}/dictionaries/hand_code.csv')
     hand_code = hand_code[["acronym", "Fullform6"]].copy().rename({"Fullform6": "hand_fullform"}, axis = 1)
     hand_code.drop_duplicates(["acronym"], inplace = True, keep = 'first')
 
     # hand_code2
-    hand_code2 = pd.read_csv('dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
+    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
     hand_code2.index.rename('acronym', inplace = True)
     hand_code2.reset_index(inplace = True)
     hand_code2.rename({'hand_fullform2': 'hand2_fullform'}, axis = 1, inplace = True)
@@ -175,19 +186,19 @@ def load_dictionaries():
 
 
 def neg_nonword_to_neg_word_set():
-    hand_code2 = pd.read_csv('dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
+    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
     return set(hand_code2.loc[~hand_code2.loc[:, 'add_to_realworld_dictionary'].isna(), :].index)
 
 def neg_nonword_to_airport_set():
-    hand_code2 = pd.read_csv('dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
+    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
     return set(hand_code2.loc[~hand_code2.loc[:, 'add_to_airport'].isna(), :].index)
 
 def neg_nonword_to_mispelled_dict():
-    hand_code2 = pd.read_csv('dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
+    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
     return dict(hand_code2.loc[~hand_code2.loc[:, 'mispelled_word_fix'].isna(), 'mispelled_word_fix'])
 
 def potential_words_from_negnw():
-    hand_code2 = pd.read_csv('dictionaries/combined_neg_nonword_handcode2.csv')
+    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv')
 
     # calculate last element with any of these columns
     added_cols = ['hand_fullform2', 'add_to_realworld_dictionary', 'add_to_airport', \
