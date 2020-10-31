@@ -278,11 +278,7 @@ def search_city(city, country, lat, lon):
         table.loc[idx, 'lat'] = lat
         table.loc[idx, 'lon'] = lon
 
-    try:
-        table['distance_km'] = table.apply(lambda row: distance(lat, lon, row['lat'], row['lon']), axis = 1)
-    except:
-        embed()
-        1/0
+    table['distance_km'] = table.apply(lambda row: distance(lat, lon, row['lat'], row['lon']), axis = 1)
 
     table.sort_values(by = 'distance_km', ascending = True, inplace = True)
     table = table.reset_index()
@@ -295,5 +291,3 @@ def search_city(city, country, lat, lon):
             all_cols.append(elem + f"_{i}")
 
     return pd.Series(vals, index = all_cols) # need to update what happens when this is called
-
-# print(search_city("san francisco", "United States", 37.5, -122.5))
