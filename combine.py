@@ -373,13 +373,10 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         res.set_index(['tracon_key', 'year', 'month'], inplace = True)
         print(res.shape)
         all_res.append(res)
-try:
-    all_res = pd.concat(all_res, ignore_index = False, axis = 1)
-    all_res = reorder_cols(all_res)
-    all_res.to_csv('results/final_dataset.csv')
+all_res = pd.concat(all_res, ignore_index = False, axis = 1)
+all_res = reorder_cols(all_res)
+all_res.to_csv('results/final_dataset.csv')
 
-    coverage = all_res.isna().sum()
-    coverage['total rows'] = all_res.shape[0]
-    coverage.to_csv('results/final_coverage.csv')
-except:
-    embed()
+coverage = all_res.isna().sum()
+coverage['total rows'] = all_res.shape[0]
+coverage.to_csv('results/final_coverage.csv')
