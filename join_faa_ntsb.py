@@ -8,9 +8,8 @@ them together
 import pandas as pd, pickle, numpy as np
 from tqdm import tqdm as tqdm
 from IPython import embed
+from helper import fill_with_empty
 
-# ntsb = pd.read_csv('aviation_data_huiyi/results/NTSB_AIDS_full_output_new.csv')
-# faa = pd.read_csv('faa/results/faa_incidents.csv', index_col = 0)
 ntsb = pd.read_csv('faa_ntsb_analysis/results/NTSB_AIDS_full_processed.csv')
 ntsb['dataset'] = 'ntsb'
 ntsb.rename({' Airport Code ': 'airport_code','ntsb_ Incident ': 'ntsb_incidents',\
@@ -21,6 +20,14 @@ ntsb.loc[non_na_sel, 'airport_code'] = ntsb.loc[non_na_sel, 'airport_code'].str.
 faa_df = pd.read_csv('faa_ntsb_analysis/results/FAA_AIDS_full_processed.csv')
 faa_df.rename({'tracon_code': 'airport_code'}, axis = 1, inplace = True)
 faa_df['dataset'] = 'faa'
+
+
+top_50_iata = set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+faa_df = faa_df.loc[faa_df['airport_code'].apply(lambda x: x in top_50_iata), :].copy()
+ntsb = ntsb.loc[ntsb['airport_code'].apply(lambda x: x in top_50_iata), :].copy()
+
+faa_df = fill_with_empty(faa_df, code_col='airport_code')
+ntsb = fill_with_empty(ntsb, code_col='airport_code')
 
 # find overlap
 def create_tracon_dict(pd, col = 'tracon_code'):
@@ -50,37 +57,6 @@ overlap['num'] = overlap_nums
 overlap = overlap.drop('day', axis = 1)\
         .groupby(['year', 'month', 'tracon_code'], as_index = False).sum()
 
-# old code
-# ntsb.rename({'airportcode_new': 'airport_code', 'airportname_new': 'airport_name', \
-#         ' Investigation Type _ Accident ': 'ntsb_accidents', \
-#         ' Investigation Type _ Incident ': 'ntsb_incidents'},
-#            axis = 1, inplace = True)
-
-# preprocess faa into correct shape. faa_incidents.csv had each unique month/year as a column
-# but we change the dataframe so that each row only has one particular month/year
-# months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
-# cols = list(faa.columns)[2:]
-#
-# df_dict = {'airport_code': [], 'airport_name': [], 'year': [], 'month': [], 'faa_incidents': []}
-# for idx in tqdm(range(1, faa.shape[0])):
-#     row = faa.iloc[idx, :]
-#     for col in cols:
-#         if row[col] > 0:
-#             df_dict['airport_code'].append(row['iata_code'])
-#             df_dict['airport_name'].append(row['clean_name'])
-#             
-#             yr = int(col.split("-")[1])
-#             if yr >= 78:
-#                 yr += 1900
-#             else:
-#                 yr += 2000
-#                 
-#             month = months.index(col.split("-")[0]) + 1
-#             df_dict['year'].append(yr)
-#             df_dict['month'].append(month)
-#             df_dict['faa_incidents'].append(row[col])
-#
-# faa_df = pd.DataFrame(df_dict)
 ntsb.loc[ntsb['airport_code'].isna(), 'airport_code'] = 'nan'
 faa_df.loc[faa_df['airport_code'].isna(), 'airport_code'] = 'nan'
 

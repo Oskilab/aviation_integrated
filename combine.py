@@ -22,7 +22,7 @@ def num_months_between(month1, year1, month2, year2):
 def generate_compare_npy(year1, month1, num_months = 1):
     def inner_func(arr):
         year2, month2 = arr
-        n_m = num_months_between(month1, year1, month2, year2)
+        n_m = num_months_between(month2, year2, month1, year1)
         return n_m > 0 and n_m <= num_months
     return inner_func
 
@@ -298,8 +298,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         for idx, row in tqdm(airport_month_events.iterrows(), \
                 total = airport_month_events.shape[0], desc = \
                 f"Combining ASRS {n_month}mon"):
-            month, year = int(row['month']), int(row['year'])
-            code = ' '.join([str(month), str(year)])
+            month, year = float(row['month']), float(row['year'])
+            code = ' '.join([str(int(month)), str(int(year))])
             d2v_code = f'{row["airport_code"]} {year}/{month}'
             assert(d2v_code in d2v_tm.index)
             if code in tracon_month_dict:
@@ -322,6 +322,7 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
 
                 num_month_from_start = num_months_between(1, 1988, month, year)
                 concat_series = []
+
                 if month_idx == 0:
                     concat_series.append(row)
                 else:
@@ -339,26 +340,6 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                 else:
                     concat_series.append(d2v_tm.loc[d2v_code])
                 final_rows.append(pd.concat(concat_series, axis = 0))
-                # if (num_month_from_start >= 0 and num_month_from_start < n_month):
-                #     if month_idx = 0:
-                #         final_rows.append(pd.concat([row, pd.Series(index=cumulative_index, \
-                #                 dtype='float64'), pd.Series(index=d2v_index, dtype='float64')]))
-                #     else:
-                #         final_rows.append(pd.concat([tr_yr_mon, pd.Series(index=cumulative_index, \
-                #                 dtype='float64'), pd.Series(index=d2v_index, dtype='float64')]))
-                # elif searched.shape[0] > 0:
-                #     cumulative = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis = 1).sum()
-                #     if month_idx == 0:
-                #         final_rows.append(pd.concat([row, cumulative, d2v_tm.loc[d2v_code]], axis = 0))
-                #     else:
-                #         final_rows.append(pd.concat([tr_yr_mon, cumulative, d2v_tm.loc[d2v_code]], axis = 0))
-                # else:
-                #     if month_idx == 0:
-                #         final_rows.append(pd.concat([row, pd.Series(index = cumulative_index, \
-                #                 dtype = 'float64'), d2v_tm.loc[d2v_code]], axis = 0))
-                #     else:
-                #         final_rows.append(pd.concat([tr_yr_mon, pd.Series(index = cumulative_index,\
-                #                 dtype = 'float64'), d2v_tm.loc[d2v_code]], axis = 0))
             else:
                 ct += 1
         print('ct', ct)

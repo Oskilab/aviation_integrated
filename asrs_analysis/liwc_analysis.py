@@ -142,11 +142,7 @@ def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict, 
         tracon = idx.split()[0]
         year = row['year']['']
         month = row['month']['']
-        try:
-            all_combs.add((tracon, year, month))
-        except:
-            embed()
-            1/0
+        all_combs.add((tracon, year, month))
 
     asrs_added_tracons = []
     for tracon_code in fin.index.map(lambda x:x.split()[0]).unique():

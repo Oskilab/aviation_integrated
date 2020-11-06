@@ -122,7 +122,7 @@ all_rows = all_rows.loc[all_rows['airport_code'].apply(lambda x: x.split()[0] in
 
 all_combs = set()
 for idx, row in all_rows.iterrows():
-    all_combs.add((row['airport_code'], row['year'], row['month']))
+    all_combs.add((row['airport_code'], int(row['year']), int(row['month'])))
 
 unique_codes = all_rows['airport_code'].unique()
 new_rows = []
