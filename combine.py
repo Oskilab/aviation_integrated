@@ -191,7 +191,6 @@ def reorder_cols(df):
     df.rename(common_col_dict, axis = 1, inplace = True)
 
     df = df.loc[:,~df.columns.duplicated()]
-    print('dropped columns', set(df.columns) - set([x for x in cols if x in df.columns]))
     return df.loc[:, [x for x in cols if x in df.columns]]
 
 def unique_tracon_month_set(df):
@@ -265,7 +264,7 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
     num_months = [1, 3, 6, 12, np.inf]
     for month_idx, n_month in enumerate(num_months):
         month_range_str = f'{n_month}m'
-        if num_months == np.inf:
+        if n_month == np.inf:
             month_range_str = 'atime'
         asrs = asrs_orig.copy()
 
