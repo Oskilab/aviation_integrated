@@ -16,6 +16,9 @@ ifr_vfr_dict = {
     'overflight': 'ovrflt'
 }
 
+def num_months_between(month1, year1, month2, year2):
+    return (year2 - year1) * 12 + month2 - month1
+
 def generate_compare_npy(year1, month1, num_months = 1):
     def inner_func(arr):
         year2, month2 = arr
@@ -252,26 +255,6 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
 
     dicts = ['casa', 'faa', 'hand', 'iata_iaco', 'nasa']
 
-    def num_months_between(month1, year1, month2, year2):
-        return (year2 - year1) * 12 + month2 - month1
-
-    def generate_compare(month1, year1, num_months = 1): # accident date
-        """
-        This returns a function to be applied row-wise on a dataframe. The inner function, when
-        applied, returns a pandas series that finds which rows are within a month range. If
-        the FAA/NTSB incident tracon_month occurs in January 2011, then the inner function finds
-        all the rows that are within num_months months before January 2011.
-        @param: month1 (int) 1-12
-        @param: year1 (int)
-        @param: num_months (int)
-        @returns: function(row) that returns a pandas Series selecting the correct rows
-        """
-        def inner_func(row):
-            month2, year2 = row['month'], row['year']
-            n_m = num_months_between(month1, year1, month2, year2)
-            return n_m > 0 and n_m <= num_months
-        return inner_func
-                    
     asrs_orig = asrs.merge(liwc_df.drop(['tracon', 'month', 'year'], axis = 1), on = 'tracon_month', \
             how = 'outer')
     asrs_orig.sort_values(['year', 'month', 'tracon'], inplace=True)
@@ -279,7 +262,7 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
     yr_mth, yr_mth_idx, yr_mth_ct = np.unique(asrs_orig[['year', 'month']].values.astype(int), \
             axis = 0, return_index=True, return_counts=True)
 
-    num_months = [1, 3, 6, 12]
+    num_months = [1, 3, 6, 12, np.inf]
     for month_idx, n_month in enumerate(num_months):
         month_range_str = f'{n_month}m'
         if num_months == np.inf:
@@ -304,53 +287,78 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
             tracon_month_dict[code] = asrs.iloc[yr_mth_sel_idx, :].copy()
             unique_info[code] = np.unique(tracon_month_dict[code]['tracon'].values.astype(str), \
                     return_index=True, return_counts=True)
-            # compare_func = generate_compare(date_row['month'], date_row['year'], num_months = n_month)
-            # tracon_month_dict[code] = asrs.loc[asrs.apply(compare_func, axis = 1), :].copy()
 
         # combines ASRS with incident/accident dataset (note d2v + liwc have already been merged to
         # ASRS). This utilizes the dictionary created above
         final_rows = []
         asrs_covered_ind = set()
         ct = 0
+        cumulative_index = asrs.columns.drop(['tracon_month', 'tracon', 'year', 'month'])
+        d2v_index = d2v_tm.columns
         for idx, row in tqdm(airport_month_events.iterrows(), \
                 total = airport_month_events.shape[0], desc = \
                 f"Combining ASRS {n_month}mon"):
-            code = ' '.join([str(int(row['month'])), str(int(row['year']))])
-            d2v_code = f'{row["airport_code"]} {row["year"]}/{row["month"]}'
+            month, year = int(row['month']), int(row['year'])
+            code = ' '.join([str(month), str(year)])
+            d2v_code = f'{row["airport_code"]} {year}/{month}'
             assert(d2v_code in d2v_tm.index)
             if code in tracon_month_dict:
                 searched = tracon_month_dict[code]
                 unq_codes, unq_idx, unq_cts = unique_info[code]
 
                 trcn_code = row['airport_code']
+                # get indices of dataframe corresponding to our tracon month
                 idx_of_code = np.searchsorted(unq_codes, trcn_code)
                 if idx_of_code >= unq_codes.shape[0] or unq_codes[idx_of_code] != trcn_code:
                     same_tracon = []
                 else:
                     start, end = unq_idx[idx_of_code], unq_idx[idx_of_code] + unq_cts[idx_of_code]
                     same_tracon = list(range(start, end))
-
-                # searched = searched.loc[searched['tracon'] == row['airport_code'], :]
                 searched = searched.iloc[same_tracon, :]
+
                 asrs_covered_ind.update(searched.index)
 
                 tr_yr_mon = row[['airport_code', 'year', 'month']]
 
-                if searched.shape[0] > 0:
-                    cumulative = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis = 1).sum()
-                    if month_idx == 0:
-                        final_rows.append(pd.concat([row, cumulative, d2v_tm.loc[d2v_code]], axis = 0))
-                    else:
-                        final_rows.append(pd.concat([tr_yr_mon, cumulative, d2v_tm.loc[d2v_code]], axis = 0))
+                num_month_from_start = num_months_between(1, 1988, month, year)
+                concat_series = []
+                if month_idx == 0:
+                    concat_series.append(row)
                 else:
-                    if month_idx == 0:
-                        final_rows.append(pd.concat([row, pd.Series(index = asrs.columns.drop(\
-                                ['tracon_month', 'tracon', 'year', 'month']), \
-                                dtype = 'float64'), d2v_tm.loc[d2v_code]], axis = 0))
-                    else:
-                        final_rows.append(pd.concat([tr_yr_mon, pd.Series(index = asrs.columns.drop(\
-                                ['tracon_month', 'tracon', 'year', 'month']), \
-                                dtype = 'float64'), d2v_tm.loc[d2v_code]], axis = 0))
+                    concat_series.append(tr_yr_mon)
+
+                if (num_month_from_start >= 0 and num_month_from_start < n_month and n_month != np.inf) or \
+                        searched.shape[0] == 0:
+                    concat_series.append(pd.Series(index=cumulative_index, dtype='float64'))
+                else:
+                    cumulative = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis = 1).sum()
+                    concat_series.append(cumulative)
+
+                if (num_month_from_start >= 0 and num_month_from_start < n_month and n_month != np.inf):
+                    concat_series.append(pd.Series(index=d2v_index, dtype='float64'))
+                else:
+                    concat_series.append(d2v_tm.loc[d2v_code])
+                final_rows.append(pd.concat(concat_series, axis = 0))
+                # if (num_month_from_start >= 0 and num_month_from_start < n_month):
+                #     if month_idx = 0:
+                #         final_rows.append(pd.concat([row, pd.Series(index=cumulative_index, \
+                #                 dtype='float64'), pd.Series(index=d2v_index, dtype='float64')]))
+                #     else:
+                #         final_rows.append(pd.concat([tr_yr_mon, pd.Series(index=cumulative_index, \
+                #                 dtype='float64'), pd.Series(index=d2v_index, dtype='float64')]))
+                # elif searched.shape[0] > 0:
+                #     cumulative = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis = 1).sum()
+                #     if month_idx == 0:
+                #         final_rows.append(pd.concat([row, cumulative, d2v_tm.loc[d2v_code]], axis = 0))
+                #     else:
+                #         final_rows.append(pd.concat([tr_yr_mon, cumulative, d2v_tm.loc[d2v_code]], axis = 0))
+                # else:
+                #     if month_idx == 0:
+                #         final_rows.append(pd.concat([row, pd.Series(index = cumulative_index, \
+                #                 dtype = 'float64'), d2v_tm.loc[d2v_code]], axis = 0))
+                #     else:
+                #         final_rows.append(pd.concat([tr_yr_mon, pd.Series(index = cumulative_index,\
+                #                 dtype = 'float64'), d2v_tm.loc[d2v_code]], axis = 0))
             else:
                 ct += 1
         print('ct', ct)
