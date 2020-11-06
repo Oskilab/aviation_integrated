@@ -33,7 +33,8 @@ def fill_with_empty(df, code_col = 'airport_code', date_range = range(1988,2020)
     unique_codes = df[code_col].unique()
     empty_row = pd.Series(index = df.columns)
     new_rows = []
-    for code, year, month in product(unique_codes, date_range, range(1,13)):
+    for code, year, month in tqdm(product(unique_codes, date_range, range(1,13)), \
+            total = unique_codes.shape[0] * len(date_range) * 12):
         comb = (code, year, month)
         if comb not in all_combs:
             copy = empty_row.copy()

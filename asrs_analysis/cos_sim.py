@@ -1,5 +1,4 @@
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
-from IPython import embed
 from collections import Counter
 from tqdm import tqdm
 # from asrs_analysis.preprocess_helper import *
@@ -39,7 +38,7 @@ def generate_compare(month1, year1, num_months = 1): # accident date
 def generate_compare_npy(year1, month1, num_months = 1):
     def inner_func(arr):
         year2, month2 = arr
-        n_m = num_months_between(month1, year1, month2, year2)
+        n_m = num_months_between(month2, year2, month1, year1)
         return n_m > 0 and n_m <= num_months
     return inner_func
 
@@ -220,7 +219,6 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
 
             index_to_d2v[index_id] = pd.Series(d2v_dict)
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
-        embed()
         month_range_dict[month_range] = month_range_dict.get(month_range, []) + [fin]
 
 def load_replace_dictionary(col):
