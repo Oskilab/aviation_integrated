@@ -2,7 +2,8 @@ from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from IPython import embed
 from collections import Counter
 from tqdm import tqdm
-from asrs_analysis.preprocess_helper import *
+# from asrs_analysis.preprocess_helper import *
+from preprocess_helper import *
 from sklearn.metrics.pairwise import cosine_similarity
 from itertools import product
 import pandas as pd, numpy as np, re, pickle, argparse
@@ -79,7 +80,8 @@ def calculate_avg_comp2(list_idx1, list_idx2, cos_res, overlap = 0, same = False
     @param: cos_res (np.ndarray) of pairwise cosine similarity metric, must be square
     @returns: (avg_d2v, num_comp)
         avg_d2v = average cosine similarity with a row index within list_idx2 and a 
-            column index within list_idx2,
+            column index within list_idx2. This is normalized average cosine similarity,
+            so (cos_sim + 1) / 2
         num_comp = number of comparisons made
     """
     num_comp = len(list_idx1) * len(list_idx2) - overlap
@@ -87,11 +89,11 @@ def calculate_avg_comp2(list_idx1, list_idx2, cos_res, overlap = 0, same = False
         return np.nan, np.nan
     else:
         list_idx1, list_idx2 = np.array(list_idx1), np.array(list_idx2)
-        sum_d2v = np.sum(cos_res[list_idx1[:, None], list_idx2])
+        sum_d2v = np.sum(cos_res[list_idx1[:, None], list_idx2]) - overlap
         avg_d2v = sum_d2v / num_comp
         if same:
             num_comp /= 2
-        return avg_d2v, num_comp
+        return (avg_d2v + 1) / 2, num_comp
         
 
 abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
@@ -119,11 +121,10 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             axis = 0, return_index=True, return_counts=True)
 
     abrev_col = abrev_col_dict[col]
-    for month_range in [1, 3, 6, 12]:
-        mr_str = str(month_range)
+    for month_range in [1, 3, 6, 12, np.inf]:
+        mr_str = f'{month_range}m'
         if month_range == np.inf:
-            mr_str = 'a'
-        mr_str += 'm'
+            mr_str = 'atime'
 
         # used in d2v column names
         end_str = f"{abrev_col}_{mr_str}" 
@@ -219,6 +220,7 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
 
             index_to_d2v[index_id] = pd.Series(d2v_dict)
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
+        embed()
         month_range_dict[month_range] = month_range_dict.get(month_range, []) + [fin]
 
 def load_replace_dictionary(col):
