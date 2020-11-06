@@ -20,232 +20,184 @@ us_state_abbrev = us_state_abbrev.to_dict()['full']
 
 us_to_abbrev = {v: k for k,v in us_state_abbrev.items()}
 
-# preprocess data
-full = pd.read_csv('datasets/NTSB_AviationData_new.txt', sep = "|")
-strip_cols = [' Airport Code ' , ' Airport Name ', ' Latitude ', ' Longitude ']
-for col in strip_cols:
-    full[col] = full[col].str.strip()
+def process_code(df):
+    """
+    Processes the Airport Code field in the NTSB incident/accident dataset by removing na values
+    and turning everything to uppercase
+    @param: df (pd.DataFrame) ntsb incident dataset
+    @returns: df (pd.DataFrame) ntsb incident dataset w/filtered Airport Code
+    """
+    invalid_codes = ['n/a', 'none', 'na']
+    for inv_code in invalid_codes:
+        df[' Airport Code '] = df[' Airport Code '].str.replace(inv_code, "")
+    nonna_code_sel = ~(df[' Airport Code '].isna())
+    df.loc[nonna_code_sel, ' Airport Code '] = df.loc[nonna_code_sel, ' Airport Code '].str.upper()
+    df.loc[df[' Airport Code '].isna(), ' Airport Code '] = ''
+    return df
 
-# process airport code
-invalid_codes = ['n/a', 'none', 'na']
-for inv_code in invalid_codes:
-    full[' Airport Code '] = full[' Airport Code '].str.replace(inv_code, "")
-nonna_code_sel = ~(full[' Airport Code '].isna())
-full.loc[nonna_code_sel, ' Airport Code '] = full.loc[nonna_code_sel, ' Airport Code '].str.upper()
+def process_times(df, verbose=True):
+    """
+    Processes the date in the NTSB incident/accident dataset.
+    @param: df (pd.DataFrame) ntsb incident dataset
+    @returns: df (pd.DataFrame) ntsb incident dataset w/processed date
+    """
+    df['year'] = df[' Event Date '].str.split("/").apply(lambda x: x[2]).apply(int)
+    df['month'] = df[' Event Date '].str.split("/").apply(lambda x: x[0]).apply(int)
+    df['day'] = df[' Event Date '].str.split("/").apply(lambda x: x[1]).apply(int)
+    if verbose:
+        print('full dataset size', df.shape[0])
+    df = df.loc[(df['year'] >= 1988) & (df['year'] < 2020), :].copy()
+    return df
 
-# process airport name
-full[' Airport Name '] = full[' Airport Name '].str.replace("N/A", "")
+def print_preliminary_stats(df, verbose=True):
+    """
+    Prints preliminary statistics on the NTSB incident/accident dataset.
+    @param: df (pd.DataFrame) ntsb incident dataset
+    """
+    if verbose:
+        print('airport code missing', df.loc[df[' Airport Code '] != ''].shape[0])
+        print('airport name missing', df.loc[df[' Airport Name '] != ''].shape[0])
+        print('airport code or name missing', df.loc[(df[' Airport Name '] != '') | \
+                (df[' Airport Code '] != '')].shape[0])
+        print('airport name and no code missing', df.loc[(df[' Airport Name '] != '') & \
+                (df[' Airport Code '] == '')].shape[0])
 
-# dates
-full['year'] = full[' Event Date '].str.split("/").apply(lambda x: x[2]).apply(int)
-full['month'] = full[' Event Date '].str.split("/").apply(lambda x: x[0]).apply(int)
-full['day'] = full[' Event Date '].str.split("/").apply(lambda x: x[1]).apply(int)
-print('full dataset size', full.shape[0])
-full = full.loc[(full['year'] >= 1988) & (full['year'] < 2020), :]
-full = full.reset_index().drop('index', axis = 1)
-
-# preliminary stats
-print('airport code missing', full.loc[full[' Airport Code '] != ''].shape[0])
-print('airport name missing', full.loc[full[' Airport Name '] != ''].shape[0])
-print('airport code or name missing', full.loc[(full[' Airport Name '] != '') | \
-        (full[' Airport Code '] != '')].shape[0])
-print('airport name and no code missing', full.loc[(full[' Airport Name '] != '') & \
-        (full[' Airport Code '] == '')].shape[0])
-
-reg_dash = '([a-z]{1,})[-/]{1}([a-z]{1,})'
-pat = re.compile(reg_dash)
 def process_ntsb_name(x):
+    """
+    This processes the airport name field in the NTSB incident/accident dataset
+    @param: x (str) name of the airport
+    @returns: processed name of the airport
+    """
+    def process_word(fin, word):
+        """
+        This processes a word inside the name of an airport. It uses regex to
+        separate words that are separated by - or / (eg hello/world) and also
+        replaces some common abbreviations by their full form utilizing the
+        replace dictionary above.
+        @param: fin (list) of final result
+        @param: word (str)
+        """
+        if word != "airport" and word != "-":
+            return None
+
+        reg_dash = '([a-z]{1,})[-/]{1}([a-z]{1,})'
+        pat = re.compile(reg_dash)
+
+        if word.startswith("(") or word.startswith("/"):
+            word = word[1:]
+        if word.endswith(")") or word.endswith("/") or word.endswith(",") or word.endswith("-"):
+            word = word[:-1]
+
+        # add to fin
+        reg_res = pat.match(word)
+        if reg_res is not None:
+            fin.append(reg_res.group(1))
+            fin.append(reg_res.group(2))
+        else:
+            fin.append(word)
+
     x = str(x).lower()
     fin = []
     for elem in x.split(" "):
-        if elem != "airport" and elem != "-":
-            if elem.startswith("(") or elem.startswith("/"):
-                elem = elem[1:]
-            if elem.endswith(")") or elem.endswith("/") or elem.endswith(",") or elem.endswith("-"):
-                elem = elem[:-1]
-            # add to fin
-            reg_res = pat.match(elem)
-            if reg_res is not None:
-                fin.append(reg_res.group(1))
-                fin.append(reg_res.group(2))
-            else:
-                fin.append(elem)
+        process_word(fin, elem)
     return " ".join(fin)
 
-# calculate number of rows that are covered by volume dataset
-# vol_tracons = set(pickle.load(open('../results/vol_data.pckl', 'rb')))
-# num_na = (full[' Airport Code '] == '').sum()
-# print('vol match', coverage(full[' Airport Code '].apply(lambda x: x in vol_tracons).sum(), \
-#         full.shape[0]), f'na codes {num_na}')
+def process_location(df):
+    """
+    This processes the location information in the NTSB incident/accident dataset
+    @param: df (pd.DataFrame) ntsb incident dataset
+    @returns: df (pd.DataFrame) ntsb incident dataset w/filtered location
+    """
+    df['eventcity'] = df[' Location '].apply(get_city)
+    df['event_fullstate'] = df[' Location '].apply(get_state)
+    df['event_country'] = df[' Location '].apply(get_country)
+    return df
 
-all_full_states = set(us_state_abbrev.values())
-# process airport name
-full['eventairport_conv'] = full[' Airport Name '].apply(process_ntsb_name)
-full['eventcity'] = full[' Location '].apply(get_city)
-full['event_fullstate'] = full[' Location '].apply(get_state)
-full['event_country'] = full[' Location '].apply(get_country)
-
-
-full.loc[full[' Airport Code '].isna(), ' Airport Code '] = ''
-
-assert(full[' Airport Code '].isna().sum() == 0 and full[' Airport Name '].isna().sum() == 0)
-
-code_and_name_empty = (full[' Airport Code '] == '') & (full[' Airport Name '] == '')
-full.loc[code_and_name_empty, :].to_csv('results/discarded_ntsb.csv')
-
-# full = full.loc[~code_and_name_empty, :].copy()
-
-"""
-This following section queries google nearby places utilizing latitude/longitude information provided
-by the NTSB dataset. The wikipedia query creates a list of airportnames, which we then use to query
-airnav.com to find the identifier.
-"""
-
-# empty_code_sel = full[' Airport Code '] == ''
-# empty_lat = full[' Latitude '] == ''
-# empty_lon = full[' Longitude '] == ''
-# only_lat_lon = ~(empty_lat | empty_lon) & empty_code_sel
-#
-# if page_google:
-#     unique_lat_lon = full.loc[only_lat_lon, [" Latitude ", " Longitude "]].copy().drop_duplicates()
-#     tqdm_obj =  tqdm(unique_lat_lon.iterrows(), total = unique_lat_lon.shape[0], desc = "found 0")
-#     errors = {}
-#     lat_lon_records = []
-#     for idx, row in tqdm_obj:
-#         lat, lon = row
-#         lat, lon = float(lat), float(lon)
-#         map_api_str = f'https://maps.googleapis.com/maps/api/place/nearbysearch/json?key={key}' + \
-#             f'&location={quote(str(lat))},{quote(str(lon))}&rankby=distance&type=airport'
-#
-#         try:
-#             response = requests.get(map_api_str.replace(" ",""))
-#             response.raise_for_status()
-#
-#             # access JSON content
-#             json = response.json()
-#             if json['status'] != 'OK':
-#                 errors[idx] = json['status']
-#             else:
-#                 all_res = []
-#                 for idx, results in enumerate(json['results']):
-#                     res_dict = {'lat': lat, 'lon': lon}
-#                     res_dict['airport_name'] = results['name']
-#                     res_dict['airport_lat'] = results['geometry']['location']['lat']
-#                     res_dict['airport_lon'] = results['geometry']['location']['lng']
-#                     res_dict['vicinity'] = results['vicinity']
-#                     all_res.append(pd.Series(res_dict).add_suffix(f"_{idx}"))
-#                 res = pd.concat(all_res, axis = 0)
-#                 lat_lon_records.append(res)
-#                 tqdm_obj.set_description(f"found {len(lat_lon_records)}")
-#
-#                 # for good measure
-#                 if (len(lat_lon_records) % 50) == 0:
-#                     pd.DataFrame.from_records(lat_lon_records).to_csv('results/lat_lon_records.csv')
-#                     pickle.dump(errors, open('results/idx_errors.pckl', 'wb'))
-#         except HTTPError as http_err:
-#             errors[idx] = str(http_err)
-#         except Exception as err:
-#             errors[idx] = str(err)
-#     lat_lon_pd = pd.DataFrame.from_records(lat_lon_records)
-#     lat_lon_pd.to_csv('results/lat_lon_records.csv')
-#     pickle.dump(errors, open('results/idx_errors.pckl', 'wb'))
-# else:
-#     lat_lon_pd = pd.read_csv('results/lat_lon_records.csv', index_col = 0)
-#
+def save_discarded(df):
+    """
+    This saves the part of the NTSB incident/accident dataset that have no airport codes
+    nor airport names to a separate csv file. Then, we utilize the rest of the dataset
+    @param: df (pd.DataFrame) ntsb incident dataset
+    @param: df (pd.DataFrame) ntsb incident dataset w/airport codes or names
+    """
+    code_and_name_empty = (df[' Airport Code '] == '') & (df[' Airport Name '] == '')
+    df.loc[code_and_name_empty, :].to_csv('results/discarded_ntsb.csv')
+    return df.loc[~code_and_name_empty, :].copy()
 
 def conv_to_float(x):
+    """
+    Helper function that converts a string to a float (nan if it's an empty string)
+    @param: x (str)
+    @param: float version of x
+    """
     if x == '':
         return np.nan
     else:
         return round(float(x.strip()), 5)
 
-# create geo_full
-# geo_full = full.loc[only_lat_lon, geo_cols].drop_duplicates().copy()
-full[' Latitude '] = full[' Latitude '].apply(conv_to_float)
-full[' Longitude '] = full[' Longitude '].apply(conv_to_float)
-#
-# # combine with lat_lon_pd
-# lat_lon_pd.rename({'lat_0': ' Latitude ', 'lon_0': ' Longitude '}, axis = 1, inplace = True)
-# lat_lon_pd[' Latitude '] = lat_lon_pd[' Latitude '].apply(lambda x: round(x, 5))
-# lat_lon_pd[' Longitude '] = lat_lon_pd[' Longitude '].apply(lambda x: round(x, 5))
-# new_res = lat_lon_pd.merge(geo_full, on = [' Latitude ', ' Longitude '], how = 'left')
-# new_res.to_csv('results/selenium_output.csv') # used in seleneium
-#
-# lat_lon_pd = lat_lon_pd[[' Latitude ', ' Longitude ', 'airport_name_0']]
-# lat_lon_pd['airport_name_0'] = lat_lon_pd['airport_name_0'].apply(process_ntsb_name)
-#
-# def convert_to_float(x):
-#     x = x.strip()
-#     if x == '':
-#         return np.nan
-#     else:
-#         return float(x)
-#
-# # add back to original dataset
-# full[' Latitude '] = full[' Latitude '].apply(convert_to_float)
-# full[' Longitude '] = full[' Longitude '].apply(convert_to_float)
-# full = full.merge(lat_lon_pd, on = [' Latitude ', ' Longitude '], how = 'left')
+def process_lat_lng(df):
+    """
+    Processes the latitude/longitude fields in the NTSB incident/accident dataset.
+    @param: df (pd.DataFrame) ntsb incident dataset
+    @returns: df (pd.DataFrame) ntsb incident dataset w/processed latitude/longitude
+    """
+    df[' Latitude '] = df[' Latitude '].apply(conv_to_float)
+    df[' Longitude '] = df[' Longitude '].apply(conv_to_float)
+    return df
 
+def preprocess_data(df, verbose=True):
+    """
+    Processes the NTSB incident/accident dataset by calling the above functions. It processes
+    airport name, airport code, location, and latitude/longitude info.
+    @param: df (pd.DataFrame) ntsb incident dataset
+    @param: df (pd.DataFrame) processed ntsb incident dataset
+    """
+    strip_cols = [' Airport Code ' , ' Airport Name ', ' Latitude ', ' Longitude ']
+    for col in strip_cols:
+        df[col] = df[col].str.strip()
 
-# ct = 0
-# tqdm_obj = tqdm(code_and_loc_pd.iterrows(), desc = 'found 0', total = code_and_loc_pd.shape[0])
-# for idx, row in tqdm_obj:
-#     tuple_geo = (row['eventcity'], row['event_fullstate'], row['event_country'], row[' Airport Code '])
-#     if tuple_geo not in matched_set:
-#         if check_code(row[' Airport Code '], row['eventcity'], row['event_fullstate']):
-#             ct += 1
-#             tqdm_obj.set_description(f"found {ct}")
-#             matched_set.add(tuple_geo)
-#             if len(matched_set) % 25 == 0:
-#                 pickle.dump(matched_set, open('results/matched_set.pckl', 'wb'))
-# embed()
-# 1/0
+    df = process_code(df)
+    df[' Airport Name '] = df[' Airport Name '].str.replace("N/A", "")
+    df = process_times(df, verbose=verbose)
 
-# REMOVED
-# look at rows with missing latitude/longitude and see if there's only 1 matching airport
-# in the wikipedia database in that location
-wiki_tables = load_full_wiki(us_only = False)
-# wiki_tables = load_full_wiki(us_only = False)
-# lat_lon_missing = (empty_lat | empty_lon) & empty_code_sel
-# city_state_country = full.loc[lat_lon_missing, \
-#         ['eventcity', 'event_fullstate', 'event_country']].drop_duplicates()
-# idx_to_iata = {}
-# for idx, row in tqdm(city_state_country.iterrows(), total = city_state_country.shape[0]):
-#     city, state, country = row
-#     search_nonus = wiki_tables.loc[(wiki_tables['wiki_city'] == city) & \
-#             (wiki_tables['wiki_country'] == country), :]
-#     search_us = wiki_tables.loc[(wiki_tables['wiki_city'] == city) & \
-#             (wiki_tables['wiki_country'] == country) & \
-#             (wiki_tables['wiki_fullstate'] == state), :]
-#     if country != 'United States' and search_nonus.shape[0] == 1:
-#         idx_to_iata[idx] = search_nonus['wiki_IATA'].iloc[0]
-#     elif country == 'United States' and search_us.shape[0] == 1:
-#         idx_to_iata[idx] = search_us['wiki_IATA'].iloc[0]
-# print('only airport in city', len(idx_to_iata))
-# for key in idx_to_iata.keys():
-#     full.loc[key, ' Airport Code '] = idx_to_iata[key]
+    print_preliminary_stats(df, verbose=verbose)
 
-# use selenium code to fill in results of google query
-# import pickle
-# idx_results = pickle.load(open('results/idx_results.pckl', 'rb'))
-#
-# num_total_added = 0
-# for idx in tqdm(idx_results.keys(), total = len(idx_results)):
-#     lat, lon = new_res.loc[idx, [' Latitude ', ' Longitude ']]
-#     lat_sel = full[' Latitude '].apply(lambda x: round(x, 5)) == lat
-#     lon_sel = full[' Longitude '].apply(lambda x: round(x, 5)) == lon
-#     num_total_added += full.loc[lat_sel & lon_sel, ' Airport Code '].shape[0]
-#     full.loc[lat_sel & lon_sel, ' Airport Code '] = idx_results[idx]
-# print('selenium added', num_total_added)
+    # process airport name
+    df['eventairport_conv'] = df[' Airport Name '].apply(process_ntsb_name)
 
-"""
-look for nearest airports using wac
-"""
-def search_wac_row(idx, full, row):
+    # process location cols
+    df = process_location(df)
+
+    assert(df[' Airport Code '].isna().sum() == 0 and df[' Airport Name '].isna().sum() == 0)
+    df = save_discarded(df)
+
+    df = process_lat_lng(df)
+
+    return df
+
+def search_wac_row(full, row):
+    """
+    This utilizes the row parameter to search for nearby airports utilizing its latitude and
+    longitude information, city, and country. If some airports are found, then this function
+    selects the part of full (the NTSB incident/accident dataset) that have that latitude
+    and longitude info and returns it (as well as the number of rows within that dataset).
+    @param: full (pd.DataFrame) ntsb incident dataset
+    @param: row (pd.Series) row of latitude/longitude/city/country information. 
+        This should be extracted from the NTSB incident/accident dataset.
+        Must have the following columns 'eventcity', 'event_country', ' Latitude ', and 
+        ' Longitude '
+    @returns: pd.DataFrame. Subset of the input parameter full that contains the latitude and
+        longitude information that we queried to world-airport-codes.com
+    @returns: num_rows (int), the number of rows in our output dataframe
+    """
     lat, lon = row[' Latitude '], row[' Longitude ']
 
+    # the following call returns a table of airports that are nearest the given latitude and
+    # longitude information given by the parameter row. This is done by querying 
+    # world-airport-codes.com
     res = search_city(row['eventcity'], row['event_country'], \
             row[' Latitude '], row[' Longitude '])
+
     if res is not None:
         lat_sel = full[' Latitude '].apply(lambda x: round(x, 5)) == lat
         lon_sel = full[' Longitude '].apply(lambda x: round(x, 5)) == lon
@@ -259,88 +211,132 @@ def search_wac_row(idx, full, row):
         return tmp, tmp.shape[0]
     return None, 0
 
-empty_code_sel = full[' Airport Code '] == ''
-empty_lat, empty_lon = full[' Latitude '] == '', full[' Longitude '] == ''
-only_lat_lon = ~(empty_lat | empty_lon) & empty_code_sel
-
-if create_backup:
-    backup_ntsb, ct = [], 0
-    errors = {}
-    covered_set = set()
-    if load_backupset:
-        covered_set = pickle.load(open('results/ntsb_backup_set.pckl', 'rb'))
+def save_nearest_airports(df):
+    """
+    This analyzes the part of the NTSB incident/accident dataset with empty airport codes, and
+    non-empty latitude/longitude information. For these rows, we query world-airport-codes.com 
+    to search for nearby airports, and save a dataframe that maps from latitude/longitude to
+    nearby airports (as well as the estimated distance between the latitude/longitude coordinates
+    and the nearby airports) -- saved to results/backup_ntsb.csv. A dictionary mapping from indices
+    to errors (caused by querying the website) is also saved to (results/ntsb_backup_errors.pckl),
+    and a set of queried indices is also saved (just in case the function fails in the middle).
+    @param: df (pd.DataFrame) ntsb incident dataset
+    """
     geo_cols = [' Latitude ', ' Longitude ', 'eventcity', 'event_country']
+    empty_code_sel = df[' Airport Code '] == ''
+    empty_lat, empty_lon = df[' Latitude '] == '', df[' Longitude '] == ''
+    only_lat_lon = ~(empty_lat | empty_lon) & empty_code_sel
 
-    tmp_obj = full.loc[only_lat_lon, geo_cols].drop_duplicates()
-    tqdm_obj = tqdm(tmp_obj.iterrows(), total = tmp_obj.shape[0], \
-            desc = "wac near airports found 0")
-    for idx, row in tqdm_obj:
-        if idx in covered_set:
-            continue
-        try:
-            res, found_ct = search_wac_row(idx, full, row)
-        except HTTPError as exception:
-            errors[idx] = exception
-        ct += found_ct
+    if create_backup:
+        backup_ntsb, ct, errors = [], 0, {}
+        covered_set = set() # set of indices that we've already queried
+        if load_backupset:
+            covered_set = pickle.load(open('results/ntsb_backup_set.pckl', 'rb'))
 
-        if res is not None:
-            backup_ntsb.append(res)
-            tqdm_obj.set_description(f"wac near airports found {ct}")
-        covered_set.add(idx)
+        tmp_obj = df.loc[only_lat_lon, geo_cols].drop_duplicates()
+        tqdm_obj = tqdm(tmp_obj.iterrows(), total = tmp_obj.shape[0], \
+                desc = "wac near airports found 0")
+        for idx, row in tqdm_obj:
+            if idx in covered_set:
+                continue
+            try:
+                res, found_ct = search_wac_row(df, row)
+            except HTTPError as exception:
+                errors[idx] = exception
+            ct += found_ct
 
-        if len(covered_set) % 25 == 0:
-            pickle.dump(covered_set, open('results/ntsb_backup_set.pckl', 'wb'))
-            pickle.dump(list(errors.keys()), open('results/ntsb_backup_errors.pckl', 'wb'))
-
-    pickle.dump(covered_set, open('results/ntsb_backup_set.pckl', 'wb'))
-    pickle.dump(list(errors.keys()), open('results/ntsb_backup_errors.pckl', 'wb'))
-    pd.concat(backup_ntsb, axis = 0, ignore_index = True).to_csv('results/backup_ntsb.csv')
-    
-"""
-Search name via wikipedia
-"""
-name_nocode = (full[' Airport Code '] == '') & (full[' Airport Name '] != '')
-
-if search_wiki:
-    wiki_search_found, total_ct = {}, 0
-    name_and_state = full.loc[name_nocode, [' Airport Name ', 'event_fullstate', \
-            'event_country']].drop_duplicates()
-    tqdm_obj = tqdm(name_and_state.iterrows(), total = name_and_state.shape[0], desc = "wiki found 0, tot 0")
-    for idx, row in tqdm_obj:
-        airportname, fullstate, country = row[' Airport Name '], row['event_fullstate'], row['event_country']
-        if not pd.isna(airportname) and country == 'United States':
-            res = search_wiki_airportname(airportname, fullstate)
             if res is not None:
-                wiki_search_found[airportname] = res
-                total_ct += full.loc[full[' Airport Name '] == airportname].shape[0]
-                tqdm_obj.set_description(f"wiki found {len(wiki_search_found)}, tot {total_ct}")
-                if len(wiki_search_found) % 25 == 0:
-                    wiki_search_found_pd = pd.DataFrame.from_dict(wiki_search_found, orient = 'index')
-                    wiki_search_found_pd.to_csv('results/ntsb_wiki_search_found.csv')
+                backup_ntsb.append(res)
+                tqdm_obj.set_description(f"wac near airports found {ct}")
+            covered_set.add(idx)
 
-    wiki_search_found_pd = pd.DataFrame.from_dict(wiki_search_found, orient = 'index')
-    wiki_search_found_pd.to_csv('results/ntsb_wiki_search_found.csv')
-else:
-    wiki_search_found_pd = pd.read_csv('results/ntsb_wiki_search_found.csv', index_col = 0)
+            if len(covered_set) % 25 == 0:
+                pickle.dump(covered_set, open('results/ntsb_backup_set.pckl', 'wb'))
+                pickle.dump(list(errors.keys()), open('results/ntsb_backup_errors.pckl', 'wb'))
+                pd.concat(backup_ntsb, axis = 0, ignore_index = True).to_csv('results/backup_ntsb.csv')
 
-wiki_search_set = set(wiki_search_found_pd.index)
-print(full.loc[full[' Airport Name '].apply(lambda x: x in wiki_search_set), :].shape)
+        pickle.dump(covered_set, open('results/ntsb_backup_set.pckl', 'wb'))
+        pickle.dump(list(errors.keys()), open('results/ntsb_backup_errors.pckl', 'wb'))
+        pd.concat(backup_ntsb, axis = 0, ignore_index = True).to_csv('results/backup_ntsb.csv')
 
-res = match_using_name_loc(full[name_nocode], wiki_tables, col = ' Airport Name ')
+def search_wikipedia(df):
+    """
+    This analyzes the part of the NTSB incident/accident dataset that has no airport code, but has
+    an airport name. We query wikipedia utilizing the name and generate a dataframe that maps from
+    airport name to IATA code (and other information scraped from wikipedia, see common_funcs.py for
+    more info). We restrict our search space to only look at rows that take place within the US.
+    @param: df (pd.DataFrame) ntsb incident dataset
+    @returns: wiki_Search_found_pd (pd.DataFrame) dataframe that maps from airport name to IATA code
+        as well as other information scraped from wikipedia (see common_funcs.py for more info)
+    """
+    name_nocode = (df[' Airport Code '] == '') & (df[' Airport Name '] != '')
 
-print(full[full[' Airport Code '] == ''].shape)
-for idx, row in tqdm(res.iterrows(), total = res.shape[0]):
-    full.loc[name_nocode & (full[' Airport Code '] == row['wiki_IATA']) & \
-            (full['eventcity'] == row['eventcity']) &
-            (full['event_fullstate'] == row['event_fullstate']), ' Airport Code '] = row['wiki_IATA']
-print(full[full[' Airport Code '] == ''].shape)
+    if search_wiki:
+        wiki_search_found, total_ct = {}, 0
+        name_and_state = df.loc[name_nocode, [' Airport Name ', 'event_fullstate', \
+                'event_country']].drop_duplicates()
+        tqdm_obj = tqdm(name_and_state.iterrows(), total = name_and_state.shape[0], \
+                desc = "wiki found 0, tot 0")
+        for idx, row in tqdm_obj:
+            airportname, fullstate, country = row[' Airport Name '], row['event_fullstate'], row['event_country']
+            if not pd.isna(airportname) and country == 'United States':
+                res = search_wiki_airportname(airportname, fullstate)
+                if res is not None:
+                    wiki_search_found[airportname] = res
+                    total_ct += df.loc[df[' Airport Name '] == airportname].shape[0]
+                    tqdm_obj.set_description(f"wiki found {len(wiki_search_found)}, tot {total_ct}")
+                    if len(wiki_search_found) % 25 == 0:
+                        wiki_search_found_pd = pd.DataFrame.from_dict(wiki_search_found, orient = 'index')
+                        wiki_search_found_pd.to_csv('results/ntsb_wiki_search_found.csv')
 
-"""
-Matching codes (double checking they are codes with correct location info via wikipedia
-or airnav)
-"""
+        wiki_search_found_pd = pd.DataFrame.from_dict(wiki_search_found, orient = 'index')
+        wiki_search_found_pd.to_csv('results/ntsb_wiki_search_found.csv')
+    else:
+        wiki_search_found_pd = pd.read_csv('results/ntsb_wiki_search_found.csv', index_col = 0)
+    return wiki_search_found_pd
+
+def search_name_on_wiki_tables(df, verbose=True):
+    """
+    This function analyzes the part of the NTSB incident/accident dataset with no airport codes, but
+    has an airport name. We scrape a set of dataframes from wikipedia.org (list of airport codes), and
+    we search that dataframe utilizing the airport name. If the airport name matches with a row on the
+    wikipedia table, then we fill in the airport code with the IATA code from wikipedia.org.
+    @param: df (pd.DataFrame) ntsb incident dataset
+    @param: verbose (bool) to print or not to print statistics
+    @returns: df (pd.DataFrame) ntsb incident dataset with filled in IATA codes
+    """
+    wiki_tables = load_full_wiki(us_only = False)
+    name_nocode = (df[' Airport Code '] == '') & (df[' Airport Name '] != '')
+    res = match_using_name_loc(df[name_nocode], wiki_tables, col = ' Airport Name ')
+
+    if verbose:
+        print(df[df[' Airport Code '] == ''].shape)
+    for idx, row in tqdm(res.iterrows(), total = res.shape[0]):
+        df.loc[name_nocode & (df[' Airport Code '] == row['wiki_IATA']) & \
+                (df['eventcity'] == row['eventcity']) 
+                (df['event_fullstate'] == row['event_fullstate']), ' Airport Code '] = row['wiki_IATA']
+    if verbose:
+        print(df[df[' Airport Code '] == ''].shape)
+    return df
+
 def match_via_wikipedia(full, load_saved = True):
+    """
+    We are attempting to match airport codes found in the NTSB incident/accident dataset to
+    airport codes found from the wikipedia tables. This function generates a set of airport codes
+    found in the NTSB incident/accident dataset that also match with an airport code in the
+    wikipedia dataset (matched_set), and a set of airport codes found in the NTSB incident/accident
+    dataset but not in the wikipedia dataset (not_matched_set)
+    @param: full (pd.DataFrame) NTSB incident/accident dataset
+    @param: load_saved (bool) whether or not to load the matched_set and unmatched set that we
+        generated in a previous running of this script
+    @returns: matched_set (set of str/codes), not_matched_set (set of str/codes)
+    """
     def match_row(code):
+        """
+        Returns whether or not there is a match in the wikipedia dataset.
+        @param: code (str)
+        @returns: bool of whether or not there is match
+        """
         selected_iata = wiki_tables.loc[wiki_tables['wiki_IATA'] == code]
         selected_icao = wiki_tables.loc[wiki_tables['wiki_ICAO'] == code]
         return selected_iata.shape[0] > 0 or selected_iaco.shape[0] > 0
@@ -359,7 +355,7 @@ def match_via_wikipedia(full, load_saved = True):
 
     for idx, row in tqdm_obj:
         code = row[' Airport Code ']
-        if code in matched_set or code in matched_set:
+        if code in matched_set:
             continue
         if match_row(code):
             matched_set.add(code)
@@ -373,14 +369,22 @@ def match_via_wikipedia(full, load_saved = True):
     return matched_set, not_matched_set
 
 def match_via_wac(full, matched_set, not_matched_set):
-    # searching via selenium
+    """
+    This function matches airport codes found in the NTSB incident/accident dataset to airport codes
+    found by querying world-airport-codes.com. If there is an entry in world-airport-codes with
+    the given code, then we consider it a match. If there is a match, we add the code to the matched_set
+    and otherwise, we add the code to the not_matched_set
+    @param: full (pd.DataFrame) NTSB incident/accident dataset
+    @param: matched_set (set of codes) generated from match_via_wikipedia of codes that have currently
+        been matched 
+    @param: not_matched_set (set of codes) generated from match_via_wikipedia of codes that have not
+        been matched
+    """
+    code_and_loc_pd =  full.loc[full[' Airport Code '] != '', [' Airport Code ']].drop_duplicates()
     tqdm_obj = tqdm(code_and_loc_pd.iterrows(), total = code_and_loc_pd.shape[0],\
             desc = f'match wac found {len(matched_set)}')
     for idx, row in tqdm_obj:
         code = row[' Airport Code ']
-        # manually skipping
-        # if idx < 26627:
-        #     continue
         if code not in matched_set:
             if check_code(code):
                 matched_set.add(code)
@@ -393,42 +397,87 @@ def match_via_wac(full, matched_set, not_matched_set):
         else:
             not_matched_set.add(code)
 
-full['found_code_ntsb'] = 0
-if match:
-    # see if the codes are matched in wikipedia table
-    wiki_tables = load_full_wiki(us_only = False)
-    matched_set, not_matched_set = match_via_wikipedia(full, load_saved = False)
+def match_codes(df, verbose=True):
+    """
+    This creates a new column in the NTSB incident/accident dataset of whether or not the IATA code
+    has been matched via a third-party website (either wikipedia or world-airport-codes.com). The 
+    new column 'found_code_ntsb' indicates whether or not the airport code has been verified by another
+    website
+    @param: df (pd.DataFrame) ntsb incident dataset
+    @param: verbose (bool) to print or not to print descriptive statistics
+    @returns: df (pd.DataFrame) ntsb incident dataset w/added column
+    """
+    df['found_code_ntsb'] = 0
+    if match:
+        # see if the codes are matched in wikipedia table
+        wiki_tables = load_full_wiki(us_only = False)
+        matched_set, not_matched_set = match_via_wikipedia(df, load_saved = False)
 
-    # count the number of codes matched in wikipedia table
-    tmp = full.loc[~code_and_name_empty, :].copy()
-    ct = 0
-    for code in matched_set:
-        ct += tmp.loc[tmp[' Airport Code '] == code].shape[0]
-    print('wiki matched', ct)
+        # count the number of codes matched in wikipedia table
+        tmp = df.loc[~code_and_name_empty, :].copy()
+        ct = 0
+        for code in matched_set:
+            ct += tmp.loc[tmp[' Airport Code '] == code].shape[0]
+        if verbose:
+            print('wiki matched', ct)
 
-    match_via_wac(full, matched_set, not_matched_set)
+        match_via_wac(df, matched_set, not_matched_set)
 
-    ct = 0
-    for code in matched_set:
-        sel = tmp[' Airport Code '] == code
-        ct += tmp.loc[sel].shape[0]
-    print('wiki + airnav matched', ct)
-    pickle.dump(matched_set, open('results/ntsb_matched_set.pckl', 'wb'))
-else:
-    matched_set = pickle.load(open('results/ntsb_matched_set.pckl', 'rb'))
+        ct = 0
+        for code in matched_set:
+            sel = tmp[' Airport Code '] == code
+            ct += tmp.loc[sel].shape[0]
+        if verbose:
+            print('wiki + airnav matched', ct)
+        pickle.dump(matched_set, open('results/ntsb_matched_set.pckl', 'wb'))
+    else:
+        matched_set = pickle.load(open('results/ntsb_matched_set.pckl', 'rb'))
 
-full.loc[full[' Airport Code '].apply(lambda x: x in matched_set), 'found_code_ntsb'] = 1
+    df.loc[df[' Airport Code '].apply(lambda x: x in matched_set), 'found_code_ntsb'] = 1
+    return df
 
-tracon_date = pd.DataFrame(full.groupby(['day', 'month', 'year', ' Airport Code ']).size())
-tracon_date.to_csv('results/tracon_date_ntsb.csv')
-"""
-Save results
-"""
-full = pd.concat([full, pd.get_dummies(full[' Investigation Type '], prefix = 'ntsb')], axis = 1)
-full = full[[' Airport Code ', 'year', 'month', 'ntsb_ Incident ', 'ntsb_ Accident ']]\
-        .groupby([' Airport Code ', 'year', 'month']).sum()
+def postprocess_results(df):
+    """
+    This post-processes the NTSB incident/accident dataset by grouping by airport code/year/month
+    and calculates the number of incidents/accidents for that given tracon_month
+    @param: df (pd.DataFrame) ntsb incident dataset
+    @param: df (pd.DataFrame) ntsb incident dataset after being processed
+    """
+    df = pd.concat([df, pd.get_dummies(df[' Investigation Type '], prefix = 'ntsb')], axis = 1)
+    df = df[[' Airport Code ', 'year', 'month', 'ntsb_ Incident ', 'ntsb_ Accident ']]\
+            .groupby([' Airport Code ', 'year', 'month']).sum()
 
-full = full.reset_index()
-full.rename({' Airport Code ': 'airport_code'}, axis = 1, inplace = True)
-full.loc[full['airport_code'] == 'nan', 'airport_code'] = np.nan
-full.to_csv('results/NTSB_AIDS_full_processed.csv', index = False)
+    df = df.reset_index()
+    df.rename({' Airport Code ': 'airport_code'}, axis = 1, inplace = True)
+    df.loc[df['airport_code'] == 'nan', 'airport_code'] = np.nan
+    return df
+
+def main(verbose=True):
+    # preprocess data
+    full = pd.read_csv('datasets/NTSB_AviationData_new.txt', sep = "|")
+    full = preprocess_data(full, verbose=verbose)
+
+    save_nearest_airports(full)
+
+    # search wikipedia via requests
+    wiki_search_found_pd = search_wikipedia(full)
+    wiki_search_set = set(wiki_search_found_pd.index)
+    if verbose:
+        print(full.loc[full[' Airport Name '].apply(lambda x: x in wiki_search_set), :].shape)
+
+    # search wikipedia on wiki tables
+    full = search_name_on_wiki_tables(full, verbose=verbose)
+
+    # match codes
+    full = match_codes(full, verbose=verbose)
+
+    # save dates
+    tracon_date = pd.DataFrame(full.groupby(['day', 'month', 'year', ' Airport Code ']).size())
+    tracon_date.to_csv('results/tracon_date_ntsb.csv')
+
+    # postprocess results
+    full = postprocess_results(full)
+    full.to_csv('results/NTSB_AIDS_full_processed.csv', index = False)
+
+if __name__ == "__main__":
+    main()
