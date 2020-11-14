@@ -100,6 +100,7 @@ def match_using_name_loc(incident_df, wiki_table, col = 'eventairport_conv'):
 
         # find airports that contain all words in our airport name
         res = wiki_table.loc[num_words_matched == len(all_words_in_name), :]
+
         if res.shape[0] == 1: # if only one result, select that row
             full_matched_pd.append(pd.concat([unique_loc.loc[idx, :], res.iloc[0, :]], axis = 0))
             tqdm_obj.set_description(f"found {len(full_matched_pd)}")

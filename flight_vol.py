@@ -4,6 +4,7 @@ from tqdm import tqdm
 from IPython import embed
 from collections import namedtuple
 from itertools import product
+
 coverage = namedtuple('coverage', ['part', 'total'])
 """
 Combines flight volume data (WEB-Report-*) with airport_month_events, which is the processed
@@ -56,6 +57,7 @@ for x in os.listdir('datasets/'):
             part2['ATADS_Tracon_Tower'] = 'Tower'
         pds.append(part2)
 part2 = pd.concat(pds, axis = 0, ignore_index = True, sort = True)
+part2 = part2.drop_duplicates()
 
 part2['month'] = part2['Date'].str.split("/").apply(lambda x: int(x[0]) if isinstance(x, list) else np.nan)
 part2['year'] = part2['Date'].str.split("/").apply(lambda x: int(x[1]) if isinstance(x, list) else np.nan)
@@ -71,6 +73,7 @@ for idx, row in tqdm(part2.iterrows(), total = part2.shape[0]):
 
 # combine the two csvs
 res = pd.read_csv('results/airport_month_events.csv', index_col = 0)
+
 num_cols = part2.columns.shape[0]
 all_nans = pd.Series(index = part2.columns)
 
