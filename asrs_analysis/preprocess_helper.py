@@ -32,6 +32,10 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
             total = asrs.shape[0]))
     asrs = asrs_dropped
 
+    if test:
+        np.random.seed(42)
+        asrs = asrs.loc[np.random.choice(asrs.index, 1000), :].copy()
+
     # for simplicity's sake we create an empty synopsis_report2
     asrs['synopsis_report2'] = np.nan
 
@@ -53,6 +57,13 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
         report1 = asrs[f'{type_report}_report1'].replace(np.nan, '')
         report2 = asrs[f'{type_report}_report2'].replace(np.nan, '')
         asrs[type_report] = report1 + " " + report2
+
+        # preprocess text
+        asrs[type_report] = asrs.apply(lambda x: ' '.join(convert_to_words(x, type_report)), axis=1)
+
+        asrs[type_report] = asrs[type_report].str.lower()
+        asrs[f'{type_report}_report1'] = asrs[f'{type_report}_report1'].str.lower()
+        asrs[f'{type_report}_report2'] = asrs[f'{type_report}_report2'].replace(np.nan, '').str.lower()
 
     def generate_date_cols(asrs):
         asrs['year'] = asrs['Date'].apply(lambda x: int(x // 100) if not pd.isna(x) else np.nan)
@@ -120,16 +131,13 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
     asrs['combined'] = asrs['narrative'] + ' ' + asrs['callback'] + ' ' + \
             asrs['synopsis']
 
-    cols = ['narrative', 'synopsis', 'callback']
-    for col in cols:
-        asrs[col] = asrs[col].str.lower()
-        asrs[f'{col}_report1'] = asrs[f'{col}_report1'].str.lower()
-        asrs[f'{col}_report2'] = asrs[f'{col}_report2'].replace(np.nan, '').str.lower()
+    # cols = ['narrative', 'synopsis', 'callback']
+    # for col in cols:
+    #     asrs[col] = asrs[col].str.lower()
+    #     asrs[f'{col}_report1'] = asrs[f'{col}_report1'].str.lower()
+    #     asrs[f'{col}_report2'] = asrs[f'{col}_report2'].replace(np.nan, '').str.lower()
     asrs['combined'] = asrs['combined'].str.lower()
 
-    if test:
-        np.random.seed(42)
-        asrs = asrs.loc[np.random.choice(asrs.index, 1000), :].copy()
 
     total = asrs.shape[0]
     asrs = tracon_analysis(asrs)
@@ -262,11 +270,18 @@ def generator_split(split_series):
         for x in list_elem:
             yield x
 
+def replace_words(sentence, replace_dict={}):
+    split_sentence = sentence.split()
+    for idx, elem in enumerate(split_sentence):
+        split_sentence[idx] = replace_dict.get(elem, elem)
+    return np.array(split_sentence)
+
 def create_counter(df, col = 'narrative'):
     tqdm.pandas(desc = col)
     # split = df.apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
     dropped = df.drop_duplicates(col)
-    split = dropped.progress_apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
+    # split = dropped.progress_apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
+    split = dropped.progress_apply(lambda x: np.array(x[col].split()), axis = 1)
     res = Counter(generator_split(split))
     res = pd.DataFrame.from_dict(dict(res), orient = 'index')
     return res

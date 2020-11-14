@@ -95,11 +95,13 @@ def analyze_tracon_period(df_grouped, sel_cols, df, group_to_set, replace_dict, 
         asrs[col] = asrs[col].str.lower()
 
         # replace abrevs
-        split = asrs.apply(lambda x: convert_to_words(x, col, replace_dict), axis = 1)
+        # split = asrs.apply(lambda x: convert_to_words(x, col, replace_dict), axis = 1)
+        split = asrs.apply(lambda x: replace_words(x[col], replace_dict), axis = 1)
         index_to_counter_replace[index_id] = Counter(np.hstack(split.values).flatten())
 
         # w/o replace abrevs
-        split = asrs.apply(lambda x: convert_to_words(x, col, {}), axis = 1)
+        # split = asrs.apply(lambda x: convert_to_words(x, col, {}), axis = 1)
+        split = asrs.apply(lambda x: replace_words(x[col]), axis = 1)
         index_to_counter[index_id] = Counter(np.hstack(split.values).flatten())
 
     key_ctr = list(index_to_counter.items())

@@ -327,7 +327,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         for field in tqdm(reps):
             if field not in doc_to_idx:
                 # preprocess document
-                np_res = convert_to_words(field, replace_dict=r_d)
+                # np_res = convert_to_words(field, replace_dict=r_d)
+                np_res = split_sentence(field, replace_dict=r_d)
                 doc_str = ' '.join(np_res)
 
                 doc_to_idx[field] = ct
