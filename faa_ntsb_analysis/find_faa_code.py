@@ -335,9 +335,6 @@ def save_not_matched(df, not_matched, matched_names, verbose=True):
     @param: matched_names (set of str) contains all airport names that have been matched
     @param: verbose (bool) whether or not to print out statistics
     """
-    if verbose:
-        print(coverage(df.loc[df['eventairport_conv'].apply(lambda x: x in matched_names), :].shape[0],
-                df.shape[0]))
     nf_sel = not_matched['eventairport_conv'].apply(lambda x: x not in matched_names)
     not_matched.loc[nf_sel, :].to_csv('results/not_matched.csv', index = False)
 

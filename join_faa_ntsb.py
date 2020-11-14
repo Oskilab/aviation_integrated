@@ -21,7 +21,6 @@ faa_df = pd.read_csv('faa_ntsb_analysis/results/FAA_AIDS_full_processed.csv')
 faa_df.rename({'tracon_code': 'airport_code'}, axis = 1, inplace = True)
 faa_df['dataset'] = 'faa'
 
-
 top_50_iata = set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
 faa_df = faa_df.loc[faa_df['airport_code'].apply(lambda x: x in top_50_iata), :].copy()
 ntsb = ntsb.loc[ntsb['airport_code'].apply(lambda x: x in top_50_iata), :].copy()
