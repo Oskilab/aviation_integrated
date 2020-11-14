@@ -111,7 +111,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
             selector = selector & (all_pds[sel[sel_idx]] == tmp.loc[i, sel[sel_idx]])
         asrs = all_pds.loc[selector, :].copy()
 
-        asrs[f'{col}_wc'] = asrs.apply(lambda x: convert_to_words(x, col).shape[0], axis = 1)
+        # asrs[f'{col}_wc'] = asrs.apply(lambda x: convert_to_words(x, col).shape[0], axis = 1)
+        asrs[f'{col}_wc'] = asrs.apply(lambda x: split_sentence(x[col]).shape[0], axis = 1)
 
         # fill in additional columns
         other_info = {}
@@ -130,7 +131,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
 
         # this creates a collections.Counter object that counts the number of times each word
         # showed up within the given tracon_month, then saved to index_to_counter
-        split = asrs.apply(lambda x: convert_to_words(x, col), axis = 1) # see preprocess_helper.py
+        # split = asrs.apply(lambda x: convert_to_words(x, col), axis = 1) # see preprocess_helper.py
+        split = asrs.apply(lambda x: split_sentence(x[col]), axis = 1) # see preprocess_helper.py
         index_to_counter[index_id] = Counter(np.hstack(split.values).flatten())
         index_to_other_info[index_id] = pd.Series(other_info)
 

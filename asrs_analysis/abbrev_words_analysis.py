@@ -293,4 +293,6 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     total_summary = unique_summary.merge(ct_summary, on = 'tag')
     total_summary.to_csv(f'results/tag_summary_{orig_col}.csv')
 
-pd.DataFrame.from_dict(summary_pd, orient = 'index').to_csv('results/all_summary.csv')
+all_summary = pd.DataFrame.from_dict(summary_pd, orient = 'index')
+all_summary.to_csv('results/all_summary.csv')
+embed()
