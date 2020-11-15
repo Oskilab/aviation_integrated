@@ -9,65 +9,56 @@ from preprocess_helper import neg_nonword_to_neg_word_set, neg_nonword_to_airpor
 from bs4 import BeautifulSoup
 import argparse
 
-parser = argparse.ArgumentParser(description='Analyze abbreviations.')
-parser.add_argument('-t', action = 'store_true')
-args = parser.parse_args()
-
-test = args.t
-print('abbrev_words_analysis test', test)
-
-# get list of cities
-with open('datasets/List_of_United_States_cities_by_population') as wiki_cities:
-    list_of_cities = BeautifulSoup(wiki_cities.read(),'html.parser')
-
-# process html
-cities = []
-for x in list_of_cities.find_all('td'):
-    try:
-        if x.a.string is not None:
-            cities.append(x.a.string)
-    except AttributeError:
-        continue
-
-# only use subset
-ny_ind, wood_ind = cities.index('New York'), cities.index('Woodbridge')
-cities = cities[ny_ind:wood_ind]
-
-cities_words = []
-for x in cities:
-    for elem in x.split(" "):
-        cities_words.append(elem.lower())
-cities = set(cities_words)
-
-aviation_dicts = load_dictionaries() # see preprocess helper
-asrs = load_asrs(load_saved = False, test = test) # see preprocess helper
-negnw_to_negw = neg_nonword_to_neg_word_set()
-negnw_to_airport = neg_nonword_to_airport_set()
-
-# create set of all abbreviations in all dictionaries
-dfs = list(aviation_dicts.values())
-all_abrevs = set(dfs[0]['acronym'])
-for i in range(1, len(dfs)):
-    all_abrevs.update(dfs[i]['acronym'])
-
-# python dictionaries
-eng_stopwords = set(stopwords.words('english'))
-d = enchant.Dict("en_US")
-
 summary_cols = ['total words', 'unique words', 'neg_nonword unprocessed', 'unique neg_nonword unprocessed',\
         'neg_hand2', 'unique neg_hand2','airport', 'unique airport', 'neg_nonalpha', 'unique neg_nonalpha', \
         'neg_city', 'unique neg_city','neg_nonword processed', 'unique neg_nonword procesed',  \
         'pot. words frm neg_nw', 'unique pot. words frm neg_nw','top down', 'unique top down','hand', \
         'unique hand' 'hand2', 'unique_hand2']
-summary_pd = {}
-for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_synopsis_combined']:
-    summary_dict = {}
-    # this creates a dataframe of word counts
-    total_cts = create_counter(asrs, orig_col)
-    total_cts.sort_values(by = 0, ascending = False, inplace = True)
 
-    summary_dict[summary_cols[0]] = total_cts[0].sum() # total words
-    summary_dict[summary_cols[1]] = total_cts[0].shape[0] # unique words
+def parse_args():
+    parser = argparse.ArgumentParser(description='Analyze abbreviations.')
+    parser.add_argument('-t', action = 'store_true')
+    args = parser.parse_args()
+
+    test = args.t
+    return test
+
+def parse_city_words():
+    # get list of cities
+    with open('datasets/List_of_United_States_cities_by_population') as wiki_cities:
+        list_of_cities = BeautifulSoup(wiki_cities.read(), 'html.parser')
+
+    # process html
+    cities = []
+    for x in list_of_cities.find_all('td'):
+        try:
+            if x.a.string is not None:
+                cities.append(x.a.string)
+        except AttributeError:
+            continue
+
+    # only use subset
+    ny_ind, wood_ind = cities.index('New York'), cities.index('Woodbridge')
+    cities = cities[ny_ind:wood_ind]
+
+    cities_words = []
+    for x in cities:
+        for elem in x.split(" "):
+            cities_words.append(elem.lower())
+
+    return set(cities_words)
+
+def get_all_abrevs(aviation_dicts):
+    # create set of all abbreviations in all dictionaries
+    dfs = list(aviation_dicts.values())
+    all_abrevs = set(dfs[0]['acronym'])
+    for i in range(1, len(dfs)):
+        all_abrevs.update(dfs[i]['acronym'])
+    return all_abrevs
+
+def negatives(total_cts, summary_dict, word_categories, orig_col):
+    global summary_cols
+    all_abrevs, eng_stopwords, d, negnw_to_negw, negnw_to_airport, cities = word_categories
 
     # Negatives (or words that are not found in any abbreviation dictionary)
     fn = total_cts.loc[total_cts.index.map(lambda x: x not in all_abrevs), :].copy()
@@ -123,20 +114,10 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     summary_dict[summary_cols[15]] = fn[sel].shape[0] # unique potential words from neg_nw
 
     fn.to_csv(f'results/fn_tagged_{orig_col}.csv')
+    return fn
 
-    # Positives (or words that are found in an abbreviation dictionary)
-    # combine with full-form from dictionaries
-    total_cts = total_cts.reset_index().rename({'index': 'acronym'}, axis = 1)
-    for aviation_pd in aviation_dicts.values():
-        total_cts = total_cts.merge(aviation_pd, on = "acronym", how = "left")
-
-    total_cts.drop_duplicates(inplace = True)
-    total_cts.set_index('acronym', inplace = True)
-
-    total_cts['abrev'] = 0
-    total_cts['tag'] = ''
-    total_cts = pd.concat([fn, total_cts], axis = 0, ignore_index = False, sort = False)
-    total_cts.sort_values(by = 0, ascending = False, inplace = True)
+def positives(total_cts, summary_dict, word_categories, aviation_dicts, orig_col):
+    all_abrevs, eng_stopwords, d, negnw_to_negw, negnw_to_airport, cities = word_categories
 
     # pos_sel = the rows that have at least one non-NAN value
     pos_sel = total_cts['casa_fullform'].isna()
@@ -146,33 +127,6 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
 
     sum_cts = np.sum(total_cts.loc[:, 0])
 
-    # FAA/CASA common abreviations
-    # faa_casa_common = total_cts.loc[list(casa_faa_set), :].copy()
-    # faa_casa_common['perc_all'] = faa_casa_common[0] / sum_cts
-    # faa_casa_common['perc'] = faa_casa_common[0] / np.sum(faa_casa_common[0])
-    # faa_casa_common.sort_values(by = 0, inplace = True, ascending =  False)
-    # faa_casa_common.to_csv('results/faa_casa_common.csv')
-
-    # Basic Analysis
-    tmp = np.cumsum(total_cts.loc[:, 0]) / sum_cts
-    for idx in range(tmp.shape[0]):
-        if tmp[idx] > 0.9:
-            print(f"{idx + 1} words account for 90% of all abbreviations")
-            break
-
-    num_words, num_stop = 0, 0
-    ct_stop = 0
-    for abrev, num in total_cts.iloc[:idx].loc[:, 0].iteritems():
-        if d.check(abrev):
-            num_words += 1
-        if abrev in eng_stopwords:
-            num_stop += 1
-            ct_stop += num
-    # print(f"Of the {idx + 1} most common abbreviations, {num_words} are English words, " \
-    #         + f"{num_stop} are English stopwords")
-    # print(f"Stopwords account for {ct_stop * 100 / sum_cts:.2f} of all abbreviations")
-    # print(f"1000 abbreviations account for {tmp[999]:.4f} of all abbreviations\n")
-    #
     # Stopwords dataframe
     sel = pos_sel & total_cts.index.map(lambda x: x in eng_stopwords)
     total_cts.loc[sel, 'tag'] = 'pos_stopword'
@@ -185,7 +139,6 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     # Not english stopwords and english words
     pos_word_sel = pos_sel & total_cts.index.map(lambda x: d.check(x) and x not in eng_stopwords)
     total_cts.loc[pos_word_sel, 'tag'] = 'pos_word'
-
 
     # HANDCODED: we look at English words that are actually abbreviations
     # and add it back to our list of abbreviations. Only looked at top 99%
@@ -212,8 +165,18 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     summary_dict[summary_cols[17]] = total_cts[top_down_sel].shape[0] # unique top down
     total_cts.to_csv(f'results/total_cts_tagged_{orig_col}.csv')
 
+def get_top_down_subset(total_cts, dictionary_names):
+    sel = None
+    for dictionary in dictionary_names:
+        if sel is None:
+            sel = ~total_cts[f'{dictionary}_fullform'].isna()
+        else:
+            sel = sel | (~total_cts[f'{dictionary}_fullform'].isna())
+    subset = total_cts.loc[sel, :].copy()
+    return subset
 
-    dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'hand2', 'iata']
+
+def generate_dictionary_summary(total_cts, dictionary_names, summary_dict):
     dictionary_summary = {}
     for dictionary in dictionary_names:
         subset = total_cts.loc[~total_cts[f'{dictionary}_fullform'].isna(), :]
@@ -223,60 +186,39 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
         if dictionary == 'hand' or dictionary == 'hand2':
             summary_dict[f'{dictionary}'] = subset[0].sum()
             summary_dict[f'unique {dictionary}'] = subset[0].shape[0]
-    summary_pd[orig_col] = pd.Series(summary_dict)
+    return dictionary_summary
 
-    dictionary_names.remove('iata')
-    sel = None
-    for dictionary in dictionary_names:
-        if sel is None:
-            sel = ~total_cts[f'{dictionary}_fullform'].isna()
-        else:
-            sel = sel | (~total_cts[f'{dictionary}_fullform'].isna())
-    subset = total_cts.loc[sel, :].copy()
-    dictionary_summary['total_top_down_abrev'] = pd.Series({'ct': np.sum(subset[0]), \
-            'unique_ct': subset.shape[0]})
-    dictionary_summary = pd.DataFrame.from_dict(dictionary_summary, orient = 'index')
-    dictionary_summary.to_csv(f'results/dictionary_summary_{orig_col}.csv')
+def generate_bar_chart(total_cts, agg_func, output_fn, title="", abrev=True):
+    if abrev:
+        tmp = total_cts.loc[total_cts['abrev'] == 1, [0, 'tag']].groupby('tag').agg(agg_func)
+    else:
+        tmp = total_cts.loc[:, [0, 'tag']].groupby('tag').agg(agg_func)
+    tot = np.sum(tmp)[0]
 
+    ax = (tmp / tot).plot.barh(y = 0, figsize = (10, 6), title=title)
+    plt.tight_layout()
+    ax.get_figure().savefig(output_fn)
+
+def generate_all_bar_charts(total_cts, orig_col):
     # The following section creates a series of bar plots showing the breakdown of the total corpus
     # by the created tags. If there's a unique preceding the name of the file, then it's the breakdown
     # of unique words (or the vocabulary used in the dataset)
     # only abbreviations, total_cts
-    tmp = total_cts.loc[total_cts['abrev'] == 1, [0, 'tag']].groupby('tag').agg(np.sum)
-    tot = np.sum(tmp)[0]
+    generate_bar_chart(total_cts, np.sum, f'results/abrev_bar_plot_{orig_col}.png', title=\
+            f"Abrev Bar Chart (Prop of Abrevs, {orig_col})")
 
-    ax = (tmp / tot).plot.barh(y = 0, figsize = (10, 6), title = f"Abrev Bar Chart (Prop of Abrevs, {orig_col})")
-    plt.tight_layout()
-    ax.get_figure().savefig(f'results/abrev_bar_plot_{orig_col}.png')
+    generate_bar_chart(total_cts, lambda x: np.unique(x).shape[0], \
+            f'results/unique_abrev_bar_plot_{orig_col}.png', 
+            title=f"Unique Abrev Bar Chart (Prop. of Abrev vocab, {orig_col})")
 
-    # only abbreviations, unique
-    tmp = total_cts.loc[total_cts['abrev'] == 1, [0, 'tag']].groupby('tag').agg(lambda x: np.unique(x).shape[0])
-    tot = np.sum(tmp)[0]
+    generate_bar_chart(total_cts, np.sum, f'results/corpus_bar_plot_{orig_col}.png', 
+            title=f"Corpus Bar Chart (Prop. of Total Corpus, {orig_col})", abrev=False)
 
-    ax = (tmp / tot).plot.barh(y = 0, figsize = (10, 6), title = f"Unique Abrev Bar Chart (Prop. of Abrev vocab, {orig_col})")
-    plt.tight_layout()
-    ax.get_figure().savefig(f'results/unique_abrev_bar_plot_{orig_col}.png')
+    generate_bar_chart(total_cts, lambda x: np.unique(x).shape[0], \
+            f'results/unique_corpus_bar_plot_{orig_col}.png', 
+            title=f"Unique Corpus Bar Chart (Prop. of total vocab, {orig_col})", abrev=False)
 
-    # whole corpus, total_cts
-    tmp = total_cts.loc[:, [0, 'tag']].groupby('tag').agg(np.sum)
-    tot = np.sum(tmp)[0]
-
-    ax = (tmp / tot).plot.barh(y = 0, figsize = (10, 6), title = f"Corpus Bar Chart (Prop. of Total Corpus, {orig_col})")
-    plt.tight_layout()
-    ax.get_figure().savefig(f'results/corpus_bar_plot_{orig_col}.png')
-
-    # whole corpus, unique
-    tmp = total_cts.loc[:, [0, 'tag']].groupby('tag').agg(lambda x: np.unique(x).shape[0])
-    tot = np.sum(tmp)[0]
-
-    ax = (tmp / tot).plot.barh(y = 0, figsize = (10, 6), title = f"Unique Corpus Bar Chart (Prop. of total vocab, {orig_col})")
-    plt.tight_layout()
-    ax.get_figure().savefig(f'results/unique_corpus_bar_plot_{orig_col}.png')
-
-    # save tags
-    for tag in total_cts['tag'].unique():
-        total_cts.loc[total_cts['tag'] == tag, :].to_csv(f"results/{orig_col}_{tag}.csv")
-
+def generate_abrev_tag_summary(total_cts, orig_col):
     only_abrevs = total_cts.loc[total_cts['abrev'] == 1]
 
     # create summary of all tags by grouping by tags, and dividing by the sum of the counts
@@ -293,6 +235,92 @@ for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_sy
     total_summary = unique_summary.merge(ct_summary, on = 'tag')
     total_summary.to_csv(f'results/tag_summary_{orig_col}.csv')
 
-all_summary = pd.DataFrame.from_dict(summary_pd, orient = 'index')
-all_summary.to_csv('results/all_summary.csv')
-embed()
+
+def process_asrs(total_cts, fn, aviation_dicts):
+    total_cts = total_cts.reset_index().rename({'index': 'acronym'}, axis = 1)
+    for aviation_pd in aviation_dicts.values():
+        total_cts = total_cts.merge(aviation_pd, on = "acronym", how = "left")
+
+    total_cts.drop_duplicates(inplace = True)
+    total_cts.set_index('acronym', inplace = True)
+
+    total_cts['abrev'] = 0
+    total_cts['tag'] = ''
+    total_cts = pd.concat([fn, total_cts], axis = 0, ignore_index = False, sort = False)
+    total_cts.sort_values(by = 0, ascending = False, inplace = True)
+    return total_cts
+
+def analyze_dictionary_words(total_cts, summary_dict, orig_col):
+    dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'hand2', 'iata']
+    dictionary_summary = generate_dictionary_summary(total_cts, dictionary_names, summary_dict)
+
+    dictionary_names.remove('iata')
+    subset = get_top_down_subset(total_cts, dictionary_names)
+
+    dictionary_summary['total_top_down_abrev'] = pd.Series({'ct': np.sum(subset[0]), \
+            'unique_ct': subset.shape[0]})
+    dictionary_summary = pd.DataFrame.from_dict(dictionary_summary, orient = 'index')
+    dictionary_summary.to_csv(f'results/dictionary_summary_{orig_col}.csv')
+
+def analyze_column(asrs, orig_col, summary_pd, word_categories, aviation_dicts):
+    summary_dict = {}
+    # this creates a dataframe of word counts
+    total_cts = create_counter(asrs, orig_col)
+    total_cts.sort_values(by = 0, ascending = False, inplace = True)
+
+    summary_dict[summary_cols[0]] = total_cts[0].sum() # total words
+    summary_dict[summary_cols[1]] = total_cts[0].shape[0] # unique words
+
+    # analyze words not found in aviation dictionaries
+    fn = negatives(total_cts, summary_dict, word_categories, orig_col)
+
+    total_cts = process_asrs(total_cts, fn, aviation_dicts)
+
+    # Positives (or words that are found in an abbreviation dictionary)
+    # combine with full-form from dictionaries
+    positives(total_cts, summary_dict, word_categories, aviation_dicts, orig_col)
+
+    analyze_dictionary_words(total_cts, summary_dict, orig_col)
+
+    summary_pd[orig_col] = pd.Series(summary_dict)
+
+    # generate bar charts of distribution
+    generate_all_bar_charts(total_cts, orig_col)
+
+    # save tags
+    for tag in total_cts['tag'].unique():
+        total_cts.loc[total_cts['tag'] == tag, :].to_csv(f"results/{orig_col}_{tag}.csv")
+
+    # save summary dataframe of tags (only abbreviations)
+    generate_abrev_tag_summary(total_cts, orig_col)
+
+def main():
+    test = parse_args()
+    cities = parse_city_words()
+
+    # load datasets
+    aviation_dicts = load_dictionaries() # see preprocess helper
+    all_abrevs = get_all_abrevs(aviation_dicts)
+    asrs = load_asrs(load_saved = False, test = test) # see preprocess helper
+
+    # python dictionaries
+    eng_stopwords = set(stopwords.words('english'))
+    d = enchant.Dict("en_US")
+
+    # load neg nonword sets
+    negnw_to_negw = neg_nonword_to_neg_word_set()
+    negnw_to_airport = neg_nonword_to_airport_set()
+
+    word_categories = [all_abrevs, eng_stopwords, d, negnw_to_negw, negnw_to_airport, cities]
+
+    # analyze each column
+    summary_pd = {}
+    for orig_col in ['narrative', 'synopsis', 'callback' , 'combined', 'narrative_synopsis_combined']:
+        analyze_column(asrs, orig_col, summary_pd, word_categories, aviation_dicts)
+
+    # save summary of all columns and corresponding dictionaries/abbreviations/etc.
+    all_summary = pd.DataFrame.from_dict(summary_pd, orient = 'index')
+    all_summary.to_csv('results/all_summary.csv')
+
+if __name__ == "__main__":
+    main()
