@@ -493,13 +493,6 @@ def main(verbose=True):
 
     full = fill_in_handcode_iata(full)
 
-    # handcode_iata_dict_df = pd.read_excel('datasets/NTSB_Key.xlsx')
-    # handcode_iata_dict = {}
-    # for idx, row in handcode_iata_dict_df.set_index('airportname').iterrows():
-    #     handcode_iata_dict[idx.strip()] = row['tracon_key']
-    # print(full[' Airport Code '].apply(lambda x: x in handcode_iata_dict).sum())
-    embed()
-
     # match codes
     full = match_codes(full, verbose=verbose)
 
