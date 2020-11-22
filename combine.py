@@ -5,7 +5,7 @@ from helper import get_tracon, get_year, get_month, tracon_month_split, fill_wit
 # from asrs_analysis.cos_sim import year_month_indices
 from collections import Counter
 import pandas as pd, numpy as np, re
-import argparse
+import argparse, os
 
 """
 Combines ASRS data with FAA/NTSB, LIWC and Doc2Vec datasets
@@ -15,6 +15,8 @@ ifr_vfr_dict = {
     'general': 'gen',
     'overflight': 'ovrflt'
 }
+if not os.path.exists('results/final/'):
+    os.makedirs('results/final/')
 
 def num_months_between(month1, year1, month2, year2):
     return (year2 - year1) * 12 + month2 - month1
@@ -283,7 +285,7 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
             code = ' '.join([str(month), str(year)])
 
             yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month), \
-                    num_months=month_idx)
+                    num_months=n_month)
             tracon_month_dict[code] = asrs.iloc[yr_mth_sel_idx, :].copy()
             unique_info[code] = np.unique(tracon_month_dict[code]['tracon'].values.astype(str), \
                     return_index=True, return_counts=True)
@@ -361,8 +363,9 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         res = res.loc[:,~res.columns.duplicated()]
         res.set_index(['tracon_key', 'year', 'month'], inplace = True)
         print(res.shape)
+        res.to_csv('results/final/{col}_{month_range_str}.csv')
         all_res.append(res)
-all_res = pd.concat(all_res, ignore_index = False, axis = 1)
+all_res = pd.concat(all_res, ignore_index=False, axis=1)
 all_res = reorder_cols(all_res)
 all_res.to_csv('results/final_dataset.csv')
 
