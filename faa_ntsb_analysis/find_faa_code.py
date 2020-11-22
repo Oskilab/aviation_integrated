@@ -444,6 +444,19 @@ def check_tracon_codes(df):
     # df.loc[df['tracon_code'].apply(lambda x: x in matched_set), 'found_code_faa'] = 1
     return df
 
+def fill_in_handcode_iata(df):
+    """
+    This utilizes a handcoded dictionary that maps between airport name to matching IATA code.
+    @param: df (pd.DataFrame) dataframe of FAA incident/accident dataset
+    @returns: processed df with handcoded IATA codes
+    """
+    handcode_iata_dict_df = pd.read_excel('datasets/FAA_key.xlsx')
+    handcode_iata_dict = {}
+    for idx, row in handcode_iata_dict_df.set_index('FAA_key').iterrows():
+        handcode_iata_dict[idx] = row['tracon_key']
+    df['tracon_code'] = df['eventairport'].apply(lambda x: handcode_iata_dict.get(x, np.nan))
+    return df
+
 def post_process_results(df):
     """
     This post processes the results by grouping by tracon_month and then counting the number
@@ -490,22 +503,28 @@ def main(verbose=True):
     if backup:
         create_backup(full, verbose=verbose)
 
+    # the following lines are commented out because matching names to IATA codes created
+    # some number of false positives. Instead, we now utilize a dictionary that maps from
+    # eventairport to IATA code
+
     # match names using wikipedia table
-    full_matched_pd = wiki_name_matching(full)
+    # full_matched_pd = wiki_name_matching(full)
 
     # work on those that we could not find codes for
-    all_matched_names = set(full_matched_pd['eventairport_conv'])
-    not_matched = get_unmatched_names_cities(full, all_matched_names)
+    # all_matched_names = set(full_matched_pd['eventairport_conv'])
+    # not_matched = get_unmatched_names_cities(full, all_matched_names)
 
     # match names by querying wikipedia
-    wiki_search_found_df = query_wikipedia(not_matched)
+    # wiki_search_found_df = query_wikipedia(not_matched)
 
     # save unmatched part of dataset to separate csv file
-    all_matched_names = all_matched_names.union(set(wiki_search_found_df.index))
-    save_not_matched(full, not_matched, all_matched_names, verbose=verbose)
+    # all_matched_names = all_matched_names.union(set(wiki_search_found_df.index))
+    # save_not_matched(full, not_matched, all_matched_names, verbose=verbose)
 
     # fill in dataset with matched iata codes (found via airport name above)
-    full = fill_in_iata(full, full_matched_pd, wiki_search_found_df)
+    # full = fill_in_iata(full, full_matched_pd, wiki_search_found_df)
+    full = fill_in_handcode_iata(full)
+
     if verbose:
         print('non empty tracon code rows', full.loc[~full['tracon_code'].isna()].shape[0])
 

@@ -397,6 +397,25 @@ def match_via_wac(full, matched_set, not_matched_set):
         else:
             not_matched_set.add(code)
 
+def fill_in_handcode_iata(df):
+    """
+    This utilizes a handcoded dictionary that maps between airport name to matching IATA code.
+    @param: df (pd.DataFrame) dataframe of NTSB incident/accident dataset
+    @returns: processed df with handcoded IATA codes
+    """
+    handcode_iata_dict_df = pd.read_excel('datasets/NTSB_Key.xlsx')
+    handcode_iata_dict = {}
+    for idx, row in handcode_iata_dict_df.set_index('airportname').iterrows():
+        handcode_iata_dict[idx.strip()] = row['tracon_key']
+
+    empty_code = df[' Airport Code '] == ''
+    df.loc[empty_code, ' Airport Code '] = df[' Airport Name ']\
+            .apply(lambda x: handcode_iata_dict.get(x, np.nan))
+
+    codes = set(handcode_iata_dict.values())
+    print('num covered by handcode', df[' Airport Code '].apply(lambda x: x in codes).sum())
+    return df
+
 def match_codes(df, verbose=True):
     """
     This creates a new column in the NTSB incident/accident dataset of whether or not the IATA code
@@ -459,14 +478,20 @@ def main(verbose=True):
 
     save_nearest_airports(full)
 
+    # the following lines are commented out because matching names to IATA codes created
+    # some number of false positives. Instead, we now utilize a dictionary that maps from
+    # eventairport to IATA code
+
     # search wikipedia via requests
-    wiki_search_found_pd = search_wikipedia(full)
-    wiki_search_set = set(wiki_search_found_pd.index)
-    if verbose:
-        print(full.loc[full[' Airport Name '].apply(lambda x: x in wiki_search_set), :].shape)
+    # wiki_search_found_pd = search_wikipedia(full)
+    # wiki_search_set = set(wiki_search_found_pd.index)
+    # if verbose:
+    #     print(full.loc[full[' Airport Name '].apply(lambda x: x in wiki_search_set), :].shape)
 
     # search wikipedia on wiki tables
-    full = search_name_on_wiki_tables(full, verbose=verbose)
+    # full = search_name_on_wiki_tables(full, verbose=verbose)
+
+    full = fill_in_handcode_iata(full)
 
     # match codes
     full = match_codes(full, verbose=verbose)

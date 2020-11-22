@@ -130,12 +130,6 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
     asrs['narrative_synopsis_combined'] = asrs['narrative'] + ' ' + asrs['synopsis']
     asrs['combined'] = asrs['narrative'] + ' ' + asrs['callback'] + ' ' + \
             asrs['synopsis']
-
-    # cols = ['narrative', 'synopsis', 'callback']
-    # for col in cols:
-    #     asrs[col] = asrs[col].str.lower()
-    #     asrs[f'{col}_report1'] = asrs[f'{col}_report1'].str.lower()
-    #     asrs[f'{col}_report2'] = asrs[f'{col}_report2'].replace(np.nan, '').str.lower()
     asrs['combined'] = asrs['combined'].str.lower()
 
 
@@ -278,10 +272,11 @@ def replace_words(sentence, replace_dict={}):
 
 def create_counter(df, col = 'narrative'):
     tqdm.pandas(desc = col)
-    # split = df.apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
+
     dropped = df.drop_duplicates(col)
-    # split = dropped.progress_apply(lambda x: convert_to_words(x, col, mispelled_dict), axis = 1)
     split = dropped.progress_apply(lambda x: np.array(x[col].split()), axis = 1)
+
+    # split = df.progress_apply(lambda x: np.array(x[col].split()), axis = 1)
     res = Counter(generator_split(split))
     res = pd.DataFrame.from_dict(dict(res), orient = 'index')
     return res
