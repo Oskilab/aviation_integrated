@@ -282,7 +282,8 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
             month, year = int(date_row['month']), int(date_row['year'])
             code = ' '.join([str(month), str(year)])
 
-            yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month))
+            yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month), \
+                    num_months=month_idx)
             tracon_month_dict[code] = asrs.iloc[yr_mth_sel_idx, :].copy()
             unique_info[code] = np.unique(tracon_month_dict[code]['tracon'].values.astype(str), \
                     return_index=True, return_counts=True)
