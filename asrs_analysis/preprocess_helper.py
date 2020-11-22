@@ -34,7 +34,7 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
 
     if test:
         np.random.seed(42)
-        asrs = asrs.loc[np.random.choice(asrs.index, 1000), :].copy()
+        asrs = asrs.loc[np.random.choice(asrs.index, 1000, replace=False), :].copy()
 
     # for simplicity's sake we create an empty synopsis_report2
     asrs['synopsis_report2'] = np.nan
@@ -64,6 +64,9 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
         asrs[type_report] = asrs[type_report].str.lower()
         asrs[f'{type_report}_report1'] = asrs[f'{type_report}_report1'].str.lower()
         asrs[f'{type_report}_report2'] = asrs[f'{type_report}_report2'].replace(np.nan, '').str.lower()
+
+        asrs[asrs[type_report].duplicated(keep=False)]\
+                .to_csv(f'results/duplicated_{type_report}.csv')
 
     def generate_date_cols(asrs):
         asrs['year'] = asrs['Date'].apply(lambda x: int(x // 100) if not pd.isna(x) else np.nan)
