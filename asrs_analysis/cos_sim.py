@@ -107,46 +107,49 @@ def calculate_avg_comp2(list_idx1, list_idx2, cos_res, overlap = 0, same = False
             num_comp /= 2
         return (avg_d2v + 1) / 2, num_comp
         
-def generate_d2v_row(same_d2v, other_d2v, all_d2v, col_info, replace=True):
+def generate_d2v_row(same_d2v, other_d2v, all_d2v, cos_res, col_info, replace=True):
     abrev_col, col, col_type1, col_type2, col_type3 = col_info
     d2v_dict = {}
     # same to same tracon
-    avg_d2v, num_comp = calculate_avg_d2v(same_d2v, same_d2v, \
-            overlap = same_d2v.shape[0], same = True)
+    avg_d2v, num_comp = calculate_avg_comp2(same_d2v, same_d2v, cos_res, \
+            overlap = len(same_d2v), same = True)
     d2v_dict[f'trcn{col_type1}'] = avg_d2v
     d2v_dict[f'trcn{col_type2}'] = num_comp
+    d2v_dict[f'trcn{col_type3}'] = len(same_d2v)
 
     # same to other tracon
-    avg_d2v, num_comp = calculate_avg_d2v(same_d2v, other_d2v)
+    avg_d2v, num_comp = calculate_avg_comp2(same_d2v, other_d2v, cos_res)
     d2v_dict[f'trcn_invout{col_type1}'] = avg_d2v
     d2v_dict[f'trcn_invout{col_type2}'] = num_comp
 
     # other to other tracon
-    avg_d2v, num_comp = calculate_avg_d2v(other_d2v, other_d2v, \
-            overlap = other_d2v.shape[0], same = True)
+    avg_d2v, num_comp = calculate_avg_comp2(other_d2v, other_d2v, cos_res, \
+            overlap = len(other_d2v), same = True)
     d2v_dict[f'trcn_out{col_type1}'] = avg_d2v
     d2v_dict[f'trcn_out{col_type2}'] = num_comp
+    d2v_dict[f'trcn_out{col_type3}'] = len(other_d2v)
 
     # same to all tracon
-    avg_d2v, num_comp = calculate_avg_d2v(same_d2v, all_d2v, \
-            overlap = same_d2v.shape[0])
+    avg_d2v, num_comp = calculate_avg_comp2(same_d2v, all_d2v, cos_res,\
+            overlap = len(same_d2v))
     d2v_dict[f'trcn_invall{col_type1}'] = avg_d2v
     d2v_dict[f'trcn_invall{col_type2}'] = num_comp
 
     # all to all tracon
-    avg_d2v, num_comp = calculate_avg_d2v(all_d2v, all_d2v, \
-            overlap = all_d2v.shape[0], same = True)
+    avg_d2v, num_comp = calculate_avg_comp2(all_d2v, all_d2v, cos_res, \
+            overlap = len(all_d2v), same = True)
     d2v_dict[f'trcn_all{col_type1}'] = avg_d2v
     d2v_dict[f'trcn_all{col_type2}'] = num_comp
+    d2v_dict[f'trcn_all{col_type3}'] = len(all_d2v)
 
     # b/w report1 and report2
-    if col == 'narrative' or col == 'callback': # only those with mult reports
-        this_tracon = searched.iloc[same_tracon, :]
-        d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
-                this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean().iloc[0]
-        d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
-                this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count().iloc[0]
-
+    # if col == 'narrative' or col == 'callback': # only those with mult reports
+    #     this_tracon = searched.iloc[same_tracon, :]
+    #     d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
+    #             this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean().iloc[0]
+    #     d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
+    #             this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count().iloc[0]
+    #
     return pd.Series(d2v_dict)
 
 abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
@@ -201,7 +204,8 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
 
             # select only the rows within the month range
             compare_func = generate_compare(month, year, num_months = month_range)
-            yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month))
+            yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month), \
+                    num_months=month_range)
 
             tracon_month_dict[code] = all_pds.iloc[yr_mth_sel_idx, :].copy().drop_duplicates(col)
             searched = tracon_month_dict[code]
@@ -224,16 +228,22 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             else:
                 d2v1 = np.zeros((0, 0))
 
+            cos_res = cosine_similarity(d2v1, d2v1)
+
             for tracon, tracon_idx, tracon_cts in zip(codes, code_idx, code_cts):
                 start, end = int(tracon_idx), int(tracon_idx + tracon_cts)
 
-                same_d2v = d2v1[start:end]
-                other_d2v = np.vstack([d2v1[:start], d2v1[end:]])
-                all_d2v = d2v1
+                # same_d2v = d2v1[start:end]
+                # other_d2v = np.vstack([d2v1[:start], d2v1[end:]])
+                # all_d2v = d2v1
+                same_d2v = list(range(start, end))
+                other_d2v = list(range(0, start)) + list(range(end, searched.shape[0]))
+                all_d2v = list(range(searched.shape[0]))
+
 
                 index_id = f"{tracon} {int(year)}/{int(month)}"
-                index_to_d2v[index_id] = generate_d2v_row(same_d2v, other_d2v, all_d2v, col_info, \
-                        replace=replace)
+                index_to_d2v[index_id] = generate_d2v_row(same_d2v, other_d2v, all_d2v, cos_res, \
+                        col_info, replace=replace)
 
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
         month_range_dict[month_range] = month_range_dict.get(month_range, []) + [fin]
@@ -304,7 +314,7 @@ def generate_tagged_docs(np_fields, r_d):
     docs = []
     doc_to_idx = {}
     ct = 0
-    for field in np_fields:
+    for field in tqdm(np_fields, total=np_fields.shape[0]):
         if field not in doc_to_idx:
             doc_to_idx[field] = ct
 
@@ -330,12 +340,12 @@ def d2v_multiple_reports(all_pds):
             # train doc2vec
             model = Doc2Vec(docs, vector_size = 20, window = 3)
             only_mult_rep_df = all_pds.loc[all_pds[f'{mult_col}_multiple_reports'], :]
-            for idx, row in only_mult_rep_df.iterrows():
+            for idx, row in tqdm(only_mult_rep_df.iterrows(), total=only_mult_rep_df.shape[0]):
                 vec1 = model.docvecs[doc_to_idx[row[f'{mult_col}_report1']]]
                 vec2 = model.docvecs[doc_to_idx[row[f'{mult_col}_report2']]]
 
                 cos_sim = cosine_similarity(vec1.reshape(1, 20), vec2.reshape(1, 20))
-                all_pds.loc[idx, cos_col_name] = cos_sim[0, 0]
+                all_pds.loc[idx, cos_col_name] = (cos_sim[0, 0] + 1) / 2
     return all_pds
 
 def cos_sim_analysis(all_pds, tracon_month_unique):
@@ -359,17 +369,19 @@ def main():
     # load files
     all_pds = load_asrs(load_saved = True)
     all_pds = all_pds.reset_index().drop('index', axis = 1)
-    all_pds = tracon_analysis(all_pds)
+    # all_pds = tracon_analysis(all_pds)
 
     # top 50/missing row analysis
     tracon_month_unique = all_pds[['tracon_code', 'month', 'year']].drop_duplicates()
     unique_codes = incident_unique_codes()
     unique_ntsb_faa_codes = all_unique_codes(all_pds, tracon_month_unique, unique_codes)
+    print('after missing row analysis')
 
     unique_ntsb_faa_codes, tracon_month_unique = filter_top50(unique_ntsb_faa_codes, tracon_month_unique)
     tracon_month_unique = add_missing_rows(unique_ntsb_faa_codes, tracon_month_unique)
+    print('after missing rows')
 
-    all_pds = d2v_multiple_reports(all_pds)
+    # all_pds = d2v_multiple_reports(all_pds)
     cos_sim_analysis(all_pds, tracon_month_unique)
 
 if __name__ == "__main__":
