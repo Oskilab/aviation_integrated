@@ -363,12 +363,24 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
         res = res.loc[:,~res.columns.duplicated()]
         res.set_index(['tracon_key', 'year', 'month'], inplace = True)
         print(res.shape)
-        res.to_csv('results/final/{col}_{month_range_str}.csv')
+        res.to_csv(f'results/final/{col}_{month_range_str}.csv')
         all_res.append(res)
-all_res = pd.concat(all_res, ignore_index=False, axis=1)
-all_res = reorder_cols(all_res)
-all_res.to_csv('results/final_dataset.csv')
 
-coverage = all_res.isna().sum()
-coverage['total rows'] = all_res.shape[0]
-coverage.to_csv('results/final_coverage.csv')
+        # free up space
+        tracon_month_dict = {}
+        unique_info = {}
+
+for idx in range(len(all_res)):
+    if not isinstance(all_res[idx].index, pd.MultiIndex):
+        all_res[idx] = all_res[idx].reset_index().set_index(['tracon_key', 'year', 'month'])
+
+try:
+    all_res = pd.concat(all_res, ignore_index=False, axis=1, copy=False)
+    all_res = reorder_cols(all_res)
+    all_res.to_csv('results/final_dataset.csv')
+
+    coverage = all_res.isna().sum()
+    coverage['total rows'] = all_res.shape[0]
+    coverage.to_csv('results/final_coverage.csv')
+except:
+    embed()
