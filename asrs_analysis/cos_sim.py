@@ -53,6 +53,19 @@ def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_months
     end = yr_mth_idx[idx_of_sel[-1]] + yr_mth_cts[idx_of_sel[-1]]
     return list(range(start, end))
 
+def calculate_avg_d2v(d2v1, d2v2, overlap=0, same=False):
+    num_comp = d2v1.shape[0] * d2v2.shape[0] - overlap
+    if num_comp <= 0:
+        return np.nan, np.nan
+    elif d2v1.shape[0] > 0 and d2v2.shape[0] > 0:
+        cos_res = cosine_similarity(d2v1, d2v2)
+        sum_d2v = np.sum(cos_res) - overlap
+        num_comp = d2v1.shape[0] * d2v2.shape[0] - overlap
+        avg_d2v = sum_d2v / num_comp
+        if same:
+            num_comp /= 2 # you're comparing to itself so 2way symmetry
+        return avg_d2v, num_comp
+
 def calculate_avg_comp(list_idx1, list_idx2, d2v_model, overlap = 0, same = False):
     if len(list_idx1) == 1 and len(list_idx2) == 1 and same:
         return np.nan, np.nan
@@ -94,6 +107,47 @@ def calculate_avg_comp2(list_idx1, list_idx2, cos_res, overlap = 0, same = False
             num_comp /= 2
         return (avg_d2v + 1) / 2, num_comp
         
+def generate_d2v_row(same_d2v, other_d2v, all_d2v, col_info, replace=True):
+    abrev_col, col, col_type1, col_type2, col_type3 = col_info
+    d2v_dict = {}
+    # same to same tracon
+    avg_d2v, num_comp = calculate_avg_d2v(same_d2v, same_d2v, \
+            overlap = same_d2v.shape[0], same = True)
+    d2v_dict[f'trcn{col_type1}'] = avg_d2v
+    d2v_dict[f'trcn{col_type2}'] = num_comp
+
+    # same to other tracon
+    avg_d2v, num_comp = calculate_avg_d2v(same_d2v, other_d2v)
+    d2v_dict[f'trcn_invout{col_type1}'] = avg_d2v
+    d2v_dict[f'trcn_invout{col_type2}'] = num_comp
+
+    # other to other tracon
+    avg_d2v, num_comp = calculate_avg_d2v(other_d2v, other_d2v, \
+            overlap = other_d2v.shape[0], same = True)
+    d2v_dict[f'trcn_out{col_type1}'] = avg_d2v
+    d2v_dict[f'trcn_out{col_type2}'] = num_comp
+
+    # same to all tracon
+    avg_d2v, num_comp = calculate_avg_d2v(same_d2v, all_d2v, \
+            overlap = same_d2v.shape[0])
+    d2v_dict[f'trcn_invall{col_type1}'] = avg_d2v
+    d2v_dict[f'trcn_invall{col_type2}'] = num_comp
+
+    # all to all tracon
+    avg_d2v, num_comp = calculate_avg_d2v(all_d2v, all_d2v, \
+            overlap = all_d2v.shape[0], same = True)
+    d2v_dict[f'trcn_all{col_type1}'] = avg_d2v
+    d2v_dict[f'trcn_all{col_type2}'] = num_comp
+
+    # b/w report1 and report2
+    if col == 'narrative' or col == 'callback': # only those with mult reports
+        this_tracon = searched.iloc[same_tracon, :]
+        d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
+                this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean().iloc[0]
+        d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
+                this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count().iloc[0]
+
+    return pd.Series(d2v_dict)
 
 abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
@@ -114,6 +168,9 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
     else:
         mult_rep_cols = []
 
+    # all tracon
+    all_trcn_codes = set(tracon_month_unique['tracon_code'])
+
     all_pds = all_pds[['tracon_code', 'year', 'month', col] + mult_rep_cols]
     all_pds.sort_values(['year', 'month', 'tracon_code'], inplace = True)
 
@@ -132,90 +189,52 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         col_type2 = f'{"_flfrm" if replace else ""}_ct_{end_str}'
         col_type3 = f'{"_flfrm" if replace else ""}_vol_{end_str}'
 
+        col_info = [col, abrev_col, col_type1, col_type2, col_type3]
+
+        index_to_d2v = {}
         # generate dictionaries for caching
         tracon_month_dict, cos_res_tracon_dict = {}, {}
-        unique_info = {}
-        for month, year in product(range(1, 13), range(1988, 2020)):
+        # unique_info = {}
+        for month, year in tqdm(product(range(1, 13), range(1988, 2020)), total=num_time_periods, \
+                desc = f'{col} {mr_str}'):
             code = ' '.join([str(int(month)), str(int(year))])
 
             # select only the rows within the month range
             compare_func = generate_compare(month, year, num_months = month_range)
             yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month))
+
             tracon_month_dict[code] = all_pds.iloc[yr_mth_sel_idx, :].copy().drop_duplicates(col)
-            unique_info[code] = np.unique(tracon_month_dict[code].values.astype(str)[:, 0], \
+            searched = tracon_month_dict[code]
+
+            codes, code_idx, code_cts = np.unique(tracon_month_dict[code].values.astype(str)[:, 0], \
                     return_index=True, return_counts=True)
+            sel = [x in all_trcn_codes for x in codes]
+            codes, code_idx, code_cts = codes[sel], code_idx[sel], code_cts[sel]
+
+            # add missing trcn codes
+            add_codes = np.array(list(all_trcn_codes - set(codes)))
+            codes = np.hstack((codes, add_codes))
+            code_idx = np.hstack((code_idx, np.zeros(add_codes.shape)))
+            code_cts = np.hstack((code_cts, np.zeros(add_codes.shape)))
 
             all_tracon = list(tracon_month_dict[code][col])
 
-            if len(all_tracon) >= 1:
+            if len(all_tracon) > 0:
                 d2v1 = np.vstack([d2v_model.docvecs[field_dict[x]] for x in all_tracon])
-                cos_res_tracon_dict[code] = cosine_similarity(d2v1, d2v1)
             else:
-                cos_res_tracon_dict[code] = np.zeros((0, 0))
+                d2v1 = np.zeros((0, 0))
 
-        index_to_d2v  = {}
+            for tracon, tracon_idx, tracon_cts in zip(codes, code_idx, code_cts):
+                start, end = int(tracon_idx), int(tracon_idx + tracon_cts)
 
-        # actually generate d2v cosine analysis data
-        for idx, row in tqdm(tracon_month_unique.iterrows(), total = tracon_month_unique.shape[0], \
-                desc = f"{col} analysis {month_range}mon"):
-            index_id = f"{row['tracon_code']} {row['year']}/{row['month']}"
-            code = ' '.join([str(int(row['month'])), str(int(row['year']))])
+                same_d2v = d2v1[start:end]
+                other_d2v = np.vstack([d2v1[:start], d2v1[end:]])
+                all_d2v = d2v1
 
-            cos_res = cos_res_tracon_dict[code]
-            searched = tracon_month_dict[code] # all rows with time period
-            unq_codes, unq_idx, unq_cts = unique_info[code]
+                index_id = f"{tracon} {int(year)}/{int(month)}"
+                index_to_d2v[index_id] = generate_d2v_row(same_d2v, other_d2v, all_d2v, col_info, \
+                        replace=replace)
 
-            trcn_code = row['tracon_code'] 
-            idx_of_code = np.searchsorted(unq_codes, trcn_code)
-            if idx_of_code >= unq_codes.shape[0] or unq_codes[idx_of_code] != trcn_code:
-                same_tracon = []
-                other_tracon = list(range(searched.shape[0]))
-            else:
-                start, end = unq_idx[idx_of_code], unq_idx[idx_of_code] + unq_cts[idx_of_code]
-                same_tracon = list(range(start, end))
-                other_tracon = list(range(0, start)) + list(range(end, searched.shape[0]))
-
-            all_tracon = list(range(searched.shape[0]))
-
-            d2v_dict = {}
-            # same to same tracon
-            avg_d2v, num_comp = calculate_avg_comp2(same_tracon, same_tracon, cos_res, \
-                    overlap = len(same_tracon), same = True)
-            d2v_dict[f'trcn{col_type1}'] = avg_d2v
-            d2v_dict[f'trcn{col_type2}'] = num_comp
-
-            # same to other tracon
-            avg_d2v, num_comp = calculate_avg_comp2(same_tracon, other_tracon, cos_res)
-            d2v_dict[f'trcn_invout{col_type1}'] = avg_d2v
-            d2v_dict[f'trcn_invout{col_type2}'] = num_comp
-
-            # other to other tracon
-            avg_d2v, num_comp = calculate_avg_comp2(other_tracon, other_tracon, cos_res, \
-                    overlap = len(other_tracon), same = True)
-            d2v_dict[f'trcn_out{col_type1}'] = avg_d2v
-            d2v_dict[f'trcn_out{col_type2}'] = num_comp
-
-            # same to all tracon
-            avg_d2v, num_comp = calculate_avg_comp2(same_tracon, all_tracon, cos_res, \
-                    overlap = len(same_tracon))
-            d2v_dict[f'trcn_invall{col_type1}'] = avg_d2v
-            d2v_dict[f'trcn_invall{col_type2}'] = num_comp
-
-            # all to all tracon
-            avg_d2v, num_comp = calculate_avg_comp2(all_tracon, all_tracon, cos_res, \
-                    overlap = len(all_tracon), same = True)
-            d2v_dict[f'trcn_all{col_type1}'] = avg_d2v
-            d2v_dict[f'trcn_all{col_type2}'] = num_comp
-
-            # b/w report1 and report2
-            if col == 'narrative' or col == 'callback': # only those with mult reports
-                this_tracon = searched.iloc[same_tracon, :]
-                d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}'] = \
-                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].mean().iloc[0]
-                d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
-                        this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count().iloc[0]
-
-            index_to_d2v[index_id] = pd.Series(d2v_dict)
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
         month_range_dict[month_range] = month_range_dict.get(month_range, []) + [fin]
 
@@ -289,7 +308,7 @@ def generate_tagged_docs(np_fields, r_d):
         if field not in doc_to_idx:
             doc_to_idx[field] = ct
 
-            np_res = replace_words(field, replace_dict=r_d)
+            np_res = replace_words(str(field), replace_dict=r_d)
             doc_str = ' '.join(np_res)
 
             docs.append(TaggedDocument(doc_str, [ct]))
