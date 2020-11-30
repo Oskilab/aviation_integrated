@@ -16,6 +16,61 @@ if start_path_split[-1] != 'asrs_analysis':
 
 coverage = namedtuple('coverage', ['part', 'total'])
 
+def tracon_analysis(asrs):
+    pat = re.compile('(info|atc)_(code|type|repeated)\d')
+    dropcols = [col for col in asrs if pat.match(col)]
+
+    all_pds = []
+    for idx, row in tqdm(asrs.iterrows(), total = asrs.shape[0]):
+        # calculate the number of times a tracon_code appears
+        # in this particular observation (including soft duplicates)
+        code_ctr, ident_ctr = Counter(), Counter()
+        code_and_type_set = set()
+        num_na = 0
+        for info_type in ['atc', 'info']:
+            for i in range(6):
+                tracon_code = row[f'{info_type}_code{i}']
+                tracon_type = row[f'{info_type}_type{i}']
+
+                if pd.isna(tracon_code) and pd.isna(tracon_type):
+                    num_na += 1
+                else:
+                    code_and_type = f'{tracon_code} {tracon_type}'
+
+                    # add soft-duplicates to code_ctr but exclude hard-duplicates
+                    if code_and_type not in code_and_type_set:
+                        code_ctr.update([tracon_code])
+                        ident_ctr.update([tracon_type])
+
+                    code_and_type_set.add(code_and_type)
+        code_ctr, ident_ctr = dict(code_ctr), dict(ident_ctr)
+        if num_na == 12:
+            # still add the row if all of the codes are NA
+            copy_row = row.copy()
+            for key in ident_ctr:
+                copy_row[f'{key}_ident_ct'] = ident_ctr[key]
+            copy_row.drop(dropcols, axis = 0, inplace = True)
+            all_pds.append(copy_row)
+        else:
+            curr_codes = set()
+            for info_type in ['atc', 'info']:
+                for i in range(6):
+                    tracon_code = row[f'{info_type}_code{i}']
+                    if tracon_code not in curr_codes and not pd.isna(tracon_code):
+                        copy_row = row.copy()
+                        copy_row['tracon_code'] = tracon_code
+                        copy_row['ident_type'] = row[f'{info_type}_type{i}']
+                        copy_row['num_code_per_obs'] = code_ctr[tracon_code]
+                        # add number of each ident to the row
+                        for key in ident_ctr:
+                            copy_row[f'{key}_ident_ct'] = ident_ctr[key]
+
+                        copy_row.drop(dropcols, axis = 0, inplace = True)
+                        all_pds.append(copy_row)
+
+                        curr_codes.add(tracon_code)
+    all_pds = pd.DataFrame.from_records(all_pds)
+    return all_pds
 def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load_saved = False, \
         test = False):
     if load_saved:
@@ -73,62 +128,6 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
         asrs['month'] = asrs['Date'].apply(lambda x: int(x % 100) if not pd.isna(x) else np.nan)
         return asrs.loc[asrs['year'] != 20, :].copy()
 
-    def tracon_analysis(asrs):
-        pat = re.compile('(info|atc)_(code|type|repeated)\d')
-        dropcols = [col for col in asrs if pat.match(col)]
-
-        all_pds = []
-        for idx, row in tqdm(asrs.iterrows(), total = asrs.shape[0]):
-
-            # calculate the number of times a tracon_code appears
-            # in this particular observation (including soft duplicates)
-            code_ctr, ident_ctr = Counter(), Counter()
-            code_and_type_set = set()
-            num_na = 0
-            for info_type in ['atc', 'info']:
-                for i in range(6):
-                    tracon_code = row[f'{info_type}_code{i}']
-                    tracon_type = row[f'{info_type}_type{i}']
-
-                    if pd.isna(tracon_code) and pd.isna(tracon_type):
-                        num_na += 1
-                    else:
-                        code_and_type = f'{tracon_code} {tracon_type}'
-
-                        # add soft-duplicates to code_ctr but exclude hard-duplicates
-                        if code_and_type not in code_and_type_set:
-                            code_ctr.update([tracon_code])
-                            ident_ctr.update([tracon_type])
-
-                        code_and_type_set.add(code_and_type)
-            code_ctr, ident_ctr = dict(code_ctr), dict(ident_ctr)
-            if num_na == 12:
-                # still add the row if all of the codes are NA
-                copy_row = row.copy()
-                for key in ident_ctr:
-                    copy_row[f'{key}_ident_ct'] = ident_ctr[key]
-                copy_row.drop(dropcols, axis = 0, inplace = True)
-                all_pds.append(copy_row)
-            else:
-                curr_codes = set()
-                for info_type in ['atc', 'info']:
-                    for i in range(6):
-                        tracon_code = row[f'{info_type}_code{i}']
-                        if tracon_code not in curr_codes and not pd.isna(tracon_code):
-                            copy_row = row.copy()
-                            copy_row['tracon_code'] = tracon_code
-                            copy_row['ident_type'] = row[f'{info_type}_type{i}']
-                            copy_row['num_code_per_obs'] = code_ctr[tracon_code]
-                            # add number of each ident to the row
-                            for key in ident_ctr:
-                                copy_row[f'{key}_ident_ct'] = ident_ctr[key]
-
-                            copy_row.drop(dropcols, axis = 0, inplace = True)
-                            all_pds.append(copy_row)
-
-                            curr_codes.add(tracon_code)
-        all_pds = pd.DataFrame.from_records(all_pds)
-        return all_pds
 
     asrs['narrative_synopsis_combined'] = asrs['narrative'] + ' ' + asrs['synopsis']
     asrs['combined'] = asrs['narrative'] + ' ' + asrs['callback'] + ' ' + \

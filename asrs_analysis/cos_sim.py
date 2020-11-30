@@ -6,6 +6,7 @@ from preprocess_helper import *
 from sklearn.metrics.pairwise import cosine_similarity
 from itertools import product
 import pandas as pd, numpy as np, re, pickle, argparse
+from itertools import chain
 
 parser = argparse.ArgumentParser(description='Analyze abbreviations.')
 parser.add_argument('-t', action = 'store_true')
@@ -13,7 +14,6 @@ args = parser.parse_args()
 
 test = args.t
 num_time_periods = (2020 - 1988) * 12
-all_pds = load_asrs(load_saved = True)
 
 def num_months_between(month1, year1, month2, year2):
     return (year2 - year1) * 12 + month2 - month1
@@ -98,7 +98,8 @@ def calculate_avg_comp2(list_idx1, list_idx2, cos_res, overlap = 0, same = False
 abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
         'callback': 'call'}
-def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col = "", field_dict = {}):
+def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col = "", field_dict = {}, \
+        tracon_month_unique=None):
     """
     @param: all_pds(pd.DataFrame) should be the full asrs dataset
     @param: d2v_model (gensim.models.doc2vec) model that was trained on full dataset
@@ -129,20 +130,18 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         end_str = f"{abrev_col}_{mr_str}" 
         col_type1 = f'{"_flfrm" if replace else ""}_{end_str}'
         col_type2 = f'{"_flfrm" if replace else ""}_ct_{end_str}'
+        col_type3 = f'{"_flfrm" if replace else ""}_vol_{end_str}'
 
         # generate dictionaries for caching
         tracon_month_dict, cos_res_tracon_dict = {}, {}
         unique_info = {}
-        for month, year in tqdm(product(range(1, 13), range(1988, 2020)), total = num_time_periods, \
-                desc = f"{col} dict creation {month_range}mon"):
+        for month, year in product(range(1, 13), range(1988, 2020)):
             code = ' '.join([str(int(month)), str(int(year))])
 
             # select only the rows within the month range
             compare_func = generate_compare(month, year, num_months = month_range)
             yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month))
             tracon_month_dict[code] = all_pds.iloc[yr_mth_sel_idx, :].copy().drop_duplicates(col)
-            # tracon_month_dict[code] = all_pds.loc[all_pds.apply(compare_func, axis = 1), :].copy()\
-            #         .drop_duplicates(col)
             unique_info[code] = np.unique(tracon_month_dict[code].values.astype(str)[:, 0], \
                     return_index=True, return_counts=True)
 
@@ -162,7 +161,6 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             index_id = f"{row['tracon_code']} {row['year']}/{row['month']}"
             code = ' '.join([str(int(row['month'])), str(int(row['year']))])
 
-            # if code in cos_res_tracon_dict:
             cos_res = cos_res_tracon_dict[code]
             searched = tracon_month_dict[code] # all rows with time period
             unq_codes, unq_idx, unq_cts = unique_info[code]
@@ -234,7 +232,7 @@ def load_replace_dictionary(col):
     # generate replace dictionary
     replace_dict = {}
     for idx, row in total_cts.iterrows():
-        for dict_name in dictionary_names:
+        for dict_name in ['nasa', 'faa', 'casa', 'hand', 'iata']:
             dict_fullform = row[f'{dict_name}_fullform']
             if not pd.isna(dict_fullform):
                 dict_fullform = str(dict_fullform).lower()
@@ -242,104 +240,118 @@ def load_replace_dictionary(col):
                 break
     return replace_dict
 
-def generate_duplicated_idx(all_pds, field, mult_col, report_num = 1):
-    dup_idx = [f'{index} 1' for index in \
-            all_pds.loc[all_pds[f'{mult_col}_report1'] == field, :].index]
-    dup_idx += [f'{index} 2' for index in \
-            all_pds.loc[all_pds[f'{mult_col}_report2'] == field, :].index]
-    return dup_idx
+def incident_unique_codes():
+    # TODO: check that this pickle file is automatically being generated in pipeline
+    unique_code_fn = '../results/unique_airport_code_ntsb_faa.pckl'
+    unique_ntsb_faa_codes = pickle.load(open(unique_code_fn, 'rb'))
+    # unique codes
+    # return set(unique_ntsb_faa_codes)
+    return unique_ntsb_faa_codes
 
-dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'iata']
-all_pds = all_pds.reset_index().drop('index', axis = 1)
+def all_unique_codes(all_pds, tracon_month_unique, unique_codes):
+    set_unique_codes = set(unique_codes)
 
-tracon_month_unique = all_pds[['tracon_code', 'month', 'year']].drop_duplicates()
-all_combs = set(tracon_month_unique.apply(lambda x: (x[0], x[1], x[2]), axis = 1))
+    asrs_added_tracons = []
+    for tracon_code in tracon_month_unique['tracon_code'].unique():
+        if tracon_code not in set_unique_codes:
+            asrs_added_tracons.append(tracon_code)
 
-# TODO: check that this pickle file is automatically being generated in pipeline
-unique_code_fn = '../results/unique_airport_code_ntsb_faa.pckl'
-unique_ntsb_faa_codes = pickle.load(open(unique_code_fn, 'rb'))
-unique_codes = set(unique_ntsb_faa_codes)
+    # unique_ntsb_faa_codes
+    return np.hstack([unique_codes, np.array(asrs_added_tracons)])
 
-asrs_added_tracons = []
-for tracon_code in tracon_month_unique['tracon_code'].unique():
-    if tracon_code not in unique_codes:
-        asrs_added_tracons.append(tracon_code)
+def filter_top50(unique_ntsb_faa_codes, tracon_month_unique):
+    # if test:
+    # if we're testing only utilize the airport codes from this wikipedia file
+    top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+    unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
+            0, unique_ntsb_faa_codes)
+    tracon_month_unique = tracon_month_unique.loc[\
+        tracon_month_unique['tracon_code'].apply(lambda x: x in top_50_iata)]
+    return unique_ntsb_faa_codes, tracon_month_unique
 
-unique_ntsb_faa_codes = np.hstack([unique_ntsb_faa_codes, np.array(asrs_added_tracons)])
+def add_missing_rows(unique_ntsb_faa_codes, tracon_month_unique):
+    all_combs = set(tracon_month_unique.apply(lambda x: (x[0], x[1], x[2]), axis = 1))
+    added_rows = {'tracon_code': [], 'month': [], 'year':[]}
+    for tracon, month, year in product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)): 
+        if (tracon, month, year) not in all_combs:
+            added_rows['tracon_code'].append(tracon)
+            added_rows['month'].append(month)
+            added_rows['year'].append(year)
 
-# if test:
-# if we're testing only utilize the airport codes from this wikipedia file
-top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
-unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
-        0, unique_ntsb_faa_codes)
-tracon_month_unique = tracon_month_unique.loc[\
-    tracon_month_unique['tracon_code'].apply(lambda x: x in top_50_iata)]
+    return tracon_month_unique.append(pd.DataFrame.from_dict(added_rows))
 
-added_rows = {'tracon_code': [], 'month': [], 'year':[]}
-for tracon, month, year in product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)): 
-    if (tracon, month, year) not in all_combs:
-        added_rows['tracon_code'].append(tracon)
-        added_rows['month'].append(month)
-        added_rows['year'].append(year)
+def generate_tagged_docs(np_fields, r_d):
+    # creating list of tagged documents
+    docs = []
+    doc_to_idx = {}
+    ct = 0
+    for field in np_fields:
+        if field not in doc_to_idx:
+            doc_to_idx[field] = ct
 
-tracon_month_unique = tracon_month_unique.append(pd.DataFrame.from_dict(added_rows))
+            np_res = replace_words(field, replace_dict=r_d)
+            doc_str = ' '.join(np_res)
 
-from itertools import chain
-# all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
-# deal with multiple reports. 
-for mult_col in ['narrative', 'callback']:
-    reps = np.hstack((all_pds[f'{mult_col}_report1'].unique(), all_pds[f'{mult_col}_report2'].unique()))
-    reps = reps.astype(str)
+            docs.append(TaggedDocument(doc_str, [ct]))
+            ct += 1
+    return docs, doc_to_idx
+    
+def d2v_multiple_reports(all_pds):
+    for mult_col in ['narrative', 'callback']:
+        reps = np.hstack((all_pds[f'{mult_col}_report1'].unique(), all_pds[f'{mult_col}_report2'].unique()))
+        reps = reps.astype(str)
 
-    for r_d in [load_replace_dictionary(mult_col), {}]:
-        replace = len(r_d) > 0
-        cos_col_name = f'{mult_col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'
-        all_pds[cos_col_name] = np.nan
+        for r_d in [load_replace_dictionary(mult_col), {}]:
+            replace = len(r_d) > 0
+            cos_col_name = f'{mult_col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'
+            all_pds[cos_col_name] = np.nan
 
-        # creating list of tagged documents
-        docs = []
-        doc_to_idx = {}
-        ct = 0
-        for field in tqdm(reps, total = reps.shape[0], desc = 'creating' + \
-                f' documents for {mult_col}{" replace" if replace else ""}'):
-            if field not in doc_to_idx:
-                doc_to_idx[field] = ct
-                docs.append(TaggedDocument(field, [ct]))
-                ct += 1
+            docs, doc_to_idx = generate_tagged_docs(reps, r_d)
 
-        # train doc2vec
-        model = Doc2Vec(docs, vector_size = 20, window = 3)
-        only_mult_rep_df = all_pds.loc[all_pds[f'{mult_col}_multiple_reports'], :]
-        for idx, row in only_mult_rep_df.iterrows():
-            vec1 = model.docvecs[doc_to_idx[row[f'{mult_col}_report1']]]
-            vec2 = model.docvecs[doc_to_idx[row[f'{mult_col}_report2']]]
+            # train doc2vec
+            model = Doc2Vec(docs, vector_size = 20, window = 3)
+            only_mult_rep_df = all_pds.loc[all_pds[f'{mult_col}_multiple_reports'], :]
+            for idx, row in only_mult_rep_df.iterrows():
+                vec1 = model.docvecs[doc_to_idx[row[f'{mult_col}_report1']]]
+                vec2 = model.docvecs[doc_to_idx[row[f'{mult_col}_report2']]]
 
-            cos_sim = cosine_similarity(vec1.reshape(1, 20), vec2.reshape(1, 20))
-            all_pds.loc[idx, cos_col_name] = cos_sim[0, 0]
+                cos_sim = cosine_similarity(vec1.reshape(1, 20), vec2.reshape(1, 20))
+                all_pds.loc[idx, cos_col_name] = cos_sim[0, 0]
+    return all_pds
 
-for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
-    month_range_dict = {}
-    for r_d in [load_replace_dictionary(col), {}]:
-        reps = all_pds[col].unique()
-        # creating tagged documents
-        docs, doc_to_idx = [], {}
-        ct = 0
-        for field in tqdm(reps):
-            if field not in doc_to_idx:
-                # preprocess document
-                # np_res = convert_to_words(field, replace_dict=r_d)
-                np_res = split_sentence(field, replace_dict=r_d)
-                doc_str = ' '.join(np_res)
+def cos_sim_analysis(all_pds, tracon_month_unique):
+    for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
+        month_range_dict = {}
+        for r_d in [load_replace_dictionary(col), {}]:
+            reps = all_pds[col].unique()
+            docs, doc_to_idx = generate_tagged_docs(reps, r_d)
+            # train doc2vec
+            print('training doc2vec models. This can take a while...')
+            model = Doc2Vec(docs, vector_size = 20, window = 3)
 
-                doc_to_idx[field] = ct
-                docs.append(TaggedDocument(doc_str, [ct]))
-                ct += 1
-        # train doc2vec
-        print('training doc2vec models. This can take a while...')
-        model = Doc2Vec(docs, vector_size = 20, window = 3)
+            analyze_d2v(all_pds, model, len(r_d) > 0, month_range_dict, col = col, field_dict = doc_to_idx, \
+                    tracon_month_unique=tracon_month_unique)
 
-        analyze_d2v(all_pds, model, len(r_d) > 0, month_range_dict, col = col, field_dict = doc_to_idx)
+        for month_range in month_range_dict.keys():
+            res = pd.concat(month_range_dict[month_range], axis = 1)
+            res.to_csv(f'results/d2v_tracon_month_{col}_{month_range}mon.csv')
 
-    for month_range in month_range_dict.keys():
-        res = pd.concat(month_range_dict[month_range], axis = 1)
-        res.to_csv(f'results/d2v_tracon_month_{col}_{month_range}mon.csv')
+def main():
+    # load files
+    all_pds = load_asrs(load_saved = True)
+    all_pds = all_pds.reset_index().drop('index', axis = 1)
+    all_pds = tracon_analysis(all_pds)
+
+    # top 50/missing row analysis
+    tracon_month_unique = all_pds[['tracon_code', 'month', 'year']].drop_duplicates()
+    unique_codes = incident_unique_codes()
+    unique_ntsb_faa_codes = all_unique_codes(all_pds, tracon_month_unique, unique_codes)
+
+    unique_ntsb_faa_codes, tracon_month_unique = filter_top50(unique_ntsb_faa_codes, tracon_month_unique)
+    tracon_month_unique = add_missing_rows(unique_ntsb_faa_codes, tracon_month_unique)
+
+    all_pds = d2v_multiple_reports(all_pds)
+    cos_sim_analysis(all_pds, tracon_month_unique)
+
+if __name__ == "__main__":
+    main()
