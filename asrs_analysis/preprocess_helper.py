@@ -128,12 +128,10 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
         asrs['month'] = asrs['Date'].apply(lambda x: int(x % 100) if not pd.isna(x) else np.nan)
         return asrs.loc[asrs['year'] != 20, :].copy()
 
-
     asrs['narrative_synopsis_combined'] = asrs['narrative'] + ' ' + asrs['synopsis']
     asrs['combined'] = asrs['narrative'] + ' ' + asrs['callback'] + ' ' + \
             asrs['synopsis']
     asrs['combined'] = asrs['combined'].str.lower()
-
 
     total = asrs.shape[0]
     asrs = tracon_analysis(asrs)
