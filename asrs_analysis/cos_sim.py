@@ -234,8 +234,10 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                     np.zeros((num_codes + 1, num_codes + 1)) 
 
             if np.any(total_range):
-                nontop50 = np.vstack([d2v_model.docvecs[field_dict[x]] for x in \
-                            searched.loc[total_range, col]])
+                nontop50_idx = np.array([field_dict[x] for x in searched.loc[total_range, col]])
+                len_nontop50 = nontop50_idx.shape[0]
+                # nontop50 = np.vstack([d2v_model.docvecs[field_dict[x]] for x in \
+                #             searched.loc[total_range, col]])
             for code_idx_i in range(num_codes):
                 trcn1_idx = code_idx[code_idx_i], code_idx[code_idx_i] + code_cts[code_idx_i]
                 trcn1 = np.vstack([d2v_model.docvecs[field_dict[x]] for x in \
@@ -260,19 +262,30 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                         num_comp[code_idx_j, code_idx_i] = num_comp[code_idx_i, code_idx_j]
                         sum_comp[code_idx_j, code_idx_i] = sum_comp[code_idx_i, code_idx_j]
 
-                cos_res = cosine_similarity(trcn1, nontop50)
-                total_comp = trcn1.shape[0] * nontop50.shape[0]
+                total = 0
+                for idx in range(int(np.ceil(len_nontop50 / 2000))):
+                    nontop50 = np.vstack([d2v_model.docvecs[x] for x in nontop50_idx[idx*2000: \
+                            (idx+1)*2000]])
+                    total += np.sum(cosine_similarity(trcn1, nontop50))
+
+                total_comp = trcn1.shape[0] * len_nontop50
                 num_comp[code_idx_i, num_codes] = total_comp
-                sum_comp[code_idx_i, num_codes] = np.sum(cos_res)
+                sum_comp[code_idx_i, num_codes] = total
 
                 num_comp[num_codes, code_idx_i] = num_comp[code_idx_i, num_codes]
                 sum_comp[num_codes, code_idx_i] = sum_comp[code_idx_i, num_codes]
 
             if np.any(total_range):
-                cos_res = cosine_similarity(nontop50, nontop50)
-                total_comp = nontop50.shape[0] ** 2 + nontop50.shape[0]
+                for i in range(int(np.ceil(len_nontop50 / 2000))):
+                    for j in range(int(np.ceil(len_nontop50 / 2000))):
+                        mat1 = np.vstack([d2v_model.docvecs[x] for x in nontop50_idx[i*2000: \
+                                (i+1)*2000]])
+                        mat2 = np.vstack([d2v_model.docvecs[x] for x in nontop50_idx[j*2000: \
+                                (j+1)*2000]])
+                        total += np.sum(cosine_similarity(mat1, mat2))
+                total_comp = len_nontop50 ** 2 + len_nontop50
                 num_comp[num_codes, num_codes] = total_comp
-                sum_comp[num_codes, num_codes] = np.sum(cos_res) + nontop50.shape[0]
+                sum_comp[num_codes, num_codes] = total + len_nontop50
 
             trcn_comp = np.sum(num_comp, axis=1)
             trcn_sum = np.sum(sum_comp, axis=1)
