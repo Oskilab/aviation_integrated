@@ -136,11 +136,11 @@ def generate_d2v_row(same_d2v, other_d2v, all_d2v, cos_res, col_info, replace=Tr
     d2v_dict[f'trcn_invall{col_type2}'] = num_comp
 
     # all to all tracon
-    avg_d2v, num_comp = calculate_avg_comp2(all_d2v, all_d2v, cos_res, \
-            overlap = len(all_d2v), same = True)
-    d2v_dict[f'trcn_all{col_type1}'] = avg_d2v
-    d2v_dict[f'trcn_all{col_type2}'] = num_comp
-    d2v_dict[f'trcn_all{col_type3}'] = len(all_d2v)
+    # avg_d2v, num_comp = calculate_avg_comp2(all_d2v, all_d2v, cos_res, \
+    #         overlap = len(all_d2v), same = True)
+    # d2v_dict[f'trcn_all{col_type1}'] = avg_d2v
+    # d2v_dict[f'trcn_all{col_type2}'] = num_comp
+    # d2v_dict[f'trcn_all{col_type3}'] = len(all_d2v)
 
     # b/w report1 and report2
     # if col == 'narrative' or col == 'callback': # only those with mult reports
@@ -150,7 +150,8 @@ def generate_d2v_row(same_d2v, other_d2v, all_d2v, cos_res, col_info, replace=Tr
     #     d2v_dict[f'trcn_mult_{abrev_col}{"_flfrm" if replace else ""}_ct'] = \
     #             this_tracon[f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'].count().iloc[0]
     #
-    return pd.Series(d2v_dict)
+    # return pd.Series(d2v_dict)
+    return d2v_dict
 
 abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
@@ -232,17 +233,23 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                 cos_res = np.zeros((0, 0))
 
 
+            all_d2v = list(range(searched.shape[0]))
+            avg_d2v, num_comp = calculate_avg_comp2(all_d2v, all_d2v, cos_res, \
+                    overlap = len(all_d2v), same = True)
+
             for tracon, tracon_idx, tracon_cts in zip(codes, code_idx, code_cts):
                 start, end = int(tracon_idx), int(tracon_idx + tracon_cts)
 
                 same_d2v = list(range(start, end))
                 other_d2v = list(range(0, start)) + list(range(end, searched.shape[0]))
-                all_d2v = list(range(searched.shape[0]))
-
 
                 index_id = f"{tracon} {int(year)}/{int(month)}"
-                index_to_d2v[index_id] = generate_d2v_row(same_d2v, other_d2v, all_d2v, cos_res, \
+                row = generate_d2v_row(same_d2v, other_d2v, all_d2v, cos_res, \
                         col_info, replace=replace)
+                row[f'trcn_all{col_type1}'] = avg_d2v
+                row[f'trcn_all{col_type2}'] = num_comp
+                row[f'trcn_all{col_type3}'] = searched.shape[0]
+                index_to_d2v[index_id] = pd.Series(row)
 
             mis_row = generate_d2v_row([], list(range(searched.shape[0])), list(range(searched.shape[0])), \
                     cos_res, col_info, replace=replace)
