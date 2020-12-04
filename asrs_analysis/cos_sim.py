@@ -165,9 +165,10 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         where each dataframe has the relevant doc2vec comparison info
     """
     if col == 'narrative' or col == 'callback': # only those with mult reports
-        mult_rep_cols = [f'{col}_report1',f'{col}_report2', \
-                f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}',
-                f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}']
+        # mult_rep_cols = [f'{col}_report1',f'{col}_report2', \
+        #         f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}',
+        #         f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}']
+        mult_rep_cols = []
     else:
         mult_rep_cols = []
 
@@ -203,7 +204,6 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             code = ' '.join([str(int(month)), str(int(year))])
 
             # select only the rows within the month range
-            compare_func = generate_compare(month, year, num_months = month_range)
             yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month), \
                     num_months=month_range)
 
@@ -216,26 +216,25 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             codes, code_idx, code_cts = codes[sel], code_idx[sel], code_cts[sel]
 
             # add missing trcn codes
-            add_codes = np.array(list(all_trcn_codes - set(codes)))
-            codes = np.hstack((codes, add_codes))
-            code_idx = np.hstack((code_idx, np.zeros(add_codes.shape)))
-            code_cts = np.hstack((code_cts, np.zeros(add_codes.shape)))
+            missing_trcns = list(all_trcn_codes - set(codes))
+
+            # add_codes = np.array(list(all_trcn_codes - set(codes)))
+            # codes = np.hstack((codes, add_codes))
+            # code_idx = np.hstack((code_idx, np.zeros(add_codes.shape)))
+            # code_cts = np.hstack((code_cts, np.zeros(add_codes.shape)))
 
             all_tracon = list(tracon_month_dict[code][col])
 
             if len(all_tracon) > 0:
                 d2v1 = np.vstack([d2v_model.docvecs[field_dict[x]] for x in all_tracon])
+                cos_res = cosine_similarity(d2v1, d2v1)
             else:
-                d2v1 = np.zeros((0, 0))
+                cos_res = np.zeros((0, 0))
 
-            cos_res = cosine_similarity(d2v1, d2v1)
 
             for tracon, tracon_idx, tracon_cts in zip(codes, code_idx, code_cts):
                 start, end = int(tracon_idx), int(tracon_idx + tracon_cts)
 
-                # same_d2v = d2v1[start:end]
-                # other_d2v = np.vstack([d2v1[:start], d2v1[end:]])
-                # all_d2v = d2v1
                 same_d2v = list(range(start, end))
                 other_d2v = list(range(0, start)) + list(range(end, searched.shape[0]))
                 all_d2v = list(range(searched.shape[0]))
@@ -244,6 +243,12 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                 index_id = f"{tracon} {int(year)}/{int(month)}"
                 index_to_d2v[index_id] = generate_d2v_row(same_d2v, other_d2v, all_d2v, cos_res, \
                         col_info, replace=replace)
+
+            mis_row = generate_d2v_row([], list(range(searched.shape[0])), list(range(searched.shape[0])), \
+                    cos_res, col_info, replace=replace)
+            for tracon in missing_trcns:
+                index_id = f"{tracon} {int(year)}/{int(month)}"
+                index_to_d2v[index_id] = mis_row
 
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
         month_range_dict[month_range] = month_range_dict.get(month_range, []) + [fin]
