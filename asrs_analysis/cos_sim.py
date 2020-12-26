@@ -158,10 +158,13 @@ abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
         'callback': 'call'}
 
-def generate_d2v_vecs(pd_df, d2v_model, field_dict, replace_dict):
+def generate_d2v_vecs(pd_df, d2v_model, field_dict, replace_dict, use_field_dict=True):
     arr = []
     for x in pd_df:
-        arr += [d2v_model.docvecs[field_dict[process_with_replace(x, replace_dict)]]]
+        if use_field_dict:
+            arr += [d2v_model.docvecs[field_dict[process_with_replace(x, replace_dict)]]]
+        else:
+            arr += [d2v_model.docvecs[x]]
     return np.vstack(arr)
 
 def generate_nontop50_info(num_rows, codes_info):
@@ -190,18 +193,17 @@ def sum_comparisons(cos_res, code_cts, code_idx_i, code_idx_j):
         sum_comp += code_cts[code_idx_i]
     return sum_comp
 
-def generate_trcn_vecs(searched, idx, code_idx, code_cts, field_dict, replace_dict):
+def generate_trcn_vecs(searched, d2v_model, idx, code_idx, code_cts, field_dict, replace_dict, col):
     trcn1_idx = code_idx[idx], code_idx[idx] + code_cts[idx]
     return generate_d2v_vecs(searched.iloc[trcn1_idx[0]:trcn1_idx[1]][col], \
-            field_dict, replace_dict)
+            d2v_model, field_dict, replace_dict)
 
-def populate_comp_matrix(searched, field_dict, all_trcn_codes, codes_info):
+def populate_comp_matrix(searched, d2v_model, field_dict, all_trcn_codes, codes_info, replace_dict, col):
     # preliminary info
     codes, code_idx, code_cts = codes_info
     total_range = generate_nontop50_info(searched.shape[0], codes_info)
 
     num_codes = codes.shape[0]
-    missing_trcns = list(all_trcn_codes - set(codes))
 
     sum_comp, num_comp = np.zeros((num_codes + 1, num_codes + 1)), \
             np.zeros((num_codes + 1, num_codes + 1)) 
@@ -215,13 +217,14 @@ def populate_comp_matrix(searched, field_dict, all_trcn_codes, codes_info):
     # populations sum_comp/num_comp
     for code_idx_i in range(num_codes):
         # generate vectors for tracon i
-        trcn1 = generate_trcn_vecs(searched, code_idx_i, code_idx, code_cts, field_dict, replace_dict)
+        trcn1 = generate_trcn_vecs(searched, d2v_model, code_idx_i, code_idx, code_cts, \
+                field_dict, replace_dict, col)
 
         for code_idx_j in range(num_codes):
             if code_idx_i <= code_idx_j:
                 # generate vectors for tracon j
-                trcn2 = generate_trcn_vecs(searched, code_idx_j, code_idx, code_cts, \
-                        field_dict, replace_dict)
+                trcn2 = generate_trcn_vecs(searched, d2v_model, code_idx_j, code_idx, code_cts, \
+                        field_dict, replace_dict, col)
 
                 # pairwise comparison matrix
                 cos_res = cosine_similarity(trcn1, trcn2)
@@ -239,7 +242,7 @@ def populate_comp_matrix(searched, field_dict, all_trcn_codes, codes_info):
         total = 0
         for idx in range(int(np.ceil(len_nontop50 / 500))):
             nontop50 = generate_d2v_vecs(nontop50_idx[idx*500:(idx+1)*500], \
-                    field_dict, replace_dict)
+                    d2v_model, field_dict, replace_dict, use_field_dict=False)
             total += np.sum(cosine_similarity(trcn1, nontop50))
 
         total_comp = trcn1.shape[0] * len_nontop50
@@ -255,9 +258,9 @@ def populate_comp_matrix(searched, field_dict, all_trcn_codes, codes_info):
         for i in range(int(np.ceil(len_nontop50 / 2000))):
             for j in range(int(np.ceil(len_nontop50 / 2000))):
                 mat1 = generate_d2v_vecs(nontop50_idx[i*500:(i+1)*500], d2v_model, \
-                        field_dict, replace_dict)
+                        field_dict, replace_dict, use_field_dict=False)
                 mat2 = generate_d2v_vecs(nontop50_idx[j*500:(j+1)*500], d2v_model, \
-                        field_dict, replace_dict)
+                        field_dict, replace_dict, use_field_dict=False)
                 total += np.sum(cosine_similarity(mat1, mat2))
         total_comp = len_nontop50 ** 2 + len_nontop50
         num_comp[num_codes, num_codes] = total_comp
@@ -265,7 +268,8 @@ def populate_comp_matrix(searched, field_dict, all_trcn_codes, codes_info):
 
     return num_comp, sum_comp
 
-def analyze_time_period(num_comp, sum_comp, code_info, col_types, default_dict, index_to_d2v):
+def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, default_dict, index_to_d2v, \
+        year, month):
     codes, code_idx, code_cts = code_info
     col_type1, col_type2, col_type3 = col_types
 
@@ -326,10 +330,7 @@ def analyze_time_period(num_comp, sum_comp, code_info, col_types, default_dict, 
         row[f'trcn_out{col_type2}'] = num_div
         row[f'trcn_out{col_type3}'] = searched.shape[0]
 
-    mis_row = pd.Series(row)
-    for tracon in missing_trcns:
-        index_id = f"{tracon} {int(year)}/{int(month)}"
-        index_to_d2v[index_id] = mis_row
+    return pd.Series(row)
 
 def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col = "", field_dict = {}, \
         tracon_month_unique=None, replace_dict={}):
@@ -341,9 +342,9 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         where each dataframe has the relevant doc2vec comparison info
     """
     if col == 'narrative' or col == 'callback': # only those with mult reports
-        mult_rep_cols = [f'{col}_report1',f'{col}_report2', \
-                f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}',
-                f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}']
+        # mult_rep_cols = [f'{col}_report1',f'{col}_report2', \
+        #         f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}',
+        #         f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}']
         mult_rep_cols = []
     else:
         mult_rep_cols = []
@@ -392,10 +393,18 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             searched = all_pds.iloc[yr_mth_sel_idx, :].copy().drop_duplicates(col)
 
             codes_info = generate_codes_info(searched, all_trcn_codes)
-            num_comp, sum_comp = populate_comp_matrix(searched, field_dict, all_trcn_codes, codes_info)
+            num_comp, sum_comp = populate_comp_matrix(searched, d2v_model, field_dict, all_trcn_codes, \
+                    codes_info, replace_dict, col)
 
             # adds all series to index_to_d2v
-            analyze_time_period(num_comp, sum_comp, code_info*, col_types, output_cols, index_to_d2v)
+            mis_row = analyze_time_period(searched, num_comp, sum_comp, codes_info, col_types, \
+                    output_cols, index_to_d2v, year, month)
+
+            # add rows for nontop50 trcns
+            missing_trcns = list(all_trcn_codes - set(codes_info[0]))
+            for tracon in missing_trcns:
+                index_id = f"{tracon} {int(year)}/{int(month)}"
+                index_to_d2v[index_id] = mis_row
 
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
         month_range_dict[month_range] = month_range_dict.get(month_range, []) + [fin]
@@ -516,7 +525,7 @@ def cos_sim_analysis(all_pds, tracon_month_unique):
             model = Doc2Vec(docs, vector_size = 20, window = 3)
 
             analyze_d2v(all_pds, model, len(r_d) > 0, month_range_dict, col = col, field_dict = doc_to_idx, \
-                    tracon_month_unique=tracon_month_unique)
+                    tracon_month_unique=tracon_month_unique, replace_dict=r_d)
 
         for month_range in month_range_dict.keys():
             res = pd.concat(month_range_dict[month_range], axis = 1)
@@ -538,7 +547,7 @@ def main():
     tracon_month_unique = add_missing_rows(unique_ntsb_faa_codes, tracon_month_unique)
     print('after missing rows')
 
-    all_pds = d2v_multiple_reports(all_pds)
+    # all_pds = d2v_multiple_reports(all_pds)
     cos_sim_analysis(all_pds, tracon_month_unique)
 
 if __name__ == "__main__":
