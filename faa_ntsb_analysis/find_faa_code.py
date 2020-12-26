@@ -426,6 +426,9 @@ def check_tracon_codes(df):
         matched_set = wiki_matched_set(df, wiki_tables)
 
         tmp = df.loc[df['eventairport_conv'] != 'nan', :].copy()
+        matched_set = wiki_matched_set(df, wiki_tables)
+
+        tmp = df.loc[df['eventairport_conv'] != 'nan', :].copy()
         ct = count_matched(tmp, matched_set)
         print('wiki matched', ct)
 
