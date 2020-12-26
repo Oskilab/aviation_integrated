@@ -158,6 +158,178 @@ abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
         'callback': 'call'}
 
+def generate_d2v_vecs(pd_df, d2v_model, field_dict, replace_dict):
+    arr = []
+    for x in pd_df:
+        arr += [d2v_model.docvecs[field_dict[process_with_replace(x, replace_dict)]]]
+    return np.vstack(arr)
+
+def generate_nontop50_info(num_rows, codes_info):
+    codes, code_idx, code_cts = codes_info
+
+    total_range = np.array([True] * num_rows)
+    for code, c_idx, c_ct in zip(codes, code_idx, code_cts):
+        total_range[c_idx:c_idx+c_ct] = False
+    return total_range
+
+def generate_codes_info(searched, all_trcn_codes):
+    codes, code_idx, code_cts = np.unique(searched.values.astype(str)[:, 0], \
+            return_index=True, return_counts=True)
+    sel = [x in all_trcn_codes for x in codes]
+    return [codes[sel], code_idx[sel], code_cts[sel]]
+
+def num_comparisons(code_cts, code_idx_i, code_idx_j):
+    num_comp = code_cts[code_idx_i] * code_cts[code_idx_j]
+    if code_idx_i == code_idx_j:
+        num_comp = num_comp + code_cts[code_idx_i]
+    return num_comp
+
+def sum_comparisons(cos_res, code_cts, code_idx_i, code_idx_j):
+    sum_comp = np.sum(cos_res)
+    if code_idx_i == code_idx_j:
+        sum_comp += code_cts[code_idx_i]
+    return sum_comp
+
+def generate_trcn_vecs(searched, idx, code_idx, code_cts, field_dict, replace_dict):
+    trcn1_idx = code_idx[idx], code_idx[idx] + code_cts[idx]
+    return generate_d2v_vecs(searched.iloc[trcn1_idx[0]:trcn1_idx[1]][col], \
+            field_dict, replace_dict)
+
+def populate_comp_matrix(searched, field_dict, all_trcn_codes, codes_info):
+    # preliminary info
+    codes, code_idx, code_cts = codes_info
+    total_range = generate_nontop50_info(searched.shape[0], codes_info)
+
+    num_codes = codes.shape[0]
+    missing_trcns = list(all_trcn_codes - set(codes))
+
+    sum_comp, num_comp = np.zeros((num_codes + 1, num_codes + 1)), \
+            np.zeros((num_codes + 1, num_codes + 1)) 
+
+    # nontop50 indices for gensim model
+    if np.any(total_range):
+        nontop50_idx = np.array([field_dict[process_with_replace(x, replace_dict)] for \
+                x in searched.loc[total_range, col]])
+        len_nontop50 = nontop50_idx.shape[0]
+
+    # populations sum_comp/num_comp
+    for code_idx_i in range(num_codes):
+        # generate vectors for tracon i
+        trcn1 = generate_trcn_vecs(searched, code_idx_i, code_idx, code_cts, field_dict, replace_dict)
+
+        for code_idx_j in range(num_codes):
+            if code_idx_i <= code_idx_j:
+                # generate vectors for tracon j
+                trcn2 = generate_trcn_vecs(searched, code_idx_j, code_idx, code_cts, \
+                        field_dict, replace_dict)
+
+                # pairwise comparison matrix
+                cos_res = cosine_similarity(trcn1, trcn2)
+
+                total_comp = num_comparisons(code_cts, code_idx_i, code_idx_j)
+
+                num_comp[code_idx_i, code_idx_j] = total_comp
+                sum_comp[code_idx_i, code_idx_j] = sum_comparisons(cos_res, code_cts, code_idx_i, code_idx_j)
+
+                # fill in symmetrically
+                num_comp[code_idx_j, code_idx_i] = num_comp[code_idx_i, code_idx_j]
+                sum_comp[code_idx_j, code_idx_i] = sum_comp[code_idx_i, code_idx_j]
+
+        # nontop50 comparisons x one top50 comparisons
+        total = 0
+        for idx in range(int(np.ceil(len_nontop50 / 500))):
+            nontop50 = generate_d2v_vecs(nontop50_idx[idx*500:(idx+1)*500], \
+                    field_dict, replace_dict)
+            total += np.sum(cosine_similarity(trcn1, nontop50))
+
+        total_comp = trcn1.shape[0] * len_nontop50
+        num_comp[code_idx_i, num_codes] = total_comp
+        sum_comp[code_idx_i, num_codes] = total
+
+        num_comp[num_codes, code_idx_i] = num_comp[code_idx_i, num_codes]
+        sum_comp[num_codes, code_idx_i] = sum_comp[code_idx_i, num_codes]
+
+    # deal with nontop50 x nontop50 comparisons
+    if np.any(total_range):
+        total = 0
+        for i in range(int(np.ceil(len_nontop50 / 2000))):
+            for j in range(int(np.ceil(len_nontop50 / 2000))):
+                mat1 = generate_d2v_vecs(nontop50_idx[i*500:(i+1)*500], d2v_model, \
+                        field_dict, replace_dict)
+                mat2 = generate_d2v_vecs(nontop50_idx[j*500:(j+1)*500], d2v_model, \
+                        field_dict, replace_dict)
+                total += np.sum(cosine_similarity(mat1, mat2))
+        total_comp = len_nontop50 ** 2 + len_nontop50
+        num_comp[num_codes, num_codes] = total_comp
+        sum_comp[num_codes, num_codes] = total + len_nontop50
+
+    return num_comp, sum_comp
+
+def analyze_time_period(num_comp, sum_comp, code_info, col_types, default_dict, index_to_d2v):
+    codes, code_idx, code_cts = code_info
+    col_type1, col_type2, col_type3 = col_types
+
+    # preliminary info
+    trcn_comp = np.sum(num_comp, axis=1)
+    trcn_sum = np.sum(sum_comp, axis=1)
+
+    all_num = np.sum(trcn_comp) / 2
+    all_sum = np.sum(trcn_sum) / 2
+
+    for idx, tracon in enumerate(codes):
+        d2v_dict = default_dict.copy()
+        comp = (num_comp[idx, idx] / 2 - code_cts[idx])
+        if comp > 0:
+            d2v_dict[f'trcn{col_type1}'] = (1 + (sum_comp[idx, idx] / 2 - code_cts[idx]) / comp) / 2
+            d2v_dict[f'trcn{col_type2}'] = comp / 2
+            d2v_dict[f'trcn{col_type3}'] = code_cts[idx]
+
+        # same to other tracon
+        if trcn_comp[idx] - num_comp[idx, idx] > 0:
+            d2v_dict[f'trcn_invout{col_type1}'] = (1 + (trcn_sum[idx] - sum_comp[idx, idx]) / \
+                    (trcn_comp[idx] - num_comp[idx, idx])) / 2
+            d2v_dict[f'trcn_invout{col_type2}'] = trcn_comp[idx] - num_comp[idx, idx]
+
+        # other to other tracon
+        num_other = searched.shape[0] - code_cts[idx]
+        comp = (all_num - 2 * trcn_comp[idx] + num_comp[idx, idx]) / 2 - num_other
+        if comp > 0:
+            tot = (all_sum - 2 * trcn_sum[idx] + sum_comp[idx, idx]) / 2 - num_other
+            d2v_dict[f'trcn_out{col_type1}'] = (1 + tot / comp) / 2
+            d2v_dict[f'trcn_out{col_type2}'] = comp
+            d2v_dict[f'trcn_out{col_type3}'] = searched.shape[0] - code_cts[idx]
+
+        # same to all tracon
+        comp = trcn_comp[idx] - code_cts[idx]
+        if comp > 0:
+            d2v_dict[f'trcn_invall{col_type1}'] = (1 + (trcn_sum[idx] - code_cts[idx]) / comp) / 2
+            d2v_dict[f'trcn_invall{col_type2}'] = comp
+
+        # all to all tracon
+        if all_num > 0:
+            num_div = all_num - searched.shape[0]
+            d2v_dict[f'trcn_all{col_type1}'] = (1 + (all_sum - searched.shape[0]) / num_div) / 2
+            d2v_dict[f'trcn_all{col_type2}'] = num_div
+            d2v_dict[f'trcn_all{col_type3}'] = searched.shape[0]
+
+        index_id = f"{tracon} {int(year)}/{int(month)}"
+        index_to_d2v[index_id] = pd.Series(d2v_dict)
+
+    row = default_dict.copy()
+    num_div = all_num - searched.shape[0]
+    if num_div > 0:
+        row[f'trcn_all{col_type1}'] = (1 + (all_sum - searched.shape[0]) / num_div) / 2
+        row[f'trcn_all{col_type2}'] = num_div
+        row[f'trcn_all{col_type3}'] = searched.shape[0]
+
+        row[f'trcn_out{col_type1}'] = (1 + (all_sum - searched.shape[0]) / num_div) / 2
+        row[f'trcn_out{col_type2}'] = num_div
+        row[f'trcn_out{col_type3}'] = searched.shape[0]
+
+    mis_row = pd.Series(row)
+    for tracon in missing_trcns:
+        index_id = f"{tracon} {int(year)}/{int(month)}"
+        index_to_d2v[index_id] = mis_row
 
 def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col = "", field_dict = {}, \
         tracon_month_unique=None, replace_dict={}):
@@ -169,9 +341,9 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         where each dataframe has the relevant doc2vec comparison info
     """
     if col == 'narrative' or col == 'callback': # only those with mult reports
-        # mult_rep_cols = [f'{col}_report1',f'{col}_report2', \
-        #         f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}',
-        #         f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}']
+        mult_rep_cols = [f'{col}_report1',f'{col}_report2', \
+                f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}',
+                f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}']
         mult_rep_cols = []
     else:
         mult_rep_cols = []
@@ -197,6 +369,7 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         col_type1 = f'{"_flfrm" if replace else ""}_{end_str}'
         col_type2 = f'{"_flfrm" if replace else ""}_ct_{end_str}'
         col_type3 = f'{"_flfrm" if replace else ""}_vol_{end_str}'
+        col_types = [col_type1, col_type2, col_type3]
 
         col_info = [col, abrev_col, col_type1, col_type2, col_type3]
         output_cols = [f'trcn{col_type1}', f'trcn{col_type2}', f'trcn{col_type3}', \
@@ -207,182 +380,22 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         output_cols = {x: np.nan for x in output_cols}
 
         index_to_d2v = {}
-        # generate dictionaries for caching
-        tracon_month_dict, cos_res_tracon_dict = {}, {}
-        start_time = time.time()
-        tot_startup = 0
-        tot_cos_sim = 0
         for month, year in tqdm(product(range(1, 13), range(1988, 2020)), total=num_time_periods, \
                 desc = f'{col} {mr_str}'):
-            startup_time = time.time()
             code = ' '.join([str(int(month)), str(int(year))])
 
             # select only the rows within the month range
             yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month), \
                     num_months=month_range)
 
-            tracon_month_dict[code] = all_pds.iloc[yr_mth_sel_idx, :].copy().drop_duplicates(col)
-            searched = tracon_month_dict[code]
+            # drop duplicates of given column
+            searched = all_pds.iloc[yr_mth_sel_idx, :].copy().drop_duplicates(col)
 
-            total_range = np.array([True] * searched.shape[0])
-            codes, code_idx, code_cts = np.unique(tracon_month_dict[code].values.astype(str)[:, 0], \
-                    return_index=True, return_counts=True)
+            codes_info = generate_codes_info(searched, all_trcn_codes)
+            num_comp, sum_comp = populate_comp_matrix(searched, field_dict, all_trcn_codes, codes_info)
 
-            sel = [x in all_trcn_codes for x in codes]
-            codes, code_idx, code_cts = codes[sel], code_idx[sel], code_cts[sel]
-
-            for code, c_idx, c_ct in zip(codes, code_idx, code_cts):
-                total_range[c_idx:c_idx+c_ct] = False
-
-            num_codes = codes.shape[0]
-            missing_trcns = list(all_trcn_codes - set(codes))
-
-            sum_comp, num_comp = np.zeros((num_codes + 1, num_codes + 1)), \
-                    np.zeros((num_codes + 1, num_codes + 1)) 
-
-            tot_startup += time.time() - startup_time
-            if np.any(total_range):
-                nontop50_idx = np.array([field_dict[str(x)] for x in searched.loc[total_range, col]])
-                len_nontop50 = nontop50_idx.shape[0]
-                # nontop50 = np.vstack([d2v_model.docvecs[field_dict[x]] for x in \
-                #             searched.loc[total_range, col]])
-            cos_start = time.time()
-            for code_idx_i in range(num_codes):
-                trcn1_idx = code_idx[code_idx_i], code_idx[code_idx_i] + code_cts[code_idx_i]
-                processed_field = process_with_replace(x, replace_dict)
-                trcn1 = np.vstack([d2v_model.docvecs[field_dict[processed_field]] for x in \
-                        searched.iloc[trcn1_idx[0]:trcn1_idx[1]][col]])
-
-                for code_idx_j in range(num_codes):
-                    if code_idx_i <= code_idx_j:
-                        trcn2_idx = code_idx[code_idx_j], code_idx[code_idx_j] + code_cts[code_idx_j]
-                        processed_field = process_with_replace(x, replace_dict)
-                        trcn2 = np.vstack([d2v_model.docvecs[field_dict[processed_field]] for x in \
-                                searched.iloc[trcn2_idx[0]:trcn2_idx[1]][col]])
-
-                        cos_res = cosine_similarity(trcn1, trcn2)
-
-                        total_comp = code_cts[code_idx_i] * code_cts[code_idx_j]
-                        if code_idx_i == code_idx_j:
-                            total_comp = total_comp + code_cts[code_idx_i]
-                        num_comp[code_idx_i, code_idx_j] = total_comp
-                        sum_comp[code_idx_i, code_idx_j] = np.sum(cos_res)
-                        if code_idx_i == code_idx_j:
-                            sum_comp[code_idx_i, code_idx_j] += code_cts[code_idx_i]
-
-                        num_comp[code_idx_j, code_idx_i] = num_comp[code_idx_i, code_idx_j]
-                        sum_comp[code_idx_j, code_idx_i] = sum_comp[code_idx_i, code_idx_j]
-
-                total = 0
-                for idx in range(int(np.ceil(len_nontop50 / 500))):
-                    processed_field = process_with_replace(x, replace_dict)
-                    nontop50 = np.vstack([d2v_model.docvecs[field_dict[processed_field]] \
-                            for x in nontop50_idx[idx*500: \
-                            (idx+1)*500]])
-                    total += np.sum(cosine_similarity(trcn1, nontop50))
-
-                total_comp = trcn1.shape[0] * len_nontop50
-                num_comp[code_idx_i, num_codes] = total_comp
-                sum_comp[code_idx_i, num_codes] = total
-
-                num_comp[num_codes, code_idx_i] = num_comp[code_idx_i, num_codes]
-                sum_comp[num_codes, code_idx_i] = sum_comp[code_idx_i, num_codes]
-
-            if np.any(total_range):
-                total = 0
-                for i in range(int(np.ceil(len_nontop50 / 2000))):
-                    for j in range(int(np.ceil(len_nontop50 / 2000))):
-                        processed_field = process_with_replace(x, replace_dict)
-                        mat1 = np.vstack([d2v_model.docvecs[field_dict[processed_field]] for \
-                                x in nontop50_idx[i*500:(i+1)*500]])
-                        mat2 = np.vstack([d2v_model.docvecs[field_dict[processed_field]] for \
-                                x in nontop50_idx[j*500:(j+1)*500]])
-                        total += np.sum(cosine_similarity(mat1, mat2))
-                total_comp = len_nontop50 ** 2 + len_nontop50
-                num_comp[num_codes, num_codes] = total_comp
-                sum_comp[num_codes, num_codes] = total + len_nontop50
-
-            trcn_comp = np.sum(num_comp, axis=1)
-            trcn_sum = np.sum(sum_comp, axis=1)
-
-            diag_num = np.sum(np.diag(num_comp))
-            diag_sum = np.sum(np.diag(sum_comp))
-
-            all_num = np.sum(trcn_comp) / 2
-            all_sum = np.sum(trcn_sum) / 2
-
-            for idx, tracon in enumerate(codes):
-                d2v_dict = {}
-                comp = (num_comp[idx, idx] / 2 - code_cts[idx])
-                if comp > 0:
-                    d2v_dict[f'trcn{col_type1}'] = (1 + (sum_comp[idx, idx] / 2 - code_cts[idx]) / comp) / 2
-                    d2v_dict[f'trcn{col_type2}'] = comp / 2
-                    d2v_dict[f'trcn{col_type3}'] = code_cts[idx]
-                else:
-                    d2v_dict[f'trcn{col_type1}'] = np.nan
-                    d2v_dict[f'trcn{col_type2}'] = np.nan
-                    d2v_dict[f'trcn{col_type3}'] = np.nan
-
-                # same to other tracon
-                if trcn_comp[idx] - num_comp[idx, idx] > 0:
-                    d2v_dict[f'trcn_invout{col_type1}'] = (1 + (trcn_sum[idx] - sum_comp[idx, idx]) / \
-                            (trcn_comp[idx] - num_comp[idx, idx])) / 2
-                    d2v_dict[f'trcn_invout{col_type2}'] = trcn_comp[idx] - num_comp[idx, idx]
-                else:
-                    d2v_dict[f'trcn_invout{col_type1}'] = np.nan
-                    d2v_dict[f'trcn_invout{col_type2}'] = np.nan
-
-                # other to other tracon
-                num_other = searched.shape[0] - code_cts[idx]
-                comp = (all_num - 2 * trcn_comp[idx] + num_comp[idx, idx]) / 2 - num_other
-                if comp > 0:
-                    tot = (all_sum - 2 * trcn_sum[idx] + sum_comp[idx, idx]) / 2 - num_other
-                    d2v_dict[f'trcn_out{col_type1}'] = (1 + tot / comp) / 2
-                    d2v_dict[f'trcn_out{col_type2}'] = comp
-                    d2v_dict[f'trcn_out{col_type3}'] = searched.shape[0] - code_cts[idx]
-                else:
-                    d2v_dict[f'trcn_out{col_type1}'] = np.nan
-                    d2v_dict[f'trcn_out{col_type2}'] = np.nan
-                    d2v_dict[f'trcn_out{col_type3}'] = np.nan
-
-                # same to all tracon
-                comp = trcn_comp[idx] - code_cts[idx]
-                if comp > 0:
-                    d2v_dict[f'trcn_invall{col_type1}'] = (1 + (trcn_sum[idx] - code_cts[idx]) / comp) / 2
-                    d2v_dict[f'trcn_invall{col_type2}'] = comp
-                else:
-                    d2v_dict[f'trcn_invall{col_type1}'] = np.nan
-                    d2v_dict[f'trcn_invall{col_type2}'] = np.nan
-
-                # all to all tracon
-                if all_num > 0:
-                    num_div = all_num - searched.shape[0]
-                    d2v_dict[f'trcn_all{col_type1}'] = (1 + (all_sum - searched.shape[0]) / num_div) / 2
-                    d2v_dict[f'trcn_all{col_type2}'] = num_div
-                    d2v_dict[f'trcn_all{col_type3}'] = searched.shape[0]
-                else:
-                    d2v_dict[f'trcn_all{col_type1}'] = np.nan
-                    d2v_dict[f'trcn_all{col_type2}'] = np.nan
-                    d2v_dict[f'trcn_all{col_type3}'] = np.nan
-
-                index_id = f"{tracon} {int(year)}/{int(month)}"
-                index_to_d2v[index_id] = pd.Series(d2v_dict)
-
-            row = output_cols.copy()
-            num_div = all_num - searched.shape[0]
-            if num_div > 0:
-                row[f'trcn_all{col_type1}'] = (1 + (all_sum - searched.shape[0]) / num_div) / 2
-                row[f'trcn_all{col_type2}'] = num_div
-                row[f'trcn_all{col_type3}'] = searched.shape[0]
-
-                row[f'trcn_out{col_type1}'] = (1 + (all_sum - searched.shape[0]) / num_div) / 2
-                row[f'trcn_out{col_type2}'] = num_div
-                row[f'trcn_out{col_type3}'] = searched.shape[0]
-
-            mis_row = pd.Series(row)
-            for tracon in missing_trcns:
-                index_id = f"{tracon} {int(year)}/{int(month)}"
-                index_to_d2v[index_id] = mis_row
+            # adds all series to index_to_d2v
+            analyze_time_period(num_comp, sum_comp, code_info*, col_types, output_cols, index_to_d2v)
 
         fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
         month_range_dict[month_range] = month_range_dict.get(month_range, []) + [fin]
