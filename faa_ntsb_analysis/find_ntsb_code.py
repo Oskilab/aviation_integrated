@@ -403,6 +403,13 @@ def fill_in_handcode_iata(df):
     @param: df (pd.DataFrame) dataframe of NTSB incident/accident dataset
     @returns: processed df with handcoded IATA codes
     """
+    fix_code_df = pd.read_excel('datasets/NTSB_airportcode_fix.xlsx', index_col=0)
+    fix_code_dict = {}
+    for index in fix_code_df.index:
+        fix_code_dict[fix_code_df.loc[index, 'airport_code']] = index
+
+    df[' Airport Code '] = df[' Airport Code '].apply(lambda x: fix_code_dict.get(x, x))
+
     handcode_iata_dict_df = pd.read_excel('datasets/NTSB_Key.xlsx')
     handcode_iata_dict = {}
     for idx, row in handcode_iata_dict_df.set_index('airportname').iterrows():
