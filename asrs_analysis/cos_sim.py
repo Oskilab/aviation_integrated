@@ -157,8 +157,10 @@ def generate_d2v_row(same_d2v, other_d2v, all_d2v, cos_res, col_info, replace=Tr
 abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
         'callback': 'call'}
+
+
 def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col = "", field_dict = {}, \
-        tracon_month_unique=None):
+        tracon_month_unique=None, replace_dict={}):
     """
     @param: all_pds(pd.DataFrame) should be the full asrs dataset
     @param: d2v_model (gensim.models.doc2vec) model that was trained on full dataset
@@ -247,13 +249,15 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             cos_start = time.time()
             for code_idx_i in range(num_codes):
                 trcn1_idx = code_idx[code_idx_i], code_idx[code_idx_i] + code_cts[code_idx_i]
-                trcn1 = np.vstack([d2v_model.docvecs[field_dict[str(x)]] for x in \
+                processed_field = process_with_replace(x, replace_dict)
+                trcn1 = np.vstack([d2v_model.docvecs[field_dict[processed_field]] for x in \
                         searched.iloc[trcn1_idx[0]:trcn1_idx[1]][col]])
 
                 for code_idx_j in range(num_codes):
                     if code_idx_i <= code_idx_j:
                         trcn2_idx = code_idx[code_idx_j], code_idx[code_idx_j] + code_cts[code_idx_j]
-                        trcn2 = np.vstack([d2v_model.docvecs[field_dict[str(x)]] for x in \
+                        processed_field = process_with_replace(x, replace_dict)
+                        trcn2 = np.vstack([d2v_model.docvecs[field_dict[processed_field]] for x in \
                                 searched.iloc[trcn2_idx[0]:trcn2_idx[1]][col]])
 
                         cos_res = cosine_similarity(trcn1, trcn2)
@@ -271,7 +275,9 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
 
                 total = 0
                 for idx in range(int(np.ceil(len_nontop50 / 500))):
-                    nontop50 = np.vstack([d2v_model.docvecs[field_dict[str(x)]] for x in nontop50_idx[idx*500: \
+                    processed_field = process_with_replace(x, replace_dict)
+                    nontop50 = np.vstack([d2v_model.docvecs[field_dict[processed_field]] \
+                            for x in nontop50_idx[idx*500: \
                             (idx+1)*500]])
                     total += np.sum(cosine_similarity(trcn1, nontop50))
 
@@ -286,10 +292,11 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                 total = 0
                 for i in range(int(np.ceil(len_nontop50 / 2000))):
                     for j in range(int(np.ceil(len_nontop50 / 2000))):
-                        mat1 = np.vstack([d2v_model.docvecs[field_dict[str(x)]] for x in nontop50_idx[i*500: \
-                                (i+1)*500]])
-                        mat2 = np.vstack([d2v_model.docvecs[field_dict[str(x)]] for x in nontop50_idx[j*500: \
-                                (j+1)*500]])
+                        processed_field = process_with_replace(x, replace_dict)
+                        mat1 = np.vstack([d2v_model.docvecs[field_dict[processed_field]] for \
+                                x in nontop50_idx[i*500:(i+1)*500]])
+                        mat2 = np.vstack([d2v_model.docvecs[field_dict[processed_field]] for \
+                                x in nontop50_idx[j*500:(j+1)*500]])
                         total += np.sum(cosine_similarity(mat1, mat2))
                 total_comp = len_nontop50 ** 2 + len_nontop50
                 num_comp[num_codes, num_codes] = total_comp
@@ -441,18 +448,19 @@ def add_missing_rows(unique_ntsb_faa_codes, tracon_month_unique):
 
     return tracon_month_unique.append(pd.DataFrame.from_dict(added_rows))
 
+def process_with_replace(field, r_d):
+    np_res = replace_words(str(field), replace_dict=r_d)
+    return ' '.join(np_res)
+
 def generate_tagged_docs(np_fields, r_d):
     # creating list of tagged documents
     docs = []
     doc_to_idx = {}
     ct = 0
     for field in tqdm(np_fields, total=np_fields.shape[0]):
-        if str(field) not in doc_to_idx:
-            doc_to_idx[str(field)] = ct
-
-            np_res = replace_words(str(field), replace_dict=r_d)
-            doc_str = ' '.join(np_res)
-
+        doc_str = process_with_replace(field, r_d)
+        if doc_str not in doc_to_idx:
+            doc_to_idx[doc_str] = ct
             docs.append(TaggedDocument(doc_str, [ct]))
             ct += 1
     return docs, doc_to_idx
@@ -473,8 +481,11 @@ def d2v_multiple_reports(all_pds):
             model = Doc2Vec(docs, vector_size = 20, window = 3)
             only_mult_rep_df = all_pds.loc[all_pds[f'{mult_col}_multiple_reports'], :]
             for idx, row in tqdm(only_mult_rep_df.iterrows(), total=only_mult_rep_df.shape[0]):
-                vec1 = model.docvecs[doc_to_idx[row[f'{mult_col}_report1']]]
-                vec2 = model.docvecs[doc_to_idx[row[f'{mult_col}_report2']]]
+                report1 = process_with_replace(row[f'{mult_col}_report1'], r_d)
+                report2 = process_with_replace(row[f'{mult_col}_report2'], r_d)
+
+                vec1 = model.docvecs[doc_to_idx[report1]]
+                vec2 = model.docvecs[doc_to_idx[report2]]
 
                 cos_sim = cosine_similarity(vec1.reshape(1, 20), vec2.reshape(1, 20))
                 all_pds.loc[idx, cos_col_name] = (cos_sim[0, 0] + 1) / 2
