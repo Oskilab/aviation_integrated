@@ -137,8 +137,9 @@ def reorder_cols(df):
     text_columns = ['narr', 'syn', 'call', 'narrsyn', 'all']
     wc = ['avg_wc', 'wc']
     sel = ['', 'all', 'out', 'prop']
-    time_windows = ['1m', '3m', '6m', '12m', 'atime']
-    wc_cols = generate_cartesian_prod_columns([text_columns, wc, sel, time_windows])
+    # time_windows = ['1m', '3m', '6m', '12m', 'atime']
+    wc_cols = generate_cartesian_prod_columns([text_columns, wc, sel])
+    # wc_cols = generate_cartesian_prod_columns([text_columns, wc, sel, time_windows])
     cols = cols + wc_cols
 
     # trcn columns (d2v)
@@ -263,7 +264,7 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
     yr_mth, yr_mth_idx, yr_mth_ct = np.unique(asrs_orig[['year', 'month']].values.astype(int), \
             axis = 0, return_index=True, return_counts=True)
 
-    num_months = [1, 3, 6, 12, np.inf]
+    num_months = [1, 3, 6, 12]
     for month_idx, n_month in enumerate(num_months):
         month_range_str = f'{n_month}m'
         if n_month == np.inf:
@@ -330,6 +331,7 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                 else:
                     concat_series.append(tr_yr_mon)
 
+                # select asrs rows, if it's beginning or no rows found in asrs, then add nans
                 if (num_month_from_start >= 0 and num_month_from_start < n_month and n_month != np.inf) or \
                         searched.shape[0] == 0:
                     concat_series.append(pd.Series(index=cumulative_index, dtype='float64'))
@@ -337,6 +339,7 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                     cumulative = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis = 1).sum()
                     concat_series.append(cumulative)
 
+                # select d2v rows, if it's the beginning, remove those rows
                 if (num_month_from_start >= 0 and num_month_from_start < n_month and n_month != np.inf):
                     concat_series.append(pd.Series(index=d2v_index, dtype='float64'))
                 else:
