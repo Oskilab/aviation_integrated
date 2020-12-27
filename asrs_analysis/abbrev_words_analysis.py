@@ -16,6 +16,11 @@ summary_cols = ['total words', 'unique words', 'neg_nonword unprocessed', 'uniqu
         'unique hand' 'hand2', 'unique_hand2']
 
 def parse_args():
+    """
+    Parses commandline arguments. If -t isincluded, we are only testing the pipeline,
+    and a subset of the data is taken for fast computations
+    @returns: test (bool) True if -t is included, False otherwise
+    """
     parser = argparse.ArgumentParser(description='Analyze abbreviations.')
     parser.add_argument('-t', action = 'store_true')
     args = parser.parse_args()
@@ -24,6 +29,11 @@ def parse_args():
     return test
 
 def parse_city_words():
+    """
+    This reads an html file of a list of US cities, and it creates a set of all
+    words that are utilized in a city name (e.g., 'york' from 'New York')
+    @returns: cities_words (set of str)
+    """
     # get list of cities
     with open('datasets/List_of_United_States_cities_by_population') as wiki_cities:
         list_of_cities = BeautifulSoup(wiki_cities.read(), 'html.parser')
@@ -49,6 +59,12 @@ def parse_city_words():
     return set(cities_words)
 
 def get_all_abrevs(aviation_dicts):
+    """
+    Generates a set of all known abbreviations (top-down).
+    @param: aviation_dicts (dict[abbrev_dataset_name] -> pd.DataFrame), see
+        preprocess_helper.py for more information
+    @returns: set of all known abbreviations (top-down)
+    """
     # create set of all abbreviations in all dictionaries
     dfs = list(aviation_dicts.values())
     all_abrevs = set(dfs[0]['acronym'])
@@ -57,6 +73,33 @@ def get_all_abrevs(aviation_dicts):
     return all_abrevs
 
 def negatives(total_cts, summary_dict, word_categories, orig_col):
+    """
+    This analyzes the words of the ASRS dataset that are not found in any
+    abbreviation_dictionary. We label each word with a specific tag such as
+    neg_word, neg_nonword, ..., to organize all known "negative" words.
+    @param: total_cts (pd.DataFrame) of words -> # times the word occurs
+        in ASRS dataset. The column named 0 is the count
+    @param: summary_dict (dict[summary_colname] -> value), this keeps track
+        of global information that would be useful (the number of neg_nonwords, 
+        or the nubmer of neg_words, etc.)
+    @param: word_categories (list of objects) includes information on important
+        types of word_categories
+        word_categories[0] = set of all known top-down abbreviations
+        word_categories[1] = set of all english stop words
+        word_categories[2] = enchant dictionary (see pyenchant module) 
+            functions as an english dictionary
+        word_categories[3] = set of all neg_nonwords that are actually english words
+            this is handcoded and added back to neg_word_hand2
+            see preprocess_helper:neg_nonword_to_neg_word_set()
+        word_categories[4] = set of all neg_nonwords that are actually part of
+            airport names. These are added to neg_airport category
+        word_categories[5] = set of all words from city names (scraped from wiki)
+            see parse_city_words() for more info
+    @param: orig_col (str) column that we are analyzing
+    @returns: portion of total_cts that are negative words (words that don't occur
+        in any aviation dictionary). Each word is given an associated tag
+        as well as abrev = 0 (when it's not labelled as an abbreviation), or 1 when it is
+    """
     global summary_cols
     all_abrevs, eng_stopwords, d, negnw_to_negw, negnw_to_airport, cities = word_categories
 
@@ -117,6 +160,33 @@ def negatives(total_cts, summary_dict, word_categories, orig_col):
     return fn
 
 def positives(total_cts, summary_dict, word_categories, aviation_dicts, orig_col):
+    """
+    This analyzes the words of the ASRS dataset that are found in any
+    abbreviation_dictionary. We label each word with a specific tag such as
+    pos_word, pos_nonword, ..., to organize all known "positive" words.
+    @param: total_cts (pd.DataFrame) of words -> # times the word occurs
+        in ASRS dataset. The column named 0 is the count
+    @param: summary_dict (dict[summary_colname] -> value), this keeps track
+        of global information that would be useful (the number of neg_nonwords, 
+        or the nubmer of neg_words, etc.)
+    @param: word_categories (list of objects) includes information on important
+        types of word_categories
+        word_categories[0] = set of all known top-down abbreviations
+        word_categories[1] = set of all english stop words
+        word_categories[2] = enchant dictionary (see pyenchant module) 
+            functions as an english dictionary
+        word_categories[3] = set of all neg_nonwords that are actually english words
+            this is handcoded and added back to neg_word_hand2
+            see preprocess_helper:neg_nonword_to_neg_word_set()
+        word_categories[4] = set of all neg_nonwords that are actually part of
+            airport names. These are added to neg_airport category
+        word_categories[5] = set of all words from city names (scraped from wiki)
+            see parse_city_words() for more info
+    @param: orig_col (str) column that we are analyzing
+    @returns: portion of total_cts that are positive words (words that do occur
+        in any aviation dictionary). Each word is given an associated tag
+        as well as abrev = 0 (when it's not labelled as an abbreviation), or 1 when it is
+    """
     all_abrevs, eng_stopwords, d, negnw_to_negw, negnw_to_airport, cities = word_categories
 
     # pos_sel = the rows that have at least one non-NAN value
@@ -166,6 +236,14 @@ def positives(total_cts, summary_dict, word_categories, aviation_dicts, orig_col
     total_cts.to_csv(f'results/total_cts_tagged_{orig_col}.csv')
 
 def get_top_down_subset(total_cts, dictionary_names):
+    """
+    Returns all rows in total_cts that are associated with a word that is found
+    in any aviation dictionary
+    @param: total_cts (pd.DataFrame) of words -> # times the word occurs
+        in ASRS dataset. The column named 0 is the count
+    @param: dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'hand2', 'iata']
+    @returns: subset of total_cts with word that is found in any aviation dict
+    """
     sel = None
     for dictionary in dictionary_names:
         if sel is None:
@@ -175,8 +253,18 @@ def get_top_down_subset(total_cts, dictionary_names):
     subset = total_cts.loc[sel, :].copy()
     return subset
 
-
 def generate_dictionary_summary(total_cts, dictionary_names, summary_dict):
+    """
+    This generates a python dict that names dictionary_names (casa/nasa/...)
+    to a pd.Series that summarizes the number of times that a word in that
+    dictionary showed up in the ASRS dataset.
+    @param: total_cts (pd.DataFrame) of words -> # times the word occurs
+        in ASRS dataset. The column named 0 is the count
+    @param: dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'hand2', 'iata']
+    @param: summary_dict (dict[summary_col] -> float) contains summary information
+        about top_down/bottom_up analysis of words.
+    @returns: dictionary_summary (dict[dictionary_name] -> pd.Series of summary info)
+    """
     dictionary_summary = {}
     for dictionary in dictionary_names:
         subset = total_cts.loc[~total_cts[f'{dictionary}_fullform'].isna(), :]
@@ -189,6 +277,16 @@ def generate_dictionary_summary(total_cts, dictionary_names, summary_dict):
     return dictionary_summary
 
 def generate_bar_chart(total_cts, agg_func, output_fn, title="", abrev=True):
+    """
+    This generates a barchart of total_cts split by tag (which we generated).
+    @param: total_cts (pd.DataFrame) of words -> # times the word occurs
+        in ASRS dataset. The column named 0 is the count
+    @param: agg_func (func) used to aggregate counts
+    @param: output_fn (str) filepath for output
+    @param: title (str) how to title the bar chart
+    @param: abrev (bool) if True, we are only analyzing the portion of total_cts
+        that are labelled as abbreviations. Otherwise, the full ds
+    """
     if abrev:
         tmp = total_cts.loc[total_cts['abrev'] == 1, [0, 'tag']].groupby('tag').agg(agg_func)
     else:
@@ -200,10 +298,14 @@ def generate_bar_chart(total_cts, agg_func, output_fn, title="", abrev=True):
     ax.get_figure().savefig(output_fn)
 
 def generate_all_bar_charts(total_cts, orig_col):
-    # The following section creates a series of bar plots showing the breakdown of the total corpus
-    # by the created tags. If there's a unique preceding the name of the file, then it's the breakdown
-    # of unique words (or the vocabulary used in the dataset)
-    # only abbreviations, total_cts
+    """
+    The following section creates a series of bar plots showing the breakdown of the total corpus
+    by the created tags. If there's a unique preceding the name of the file, then it's the breakdown
+    of unique words (or the vocabulary used in the dataset)
+    @param: total_cts (pd.DataFrame) of words -> # times the word occurs
+        in ASRS dataset. The column named 0 is the count
+    @param: orig_col (str) column we are analyzing
+    """
     generate_bar_chart(total_cts, np.sum, f'results/abrev_bar_plot_{orig_col}.png', title=\
             f"Abrev Bar Chart (Prop of Abrevs, {orig_col})")
 
@@ -219,6 +321,13 @@ def generate_all_bar_charts(total_cts, orig_col):
             title=f"Unique Corpus Bar Chart (Prop. of total vocab, {orig_col})", abrev=False)
 
 def generate_abrev_tag_summary(total_cts, orig_col):
+    """
+    This summarizes total_cts and breaks it down by tag to see what proportion of the
+    dataset is from each tag. Only looks at abbreviations.
+    @param: total_cts (pd.DataFrame) of words -> # times the word occurs
+        in ASRS dataset. The column named 0 is the count
+    @param: orig_col (str) column we  are analyzing
+    """
     only_abrevs = total_cts.loc[total_cts['abrev'] == 1]
 
     # create summary of all tags by grouping by tags, and dividing by the sum of the counts
@@ -237,6 +346,17 @@ def generate_abrev_tag_summary(total_cts, orig_col):
 
 
 def process_asrs(total_cts, fn, aviation_dicts):
+    """
+    This combines top_down analysis (utilizing aviation dicts) and bottom_up analysis
+    (looking at all words not in aviation dicts). Also merges with aviation dictionaries
+    to get fullform of abbreviations
+    @param: total_cts (pd.DataFrame) of words -> # times the word occurs
+        in ASRS dataset. The column named 0 is the count
+    @param: fn (pd.DataFrame) result of negatives function
+    @param: aviation_dicts (dict[abbrev_dataset_name] -> pd.DataFrame), see
+        preprocess_helper.py for more information
+    @returns: processed total_cts (pd.DataFrame) with adjusted columns for fullforms
+    """
     total_cts = total_cts.reset_index().rename({'index': 'acronym'}, axis = 1)
     for aviation_pd in aviation_dicts.values():
         total_cts = total_cts.merge(aviation_pd, on = "acronym", how = "left")
@@ -251,6 +371,15 @@ def process_asrs(total_cts, fn, aviation_dicts):
     return total_cts
 
 def analyze_dictionary_words(total_cts, summary_dict, orig_col):
+    """
+    This generates a summary of the column we are analyzing by breaking down the 
+    abbreviations by aviation_dictionary. This is saved to results/ subfolder
+    @param: total_cts (pd.DataFrame) of words -> # times the word occurs
+        in ASRS dataset. The column named 0 is the count
+    @param: summary_dict (dict[summary_col] -> float) contains summary information
+        about top_down/bottom_up analysis of words.
+    @param: orig_col (str) column we are analyzing
+    """
     dictionary_names = ['nasa', 'faa', 'casa', 'hand', 'hand2', 'iata']
     dictionary_summary = generate_dictionary_summary(total_cts, dictionary_names, summary_dict)
 
@@ -263,6 +392,29 @@ def analyze_dictionary_words(total_cts, summary_dict, orig_col):
     dictionary_summary.to_csv(f'results/dictionary_summary_{orig_col}.csv')
 
 def analyze_column(asrs, orig_col, summary_pd, word_categories, aviation_dicts):
+    """
+    This analyzes the ASRS dataset by utilizing aviation dictionaries and word categories
+    to split all known words into different categories.
+    @param: ASRS (pd.DataFrame) dataset generated from preprocess_asrs
+    @param: orig_col (str) column we are analyzing
+    @param: summary_pd (dict[summary_col] -> summary_metric), for summarizing the 
+        full pipeline
+    @param: word_categories (list of objects) includes information on important
+        types of word_categories
+        word_categories[0] = set of all known top-down abbreviations
+        word_categories[1] = set of all english stop words
+        word_categories[2] = enchant dictionary (see pyenchant module) 
+            functions as an english dictionary
+        word_categories[3] = set of all neg_nonwords that are actually english words
+            this is handcoded and added back to neg_word_hand2
+            see preprocess_helper:neg_nonword_to_neg_word_set()
+        word_categories[4] = set of all neg_nonwords that are actually part of
+            airport names. These are added to neg_airport category
+        word_categories[5] = set of all words from city names (scraped from wiki)
+            see parse_city_words() for more info
+    @param: aviation_dicts (dict[abbrev_dataset_name] -> pd.DataFrame), see
+        preprocess_helper.py for more information
+    """
     summary_dict = {}
     # this creates a dataframe of word counts
     total_cts = create_counter(asrs, orig_col)
