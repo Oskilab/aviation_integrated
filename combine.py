@@ -118,9 +118,10 @@ def reorder_cols(df):
     @returns: re-ordered df (pd.DataFrame)
     """
     cols = ['tracon_key', 'year', 'month', 'ntsb_accidents', \
-            'ntsb_incidents', 'faa_incidents', 'state', 'region', \
-            'ddso_service_area', 'class', 'tower_operations', 'airport_operations', \
-            'total_operations', 'faa_ntsb_overlap']
+            'ntsb_incidents', 'faa_incidents', 'faa_ntsb_overlap', \
+            'ntsb_faa_incidents_total', 'ntsb_faa_incidents_total_nodups', \
+            'state', 'region', 'ddso_service_area', 'class', 'tower_operations', \
+            'airport_operations', 'total_operations', 'faa_ntsb_overlap']
     # volume columns
     flight_types = ['aircarrier', 'airtaxi', 'genaviation', 'military', 'total']
     itr_ovr = ['itnr', 'ovrflt']
@@ -137,9 +138,8 @@ def reorder_cols(df):
     text_columns = ['narr', 'syn', 'call', 'narrsyn', 'all']
     wc = ['avg_wc', 'wc']
     sel = ['', 'all', 'out', 'prop']
-    # time_windows = ['1m', '3m', '6m', '12m', 'atime']
-    wc_cols = generate_cartesian_prod_columns([text_columns, wc, sel])
-    # wc_cols = generate_cartesian_prod_columns([text_columns, wc, sel, time_windows])
+    time_windows = ['1m', '3m', '6m', '12m', 'atime']
+    wc_cols = generate_cartesian_prod_columns([text_columns, wc, sel, time_windows])
     cols = cols + wc_cols
 
     # trcn columns (d2v)
@@ -153,9 +153,8 @@ def reorder_cols(df):
     # aviation dicts
     aviation = ['nasa', 'faa', 'casa', 'iata', 'hand', 'hand2']
     unique = ['unq', '']
-    sel = ['', 'prop']
 
-    aviation_cols = generate_cartesian_prod_columns([aviation, unique, sel, time_windows])
+    aviation_cols = generate_cartesian_prod_columns([aviation, unique, text_columns, time_windows])
     cols = cols + aviation_cols
 
     # liwc cols
@@ -303,7 +302,7 @@ for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
                 f"Combining ASRS {n_month}mon"):
             month, year = float(row['month']), float(row['year'])
             code = ' '.join([str(int(month)), str(int(year))])
-            d2v_code = f'{row["airport_code"]} {year}/{month}'
+            d2v_code = f'{row["airport_code"]} {int(year)}/{int(month)}'
             assert(d2v_code in d2v_tm.index)
             if code in tracon_month_dict:
                 searched = tracon_month_dict[code]
@@ -385,5 +384,5 @@ try:
     coverage = all_res.isna().sum()
     coverage['total rows'] = all_res.shape[0]
     coverage.to_csv('results/final_coverage.csv')
-except:
+except Exception as except_obj:
     embed()

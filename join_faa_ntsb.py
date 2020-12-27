@@ -77,6 +77,10 @@ for idx, row in overlap.iterrows():
 
 assert(fin_df.drop_duplicates(index_cols).shape[0] == fin_df.shape[0])
 
+fin_df['NTSB_FAA_incidents_total'] = fin_df['faa_incidents'] + fin_df['ntsb_incidents'] + \
+        fin_df['ntsb_accidents']
+fin_df['NTSB_FAA_incidents_total_nodups'] = fin_df['NTSB_FAA_incidents_total'] - fin_df['faa_ntsb_overlap']
+
 # save results
 fin_df.to_csv('results/airport_month_events.csv')
 pickle.dump(fin_df['airport_code'].unique(), open('results/unique_airport_code_ntsb_faa.pckl', 'wb'))
