@@ -408,6 +408,12 @@ def fill_in_handcode_iata(df):
     for index in fix_code_df.index:
         fix_code_dict[fix_code_df.loc[index, 'airport_code']] = index
 
+    # clean airport code by removing first letter k if it has a length of 4
+    len4_sel = df[' Airport Code '].str.len() == 4
+    startswith_k = df[' Airport Code '].str.startswith('K')
+    sel = len4_sel & startswith_k
+    df.loc[sel, ' Airport code '] = df.loc[sel, ' Airport Code '].str.slice(1)
+
     df[' Airport Code '] = df[' Airport Code '].apply(lambda x: fix_code_dict.get(x, x))
 
     handcode_iata_dict_df = pd.read_excel('datasets/NTSB_Key.xlsx')
