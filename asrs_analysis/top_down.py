@@ -389,15 +389,12 @@ def main():
         all_dfs = generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col)
         all_dfs = analyze_wc(all_dfs, col)
 
-        # add rows for tracon codes that 
+        # add rows for missing tracon_months
         all_dfs = add_missing_rows(all_dfs)
 
         # post-process and save
         all_dfs.drop(['year', 'month'], axis = 1, inplace = True)
         all_dfs.to_csv(f'results/tracon_month_{col}.csv', index = True)
-
-        # debugging purposes
-        embed()
 
 if __name__ == "__main__":
     main()
