@@ -1,14 +1,19 @@
-from IPython import embed
-from tqdm import tqdm
-from itertools import product
-from helper import get_tracon, get_year, get_month, tracon_month_split, fill_with_empty
-from collections import Counter
-import pandas as pd, numpy as np, re
-import argparse, os
-
 """
 Combines ASRS data with FAA/NTSB, LIWC and Doc2Vec datasets
 """
+import argparse
+import os
+import re
+from itertools import product
+
+from IPython import embed
+from tqdm import tqdm
+
+import pandas as pd
+import numpy as np
+
+from helper import get_tracon, get_year, get_month, fill_with_empty
+
 ifr_vfr_dict = {
     'itinerant': 'itnr',
     'general': 'gen',
@@ -24,16 +29,16 @@ if not os.path.exists('results/final/'):
 def num_months_between(month1, year1, month2, year2):
     return (year2 - year1) * 12 + month2 - month1
 
-def generate_compare_npy(year1, month1, num_months = 1):
+def generate_compare_npy(year1, month1, num_months=1):
     def inner_func(arr):
         year2, month2 = arr
         n_m = num_months_between(month2, year2, month1, year1)
         return n_m > 0 and n_m <= num_months
     return inner_func
 
-def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_months = 1):
-    fn = generate_compare_npy(year1, month1, num_months)
-    sel = np.apply_along_axis(fn, 1, yr_mth)
+def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_months=1):
+    func = generate_compare_npy(year1, month1, num_months)
+    sel = np.apply_along_axis(func, 1, yr_mth)
 
     idx_of_sel = sel.nonzero()[0]
     if len(idx_of_sel) == 0:
@@ -43,10 +48,10 @@ def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_months
     return list(range(start, end))
 
 
-def rename_cols_dict(df, month_range_str, skip_cols = []):
+def rename_cols_dict(output_df, month_range_str, skip_cols=[]):
     """
     Create a renaming dictionary on the given output dataframe
-    @param: df (pd.DataFrame) output dataframe
+    @param: output_df (pd.DataFrame) output dataframe
     @param: month_range_str(str) '1m', '3m', ... '12m', 'atime'
         Represents what time range you are looking at
     @param: skip_cols (list of str) list of columns that we will not add
@@ -55,7 +60,7 @@ def rename_cols_dict(df, month_range_str, skip_cols = []):
     """
     except_cols = set(['year', 'month', 'tracon_key'] + skip_cols)
     rename_dict = {'airport_code': 'tracon_key'}
-    for col in df.columns:
+    for col in output_df.columns:
         if col == 'airport_code':
             continue
         new_col = col
@@ -75,16 +80,16 @@ def rename_cols_dict(df, month_range_str, skip_cols = []):
         rename_dict[col] = new_col
     return rename_dict
 
-def rename_cols(df, month_range_str, skip_cols = []):
+def rename_cols(output_df, month_range_str, skip_cols=[]):
     """
     Renames the columns of the  output dataframe
-    @param: df (pd.DataFrame) output dataframe
+    @param: output_df (pd.DataFrame) output dataframe
     @param: month_range_str(str) '1m', '3m', ... '12m', 'am'
         Represents what time range you are looking at
     @param: skip_cols (list of str) which columns to skip
     @returns: renamed dataframe
     """
-    return df.rename(rename_cols_dict(df, month_range_str, skip_cols), axis = 1)
+    return output_df.rename(rename_cols_dict(output_df, month_range_str, skip_cols), axis=1)
 
 def tuple_to_column(tuple_input):
     """
@@ -97,20 +102,20 @@ def tuple_to_column(tuple_input):
     fin_str = "_".join(tuple_input)
     return re.sub('_{2,}', '_', fin_str)
 
-def generate_cartesian_prod_columns(args):
+def generate_cartesian_prod_columns(list_args):
     """
     Helper function that creates a list of columns given a list of lists, each list
     representing the possible parts of the str
-        Ex: args = [['a', 'b'], ['c', 'd']] -> ['a_c', 'a_d', 'b_c', 'b_d']
-    @param: args (list of lists)
+        Ex: list_args = [['a', 'b'], ['c', 'd']] -> ['a_c', 'a_d', 'b_c', 'b_d']
+    @param: list_args (list of lists)
     @returns list of column names
     """
-    return list(map(tuple_to_column, product(*args)))
+    return list(map(tuple_to_column, product(*list_args)))
 
-def reorder_cols(df):
+def reorder_cols(final_df):
     """
     This reorders the columns of the final output
-    @param: df (pd.DataFrame) final output
+    @param: final_df (pd.DataFrame) final output
     @returns: re-ordered df (pd.DataFrame)
     """
     cols = ['tracon_key', 'year', 'month', 'ntsb_accidents', \
@@ -122,7 +127,6 @@ def reorder_cols(df):
     flight_types = ['aircarrier', 'airtaxi', 'genaviation', 'military', 'total']
     itr_ovr = ['itnr', 'ovrflt']
     ifr_vfr = ['ifr', 'vfr']
-    end_str=  ["1m"]
 
     vol_cols = generate_cartesian_prod_columns([flight_types, ifr_vfr, itr_ovr])
     vol_cols = vol_cols[:10] + ['military_local', 'civil_local', 'total_local'] + \
@@ -132,14 +136,14 @@ def reorder_cols(df):
 
     # wc columns
     text_columns = ['narr', 'syn', 'call', 'narrsyn', 'all']
-    wc = ['avg_wc', 'wc']
+    word_c = ['avg_wc', 'wc']
     sel = ['', 'all', 'out', 'prop']
     time_windows = ['1m', '3m', '6m', '12m', 'atime']
-    wc_cols = generate_cartesian_prod_columns([text_columns, wc, sel, time_windows])
+    wc_cols = generate_cartesian_prod_columns([text_columns, word_c, sel, time_windows])
     cols = cols + wc_cols
 
     # trcn columns (d2v)
-    cols = cols + [col for col in df.columns if 'trcn' in col]
+    cols = cols + [col for col in final_df.columns if 'trcn' in col]
 
     # some other ct columns
     ct_cols = ['pos_nwrd', 'pos_nwrd_unq', 'abrvs_no_ovrcnt', 'abrevs_no_ovrcnt_unq']
@@ -158,19 +162,20 @@ def reorder_cols(df):
     flfrm = ['', 'flfrm']
     sel = ['ct', 'prop']
     liwc_cat = set()
-    for col in df.columns:
-        for tw in time_windows:
+    for col in final_df.columns:
+        for time_w in time_windows:
             for text_col in text_columns:
-                liwc_pat = re.compile('liwc_([a-z]{1,})_' + f'{text_col}_ct_{time_windows}')
+                liwc_pat = re.compile('liwc_([a-z]{1,})_' + f'{text_col}_ct_{time_w}')
                 pat_res = liwc_pat.match(col)
                 if pat_res is not None:
                     liwc_cat.add(pat_res.group(1))
     liwc_cat = list(liwc_cat)
-    liwc_cols = generate_cartesian_prod_columns([liwc, liwc_cat, flfrm, text_columns, sel, time_windows])
+    liwc_cols = generate_cartesian_prod_columns(\
+            [liwc, liwc_cat, flfrm, text_columns, sel, time_windows])
     cols = cols + liwc_cols
 
     # ident_ct cols
-    ident_ct_cols = [x for x in df.columns if 'ident_ct' in x]
+    ident_ct_cols = [x for x in final_df.columns if 'ident_ct' in x]
     cols = cols + ident_ct_cols
 
     # deal with identical columns
@@ -180,16 +185,16 @@ def reorder_cols(df):
     only_once = []
     for col in common_cols:
         only_once.append(col)
-        for tw in time_windows:
-            common_col_dict[f'{col}_{tw}'] = col
-    for x in vol_cols:
-        common_col_dict[x + "_1m"] = x
+        for time_w in time_windows:
+            common_col_dict[f'{col}_{time_w}'] = col
+    for col in vol_cols:
+        common_col_dict[col + "_1m"] = col
     cols = cols + only_once
 
-    df.rename(common_col_dict, axis = 1, inplace = True)
+    final_df.rename(common_col_dict, axis=1, inplace=True)
 
-    df = df.loc[:,~df.columns.duplicated()]
-    return df.loc[:, [x for x in cols if x in df.columns]]
+    final_df = final_df.loc[:, ~final_df.columns.duplicated()]
+    return final_df.loc[:, [x for x in cols if x in final_df.columns]]
 
 def load_ame():
     """
@@ -199,7 +204,8 @@ def load_ame():
     @returns: airport_month_events (pd.DataFrame) of inc_acc_ds.
     """
     airport_month_events = pd.read_csv('results/combined_vol_incident.csv')
-    top_50_iata = set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+    top_50_iata = \
+            set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
     airport_month_events['airport_code'] = airport_month_events['airport_code'].astype(str)
     airport_month_events = airport_month_events.loc[\
             airport_month_events['airport_code'].apply(lambda x: x.split()[0] in top_50_iata)]
@@ -214,10 +220,10 @@ def preprocess_liwc(liwc_df):
     @param: liwc_df (pd.DataFrame) of liwc counts from asrs dataset
     @returns: liwc_df (pd.DataFrame) with extracted columns
     """
-    liwc_df['tracon'] = pd.Series(liwc_df.index.map(get_tracon), index = liwc_df.index)
-    liwc_df['month'] = pd.Series(liwc_df.index.map(get_month), index = liwc_df.index)
-    liwc_df['year'] = pd.Series(liwc_df.index.map(get_year), index = liwc_df.index)
-    liwc_df = liwc_df.reset_index().rename({'index':'tracon_month'}, axis = 1)
+    liwc_df['tracon'] = pd.Series(liwc_df.index.map(get_tracon), index=liwc_df.index)
+    liwc_df['month'] = pd.Series(liwc_df.index.map(get_month), index=liwc_df.index)
+    liwc_df['year'] = pd.Series(liwc_df.index.map(get_year), index=liwc_df.index)
+    liwc_df = liwc_df.reset_index().rename({'index':'tracon_month'}, axis=1)
     return liwc_df
 
 def preprocess_asrs(asrs):
@@ -230,7 +236,7 @@ def preprocess_asrs(asrs):
     asrs['month'] = asrs.index.map(get_month)
     asrs['year'] = asrs.index.map(get_year)
 
-    asrs = asrs.reset_index().rename({'index':'tracon_month'}, axis = 1)
+    asrs = asrs.reset_index().rename({'index':'tracon_month'}, axis=1)
     return asrs
 
 def combine_asrs_liwc(col):
@@ -240,22 +246,22 @@ def combine_asrs_liwc(col):
     @param: col (str) column that we are analyzing
     @returns: asrs_orig (pd.DataFrame) of merged asrs/liwc dataset
     """
-    asrs = pd.read_csv(f'asrs_analysis/results/tracon_month_{col}.csv', index_col = 0)
+    asrs = pd.read_csv(f'asrs_analysis/results/tracon_month_{col}.csv', index_col=0)
     asrs = preprocess_asrs(asrs)
 
     # liwc counts
     liwc_df = pd.read_csv(f'asrs_analysis/results/liwc_tracon_month_{col}_counts.csv', \
-            index_col = 0, header = [1])
+            index_col=0, header=[1])
     liwc_df = preprocess_liwc(liwc_df)
 
-    asrs_orig = asrs.merge(liwc_df.drop(['tracon', 'month', 'year'], axis = 1), 
-            on = 'tracon_month', how = 'outer')
+    asrs_orig = asrs.merge(liwc_df.drop(['tracon', 'month', 'year'], axis=1),\
+            on='tracon_month', how='outer')
     asrs_orig.sort_values(['year', 'month', 'tracon'], inplace=True)
     return asrs_orig
 
 def generate_cached_dicts(airport_month_events, asrs, n_month, yr_mth_info):
     """
-    For a given month_range (1/3/6/12 months), we calculate cached dictionaries in order 
+    For a given month_range (1/3/6/12 months), we calculate cached dictionaries in order
     to combine the datasets as quickly as possible. We define the dictionaries below.
     @param: airport_month_events (pd.DataFrame) of inc_acc_ds
     @param: asrs (pd.DataFrame) dataframe consisting of ASRS info + LIWC info
@@ -273,7 +279,7 @@ def generate_cached_dicts(airport_month_events, asrs, n_month, yr_mth_info):
             notice that the 0th dimension is equivalent to that of yr_mth_info[0],
             so yr_mth_info[2][idx] = number of times yr_mth_info[0] occurs in ASRS
             Assume that asrs is sorted by year/month then tracon
-    @returns: tracon_month_dict (dict[date] -> subset of ASRS within n_month months of 
+    @returns: tracon_month_dict (dict[date] -> subset of ASRS within n_month months of
         that particular date) dict['8 2011'] = rows of ASRS with tracon_month that are
         within n_months of that date (but not including 08/2011)
     @returns: unique_info (dict[date] -> list of np.ndarray), result of calling
@@ -281,12 +287,12 @@ def generate_cached_dicts(airport_month_events, asrs, n_month, yr_mth_info):
                 return_counts=True), same format as yr_mth_info, see above.
     """
     yr_mth, yr_mth_idx, yr_mth_ct = yr_mth_info
-    # this creates a dictionary from year/month -> pd.DataFrame of all the rows in 
+    # this creates a dictionary from year/month -> pd.DataFrame of all the rows in
     # the ASRS dataset within the month range (utilizing n_month)
     # ex.: January 2011, w/ n_month = 1 -> pd.DataFrame of all rows in ASRS in December 2010
     tracon_month_dict, unique_info = {}, {}
     month_year_df = airport_month_events[['month', 'year']].drop_duplicates()
-    for idx, date_row in tqdm(month_year_df.iterrows(), total = month_year_df.shape[0], desc = \
+    for _, date_row in tqdm(month_year_df.iterrows(), total=month_year_df.shape[0], desc=\
             f"Creating year/month dictionary {n_month}mon"):
         month, year = int(date_row['month']), int(date_row['year'])
         code = ' '.join([str(month), str(year)])
@@ -308,7 +314,7 @@ def compute_tracon_indices(unq_info, trcn_code):
     @returns: list of indices. Each index indicates that that index in a given dataframe
         has a trcn_code as given by the parameters.
     """
-    unq_codes, unq_idx, unq_codes = unq_info
+    unq_codes, unq_idx, unq_cts = unq_info
 
     idx_of_code = np.searchsorted(unq_codes, trcn_code)
     if idx_of_code >= unq_codes.shape[0] or unq_codes[idx_of_code] != trcn_code:
@@ -343,7 +349,7 @@ def generate_final_row(row, searched, d2v_tm, month, year, month_idx, n_month, c
     """
     d2v_index = d2v_tm.columns
     d2v_code = f'{row["airport_code"]} {int(year)}/{int(month)}'
-    assert(d2v_code in d2v_tm.index)
+    assert d2v_code in d2v_tm.index
 
     tr_yr_mon = row[['airport_code', 'year', 'month']]
 
@@ -363,18 +369,18 @@ def generate_final_row(row, searched, d2v_tm, month, year, month_idx, n_month, c
             searched.shape[0] == 0:
         concat_series.append(pd.Series(index=cumulative_index, dtype='float64'))
     else:
-        cumulative = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis = 1).sum()
+        cumulative = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis=1).sum()
         concat_series.append(cumulative)
 
     # select d2v rows, if it's the beginning, remove those rows
-    if (num_month_from_start >= 0 and num_month_from_start < n_month and n_month != np.inf):
+    if ((num_month_from_start >= 0) and (num_month_from_start < n_month) and (n_month != np.inf)):
         concat_series.append(pd.Series(index=d2v_index, dtype='float64'))
     else:
         concat_series.append(d2v_tm.loc[d2v_code])
-    return pd.concat(concat_series, axis = 0)
+    return pd.concat(concat_series, axis=0)
 
-def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon_month_dict, unique_info, \
-        month_idx, n_month):
+def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon_month_dict, \
+        unique_info, month_idx, n_month):
     """
     This generates the final dataset (combining elements from ASRS/LIWC/D2V/ABBREV) for
     a given month_range.
@@ -390,15 +396,14 @@ def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon
     @returns: final_dataset (pd.DataFrame) with elements from all datasets
     """
     final_rows, asrs_covered_ind = [], set()
-    ct = 0
+    ctr = 0
     cumulative_index = asrs.columns.drop(['tracon_month', 'tracon', 'year', 'month'])
-    for idx, row in tqdm(airport_month_events.iterrows(), total = airport_month_events.shape[0], \
-            desc = f"Combining ASRS {n_month}mon"):
+    for _, row in tqdm(airport_month_events.iterrows(), total=airport_month_events.shape[0], \
+            desc=f"Combining ASRS {n_month}mon"):
         month, year = float(row['month']), float(row['year'])
         code = ' '.join([str(int(month)), str(int(year))])
         if code in tracon_month_dict:
             searched = tracon_month_dict[code]
-            unq_codes, unq_idx, unq_cts = unique_info[code]
 
             trcn_code = row['airport_code']
             # get indices of dataframe corresponding to our tracon month
@@ -411,13 +416,13 @@ def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon
             final_rows.append(generate_final_row(row, searched, d2v_tm, month, year, \
                     month_idx, n_month, cumulative_index))
         else:
-            ct += 1
-    print('ct', ct)
+            ctr += 1
+    print('ctr', ctr)
     print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
     print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
     # generate dataset and perform some preprocessing
     res = pd.DataFrame.from_dict({idx: row for idx, row in enumerate(final_rows)}, \
-            orient = 'index')
+            orient='index')
     return res
 
 def postprocess_final_ds(res, month_range_str, ame_cols):
@@ -430,14 +435,14 @@ def postprocess_final_ds(res, month_range_str, ame_cols):
     @param: ame_cols (list of str), list of columns from airport_month_events or inc_acc_ds
     @returns: processed res (pd.DataFrame)
     """
-    res = rename_cols(res, month_range_str, skip_cols = ame_cols)
+    res = rename_cols(res, month_range_str, skip_cols=ame_cols)
 
     for fn_col in faa_ntsb_cols:
         if fn_col in res.columns:
             res.loc[res[fn_col].isna(), fn_col] = 0
 
-    res = res.loc[:,~res.columns.duplicated()]
-    res.set_index(['tracon_key', 'year', 'month'], inplace = True)
+    res = res.loc[:, ~res.columns.duplicated()]
+    res.set_index(['tracon_key', 'year', 'month'], inplace=True)
     return res
 
 def combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, airport_month_events, col):
@@ -455,7 +460,6 @@ def combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, airport_
     @returns: res (pd.DataFrame) processed dataframe including information from all datasets
     """
     ame_cols = list(airport_month_events.columns)
-    yr_mth, yr_mth_idx, yr_mth_ct = yr_mth_info
 
     # helper info
     month_range_str = f'{n_month}m'
@@ -465,7 +469,7 @@ def combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, airport_
     # load datasets
     asrs = asrs_orig.copy()
     d2v_tm = pd.read_csv(f'./asrs_analysis/results/d2v_tracon_month_{col}_{n_month}mon.csv', \
-            index_col = 0)
+            index_col=0)
     d2v_tm.index = d2v_tm.index.rename('tracon_month')
 
     tracon_month_dict, unique_info = generate_cached_dicts(airport_month_events, \
@@ -490,13 +494,12 @@ def ensure_multi_index(all_res):
 
 def main():
     airport_month_events = load_ame()
-    ame_cols = list(airport_month_events.columns)
 
     all_res = []
     for col in all_cols:
         asrs_orig = combine_asrs_liwc(col)
 
-        yr_mth_info = np.unique(asrs_orig[['year', 'month']].values.astype(int), axis = 0, \
+        yr_mth_info = np.unique(asrs_orig[['year', 'month']].values.astype(int), axis=0, \
                 return_index=True, return_counts=True)
 
         for month_idx, n_month in enumerate(num_months):
@@ -516,9 +519,9 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Combine ASRS data w/FAA/NTSB/LIWC/D2V.')
-    parser.add_argument('-t', action = 'store_true')
+    parser.add_argument('-t', action='store_true')
     args = parser.parse_args()
 
     test = args.t
-    skip_empty = False
+    SKIP_EMPTY = False
     main()
