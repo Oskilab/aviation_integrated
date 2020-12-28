@@ -1,12 +1,17 @@
-import pandas as pd, numpy as np
-import re, copy
-from IPython import embed
-from tqdm import tqdm
+"""
+Calculates LIWC counts for tracon_months.
+"""
+import argparse
 from collections import Counter
-from preprocess_helper import *
-import argparse, pickle
-from itertools import product
-import cos_sim, top_down
+
+from tqdm import tqdm
+
+import pandas as pd
+import numpy as np
+
+import cos_sim
+import preprocess_helper
+import top_down
 
 abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
@@ -17,7 +22,7 @@ sel = ['tracon_code', 'year', 'month']
 # columns of interest
 cols = ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']
 
-def convert_ctr_to_series(counter, word_dict = {}):
+def convert_ctr_to_series(counter, word_dict={}):
     """
     Takes a collections.Counter object and counts the number of times any word inside
     word_dict occurs (adds all the counts together)
@@ -33,10 +38,10 @@ def convert_ctr_to_series(counter, word_dict = {}):
             total_ct += num
     return total_ct
 
-def generate_proportions(fin_df, tqdm_desc = "generate props"):
+def generate_proportions(fin_df, tqdm_desc="generate props"):
     """
     For every combination of tracon_month and LIWC group, calculate the proportion of the LIWC
-    group that the tracon_month is responsible for in that year/month combination. E.g., 
+    group that the tracon_month is responsible for in that year/month combination. E.g.,
     tracon_month = SFO August 2011, LIWC group = Pronouns, calculate the number of pronouns that
     occur in SFO August 2011 and calculate the proportion of that number to the total number
     of pronouns that occur in August 2011.
@@ -50,22 +55,22 @@ def generate_proportions(fin_df, tqdm_desc = "generate props"):
     fin_df_grouped = fin_df.groupby(['year', 'month']).sum()
     orig_cols = list(fin_df.columns)
     for col1, col2 in fin_df.columns:
-        if col1 != 'year' and col1 != 'month':
+        if col1 not in ['year', 'month']:
             fin_df[col1, col2.replace("_ct", "_prop")] = np.nan
 
     ym_df = fin_df[[('year', ''), ('month', '')]].drop_duplicates()
-    for idx, row in tqdm(ym_df.iterrows(), total = ym_df.shape[0], desc = tqdm_desc):
+    for _, row in tqdm(ym_df.iterrows(), total=ym_df.shape[0], desc=tqdm_desc):
         year, month = row['year', ''], row['month', '']
         if pd.isna(year) or pd.isna(month):
             continue
-        sel = (fin_df['year', ''] == year) & (fin_df['month', ''] == month)
+        yrmth_sel = (fin_df['year', ''] == year) & (fin_df['month', ''] == month)
 
         for col1, col2 in orig_cols:
-            if col1 != 'year' and col1 != 'month':
+            if col1 not in ['year', 'month']:
                 fin_df.loc[sel, (col1, col2.replace("_ct", "_prop"))] = \
-                         fin_df.loc[sel, (col1, col2)] / \
+                         fin_df.loc[yrmth_sel, (col1, col2)] / \
                          fin_df_grouped.loc[(year, month), (col1, col2)]
-    fin_df.drop([('year', ''), ('month', '')], axis = 1, inplace = True)
+    fin_df.drop([('year', ''), ('month', '')], axis=1, inplace=True)
     return fin_df
 
 def generate_ct_df(key_ctr, group_to_set, col, flfrm=False):
@@ -90,23 +95,23 @@ def generate_ct_df(key_ctr, group_to_set, col, flfrm=False):
         else:
             columns = [f"liwc_{liwc_group}_flfrm_{abrev_col}_ct"]
 
-        all_df[liwc_group]  = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, \
-                group_to_set[liwc_group]) for key, ctr in key_ctr}, orient = 'index',\
+        all_df[liwc_group] = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, \
+                group_to_set[liwc_group]) for key, ctr in key_ctr}, orient='index',\
                 columns=columns)
-    return pd.concat(all_df, axis = 1)
+    return pd.concat(all_df, axis=1)
 
-def analyze_tracon_period(df_grouped, df, group_to_set, col):
+def analyze_tracon_period(df_grouped, asrs_df, group_to_set, col):
     """
     This analyzes one particular column's liwc usage.
     @param: df_grouped (pd.DataFrame) of ASRS dataset grouped with the columns tracon_code,
         year, month
-    @param: df (pd.DataFrame) the ASRS dataset
+    @param: asrs_df (pd.DataFrame) the ASRS dataset
     @param: group_to_set (dict[liwc_group] -> dict[word] -> 0) maps liwc groups to a dictionary
         and that dictionary has all the words in that liwc group. E.g., dict[pronouns] is a
         dictionary of all known english pronouns
     @param: col (str) column we are analyzing
     """
-    abrev_col = abrev_col_dict[col]
+    # abrev_col = abrev_col_dict[col]
     replace_dict = cos_sim.load_replace_dictionary(col)
 
     index_to_counter_replace, index_to_counter = {}, {}
@@ -114,15 +119,15 @@ def analyze_tracon_period(df_grouped, df, group_to_set, col):
         index_id = df_grouped.loc[i, sel[0]] + \
                 f' {df_grouped.loc[i, sel[1]]}/{df_grouped.loc[i, sel[2]]}'
 
-        asrs = top_down.select_subset(df, df_grouped, i)
+        asrs = top_down.select_subset(asrs_df, df_grouped, i)
         asrs[col] = asrs[col].str.lower()
 
         # replace abrevs
-        split = asrs.apply(lambda x: replace_words(x[col], replace_dict), axis = 1)
+        split = asrs.apply(lambda x: preprocess_helper.replace_words(x[col], replace_dict), axis=1)
         index_to_counter_replace[index_id] = Counter(np.hstack(split.values).flatten())
 
         # w/o replace abrevs
-        split = asrs.apply(lambda x: replace_words(x[col]), axis = 1)
+        split = asrs.apply(lambda x: preprocess_helper.replace_words(x[col]), axis=1)
         index_to_counter[index_id] = Counter(np.hstack(split.values).flatten())
 
     key_ctr = list(index_to_counter.items())
@@ -137,10 +142,10 @@ def analyze_tracon_period(df_grouped, df, group_to_set, col):
     fin_df_replace = generate_proportions(fin_df_replace, "generate props w/replace")
 
     # postprocess results
-    fin = pd.concat([fin_df, fin_df_replace], axis = 1)
+    fin = pd.concat([fin_df, fin_df_replace], axis=1)
     fin = top_down.add_dates(fin)
     fin = top_down.add_missing_rows(fin)
-    fin.drop(['year', 'month'], axis = 1, inplace = True)
+    fin.drop(['year', 'month'], axis=1, inplace=True)
 
     fin.to_csv(f'results/liwc_tracon_month_{col}_counts.csv')
 
@@ -158,7 +163,7 @@ def process_liwc_groups():
     group_to_set = {}
     # liwc dataframe consists of separate groups. The 3rd row being nan indicates
     # that there's a new group, so we iterate over the groups utilizing the
-    # np.nonzero() function 
+    # np.nonzero() function
     for idx in (~liwc.loc[3].isna().to_numpy()).nonzero()[0]:
         name = liwc.iloc[1, idx] # the name of the LIWC group
 
@@ -180,9 +185,10 @@ def load_asrs_ds():
     This loads the ASRS dataset and filters only the top50 iata codes.
     @returns: all_pds (pd.DataFrame) only the top50 iata code portion of the ASRS dataset.
     """
-    all_pds = load_asrs(load_saved = True)
-    all_pds = tracon_analysis(all_pds)
-    top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+    all_pds = preprocess_helper.load_asrs(load_saved=True)
+    all_pds = preprocess_helper.tracon_analysis(all_pds)
+    top_50_iata = \
+            set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
     all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
     return all_pds
 
@@ -197,7 +203,7 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Analyze abbreviations.')
-    parser.add_argument('-t', action = 'store_true')
+    parser.add_argument('-t', action='store_true')
     args = parser.parse_args()
     test = args.t
 
