@@ -1,25 +1,37 @@
-from gensim.models.doc2vec import Doc2Vec, TaggedDocument
-from collections import Counter
-from tqdm import tqdm
-import time
-# from asrs_analysis.preprocess_helper import *
-from preprocess_helper import *
-from sklearn.metrics.pairwise import cosine_similarity
+"""
+Calculates the average cosine similarity.
+"""
+import pickle
+import argparse
 from itertools import product
-import pandas as pd, numpy as np, re, pickle, argparse
-from itertools import chain
+
+from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+from tqdm import tqdm
+from sklearn.metrics.pairwise import cosine_similarity
+
+import pandas as pd
+import numpy as np
+import preprocess_helper
 
 parser = argparse.ArgumentParser(description='Analyze abbreviations.')
-parser.add_argument('-t', action = 'store_true')
+parser.add_argument('-t', action='store_true')
 args = parser.parse_args()
 
 test = args.t
-num_time_periods = (2020 - 1988) * 12
+NUM_TIME_PERIODS = (2020 - 1988) * 12
 
 def num_months_between(month1, year1, month2, year2):
+    """
+    Calculates the number of months between month1/year1 and month2/year2
+    @param: month1 (int) 1-12
+    @param: year1 (int)
+    @param: month2 (int) 1-12
+    @param: year2 (int)
+    @returns: numbero f months between the two dates.
+    """
     return (year2 - year1) * 12 + month2 - month1
 
-def generate_compare(month1, year1, num_months = 1): # accident date
+def generate_compare(month1, year1, num_months=1): # accident date
     """
     This returns a function to be applied row-wise on a dataframe. The inner function, when
     applied, returns a pandas series that finds which rows are within a month range. If
@@ -33,19 +45,39 @@ def generate_compare(month1, year1, num_months = 1): # accident date
     def inner_func(row):
         month2, year2 = row['month'], row['year']
         n_m = num_months_between(month1, year1, month2, year2)
-        return n_m > 0 and n_m <= num_months
+        return (n_m > 0) and (n_m <= num_months)
     return inner_func
 
-def generate_compare_npy(year1, month1, num_months = 1):
+def generate_compare_npy(year1, month1, num_months=1):
+    """
+    This generates a function that returns True if the given date is between 1 and
+    num_months before year1/month1
+    @param: year1 (int)
+    @param: month1 (int) 1-12
+    @param: num_months (int) the window of months
+    """
     def inner_func(arr):
         year2, month2 = arr
         n_m = num_months_between(month2, year2, month1, year1)
-        return n_m > 0 and n_m <= num_months
+        return (n_m > 0) and (n_m <= num_months)
     return inner_func
 
-def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_months = 1):
-    fn = generate_compare_npy(year1, month1, num_months)
-    sel = np.apply_along_axis(fn, 1, yr_mth)
+def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_months=1):
+    """
+    This calculates the indices within a given dataframe that are within num_months of
+    year1/month1.
+    @param: yr_mth (np.ndarray) with shape (n, 2) yr_mth[idx, 0] = year, yr_mth[idx, 1] = month
+    @param: yr_mth_idx (np.ndarray) yr_mth_idx[idx] indicates the first index in which
+        the year/month combination given by yr_mth[idx] occurs within the dataframe
+    @param: yr_mth_cts (np.ndarray) yr_mth_cts[idx] indicates the number of times the
+        year/month combination given by yr_mth[idx] occurs within the dataframe
+    @param: year1 (int) the year in question
+    @param: month1 (int) the month in question
+    @param: num_months (int) the month window
+    @returns: list of indices within the month_range defined by the parameters
+    """
+    func = generate_compare_npy(year1, month1, num_months)
+    sel = np.apply_along_axis(func, 1, yr_mth)
 
     idx_of_sel = sel.nonzero()[0]
     if len(idx_of_sel) == 0:
@@ -64,7 +96,7 @@ def generate_d2v_vecs(pd_df, d2v_model, field_dict, replace_dict, use_field_dict
     the iterable pd_df.
     @param: pd_df (iterable of str documents)
     @param: d2v_model (gensim.models.Doc2Vec) converts document to vector
-    @param: field_dict (dict[document] -> index) converts document to index for 
+    @param: field_dict (dict[document] -> index) converts document to index for
         gensim.models.Doc2Vec model (each document is tagged with an index)
     @param: replace_dict (dict[orig_word] -> word) converts words to fullform version
         of the word. This depends on whether or not we are replacing abbrevations with
@@ -74,17 +106,17 @@ def generate_d2v_vecs(pd_df, d2v_model, field_dict, replace_dict, use_field_dict
     @returns: np.ndarray with shape (len(pd_df), d2v dimension)
     """
     arr = []
-    for x in pd_df:
+    for field in pd_df:
         if use_field_dict:
-            arr += [d2v_model.docvecs[field_dict[process_with_replace(x, replace_dict)]]]
+            arr += [d2v_model.docvecs[field_dict[process_with_replace(field, replace_dict)]]]
         else:
-            arr += [d2v_model.docvecs[x]]
+            arr += [d2v_model.docvecs[field]]
     return np.vstack(arr)
 
 def generate_nontop50_info(num_rows, codes_info):
     """
     This generates a np.ndarray of booleans, which indicate whether or not each index of the
-    a given dataframe is covered by our top50 iata codes (currently we are only utilizing 
+    a given dataframe is covered by our top50 iata codes (currently we are only utilizing
     top 50 iata codes within our analysis, total_range[idx] = True if the idx row of our dataframe
     is not in the top50 iata codes).
     @param: num_rows (int) number of rows in our given dataframe
@@ -101,7 +133,7 @@ def generate_nontop50_info(num_rows, codes_info):
     codes, code_idx, code_cts = codes_info
 
     total_range = np.array([True] * num_rows)
-    for code, c_idx, c_ct in zip(codes, code_idx, code_cts):
+    for _, c_idx, c_ct in zip(codes, code_idx, code_cts):
         total_range[c_idx:c_idx+c_ct] = False
     return total_range
 
@@ -159,7 +191,7 @@ def generate_trcn_vecs(searched, d2v_model, idx, code_idx, code_cts, field_dict,
     @param: idx (int) indexes into code_idx/code_cts, indicates which code we are looking
     @param: code_idx (np.ndarray) contains start_index (within searched df) of each code
     @param: code_cts (np.ndarray) contains number of times the code appears in searched
-    @param: field_dict (dict[document] -> index) converts document to index for 
+    @param: field_dict (dict[document] -> index) converts document to index for
         gensim.models.Doc2Vec model (each document is tagged with an index)
     @param: replace_dict (dict[orig_word] -> word) converts words to fullform version
         of the word. This depends on whether or not we are replacing abbrevations with
@@ -170,12 +202,13 @@ def generate_trcn_vecs(searched, d2v_model, idx, code_idx, code_cts, field_dict,
     return generate_d2v_vecs(searched.iloc[trcn1_idx[0]:trcn1_idx[1]][col], \
             d2v_model, field_dict, replace_dict)
 
-def populate_comp_matrix(searched, d2v_model, field_dict, all_trcn_codes, codes_info, replace_dict, col):
+def populate_comp_matrix(searched, d2v_model, field_dict, codes_info, replace_dict, col):
     """
     This function calculates two matrices (num_comp and sum_comp). We are trying to calculate the
     average doc2vec cos_sim between any pair of tracon_months. To do so, we take any time period
     (e.g., Sep. 2011) and calculate two matrices each of size (#tracons + 1, #tracons + 1).
-        num_comp[i, j] = # of (adjusted) pairwise comparisons between tracon i and j within time period
+        num_comp[i, j] = # of (adjusted) pairwise comparisons between tracon i and
+            j within a time period
         sum_comp[i, j] = sum of all pairwise comparisons between i/j within time period
     The last row/column keeps track of the same information for all tracons outside of the top
     50 iata codes (which we are limiting our analysis to).
@@ -185,8 +218,8 @@ def populate_comp_matrix(searched, d2v_model, field_dict, all_trcn_codes, codes_
     we will calculate avg number by adding up cells in the final output, but doing so will double
     the off-diagonal terms (due to symmetry) and single-count the on-diagonal terms. To deal with
     this issue, we modify the on-diagonal terms to double-count those comparisons, and simply divide
-    the sum by 2 (there may be a better way to do this, but this method was developed while optimizing
-    performance).
+    the sum by 2 (there may be a better way to do this, but this method was developed while
+    optimizing performance).
 
     Using num_comp/sum_comp, we should be able to calculate all the d2v terms by adding the relevant
     terms together (for any given time period), and dividing by the number of comparisons.
@@ -194,7 +227,7 @@ def populate_comp_matrix(searched, d2v_model, field_dict, all_trcn_codes, codes_
     @param: searched (pd.DataFrame) a dataframe consisting of rows only from a one-month time period
         (e.g., Sep 2011)
     @param: d2v_model (gensim.models.Doc2Vec) converts documents to doc2vec representations
-    @param: field_dict (dict[document] -> index) converts document to index for 
+    @param: field_dict (dict[document] -> index) converts document to index for
         gensim.models.Doc2Vec model (each document is tagged with an index)
     @param: all_trcn_codes (set of codes), a set of the top50 iata codes
     @param: codes_info for only the top50 iata codes (format is above)
@@ -211,7 +244,7 @@ def populate_comp_matrix(searched, d2v_model, field_dict, all_trcn_codes, codes_
     num_codes = codes.shape[0]
 
     sum_comp, num_comp = np.zeros((num_codes + 1, num_codes + 1)), \
-            np.zeros((num_codes + 1, num_codes + 1)) 
+            np.zeros((num_codes + 1, num_codes + 1))
 
     # nontop50 indices for gensim model
     if np.any(total_range):
@@ -237,7 +270,8 @@ def populate_comp_matrix(searched, d2v_model, field_dict, all_trcn_codes, codes_
                 total_comp = num_comparisons(code_cts, code_idx_i, code_idx_j)
 
                 num_comp[code_idx_i, code_idx_j] = total_comp
-                sum_comp[code_idx_i, code_idx_j] = sum_comparisons(cos_res, code_cts, code_idx_i, code_idx_j)
+                sum_comp[code_idx_i, code_idx_j] = sum_comparisons(cos_res, code_cts, \
+                        code_idx_i, code_idx_j)
 
                 # fill in symmetrically
                 num_comp[code_idx_j, code_idx_i] = num_comp[code_idx_i, code_idx_j]
@@ -274,8 +308,8 @@ def populate_comp_matrix(searched, d2v_model, field_dict, all_trcn_codes, codes_
 
     return num_comp, sum_comp
 
-def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, default_dict, index_to_d2v, \
-        year, month):
+def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, default_dict, \
+        index_to_d2v, year, month):
     """
     This analyzes a given time period (e.g., Sep. 2011) by calculating the average cos_sim numbers
     for each tracon within the given time period, and saves the results into pandas Series. This
@@ -290,15 +324,16 @@ def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, defa
         codes_info[2] = np.ndarray([code1_ct, ..., coden_ct]) an np.ndarray of counts of each
             unique code in our dataframe.
         See np.unique documentation for details
-    @param: col_types (list of column names), col_types[0] = d2v, col_types[1] = # pairwise comparisons
-        col_types[2] = volume (or # of rows of that tracon)
-    @param: default_dict (dict[col] -> val) this is the default dictionary for the pd.Series we are generating
+    @param: col_types (list of column names), col_types[0] = d2v, col_types[1] = # pairwise
+        comparisons, col_types[2] = volume (or # of rows of that tracon)
+    @param: default_dict (dict[col] -> val) this is the default dictionary for the pd.Series we
+    are generating
     @param: index_to_d2v (dict[tracon_month] -> pd.Series) this is the dictionary we are building up
         maps tracon_month to each row
     @returns: pd.Series for all tracon_codes that do not show up within this given time period
         (all of them have the same values for this time period).
     """
-    codes, code_idx, code_cts = code_info
+    codes, _, code_cts = code_info
     col_type1, col_type2, col_type3 = col_types
 
     # preliminary info
@@ -360,7 +395,7 @@ def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, defa
 
     return pd.Series(row)
 
-def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col = "", field_dict = {}, \
+def analyze_d2v(all_pds, d2v_model, replace=True, month_range_dict={}, col="", field_dict={}, \
         tracon_month_unique=None, replace_dict={}):
     """
     Performs d2v cos_sim calculations for one particular column.
@@ -370,7 +405,7 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
     @param: month_range_dict (dict): month_range (1/3/6/12/inf) -> list of dataframes
         where each dataframe has the relevant doc2vec comparison info
     @param: col (str) the column we are analyzing
-    @param: field_dict (dict[document] -> index) converts document to index for 
+    @param: field_dict (dict[document] -> index) converts document to index for
         gensim.models.Doc2Vec model (each document is tagged with an index)
     @param: tracon_month_unique (pd.DataFrame) with only columns = tracon_code/year/month
         that lists out unique tracon_months within dataset
@@ -378,7 +413,7 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         of the word. This depends on whether or not we are replacing abbrevations with
         their fullform
     """
-    if col == 'narrative' or col == 'callback': # only those with mult reports
+    if col in ['narrative', 'callback']: # only those with mult reports
         # mult_rep_cols = [f'{col}_report1',f'{col}_report2', \
         #         f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}',
         #         f'{col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}']
@@ -390,10 +425,10 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
     all_trcn_codes = set(tracon_month_unique['tracon_code'])
 
     all_pds = all_pds[['tracon_code', 'year', 'month', col] + mult_rep_cols]
-    all_pds.sort_values(['year', 'month', 'tracon_code'], inplace = True)
+    all_pds.sort_values(['year', 'month', 'tracon_code'], inplace=True)
 
     yr_mth, yr_mth_idx, yr_mth_ct = np.unique(all_pds.values[:, [1, 2]].astype(int), \
-            axis = 0, return_index=True, return_counts=True)
+            axis=0, return_index=True, return_counts=True)
 
     abrev_col = abrev_col_dict[col]
     # for month_range in [1, 3, 6, 12, np.inf]:
@@ -403,13 +438,12 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
             mr_str = 'atime'
 
         # used in d2v column names
-        end_str = f"{abrev_col}_{mr_str}" 
+        end_str = f"{abrev_col}_{mr_str}"
         col_type1 = f'{"_flfrm" if replace else ""}_{end_str}'
         col_type2 = f'{"_flfrm" if replace else ""}_ct_{end_str}'
         col_type3 = f'{"_flfrm" if replace else ""}_vol_{end_str}'
         col_types = [col_type1, col_type2, col_type3]
 
-        col_info = [col, abrev_col, col_type1, col_type2, col_type3]
         output_cols = [f'trcn{col_type1}', f'trcn{col_type2}', f'trcn{col_type3}', \
                 f'trcn_invout{col_type1}', f'trcn_invout{col_type2}', \
                 f'trcn_out{col_type1}', f'trcn_out{col_type2}', f'trcn_out{col_type3}', \
@@ -418,20 +452,18 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
         output_cols = {x: np.nan for x in output_cols}
 
         index_to_d2v = {}
-        for month, year in tqdm(product(range(1, 13), range(1988, 2020)), total=num_time_periods, \
-                desc = f'{col} {mr_str}'):
-            code = ' '.join([str(int(month)), str(int(year))])
-
+        for month, year in tqdm(product(range(1, 13), range(1988, 2020)), total=NUM_TIME_PERIODS, \
+                desc=f'{col} {mr_str}'):
             # select only the rows within the month range
-            yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month), \
-                    num_months=month_range)
+            yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, \
+                    int(year), int(month), num_months=month_range)
 
             # drop duplicates of given column
             searched = all_pds.iloc[yr_mth_sel_idx, :].copy().drop_duplicates(col)
 
             codes_info = generate_codes_info(searched, all_trcn_codes)
-            num_comp, sum_comp = populate_comp_matrix(searched, d2v_model, field_dict, all_trcn_codes, \
-                    codes_info, replace_dict, col)
+            num_comp, sum_comp = populate_comp_matrix(searched, d2v_model, \
+                    field_dict, codes_info, replace_dict, col)
 
             # adds all series to index_to_d2v
             mis_row = analyze_time_period(searched, num_comp, sum_comp, codes_info, col_types, \
@@ -443,7 +475,7 @@ def analyze_d2v(all_pds, d2v_model, replace = True, month_range_dict = {}, col =
                 index_id = f"{tracon} {int(year)}/{int(month)}"
                 index_to_d2v[index_id] = mis_row
 
-        fin = pd.DataFrame.from_dict(index_to_d2v, orient = 'index')
+        fin = pd.DataFrame.from_dict(index_to_d2v, orient='index')
         month_range_dict[month_range] = month_range_dict.get(month_range, []) + [fin]
 
 def load_replace_dictionary(col):
@@ -453,13 +485,12 @@ def load_replace_dictionary(col):
         which string we are currently analyzing
     @returns: replace_dict (dict): abbreviation -> fullform
     """
-    # TODO: put this in preprocess_helper.py
-    total_cts = pd.read_csv(f'results/total_cts_tagged_{col}.csv', index_col = 0)
+    total_cts = pd.read_csv(f'results/total_cts_tagged_{col}.csv', index_col=0)
     total_cts = total_cts.loc[total_cts['abrev'] == 1, :]
 
     # generate replace dictionary
     replace_dict = {}
-    for idx, row in total_cts.iterrows():
+    for _, row in total_cts.iterrows():
         for dict_name in ['nasa', 'faa', 'casa', 'hand', 'iata']:
             dict_fullform = row[f'{dict_name}_fullform']
             if not pd.isna(dict_fullform):
@@ -473,16 +504,14 @@ def incident_unique_codes():
     Loads unique codes from NTSB/FAA incident/accident dataset
     @returns: np.ndarray of unique codes from the incident/accident dataset
     """
-    # TODO: check that this pickle file is automatically being generated in pipeline
     unique_code_fn = '../results/unique_airport_code_ntsb_faa.pckl'
     unique_ntsb_faa_codes = pickle.load(open(unique_code_fn, 'rb'))
     return unique_ntsb_faa_codes
 
-def all_unique_codes(all_pds, tracon_month_unique, unique_codes):
+def all_unique_codes(tracon_month_unique, unique_codes):
     """
-    Combines the unique codes from the ASRS dataset with the tracon_codes from the 
+    Combines the unique codes from the ASRS dataset with the tracon_codes from the
     incident/accident dataset.
-    @param: all_pds (pd.DataFrame) asrs dataset
     @param: tracon_month_unique (pd.DataFrame) of unique tracon_code/year/month combinations
         from asrs dataset
     @param: unique_codes (np.ndarray) of unique tracon_codes from incident/accident dataset
@@ -504,9 +533,12 @@ def filter_top50(unique_ntsb_faa_codes, tracon_month_unique):
     @param: unique_ntsb_faa_codes (np.ndarray of str) of unique tracon_codes from either dataset
     @param: tracon_month_unique (pd.DataFrame) w/columns tracon_code/year/month of ASRS dataset
     """
-    top_50_iata = set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
-    unique_ntsb_faa_codes = np.apply_along_axis(lambda x: [elem for elem in x if elem in top_50_iata], \
-            0, unique_ntsb_faa_codes)
+    top_50_iata = \
+            set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+    unique_ntsb_faa_codes = np.apply_along_axis(\
+            lambda x: [elem for elem in x if elem in top_50_iata], \
+            0, \
+            unique_ntsb_faa_codes)
     tracon_month_unique = tracon_month_unique.loc[\
         tracon_month_unique['tracon_code'].apply(lambda x: x in top_50_iata)]
     return unique_ntsb_faa_codes, tracon_month_unique
@@ -518,9 +550,9 @@ def add_missing_rows(unique_ntsb_faa_codes, tracon_month_unique):
     @param: tracon_month_unique (pd.DataFrame) w/columns tracon_code/year/month of ASRS dataset
     @returns: tracon_month_unique with rows from ASRS dataset and FAA/NTSB incident/accident dataset
     """
-    all_combs = set(tracon_month_unique.apply(lambda x: (x[0], x[1], x[2]), axis = 1))
+    all_combs = set(tracon_month_unique.apply(lambda x: (x[0], x[1], x[2]), axis=1))
     added_rows = {'tracon_code': [], 'month': [], 'year':[]}
-    for tracon, month, year in product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)): 
+    for tracon, month, year in product(unique_ntsb_faa_codes, range(1, 13), range(1988, 2020)):
         if (tracon, month, year) not in all_combs:
             added_rows['tracon_code'].append(tracon)
             added_rows['month'].append(month)
@@ -535,7 +567,7 @@ def process_with_replace(field, r_d):
     @param: r_d (dict[abbrev] -> fullform) dictionaray that maps abbreviation to fullform
     @returns: processed field
     """
-    np_res = replace_words(str(field), replace_dict=r_d)
+    np_res = preprocess_helper.replace_words(str(field), replace_dict=r_d)
     return ' '.join(np_res)
 
 def generate_tagged_docs(np_fields, r_d):
@@ -550,15 +582,15 @@ def generate_tagged_docs(np_fields, r_d):
     # creating list of tagged documents
     docs = []
     doc_to_idx = {}
-    ct = 0
+    ctr = 0
     for field in tqdm(np_fields, total=np_fields.shape[0]):
         doc_str = process_with_replace(field, r_d)
         if doc_str not in doc_to_idx:
-            doc_to_idx[doc_str] = ct
-            docs.append(TaggedDocument(doc_str, [ct]))
-            ct += 1
+            doc_to_idx[doc_str] = ctr
+            docs.append(TaggedDocument(doc_str, [ctr]))
+            ctr += 1
     return docs, doc_to_idx
-    
+
 def d2v_multiple_reports(all_pds):
     """
     For columns with multiple reports (narrative/callback), we calculate the cos_sim between
@@ -567,7 +599,8 @@ def d2v_multiple_reports(all_pds):
     @returns: all_pds (pd.DataFrame) w/new columns for cos_sim between reports
     """
     for mult_col in ['narrative', 'callback']:
-        reps = np.hstack((all_pds[f'{mult_col}_report1'].unique(), all_pds[f'{mult_col}_report2'].unique()))
+        reps = np.hstack((all_pds[f'{mult_col}_report1'].unique(),\
+                all_pds[f'{mult_col}_report2'].unique()))
         reps = reps.astype(str)
 
         for r_d in [load_replace_dictionary(mult_col), {}]:
@@ -578,7 +611,7 @@ def d2v_multiple_reports(all_pds):
             docs, doc_to_idx = generate_tagged_docs(reps, r_d)
 
             # train doc2vec
-            model = Doc2Vec(docs, vector_size = 20, window = 3)
+            model = Doc2Vec(docs, vector_size=20, window=3)
             only_mult_rep_df = all_pds.loc[all_pds[f'{mult_col}_multiple_reports'], :]
             for idx, row in tqdm(only_mult_rep_df.iterrows(), total=only_mult_rep_df.shape[0]):
                 report1 = process_with_replace(row[f'{mult_col}_report1'], r_d)
@@ -598,37 +631,40 @@ def cos_sim_analysis(all_pds, tracon_month_unique):
     @param: tracon_month_unique (pd.DataFrame) with only columns = tracon_code/year/month
         that lists out unique tracon_months within dataset
     """
-    # for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
-    for col in ['callback', 'combined', 'narrative_synopsis_combined']:
+    for col in ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']:
         month_range_dict = {}
         for r_d in [load_replace_dictionary(col), {}]:
             reps = all_pds[col].unique()
             docs, doc_to_idx = generate_tagged_docs(reps, r_d)
             # train doc2vec
             print('training doc2vec models. This can take a while...')
-            model = Doc2Vec(docs, vector_size = 20, window = 3)
+            model = Doc2Vec(docs, vector_size=20, window=3)
 
-            analyze_d2v(all_pds, model, len(r_d) > 0, month_range_dict, col = col, \
-                    field_dict = doc_to_idx, tracon_month_unique=tracon_month_unique, \
+            analyze_d2v(all_pds, model, len(r_d) > 0, month_range_dict, col=col, \
+                    field_dict=doc_to_idx, tracon_month_unique=tracon_month_unique, \
                     replace_dict=r_d)
 
-        for month_range in month_range_dict.keys():
-            res = pd.concat(month_range_dict[month_range], axis = 1)
+        for month_range in month_range_dict:
+            res = pd.concat(month_range_dict[month_range], axis=1)
             res.to_csv(f'results/d2v_tracon_month_{col}_{month_range}mon.csv')
 
 def main():
+    """
+    Calculates average cosine similarity for each tracon_month for all possible permutations
+    """
     # load files
-    all_pds = load_asrs(load_saved = True)
-    all_pds = all_pds.reset_index().drop('index', axis = 1)
-    # all_pds = tracon_analysis(all_pds)
+    all_pds = preprocess_helper.load_asrs(load_saved=True)
+    all_pds = all_pds.reset_index().drop('index', axis=1)
+    # all_pds = preprocess_helper.tracon_analysis(all_pds)
 
     # top 50/missing row analysis
     tracon_month_unique = all_pds[['tracon_code', 'month', 'year']].drop_duplicates()
     unique_codes = incident_unique_codes()
-    unique_ntsb_faa_codes = all_unique_codes(all_pds, tracon_month_unique, unique_codes)
+    unique_ntsb_faa_codes = all_unique_codes(tracon_month_unique, unique_codes)
     print('after missing row analysis')
 
-    unique_ntsb_faa_codes, tracon_month_unique = filter_top50(unique_ntsb_faa_codes, tracon_month_unique)
+    unique_ntsb_faa_codes, tracon_month_unique = \
+            filter_top50(unique_ntsb_faa_codes, tracon_month_unique)
     tracon_month_unique = add_missing_rows(unique_ntsb_faa_codes, tracon_month_unique)
     print('after missing rows')
 
