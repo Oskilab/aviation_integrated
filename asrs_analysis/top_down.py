@@ -2,6 +2,8 @@ from IPython import embed
 from tqdm import tqdm
 from itertools import product
 from collections import Counter
+# TODO: import preprocess_helper, and any functions that utilize
+# a function from preprocess_helper.func (instead of func)
 from preprocess_helper import *
 
 import pandas as pd, numpy as np, re
@@ -318,6 +320,12 @@ def generate_tracon_month_set(all_dfs):
         tracon = idx.split()[0]
         year = row['year']
         month = row['month']
+
+        if isinstance(year, pd.Series):
+            year = int(year.iloc[0])
+        if isinstance(month, pd.Series):
+            month = int(month.iloc[0])
+
         all_combs.add((tracon, year, month))
     return all_combs
 
