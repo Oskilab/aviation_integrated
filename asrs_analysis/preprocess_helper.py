@@ -1,10 +1,14 @@
-from IPython import embed
-from collections import Counter, namedtuple
-from tqdm import tqdm
-import pandas as pd
+"""
+Some helper functions to preprocess ASRS dataset.
+"""
 import re
-import numpy as np
 import os
+from collections import Counter
+
+from tqdm import tqdm
+
+import pandas as pd
+import numpy as np
 
 start_path = os.getcwd()
 start_path_split = start_path.split("/")
@@ -13,8 +17,6 @@ if start_path_split[-1] != 'asrs_analysis':
         start_path += '/asrs_analysis'
     else:
         raise ValueError(f"wrong cwd {start_path}")
-
-coverage = namedtuple('coverage', ['part', 'total'])
 
 def generate_ctrs_for_row(row):
     """
@@ -69,7 +71,7 @@ def add_duplicated_rows(row, code_ctr, ident_ctr, all_pds, dropcols):
                 for key in ident_ctr:
                     copy_row[f'{key}_ident_ct'] = ident_ctr[key]
 
-                copy_row.drop(dropcols, axis = 0, inplace = True)
+                copy_row.drop(dropcols, axis=0, inplace=True)
                 all_pds.append(copy_row)
 
                 curr_codes.add(tracon_code)
@@ -87,11 +89,11 @@ def tracon_analysis(asrs):
     @param: asrs (pd.DataFrame) ASRS dataset
     @returns: duplicated ASRS dataset (pd.DataFrame)
     """
-    pat = re.compile('(info|atc)_(code|type|repeated)\d')
+    pat = re.compile(r'(info|atc)_(code|type|repeated)\d')
     dropcols = [col for col in asrs if pat.match(col)]
 
     all_pds = []
-    for idx, row in tqdm(asrs.iterrows(), total = asrs.shape[0]):
+    for _, row in tqdm(asrs.iterrows(), total=asrs.shape[0]):
         # calculate the number of times a tracon_code appears
         # in this particular observation (including soft duplicates)
         code_ctr, ident_ctr, num_na = generate_ctrs_for_row(row)
@@ -101,15 +103,15 @@ def tracon_analysis(asrs):
             copy_row = row.copy()
             for key in ident_ctr:
                 copy_row[f'{key}_ident_ct'] = ident_ctr[key]
-            copy_row.drop(dropcols, axis = 0, inplace = True)
+            copy_row.drop(dropcols, axis=0, inplace=True)
             all_pds.append(copy_row)
         else:
             add_duplicated_rows(row, code_ctr, ident_ctr, all_pds, dropcols)
 
     return pd.DataFrame.from_records(all_pds)
 
-def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load_saved = False, \
-        test = False):
+def load_asrs(path=f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load_saved=False, \
+        test=False):
     """
     This loads the ASRS dataset and pre-processes it. This is only done once in the pipeline,
     and all other times, we simply load a saved version.
@@ -128,8 +130,6 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
     dup_cols = ['ACN', 'narrative_report1', 'narrative_report2', 'synopsis_report1'] + \
             ['callback_report1', 'callback_report2', 'Locale Reference']
     asrs_dropped = asrs.drop_duplicates(dup_cols)
-    print(coverage(part = asrs_dropped.shape[0], \
-            total = asrs.shape[0]))
     asrs = asrs_dropped
 
     if test:
@@ -143,15 +143,13 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
     # creating fields for multiple reports
     for type_report in type_reports:
         # whether or not the row has multiple reports (t/f)
-        asrs[f'{type_report}_multiple_reports'] = asrs.apply(lambda row: \
-                (not pd.isna(row[f'{type_report}_report1'])) and
-                (not pd.isna(row[f'{type_report}_report2'])), axis = 1
-        )
+        asrs[f'{type_report}_multiple_reports'] = asrs.apply(lambda row:\
+                (not pd.isna(row[f'{type_report}_report1'])) and \
+                (not pd.isna(row[f'{type_report}_report2'])), axis=1)
     # creating field for containing a callback report
     asrs["contains_callback"] = asrs.apply(lambda row: \
-            (not pd.isna(row["callback_report1"])) or
-            (not pd.isna(row["callback_report2"])), axis = 1
-    )
+            (not pd.isna(row["callback_report1"])) or \
+            (not pd.isna(row["callback_report2"])), axis=1)
     # create combined reports
     for type_report in type_reports:
         report1 = asrs[f'{type_report}_report1'].replace(np.nan, '')
@@ -163,7 +161,8 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
 
         asrs[type_report] = asrs[type_report].str.lower()
         asrs[f'{type_report}_report1'] = asrs[f'{type_report}_report1'].str.lower()
-        asrs[f'{type_report}_report2'] = asrs[f'{type_report}_report2'].replace(np.nan, '').str.lower()
+        asrs[f'{type_report}_report2'] = asrs[f'{type_report}_report2'].replace(np.nan, '')\
+                .str.lower()
 
         asrs[asrs[type_report].duplicated(keep=False)]\
                 .to_csv(f'results/duplicated_{type_report}.csv')
@@ -178,13 +177,9 @@ def load_asrs(path = f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load
             asrs['synopsis']
     asrs['combined'] = asrs['combined'].str.lower()
 
-    total = asrs.shape[0]
     asrs = tracon_analysis(asrs)
-    print(coverage(part = asrs.shape[0], total = total))
     asrs = generate_date_cols(asrs)
-    total = asrs.shape[0]
     asrs = asrs.loc[(asrs['year'] >= 1988) & (asrs['year'] < 2020)]
-    print(coverage(asrs.shape[0], total))
     asrs.to_csv(f'{start_path}/results/asrs_extracted_processed.csv')
     return asrs
 
@@ -196,36 +191,39 @@ def load_dictionaries():
     """
     # casa
     casa = pd.read_csv(f'{start_path}/dictionaries/CASA.csv') # Fullform4
-    casa = casa[["acronym", "Fullform4"]].copy().rename({"Fullform4": "casa_fullform"}, axis = 1)
-    casa['acronym'] = casa['acronym'].str.replace('\(.+\)', '')
+    casa = casa[["acronym", "Fullform4"]].copy().rename({"Fullform4": "casa_fullform"}, axis=1)
+    casa['acronym'] = casa['acronym'].str.replace(r'\(.+\)', '')
 
     # faa
     faa = pd.read_csv(f'{start_path}/dictionaries/FAA.csv') # Fullform1
-    faa = faa[["acronym", "Fullform1"]].copy().rename({"Fullform1": "faa_fullform"}, axis = 1)
+    faa = faa[["acronym", "Fullform1"]].copy().rename({"Fullform1": "faa_fullform"}, axis=1)
 
     # iata_iaco
-    iata_iaco = pd.read_csv(f'{start_path}/dictionaries/IATA_IACO.csv', encoding = 'cp437') # Fullform5
-    iata_iaco = iata_iaco[["acronym", "Fullform5"]].copy().rename({"Fullform5": "iata_fullform"}, axis = 1)
+    iata_iaco = pd.read_csv(f'{start_path}/dictionaries/IATA_IACO.csv', encoding='cp437')
+    iata_iaco = iata_iaco[["acronym", "Fullform5"]].copy().rename({"Fullform5": "iata_fullform"}, \
+            axis=1)
     iata_iaco = iata_iaco[~iata_iaco['acronym'].isna()]
 
     # nasa
     nasa = pd.read_csv(f'{start_path}/dictionaries/nasa_abbr.csv') # Fullform7
-    nasa = nasa[["acronym", "Fullform7"]].copy().rename({"Fullform7": "nasa_fullform"}, axis = 1)
-    nasa.drop_duplicates(["acronym"], inplace = True, keep = 'first')
+    nasa = nasa[["acronym", "Fullform7"]].copy().rename({"Fullform7": "nasa_fullform"}, axis=1)
+    nasa.drop_duplicates(["acronym"], inplace=True, keep='first')
 
     # hand_code
     hand_code = pd.read_csv(f'{start_path}/dictionaries/hand_code.csv')
-    hand_code = hand_code[["acronym", "Fullform6"]].copy().rename({"Fullform6": "hand_fullform"}, axis = 1)
-    hand_code.drop_duplicates(["acronym"], inplace = True, keep = 'first')
+    hand_code = hand_code[["acronym", "Fullform6"]].copy().rename({"Fullform6": "hand_fullform"}, \
+            axis=1)
+    hand_code.drop_duplicates(["acronym"], inplace=True, keep='first')
 
     # hand_code2
-    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
-    hand_code2.index.rename('acronym', inplace = True)
-    hand_code2.reset_index(inplace = True)
-    hand_code2.rename({'hand_fullform2': 'hand2_fullform'}, axis = 1, inplace = True)
+    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv', \
+            index_col=0)
+    hand_code2.index.rename('acronym', inplace=True)
+    hand_code2.reset_index(inplace=True)
+    hand_code2.rename({'hand_fullform2': 'hand2_fullform'}, axis=1, inplace=True)
     hand_code2 = hand_code2[['acronym', 'hand2_fullform']]
-    hand_code2.drop_duplicates(['acronym'], inplace = True, keep = 'first')
-    hand_code2.dropna(axis = 0, how = 'any', inplace = True)
+    hand_code2.drop_duplicates(['acronym'], inplace=True, keep='first')
+    hand_code2.dropna(axis=0, how='any', inplace=True)
 
     return {
         'casa': casa,
@@ -239,35 +237,39 @@ def load_dictionaries():
 
 def neg_nonword_to_neg_word_set():
     """
-    This returns all neg_nonwords that are actually neg_words. Neg_nonwords are 
+    This returns all neg_nonwords that are actually neg_words. Neg_nonwords are
     words that are not found in any aviation dictionary and are not in the english
     dictionary. We go through these by hand to find which ones are actually English words.
     @returns: set of neg nonwords that are actually english words
     """
-    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
+    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv', \
+            index_col=0)
     return set(hand_code2.loc[~hand_code2.loc[:, 'add_to_realworld_dictionary'].isna(), :].index)
 
 def neg_nonword_to_airport_set():
     """
-    This returns all neg_nonwords that are actually airport names. Neg_nonwords are 
+    This returns all neg_nonwords that are actually airport names. Neg_nonwords are
     words that are not found in any aviation dictionary and are not in the english
     dictionary. We go through these by hand to find which ones are actually names of
     airports
     @returns: set of neg nonwords that are actually airport names
     """
-    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
+    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv', \
+            index_col=0)
     return set(hand_code2.loc[~hand_code2.loc[:, 'add_to_airport'].isna(), :].index)
 
 def neg_nonword_to_mispelled_dict():
     """
-    This returns all neg_nonwords that are actually misspellings of english words. Neg_nonwords are 
+    This returns all neg_nonwords that are actually misspellings of english words. Neg_nonwords are
     words that are not found in any aviation dictionary and are not in the english
     dictionary. We go through these by hand to find which ones are actually misspellings
     of English words
     @returns: dictionary of neg nonwords that are actually airport names
     """
-    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv', index_col = 0)
-    return dict(hand_code2.loc[~hand_code2.loc[:, 'mispelled_word_fix'].isna(), 'mispelled_word_fix'])
+    hand_code2 = pd.read_csv(f'{start_path}/dictionaries/combined_neg_nonword_handcode2.csv',\
+            index_col=0)
+    return dict(hand_code2.loc[~hand_code2.loc[:, 'mispelled_word_fix'].isna(), \
+            'mispelled_word_fix'])
 
 def potential_words_from_negnw():
     """
@@ -290,17 +292,17 @@ def potential_words_from_negnw():
 # the following are regex patterns that help us clean words
 
 # starts with (, ' or [
-r1 = "^([\(\'\[]{1})([A-Za-z\d]{1,})$"
+R1 = r"^([\(\'\[]{1})([A-Za-z\d]{1,})$"
 # ends with ), ' or ]
-r2 = "^([A-Za-z\d]{1,})([\)\'\]]{1})$"
+R2 = r"^([A-Za-z\d]{1,})([\)\'\]]{1})$"
 # starts with (, ' or [ and ends with ), ', ]
-r3 = "^([\(\'\[\]]{1})([A-Za-z\d]{1,})([\(\'\[\]]{1})$"
+R3 = r"^([\(\'\[\]]{1})([A-Za-z\d]{1,})([\(\'\[\]]{1})$"
 # ends with ? or :, and only has alphabetical characters
-r4 = "^([A-Za-z]{1,})([\?:])$"
+R4 = r"^([A-Za-z]{1,})([\?:])$"
 # only alphabetical with a / in the middle
-r5 = "^([A-Za-z]{1,})/([A-Za-z]{1,})$"
+R5 = r"^([A-Za-z]{1,})/([A-Za-z]{1,})$"
 
-pats = [r3, r1, r2, r4, r5]
+pats = [R3, R1, R2, R4, R5]
 grps = [2, 2, 1, 1, 1] # which regex groups we need to extract
 mispelled_dict = neg_nonword_to_mispelled_dict()
 
@@ -311,13 +313,14 @@ def clean_word(elem):
     @param: elem (str) the word
     @returns: cleaned word or None if none of them match
     """
-    for r, grp_idx in zip(pats, grps):
-        pat_curr = re.compile(r)
+    for reg_pat, grp_idx in zip(pats, grps):
+        pat_curr = re.compile(reg_pat)
         match_res = pat_curr.match(elem)
         if match_res is not None:
             return match_res.group(grp_idx)
+    return None
 
-def convert_to_words(row, col = 'narrative', replace_dict = {}):
+def convert_to_words(row, col='narrative', replace_dict={}):
     """
     This converts a string or pandas.Series containing a string into
     a cleaned tokenizerd version of the string (in a np.ndarray)
@@ -329,14 +332,14 @@ def convert_to_words(row, col = 'narrative', replace_dict = {}):
     @returns: np.ndarray of cleaned tokenized version of the string in question
     """
     if not isinstance(row, str):
-        s = row[col]
+        field = row[col]
     else:
-        s = row
-    if isinstance(s, float) and np.isnan(s):
-        s = ''
-    for char in '[!"#$&\'()*+,:;<=>?@[\\]^_`{|}~/-]\.%':
-        s = s.replace(char, ' ')
-    res = np.array(re.split('[( | ;|\. |\.$]', s))
+        field = row
+    if isinstance(field, float) and np.isnan(field):
+        field = ''
+    for char in r'[!"#$&\'()*+,:;<=>?@[\\]^_`{|}~/-]\.%':
+        field = field.replace(char, ' ')
+    res = np.array(re.split(r'[( | ;|\. |\.$]', field))
     res = res[res != ''].flatten()
     fin = []
     for elem in res:
@@ -355,8 +358,8 @@ def generator_split(split_series):
     each word
     """
     for list_elem in split_series:
-        for x in list_elem:
-            yield x
+        for word in list_elem:
+            yield word
 
 def replace_words(sentence, replace_dict={}):
     """
@@ -372,20 +375,20 @@ def replace_words(sentence, replace_dict={}):
         split_sentence[idx] = replace_dict.get(elem, elem)
     return np.array(split_sentence)
 
-def create_counter(df, col = 'narrative'):
+def create_counter(text_df, col='narrative'):
     """
     This creates a dataframe that maps each unique word to the number of times
     it appears in the full dataset.
-    @param: df (pd.DataFrame) text dataset
+    @param: text_df (pd.DataFrame) text dataset
     @param: col (str) which column to analyze
     @returns: pd.DataFrame that maps unique words to the number of times they appear
         in the full dataset
     """
-    tqdm.pandas(desc = col)
+    tqdm.pandas(desc=col)
 
-    dropped = df.drop_duplicates(col)
-    split = dropped.progress_apply(lambda x: np.array(x[col].split()), axis = 1)
+    dropped = text_df.drop_duplicates(col)
+    split = dropped.progress_apply(lambda x: np.array(x[col].split()), axis=1)
 
     res = Counter(generator_split(split))
-    res = pd.DataFrame.from_dict(dict(res), orient = 'index')
+    res = pd.DataFrame.from_dict(dict(res), orient='index')
     return res
