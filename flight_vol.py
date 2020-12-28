@@ -1,27 +1,27 @@
-import pandas as pd, numpy as np, re, os
-from tqdm import tqdm
-from IPython import embed
-from collections import namedtuple
-from itertools import product
-
-coverage = namedtuple('coverage', ['part', 'total'])
 """
 Combines flight volume data (WEB-Report-*) with airport_month_events, which is the processed
 FAA/NTSB incident/accident data
 """
+import os
 
-tracon_fns = ['51547', '49612', '29844', '52212', '81669', '22012', '59543']
-tracon_fns = set([f'WEB-Report-{x}.csv' for x in tracon_fns])
+from tqdm import tqdm
 
-def get_first_header_idx(df):
+import pandas as pd
+import numpy as np
+
+TRACON_FNS = ['51547', '49612', '29844', '52212', '81669', '22012', '59543']
+TRACON_FNS = {f'WEB-Report-{x}.csv' for x in TRACON_FNS}
+
+def get_first_header_idx(vol_df):
     """
     Each volume xlsx file contains a number of extraneous rows at the top.
     This function calculates the first row which contains the header info
-    @param: df (pd.DataFrame), volume xlsx file
+    @param: vol_df (pd.DataFrame), volume xlsx file
     """
-    for idx in range(df.shape[0]):
-        if 'IFR Itinerant' in set(df.iloc[idx, :]):
+    for idx in range(vol_df.shape[0]):
+        if 'IFR Itinerant' in set(vol_df.iloc[idx, :]):
             return idx
+    return None
 
 def generate_prefix_header(header_row):
     """
@@ -34,11 +34,11 @@ def generate_prefix_header(header_row):
     """
     prefixes = []
     curr_prefix = ''
-    for x in header_row:
-        if x == ' ':
+    for header_name in header_row:
+        if header_name == ' ':
             prefixes.append('')
-        elif not pd.isna(x):
-            curr_prefix = x + '\t'
+        elif not pd.isna(header_name):
+            curr_prefix = header_name + '\t'
             prefixes.append(curr_prefix)
         else:
             prefixes.append(curr_prefix)
@@ -70,19 +70,17 @@ def load_volume_file(filename):
     @param: filename (str) path to volume file
     @returns: vol_data (pd.DataFrame) of volume data
     """
-    global tracon_fns
-
     vol_data = pd.read_csv(filename)
     first_header_idx = get_first_header_idx(vol_data)
-    
+
     # because the csv has multiple headers, we create a list of column name prefixes
     prefixes = generate_prefix_header(vol_data.iloc[first_header_idx, :])
-            
+
     # generate column names
     cols = generate_column_names(vol_data.iloc[first_header_idx + 1, :], prefixes)
 
     vol_data.columns = cols
-    vol_data = vol_data.iloc[3:-2,:-1].copy() # some beginning rows and end rows are dropped
+    vol_data = vol_data.iloc[3:-2, :-1].copy() # some beginning rows and end rows are dropped
 
     vol_data = vol_data.loc[:, ~vol_data.columns.duplicated()].copy()
     return vol_data
@@ -94,29 +92,29 @@ def load_volume():
     """
     # read in flight volume data
     pds = []
-    for x in os.listdir('datasets/'):
-        if '.csv' in x and '.swp' not in x and 'WEB-Report' in x:
-            vol_data = load_volume_file(f"datasets/{x}")
+    for filename in os.listdir('datasets/'):
+        if '.csv' in filename and '.swp' not in filename and 'WEB-Report' in filename:
+            vol_data = load_volume_file(f"datasets/{filename}")
 
             # add column indicating from tracon or tower
-            if x in tracon_fns:
+            if filename in TRACON_FNS:
                 vol_data['ATADS_Tracon_Tower'] = 'Tracon'
             else:
                 vol_data['ATADS_Tracon_Tower'] = 'Tower'
 
             pds.append(vol_data)
 
-    return pd.concat(pds, axis = 0, ignore_index = True, sort = True)
+    return pd.concat(pds, axis=0, ignore_index=True, sort=True)
 
-def conv_to_int(x):
+def conv_to_int(str_input):
     """
     Helper function to convert string to int, nan when error occurs.
-    @param: x (string) to be converted
+    @param: str_input (string) to be converted
     @returns: int/np.nan of converted x
     """
     try:
-        return int(x)
-    except:
+        return int(str_input)
+    except ValueError:
         return np.nan
 
 def process_dates(vol_data):
@@ -133,17 +131,17 @@ def process_dates(vol_data):
     vol_data['month'] = vol_data['month'].astype(int)
     vol_data['year'] = vol_data['year'].astype(int)
     return vol_data
-    
+
 def generate_facility_date_dict(vol_data):
     """
     This creates a nested dictionary dict[facility] -> dict[date] -> location
     @param: vol_data (pd.DataFrame) the full volume dataset.
     @returns: dict[facility] -> dict[date] -> location in vol_data
     """
-    # create dictionary of facility/date -> loc idx (it's a nested dictionary using facility and date
-    # consecutively)
+    # create dictionary of facility/date -> loc idx (it's a nested dictionary using
+    # facility and date  consecutively)
     id_to_idx = {}
-    for idx, row in tqdm(vol_data.iterrows(), total = vol_data.shape[0]):
+    for idx, row in tqdm(vol_data.iterrows(), total=vol_data.shape[0]):
         code = str(row['Facility']).strip()
         facility_dict = id_to_idx.get(code, {})
         facility_dict[row['Date']] = idx
@@ -153,8 +151,8 @@ def generate_facility_date_dict(vol_data):
 def date_to_str(year, month):
     """
     Converts year/month pair to a string of month/year with padded month
-    @param: year (int/np.nan) 
-    @param: month (int/np.nan) 
+    @param: year (int/np.nan)
+    @param: month (int/np.nan)
     @returns month/year
     """
     month_str = '0' * int(month < 10) + str(month)
@@ -172,9 +170,9 @@ def generate_final_row(row, code, date_str, id_to_idx, vol_data):
         and the volume dataset. Nans if the volume data could not be found
     """
     if code in id_to_idx and date_str in id_to_idx[code]:
-        final_row = pd.concat([row, vol_data.loc[id_to_idx[code][date_str], :]], axis = 0)
+        final_row = pd.concat([row, vol_data.loc[id_to_idx[code][date_str], :]], axis=0)
     else:
-        final_row = pd.concat([row, pd.Series(index=vol_data.columns)], axis = 0)
+        final_row = pd.concat([row, pd.Series(index=vol_data.columns)], axis=0)
     return final_row[~final_row.index.duplicated(keep='first')]
 
 def generate_combined_dfs(res, vol_data, id_to_idx):
@@ -188,12 +186,13 @@ def generate_combined_dfs(res, vol_data, id_to_idx):
     @returns: dnf (pd.DataFrame) all rows where the code was found but the date was not found
         in the volume data
     """
-    # generate dataframe. If the incident/accident date is not found in he flight volume data, then
-    # it is added to rows_dnf (rows date not found), and if the tracon code is not found in the volume
-    # data it is added to rows_cnf (rows code not found). Note nans are used to replace the missing info
+    # generate dataframe. If the incident/accident date is not found in he flight volume data,
+    # then it is added to rows_dnf (rows date not found), and if the tracon code is not found
+    # in the volume data it is added to rows_cnf (rows code not found). Note nans are used to
+    # replace the missing info
     rows, rows_dnf, rows_cnf = [], [], []
     date_nf_ct, code_nf_ct = 0, 0
-    for idx, row in tqdm(res.iterrows(), total = res.shape[0]):
+    for _, row in tqdm(res.iterrows(), total=res.shape[0]):
         code = row['airport_code']
         if pd.isna(code):
             continue
@@ -217,22 +216,26 @@ def generate_combined_dfs(res, vol_data, id_to_idx):
     return all_rows, cnf, dnf
 
 def main():
+    """
+    Adds volume data to incident/accident dataset
+    """
     vol_data = load_volume()
     vol_data = process_dates(vol_data)
 
     id_to_idx = generate_facility_date_dict(vol_data)
 
     # combine the two csvs
-    res = pd.read_csv('results/airport_month_events.csv', index_col = 0)
+    res = pd.read_csv('results/airport_month_events.csv', index_col=0)
 
     # top 50 iata codes
-    top_50_iata = set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+    top_50_iata = \
+            set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
     res = res[res['airport_code'].apply(lambda x: x in top_50_iata)]
 
     all_rows, cnf, dnf = generate_combined_dfs(res, vol_data, id_to_idx)
 
     # save csvs
-    all_rows.to_csv('results/combined_vol_incident.csv', index = False)
+    all_rows.to_csv('results/combined_vol_incident.csv', index=False)
     cnf.to_csv('results/nf_codes.csv')
     dnf.to_csv('results/nf_dates.csv')
 
