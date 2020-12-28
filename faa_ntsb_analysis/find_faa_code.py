@@ -1,11 +1,16 @@
+import re
+import pickle
+
 from tqdm import tqdm
 from IPython import embed
-from common_funcs import load_full_wiki, match_using_name_loc, search_wiki_airportname
 from requests import HTTPError
+import urllib.request as request
+
+from common_funcs import load_full_wiki, match_using_name_loc, search_wiki_airportname
 from selenium_funcs import check_code, search_city
 
-import pandas as pd, numpy as np, re, pickle
-import urllib.request as request
+import pandas as pd
+import numpy as np
 query_wiki, perform_name_matching = False, True
 backup, check_codes = False, False
 wac_load = True
@@ -23,8 +28,8 @@ def load_faa_data():
     for col in new.columns:
         rename_dict[col] = col.lower().replace(" ", "")
 
-    new.rename(rename_dict, axis = 1, inplace = True)
-    return pd.concat([full, new], axis = 0, ignore_index = True, sort = False)
+    new.rename(rename_dict, axis=1, inplace=True)
+    return pd.concat([full, new], axis=0, ignore_index=True, sort=False)
 
 def get_month(date):
     """
@@ -336,27 +341,28 @@ def save_not_matched(df, not_matched, matched_names, verbose=True):
     @param: verbose (bool) whether or not to print out statistics
     """
     nf_sel = not_matched['eventairport_conv'].apply(lambda x: x not in matched_names)
-    not_matched.loc[nf_sel, :].to_csv('results/not_matched.csv', index = False)
+    not_matched.loc[nf_sel, :].to_csv('results/not_matched.csv', index=False)
 
-def fill_in_handcoded(df):
+def fill_in_handcoded(faa_df):
     """
     This fills in the faa incident dataset with IATA codes by utilizing the name of airport
     city and state, and a handcoded dataset with airport names/city/states and their corresponding
     airport codes
-    @param: df (pd.DataFrame) faa incident dataset
-    @returns: df (pd.DataFrame) with filled in iata codes
+    @param: faa_df (pd.DataFrame) faa incident dataset
+    @returns: faa_df (pd.DataFrame) with filled in iata codes
     """
-    handcoded = pd.read_csv('datasets/not_matched_full_v1.csv', index_col = 0)
-    handcoded.drop(['Unnamed: 8'], axis = 1, inplace = True)
-    handcoded.rename({'Unnamed: 7': 'tracon_code'}, axis = 1,inplace = True)
+    handcoded = pd.read_csv('datasets/not_matched_full_v1.csv', index_col=0)
+    handcoded.drop(['Unnamed: 8'], axis=1, inplace=True)
+    handcoded.rename({'Unnamed: 7': 'tracon_code'}, axis=1, inplace=True)
     handcoded = handcoded.loc[~handcoded['tracon_code'].isna(), :].copy()
 
-    for idx, row in tqdm(handcoded.iterrows(), total = handcoded.shape[0], desc = "handcoded"):
+    for idx, row in tqdm(handcoded.iterrows(), total=handcoded.shape[0], desc="handcoded"):
         if row['tracon_code'] != '?':
-            df.loc[(df['eventairport_conv'] == row['eventairport_conv']) & \
-                     (df['eventcity'] == row['eventcity']) & \
-                     (df['eventstate'] == row['eventstate']), 'tracon_code'] = row['tracon_code']
-    return df
+            faa_df.loc[(faa_df['eventairport_conv'] == row['eventairport_conv']) & \
+                     (faa_df['eventcity'] == row['eventcity']) & \
+                     (faa_df['eventstate'] == row['eventstate']), 'tracon_code'] = row['tracon_code']
+
+    return faa_df
 
 def fill_in_iata(df, full_matched_pd, wiki_search_found_df):
     """
@@ -527,6 +533,7 @@ def main(verbose=True):
     # fill in dataset with matched iata codes (found via airport name above)
     # full = fill_in_iata(full, full_matched_pd, wiki_search_found_df)
     full = fill_in_handcode_iata(full)
+    full = fill_in_handcoded(full)
 
     if verbose:
         print('non empty tracon code rows', full.loc[~full['tracon_code'].isna()].shape[0])
