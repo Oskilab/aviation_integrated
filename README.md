@@ -20,14 +20,14 @@ bash -e ./run_all -t
 This is a list of handcoded files that are a part of the pipeline (that may need to be modified in the future
 
 1. `asrs_analysis/dictionaries/combined_neg_nonword_handcode2.csv`: dataframe consisting of words we've categorized as `neg_nonword`, or words that are not found in any of the aviation dictionaries, and are also not considered to be english words via the enchant library. As a rule, we've ruled these to be abbreviations, but we've hand-coded some portion of them to either keep them as abbreviations or to remove them (see the file for the format)
-2. `faa_ntsb_analysis/datasets/FAA_airport_tracon_key.xlsx`: dataframe that maps `event_airport` (of FAA incident/accident dataset) to its corresponding tracon\_key
+2. `faa_ntsb_analysis/datasets/FAA_key.xlsx`: dataframe that maps `event_airport` (of FAA incident/accident dataset) to its corresponding tracon\_key
 3. `faa_ntsb_analysis/datasets/NTSB_airportcode_fix.xlsx`: this is a dataframe that maps an uncleaned airport code like `KSFO` to a cleaned airport code like `SFO`. Must have the columns `fixed_airport_code`, and `airport_code` in that order.
 4. `faa_ntsb_analysis/datasets/not_matched_full_v1.csv`: this is handcoded file that maps from FAA airport name to tracon\_code
 
 
 Requirements for each file
 1. `asrs_analysis/dictionaries/combined_neg_nonword_handcode2.csv`: must have the columns: `add_to_realworld_dictionary` `add_to_airport` `mispelled_word_fix`.
-2. `faa_ntsb_analysis/datasets/FAA_airport_tracon_key.xlsx`: must have `tracon_key` and `event_airport` columns in that order
+2. `faa_ntsb_analysis/datasets/FAA_key.xlsx`: must have `tracon_key` and `event_airport` columns in that order
 3. `faa_ntsb_analysis/datasets/NTSB_airportcode_fix.xlsx`: must have the columns `fixed_airport_code`, and `airport_code` in that order.
 
 
