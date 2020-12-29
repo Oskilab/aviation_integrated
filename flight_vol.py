@@ -106,6 +106,19 @@ def load_volume():
 
     return pd.concat(pds, axis=0, ignore_index=True, sort=True)
 
+def conv_str_num_to_num(vol_data):
+    """
+    Helper function that converts a column with strings and commas into integers
+    @param: vol_data (pd.DataFrame) volume dataframe
+    @returns: vol_data (pd.DataFrame) with float columns
+    """
+    for col in vol_data.columns:
+        just_num = vol_data[col].str.contains(r'^[0-9,]+$').astype(bool)
+        if vol_data[just_num].shape[0] == vol_data.shape[0]:
+            vol_data.loc[just_num, col] = vol_data.loc[just_num, col].str.replace(',', '')
+            vol_data[col] = vol_data[col].astype(float)
+    return vol_data
+
 def conv_to_int(str_input):
     """
     Helper function to convert string to int, nan when error occurs.
@@ -220,6 +233,7 @@ def main():
     Adds volume data to incident/accident dataset
     """
     vol_data = load_volume()
+    vol_data = conv_str_num_to_num(vol_data)
     vol_data = process_dates(vol_data)
 
     id_to_idx = generate_facility_date_dict(vol_data)
