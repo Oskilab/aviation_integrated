@@ -6,7 +6,6 @@ import os
 import re
 from itertools import product
 
-from IPython import embed
 from tqdm import tqdm
 
 import pandas as pd
@@ -22,6 +21,11 @@ ifr_vfr_dict = {
 all_cols = ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']
 faa_ntsb_cols = ['ntsb_incidents', 'ntsb_accidents', 'faa_incidents']
 num_months = [1, 3, 6, 12]
+
+# converts full column name to shortened column name
+ABREV_COL_DICT = {'narrative': 'narr', 'synopsis': 'syn', \
+        'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
+        'callback': 'call'}
 
 if not os.path.exists('results/final/'):
     os.makedirs('results/final/')
@@ -180,7 +184,7 @@ def reorder_cols(final_df):
 
     # deal with identical columns
     common_cols = ['num_total_idents', 'num_multiple_reports', \
-            'num_observations', 'num_callbacks']
+            'num_observations', 'num_callbacks', 'avg_code_per_obs']
     common_col_dict = {}
     only_once = []
     for col in common_cols:
@@ -324,7 +328,62 @@ def compute_tracon_indices(unq_info, trcn_code):
         same_tracon = list(range(start, end))
     return same_tracon
 
-def generate_final_row(row, searched, d2v_tm, month, year, month_idx, n_month, cumulative_index):
+def calculate_all_liwc_grps(final_df, abrev_col, time_w):
+    """
+    Figures out what the LIWC groups are.
+    @param: final_df (pd.DataFrame) the final dataframe constructed at the end of the pipeline
+    @param: abrev_col (str) the abbreviated version of the column we are analyzing
+        (e.g., narr, syn, narrsyn, etc.)
+    @param: time_w (int) the time window string ('1m', '3m', 'atime', etc.) generated from
+        generate_month_range_str function
+    @returns: list of the liwc groups (ipron, body, etc.)
+    """
+    liwc_cat = set()
+    for col in final_df.columns:
+        liwc_pat = re.compile(r'liwc_([A-Za-z]{1,})_' + f'{abrev_col}_ct_{time_w}')
+        pat_res = liwc_pat.match(col)
+        if pat_res is not None:
+            liwc_cat.add(pat_res.group(1))
+    liwc_cat = list(liwc_cat)
+    return liwc_cat
+
+def calculate_props(searched, col):
+    """
+    Aggregate searched so that the final columns have the correct values (add the counts together
+    or perform some calculations for proportions/averages).
+    @param: searched (pd.Series) dataframe consisting of rows within a certain time period for
+        a particular tracon (e.g, May/June/July 2011 for SFO for a 3 month time window from
+        August 2011).
+    @param: col (str) column we are analyzing
+    @param: aggregated version of searched
+    """
+    abrev_col = ABREV_COL_DICT[col]
+
+    # caclculate total number of codes
+    total_codes = (searched['avg_code_per_obs'] * searched['num_observations']).sum()
+
+    cumulative = searched.sum()
+    num_observation = cumulative['num_observations']
+
+    # calculate avg_wc
+    if num_observation != 0:
+        cumulative[f'{abrev_col}_avg_wc'] = cumulative[f'{abrev_col}_wc'] / num_observation
+        cumulative['avg_code_per_obs'] = total_codes / num_observation
+    else:
+        cumulative[f'{abrev_col}_avg_wc'] = np.nan
+        cumulative['avg_code_per_obs'] = np.nan
+
+    # calculate wc_props
+    total_wc = cumulative[f'{abrev_col}_wc_all']
+    if total_wc != 0:
+        cumulative[f'{abrev_col}_wc_prop'] = cumulative[f'{abrev_col}_wc'] / total_wc
+    else:
+        cumulative[f'{abrev_col}_wc_prop'] = np.nan
+
+    return cumulative
+
+def generate_final_row(row, searched, d2v_tm, month, year, month_idx, n_month, cumulative_index, \
+        col):
     """
     This combines one row of the ASRS dataset with one row of the d2v dataset for a given
     month_range and month/year. We ensure that if the month/year is smaller than n_months away
@@ -343,6 +402,7 @@ def generate_final_row(row, searched, d2v_tm, month, year, month_idx, n_month, c
     @param: month_idx (int), which month_range we are utilizing. This indexes into num_months
     @param: n_month (int), the month_range value
     @param: cumulative_index (pd.Index) is an iterable of what columns exist in ASRS/LIWC df
+    @param: col (str) column we are analyzing
     @returns: pd.Series with all relevant columns that are linked with the month/year combination
         from row (of inc_acc_ds/airport_month_events). Includes average d2v numbers, LIWC numbers,
         all other calculations made in the whole pipeline from d2v/liwc/abbrev/etc.
@@ -369,7 +429,8 @@ def generate_final_row(row, searched, d2v_tm, month, year, month_idx, n_month, c
             searched.shape[0] == 0:
         concat_series.append(pd.Series(index=cumulative_index, dtype='float64'))
     else:
-        cumulative = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis=1).sum()
+        searched = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis=1)
+        cumulative = calculate_props(searched, col)
         concat_series.append(cumulative)
 
     # select d2v rows, if it's the beginning, remove those rows
@@ -380,7 +441,7 @@ def generate_final_row(row, searched, d2v_tm, month, year, month_idx, n_month, c
     return pd.concat(concat_series, axis=0)
 
 def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon_month_dict, \
-        unique_info, month_idx, n_month):
+        unique_info, month_idx, n_month, col):
     """
     This generates the final dataset (combining elements from ASRS/LIWC/D2V/ABBREV) for
     a given month_range.
@@ -393,6 +454,7 @@ def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon
         This is generated from generate_cached_dicts (also see combined_col_month_range)
     @param: month_idx (int), which month_range we are utilizing. This indexes into num_months
     @param: n_month (int), the month_range value
+    @param: col (str), column we are analyzing
     @returns: final_dataset (pd.DataFrame) with elements from all datasets
     """
     final_rows, asrs_covered_ind = [], set()
@@ -414,7 +476,7 @@ def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon
 
             # row, month, year, month_idx, n_month, cumulative_index, searched
             final_rows.append(generate_final_row(row, searched, d2v_tm, month, year, \
-                    month_idx, n_month, cumulative_index))
+                    month_idx, n_month, cumulative_index, col))
         else:
             ctr += 1
     print('ctr', ctr)
@@ -445,6 +507,18 @@ def postprocess_final_ds(res, month_range_str, ame_cols):
     res.set_index(['tracon_key', 'year', 'month'], inplace=True)
     return res
 
+def generate_month_range_str(month_range):
+    """
+    This converts a float/int representing the month range to the string version
+    (e.g., 1 -> '1m', 3 -> '3m', np.inf -> 'atime')
+    @param: month_range (numeric) the month range we are analyzing
+    @returns: string version of month_range
+    """
+    month_range_str = f'{month_range}m'
+    if month_range == np.inf:
+        month_range_str = 'atime'
+    return month_range_str
+
 def combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, airport_month_events, col):
     """
     Given a column and a month_range, we combine the doc2vec, liwc, asrs, and airport_month_events
@@ -462,9 +536,7 @@ def combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, airport_
     ame_cols = list(airport_month_events.columns)
 
     # helper info
-    month_range_str = f'{n_month}m'
-    if n_month == np.inf:
-        month_range_str = 'atime'
+    month_range_str = generate_month_range_str(n_month)
 
     # load datasets
     asrs = asrs_orig.copy()
@@ -474,9 +546,9 @@ def combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, airport_
 
     tracon_month_dict, unique_info = generate_cached_dicts(airport_month_events, \
             asrs, n_month, yr_mth_info)
-    
+ 
     res = generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, \
-            tracon_month_dict, unique_info, month_idx, n_month)
+            tracon_month_dict, unique_info, month_idx, n_month, col)
     res = postprocess_final_ds(res, month_range_str, ame_cols)
     res.to_csv(f'results/final/{col}_{month_range_str}.csv')
     return res
@@ -492,7 +564,34 @@ def ensure_multi_index(all_res):
             all_res[idx] = all_res[idx].reset_index().set_index(['tracon_key', 'year', 'month'])
     return all_res
 
+def generate_liwc_prop_cols(final_df, col, n_month):
+    """
+    This calculates the LIWC proportion columns. For instance in the case of SFO Aug 2011,
+    liwc_body_narr_prop_1m indicates the proportion of LIWC 'body' words that the tracon
+    SFO was responsible for during July 2011 if n_month = 1 (1 month before SFO Aug 2011)
+    @param: final_df (pd.DataFrame) the final dataframe constructed at the end of the pipeline
+    @param: col (str) column we are analyzing (narrative/synopsis/etc.)
+    @param: n_month (int/float) the time window
+    """
+    mth_range_str = generate_month_range_str(n_month)
+    abrev_col = ABREV_COL_DICT[col]
+    liwc_grps = calculate_all_liwc_grps(final_df, abrev_col, mth_range_str)
+    for grp in liwc_grps:
+        start_colname = f'liwc_{grp}_{abrev_col}'
+        all_liwc_cts = final_df[f'{start_colname}_all_{mth_range_str}']
+        nonzero_liwc_cts = all_liwc_cts != 0
+
+        final_df.loc[nonzero_liwc_cts, f'{start_colname}_prop_{mth_range_str}'] = \
+                final_df[f'{start_colname}_ct_{mth_range_str}'] / all_liwc_cts
+        final_df.loc[~nonzero_liwc_cts, f'{start_colname}_prop_{mth_range_str}'] = np.nan
+
+        final_df.drop(f'{start_colname}_all_{mth_range_str}', axis=1, inplace=True)
+    return final_df
+
 def main():
+    """
+    Combines separate dataframes together
+    """
     airport_month_events = load_ame()
 
     all_res = []
@@ -505,8 +604,8 @@ def main():
         for month_idx, n_month in enumerate(num_months):
             res = combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, \
                     airport_month_events, col)
+            res = generate_liwc_prop_cols(res, col, n_month)
             all_res.append(res)
-            embed()
 
     all_res = ensure_multi_index(all_res)
     all_res = pd.concat(all_res, ignore_index=False, axis=1, copy=False)

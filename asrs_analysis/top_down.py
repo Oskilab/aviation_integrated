@@ -270,8 +270,6 @@ def analyze_wc(all_dfs, col):
         {abrev_col}_wc_all: total word count of a given time period (year/month combination)
         {abrev_col}_wc_out: word count of all tracons in a given time period outside
             the given tracon_code
-        {abrev_col}_wc_prop: the proportion of the total word count (in a given year/month)
-            that this tracon_month is reponsible for
     """
     abrev_col = abrev_col_dict[col]
     year_month_gb = all_dfs[['year', 'month', f'{abrev_col}_wc']] \
@@ -282,7 +280,6 @@ def analyze_wc(all_dfs, col):
         yr_mth_sel = (all_dfs['year'] == row['year']) & (all_dfs['month'] == row['month'])
         all_dfs.loc[yr_mth_sel, f'{abrev_col}_wc_all'] = row[f'{abrev_col}_wc']
     all_dfs[f'{abrev_col}_wc_out'] = all_dfs[f'{abrev_col}_wc_all'] - all_dfs[f'{abrev_col}_wc']
-    all_dfs[f'{abrev_col}_wc_prop'] = all_dfs[f'{abrev_col}_wc'] / all_dfs[f'{abrev_col}_wc_all']
     return all_dfs
 
 def load_ntsb_faa_codes():

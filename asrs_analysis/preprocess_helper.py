@@ -54,7 +54,9 @@ def add_duplicated_rows(row, code_ctr, ident_ctr, all_pds, dropcols):
     and the results from generate_ctrs_for_rows, and adds the duplicated rows to all_pds
     @param: row (pd.Series) from ASRS dataset
     @param: code_ctr (collections.Counter) counts the number of times each code appears
+        in the row
     @param: ident_ctr (collections.Counter) counts the number of times each ident appears
+        in the row
     @param: all_pds (list of pd.Series) final result, we add to this list
     @param: dropcols (list of str), which columns to drop when we construct the new dataframe
     """
@@ -370,6 +372,8 @@ def replace_words(sentence, replace_dict={}):
         words to new words
     @returns: np.ndarray of tokenized words in the sentence
     """
+    if isinstance(sentence, float) and pd.isna(sentence):
+        return np.array([])
     split_sentence = sentence.split()
     for idx, elem in enumerate(split_sentence):
         split_sentence[idx] = replace_dict.get(elem, elem)

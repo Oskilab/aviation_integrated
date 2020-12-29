@@ -56,7 +56,7 @@ def generate_proportions(fin_df, tqdm_desc="generate props"):
     orig_cols = list(fin_df.columns)
     for col1, col2 in fin_df.columns:
         if col1 not in ['year', 'month']:
-            fin_df[col1, col2.replace("_ct", "_prop")] = np.nan
+            fin_df[col1, col2.replace("_ct", "_all")] = np.nan
 
     ym_df = fin_df[[('year', ''), ('month', '')]].drop_duplicates()
     for _, row in tqdm(ym_df.iterrows(), total=ym_df.shape[0], desc=tqdm_desc):
@@ -67,8 +67,7 @@ def generate_proportions(fin_df, tqdm_desc="generate props"):
 
         for col1, col2 in orig_cols:
             if col1 not in ['year', 'month']:
-                fin_df.loc[sel, (col1, col2.replace("_ct", "_prop"))] = \
-                         fin_df.loc[yrmth_sel, (col1, col2)] / \
+                fin_df.loc[yrmth_sel, (col1, col2.replace("_ct", "_all"))] = \
                          fin_df_grouped.loc[(year, month), (col1, col2)]
     fin_df.drop([('year', ''), ('month', '')], axis=1, inplace=True)
     return fin_df
