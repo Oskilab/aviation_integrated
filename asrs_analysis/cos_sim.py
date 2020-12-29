@@ -292,20 +292,6 @@ def populate_comp_matrix(searched, d2v_model, field_dict, codes_info, replace_di
             num_comp[num_codes, code_idx_i] = num_comp[code_idx_i, num_codes]
             sum_comp[num_codes, code_idx_i] = sum_comp[code_idx_i, num_codes]
 
-    # deal with nontop50 x nontop50 comparisons
-    if np.any(total_range):
-        total = 0
-        for i in range(int(np.ceil(len_nontop50 / 2000))):
-            for j in range(int(np.ceil(len_nontop50 / 2000))):
-                mat1 = generate_d2v_vecs(nontop50_idx[i*500:(i+1)*500], d2v_model, \
-                        field_dict, replace_dict, use_field_dict=False)
-                mat2 = generate_d2v_vecs(nontop50_idx[j*500:(j+1)*500], d2v_model, \
-                        field_dict, replace_dict, use_field_dict=False)
-                total += np.sum(cosine_similarity(mat1, mat2))
-        total_comp = len_nontop50 ** 2 + len_nontop50
-        num_comp[num_codes, num_codes] = total_comp
-        sum_comp[num_codes, num_codes] = total + len_nontop50
-
     return num_comp, sum_comp
 
 def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, default_dict, \
@@ -351,12 +337,6 @@ def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, defa
             d2v_dict[f'trcn{col_type2}'] = comp / 2
             d2v_dict[f'trcn{col_type3}'] = code_cts[idx]
 
-        # same to other tracon
-        if trcn_comp[idx] - num_comp[idx, idx] > 0:
-            d2v_dict[f'trcn_invout{col_type1}'] = (1 + (trcn_sum[idx] - sum_comp[idx, idx]) / \
-                    (trcn_comp[idx] - num_comp[idx, idx])) / 2
-            d2v_dict[f'trcn_invout{col_type2}'] = trcn_comp[idx] - num_comp[idx, idx]
-
         # other to other tracon
         num_other = searched.shape[0] - code_cts[idx]
         comp = (all_num - 2 * trcn_comp[idx] + num_comp[idx, idx]) / 2 - num_other
@@ -371,13 +351,6 @@ def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, defa
         if comp > 0:
             d2v_dict[f'trcn_invall{col_type1}'] = (1 + (trcn_sum[idx] - code_cts[idx]) / comp) / 2
             d2v_dict[f'trcn_invall{col_type2}'] = comp
-
-        # all to all tracon
-        if all_num > 0:
-            num_div = all_num - searched.shape[0]
-            d2v_dict[f'trcn_all{col_type1}'] = (1 + (all_sum - searched.shape[0]) / num_div) / 2
-            d2v_dict[f'trcn_all{col_type2}'] = num_div
-            d2v_dict[f'trcn_all{col_type3}'] = searched.shape[0]
 
         index_id = f"{tracon} {int(year)}/{int(month)}"
         index_to_d2v[index_id] = pd.Series(d2v_dict)
@@ -445,10 +418,8 @@ def analyze_d2v(all_pds, d2v_model, replace=True, month_range_dict={}, col="", f
         col_types = [col_type1, col_type2, col_type3]
 
         output_cols = [f'trcn{col_type1}', f'trcn{col_type2}', f'trcn{col_type3}', \
-                f'trcn_invout{col_type1}', f'trcn_invout{col_type2}', \
                 f'trcn_out{col_type1}', f'trcn_out{col_type2}', f'trcn_out{col_type3}', \
-                f'trcn_invall{col_type1}', f'trcn_invall{col_type2}', \
-                f'trcn_all{col_type1}', f'trcn_all{col_type2}', f'trcn_all{col_type3}']
+                f'trcn_invall{col_type1}', f'trcn_invall{col_type2}']
         output_cols = {x: np.nan for x in output_cols}
 
         index_to_d2v = {}
