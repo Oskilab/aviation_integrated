@@ -358,10 +358,6 @@ def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, defa
     row = default_dict.copy()
     num_div = all_num - searched.shape[0]
     if num_div > 0:
-        row[f'trcn_all{col_type1}'] = (1 + (all_sum - searched.shape[0]) / num_div) / 2
-        row[f'trcn_all{col_type2}'] = num_div
-        row[f'trcn_all{col_type3}'] = searched.shape[0]
-
         row[f'trcn_out{col_type1}'] = (1 + (all_sum - searched.shape[0]) / num_div) / 2
         row[f'trcn_out{col_type2}'] = num_div
         row[f'trcn_out{col_type3}'] = searched.shape[0]
