@@ -76,15 +76,36 @@ def get_total_num_idents(asrs, other_info, unique_idents):
         tot += num_idents
     return tot
 
+def split_on_last_space(trcn_mth):
+    """
+    Splits word on the last occurence of a space. trcn_mth = f'{trcn} {year}/{month}'
+    The issue is that the trcn name might have a space in it, so we split on last occurence
+    of space
+    @param: trcn_mth (str) format '{trcn} {year}/{month}'
+    @returns: list of strs ['{trcn}', '{year}/{month}']
+    """
+    space_idx = trcn_mth.rindex(' ')
+    return [trcn_mth[:space_idx], trcn_mth[space_idx:]]
+
 def to_year(trcn_mth):
+    """
+    Converts a tracon_month string into a float by extracting the year information
+    @param: trcn_mth (str) format '{trcn} {year}/{month}'
+    @returns: year
+    """
     try:
-        return int(float(trcn_mth.split()[1].split("/")[0]))
+        return int(float(split_on_last_space(trcn_mth)[1].split("/")[0]))
     except ValueError:
         return np.nan
 
 def to_month(trcn_mth):
+    """
+    Converts a tracon_month string into a float by extracting the month information
+    @param: trcn_mth (str) format '{trcn} {year}/{month}'
+    @returns: month
+    """
     try:
-        return int(float(trcn_mth.split()[1].split("/")[1]))
+        return int(float(split_on_last_space(trcn_mth)[1].split("/")[1]))
     except ValueError:
         return np.nan
 
