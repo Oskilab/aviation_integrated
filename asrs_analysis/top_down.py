@@ -383,7 +383,7 @@ def generate_missing_df(all_dfs, unique_ntsb_faa_codes, all_combs):
             total=NUM_TIME_PERIODS * unique_ntsb_faa_codes.shape[0]):
         if (tracon, year, month) not in all_combs:
             index = f'{tracon} {year}/{month}'
-            new_output[index] = pd.Series(index=all_dfs.columns)
+            new_output[index] = pd.Series(index=all_dfs.columns, dtype=float)
     return pd.DataFrame.from_dict(new_output, orient='index')
 
 def add_missing_rows(all_dfs):
