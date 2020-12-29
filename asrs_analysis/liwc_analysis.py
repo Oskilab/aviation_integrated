@@ -185,7 +185,7 @@ def load_asrs_ds():
     @returns: all_pds (pd.DataFrame) only the top50 iata code portion of the ASRS dataset.
     """
     all_pds = preprocess_helper.load_asrs(load_saved=True)
-    all_pds = preprocess_helper.tracon_analysis(all_pds)
+    # all_pds = preprocess_helper.tracon_analysis(all_pds)
     top_50_iata = \
             set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
     all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
