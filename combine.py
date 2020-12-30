@@ -157,23 +157,19 @@ def reorder_cols(final_df):
     # aviation dicts
     aviation = ['nasa', 'faa', 'casa', 'iata', 'hand', 'hand2']
     unique = ['unq', '']
+    selection = ["", "out", "all"]
+    num_type = ["", "avg", "prop"]
 
-    aviation_cols = generate_cartesian_prod_columns([aviation, unique, text_columns, time_windows])
+    aviation_cols = generate_cartesian_prod_columns( \
+            [aviation, unique, text_columns, selection, num_type, time_windows])
     cols = cols + aviation_cols
 
     # liwc cols
     liwc = ['liwc']
     flfrm = ['', 'flfrm']
     sel = ['ct', 'prop', 'avg', 'out_ct', 'all_ct', 'out_prop', 'all_prop']
-    liwc_cat = set()
-    for col in final_df.columns:
-        for time_w in time_windows:
-            for text_col in text_columns:
-                liwc_pat = re.compile('liwc_([a-z]{1,})_' + f'{text_col}_ct_{time_w}')
-                pat_res = liwc_pat.match(col)
-                if pat_res is not None:
-                    liwc_cat.add(pat_res.group(1))
-    liwc_cat = list(liwc_cat)
+
+    liwc_cat = calculate_all_liwc_grps(final_df, ABREV_COL_DICT[all_cols[0]], time_windows[0])
     liwc_cols = generate_cartesian_prod_columns(\
             [liwc, liwc_cat, flfrm, text_columns, sel, time_windows])
     cols = cols + liwc_cols
@@ -185,17 +181,13 @@ def reorder_cols(final_df):
     # deal with identical columns
     common_cols = ['num_total_idents', 'num_multiple_reports', \
             'num_observations', 'num_callbacks', 'avg_code_per_obs']
-    common_col_dict = {}
-    only_once = []
-    for col in common_cols:
-        only_once.append(col)
-        for time_w in time_windows:
-            common_col_dict[f'{col}_{time_w}'] = col
-    for col in vol_cols:
-        common_col_dict[col + "_1m"] = col
-    cols = cols + only_once
+    other_cols = generate_cartesian_prod_columns([common_cols, selection, time_windows])
+    cols = cols + other_cols
 
-    final_df.rename(common_col_dict, axis=1, inplace=True)
+    rename_dict = {}
+    for col in vol_cols:
+        rename_dict[f"{col}_1m"] = col
+    final_df.rename(rename_dict, axis=1, inplace=True)
 
     final_df = final_df.loc[:, ~final_df.columns.duplicated()]
     return final_df.loc[:, [x for x in cols if x in final_df.columns]]
@@ -466,8 +458,6 @@ def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon
     for _, row in tqdm(airport_month_events.iterrows(), total=airport_month_events.shape[0], \
             desc=f"Combining ASRS {n_month}mon"):
         month, year = float(row['month']), float(row['year'])
-        if year == 2019 and month >= 11:
-            continue
         code = ' '.join([str(int(month)), str(int(year))])
         if code in tracon_month_dict:
             searched = tracon_month_dict[code]
@@ -508,6 +498,7 @@ def postprocess_final_ds(res, month_range_str, ame_cols):
         if fn_col in res.columns:
             res.loc[res[fn_col].isna(), fn_col] = 0
 
+    res = res.loc[~((res['year'] == 2019) & (res['month'] >= 11))]
     res = res.loc[:, ~res.columns.duplicated()]
     res.set_index(['tracon_key', 'year', 'month'], inplace=True)
     return res
@@ -663,7 +654,7 @@ def main():
         asrs_orig = combine_asrs_liwc(col)
         asrs_dict_cols = asrs_dictionary_cols(asrs_orig)
 
-        yr_mth_info = np.unique(asrs_orig[['year', 'month']].values.astype(int), axis=0, \
+        yr_mth_info = np.unique(asrs_orig[['year', 'month']].dropna().values.astype(int), axis=0, \
                 return_index=True, return_counts=True)
 
         for month_idx, n_month in enumerate(num_months):
