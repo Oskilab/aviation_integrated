@@ -10,6 +10,11 @@ fi
 
 echo ================ Analyzing Abbreviations ================
 if $test_var; then
+    python abbrev_words_analysis.py -t -summary_only
+else
+    python abbrev_words_analysis.py -summary_only
+fi
+if $test_var; then
     python abbrev_words_analysis.py -t
 else
     python abbrev_words_analysis.py

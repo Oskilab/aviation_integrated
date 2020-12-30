@@ -175,11 +175,14 @@ cd ../
     * Pos_iata_only_words: word that was only found in the iata dictionary (marked as non-abrev)
 
 **Running**:
+You may also utilize the -t flag for testing purposes
 ```
 cd asrs_analysis
+python abbrev_words_analysis.py -summary_only
 python abbrev_words_analysis.py
 cd ../
 ``` 
+The summary only tag indicates that we are just trying to summarize the breakdown of all words in each column (by pos_nwrd, pos_word, all the different categories). To do this, we don't expand the ASRS dataset by tracon (remember that the original ASRS dataset has multiple tracons per row and each row needs to be expanded by tracon_code), as doing so will cause some discrepancies (the word count for `combined != narrative + synopsis + callback`. If you don't utilize the summary_only tag, summaries of each tag as well as the overall summary csv is not generated and the only csv generated is the total_cts dataframes (see output section above).
 #### (4.b) top\_down.py
 **Purpose**: Organize ASRS dataset via tracon_month and create a counts dataframe mapping tracon_month to the number of times pos_nonwords, overall abbreviations, and (faa|casa|iata|hand|nasa) abbreviations show up.
 
