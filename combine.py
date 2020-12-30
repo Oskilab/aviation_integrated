@@ -6,6 +6,7 @@ import os
 import re
 from itertools import product
 
+from IPython import embed
 from tqdm import tqdm
 
 import pandas as pd
@@ -33,14 +34,14 @@ if not os.path.exists('results/final/'):
 def num_months_between(month1, year1, month2, year2):
     return (year2 - year1) * 12 + month2 - month1
 
-def generate_compare_npy(year1, month1, num_months=1):
+def generate_compare_npy(year1, month1, num_month_range=1):
     def inner_func(arr):
         year2, month2 = arr
         n_m = num_months_between(month2, year2, month1, year1)
-        return n_m > 0 and n_m <= num_months
+        return n_m > 0 and n_m <= num_month_range
     return inner_func
 
-def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_months=1):
+def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_month_range=1):
     func = generate_compare_npy(year1, month1, num_months)
     sel = np.apply_along_axis(func, 1, yr_mth)
 
@@ -164,7 +165,7 @@ def reorder_cols(final_df):
     # liwc cols
     liwc = ['liwc']
     flfrm = ['', 'flfrm']
-    sel = ['ct', 'prop']
+    sel = ['ct', 'prop', 'avg', 'out_ct', 'all_ct', 'out_prop', 'all_prop']
     liwc_cat = set()
     for col in final_df.columns:
         for time_w in time_windows:
@@ -302,7 +303,7 @@ def generate_cached_dicts(airport_month_events, asrs, n_month, yr_mth_info):
         code = ' '.join([str(month), str(year)])
 
         yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month), \
-                num_months=n_month)
+                num_month_range=n_month)
         tracon_month_dict[code] = asrs.iloc[yr_mth_sel_idx, :].copy()
         unique_info[code] = np.unique(tracon_month_dict[code]['tracon'].values.astype(str), \
                 return_index=True, return_counts=True)
@@ -546,7 +547,7 @@ def combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, airport_
 
     tracon_month_dict, unique_info = generate_cached_dicts(airport_month_events, \
             asrs, n_month, yr_mth_info)
- 
+
     res = generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, \
             tracon_month_dict, unique_info, month_idx, n_month, col)
     res = postprocess_final_ds(res, month_range_str, ame_cols)
@@ -578,14 +579,73 @@ def generate_liwc_prop_cols(final_df, col, n_month):
     liwc_grps = calculate_all_liwc_grps(final_df, abrev_col, mth_range_str)
     for grp in liwc_grps:
         start_colname = f'liwc_{grp}_{abrev_col}'
-        all_liwc_cts = final_df[f'{start_colname}_all_{mth_range_str}']
+        all_liwc_cts = final_df[f'{start_colname}_all_ct_{mth_range_str}']
         nonzero_liwc_cts = all_liwc_cts != 0
 
+        # average
+        final_df[f'{start_colname}_avg_{mth_range_str}'] = \
+                final_df[f'{start_colname}_ct_{mth_range_str}'] / \
+                final_df[f'num_observations_{mth_range_str}']
+
+        final_df[f'{start_colname}_all_avg_{mth_range_str}'] = \
+                final_df[f'{start_colname}_all_ct_{mth_range_str}'] / \
+                final_df[f'num_observations_all_{mth_range_str}']
+
+        final_df[f'{start_colname}_out_avg_{mth_range_str}'] = \
+                final_df[f'{start_colname}_out_ct_{mth_range_str}'] / \
+                final_df[f'num_observations_out_{mth_range_str}']
+
+        # proportions
         final_df.loc[nonzero_liwc_cts, f'{start_colname}_prop_{mth_range_str}'] = \
                 final_df[f'{start_colname}_ct_{mth_range_str}'] / all_liwc_cts
         final_df.loc[~nonzero_liwc_cts, f'{start_colname}_prop_{mth_range_str}'] = np.nan
 
-        final_df.drop(f'{start_colname}_all_{mth_range_str}', axis=1, inplace=True)
+        final_df[f'{start_colname}_out_prop_{mth_range_str}'] = \
+                final_df[f'{start_colname}_out_ct_{mth_range_str}'] / \
+                final_df[f'{start_colname}_all_ct_{mth_range_str}']
+        final_df[f'{start_colname}_all_prop_{mth_range_str}'] = \
+                final_df[f'{start_colname}_ct_{mth_range_str}'] / \
+                final_df[f'{start_colname}_all_ct_{mth_range_str}']
+    return final_df
+
+def asrs_dictionary_cols(asrs_orig):
+    """
+    Returns all columns that are dictionary counts (does not include _all, or _out permutations)
+    @param: asrs_orig (pd.DataFrame) df with ASRS and LIWC columns
+    @returns: list of columns that are dictionary counts
+    """
+    dict_cols = []
+    for col in asrs_orig.columns:
+        if 'liwc' not in col and 'avg' not in col and 'ident_ct' not in col and 'num' not in col \
+                and col not in ['tracon', 'month', 'year', 'tracon_month'] and \
+                not col.endswith("_all") and not col.endswith("_out"):
+            dict_cols.append(col)
+    return dict_cols
+
+def aggregate_asrs_cols(final_df, dict_cols, n_month):
+    """
+    Aggregates ASRS columns
+    @param: final_df (pd.DataFrame) the final dataframe constructed at the end of the pipeline
+    @param: dict_cols (list of str) list of all dictionary columns (excludes all/out permutations)
+    @param: n_month (int/float) the time window
+    """
+    mth_range_str = generate_month_range_str(n_month)
+    for col in dict_cols:
+        # average
+        final_df[f'{col}_avg_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
+                final_df[f'num_observations_{mth_range_str}']
+        final_df[f'{col}_out_avg_{mth_range_str}'] = final_df[f'{col}_out_{mth_range_str}'] / \
+                final_df[f'num_observations_out_{mth_range_str}']
+        final_df[f'{col}_all_avg_{mth_range_str}'] = final_df[f'{col}_all_{mth_range_str}'] / \
+                final_df[f'num_observations_all_{mth_range_str}']
+
+        # proportions
+        final_df[f'{col}_prop_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
+                final_df[f'{col}_all_{mth_range_str}']
+        final_df[f'{col}_out_prop_{mth_range_str}'] = final_df[f'{col}_out_{mth_range_str}'] / \
+                final_df[f'{col}_all_{mth_range_str}']
+        final_df[f'{col}_all_prop_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
+                final_df[f'{col}_all_{mth_range_str}']
     return final_df
 
 def main():
@@ -597,6 +657,7 @@ def main():
     all_res = []
     for col in all_cols:
         asrs_orig = combine_asrs_liwc(col)
+        asrs_dict_cols = asrs_dictionary_cols(asrs_orig)
 
         yr_mth_info = np.unique(asrs_orig[['year', 'month']].values.astype(int), axis=0, \
                 return_index=True, return_counts=True)
@@ -605,6 +666,8 @@ def main():
             res = combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, \
                     airport_month_events, col)
             res = generate_liwc_prop_cols(res, col, n_month)
+            res = aggregate_asrs_cols(res, asrs_dict_cols, n_month)
+            embed()
             all_res.append(res)
 
     all_res = ensure_multi_index(all_res)

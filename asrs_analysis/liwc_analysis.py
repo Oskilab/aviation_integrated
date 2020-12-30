@@ -67,8 +67,14 @@ def generate_proportions(fin_df, tqdm_desc="generate props"):
 
         for col1, col2 in orig_cols:
             if col1 not in ['year', 'month']:
-                fin_df.loc[yrmth_sel, (col1, col2.replace("_ct", "_all"))] = \
+                fin_df.loc[yrmth_sel, (col1, col2.replace("_ct", "_all_ct"))] = \
                          fin_df_grouped.loc[(year, month), (col1, col2)]
+
+    for col1, col2 in orig_cols:
+        if col1 not in ['year', 'month']:
+            fin_df.loc[:, (col1, col2.replace("_ct", "_out_ct"))] = \
+                    fin_df.loc[:, (col1, col2.replace("_ct", "_all_ct"))] -\
+                    fin_df.loc[:, (col1, col2)]
     fin_df.drop([('year', ''), ('month', '')], axis=1, inplace=True)
     return fin_df
 
@@ -185,7 +191,7 @@ def load_asrs_ds():
     @returns: all_pds (pd.DataFrame) only the top50 iata code portion of the ASRS dataset.
     """
     all_pds = preprocess_helper.load_asrs(load_saved=True)
-    # all_pds = preprocess_helper.tracon_analysis(all_pds)
+    all_pds = preprocess_helper.tracon_analysis(all_pds)
     top_50_iata = \
             set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
     all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]
