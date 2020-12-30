@@ -6,7 +6,6 @@ import os
 import re
 from itertools import product
 
-from IPython import embed
 from tqdm import tqdm
 
 import pandas as pd
@@ -425,9 +424,12 @@ def generate_final_row(row, searched, d2v_tm, month, year, month_idx, n_month, c
     else:
         concat_series.append(tr_yr_mon)
 
+    no_rows = searched.shape[0] == 0 or \
+            searched['num_observations'].isna().sum() == searched.shape[0]
+
     # select asrs rows, if it's beginning or no rows found in asrs, then add nans
     if (num_month_from_start >= 0 and num_month_from_start < n_month and n_month != np.inf) or \
-            searched.shape[0] == 0:
+            no_rows:
         concat_series.append(pd.Series(index=cumulative_index, dtype='float64'))
     else:
         searched = searched.drop(['tracon_month', 'tracon', 'year', 'month'], axis=1)
@@ -667,7 +669,6 @@ def main():
                     airport_month_events, col)
             res = generate_liwc_prop_cols(res, col, n_month)
             res = aggregate_asrs_cols(res, asrs_dict_cols, n_month)
-            embed()
             all_res.append(res)
 
     all_res = ensure_multi_index(all_res)
