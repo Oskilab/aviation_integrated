@@ -282,25 +282,31 @@ def generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col):
     all_dfs = add_dates(all_dfs)
     return all_dfs
 
-def analyze_wc(all_dfs, col):
+def analyze_wc(all_dfs):
     """
-    Calculates columns for total word counts for each tracon_month.
+    Calculates columns for total word counts for each tracon_month. TODO change name of this
+    function (not just word count anymore)
     @param: all_dfs (pd.DataFrame) maps each tracon_month to its associated word counts
-    @param: col (str) column we are analyzing
     @returns: adjusted all_dfs with added wc columns
         {abrev_col}_wc_all: total word count of a given time period (year/month combination)
         {abrev_col}_wc_out: word count of all tracons in a given time period outside
             the given tracon_code
     """
-    abrev_col = abrev_col_dict[col]
-    year_month_gb = all_dfs[['year', 'month', f'{abrev_col}_wc']] \
+    # select all columns that can be summed up (and ignore ident_ct or date columns)
+    all_cols = [col for col in all_dfs.columns if 'avg' not in col and 'ident_ct' not in col \
+            and col not in ['year', 'month']]
+
+    year_month_gb = all_dfs[['year', 'month'] + all_cols] \
             .groupby(['year', 'month']).sum().reset_index()
-    all_dfs[f'{abrev_col}_wc_all'], all_dfs[f'{abrev_col}_wc_out'] = np.nan, np.nan
 
     for _, row in year_month_gb.iterrows():
         yr_mth_sel = (all_dfs['year'] == row['year']) & (all_dfs['month'] == row['month'])
-        all_dfs.loc[yr_mth_sel, f'{abrev_col}_wc_all'] = row[f'{abrev_col}_wc']
-    all_dfs[f'{abrev_col}_wc_out'] = all_dfs[f'{abrev_col}_wc_all'] - all_dfs[f'{abrev_col}_wc']
+        for sum_col in all_cols:
+            all_dfs.loc[yr_mth_sel, f'{sum_col}_all'] = row[sum_col]
+
+    for sum_col in all_cols:
+        all_dfs[f'{sum_col}_out'] = all_dfs[f'{sum_col}_all'] - all_dfs[sum_col]
+
     return all_dfs
 
 def load_ntsb_faa_codes():
@@ -420,7 +426,7 @@ def main():
 
         # generate count dataframes
         all_dfs = generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col)
-        all_dfs = analyze_wc(all_dfs, col)
+        all_dfs = analyze_wc(all_dfs)
 
         # add rows for missing tracon_months
         all_dfs = add_missing_rows(all_dfs)
