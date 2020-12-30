@@ -466,6 +466,8 @@ def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon
     for _, row in tqdm(airport_month_events.iterrows(), total=airport_month_events.shape[0], \
             desc=f"Combining ASRS {n_month}mon"):
         month, year = float(row['month']), float(row['year'])
+        if year == 2019 and month >= 11:
+            continue
         code = ' '.join([str(int(month)), str(int(year))])
         if code in tracon_month_dict:
             searched = tracon_month_dict[code]
