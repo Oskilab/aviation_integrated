@@ -1,8 +1,8 @@
 import argparse
 
 from nltk.corpus import stopwords
-import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
+import matplotlib.pyplot as plt
 import enchant
 
 import pandas as pd
@@ -27,10 +27,12 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description='Analyze abbreviations.')
     parser.add_argument('-t', action='store_true')
+    parser.add_argument('-summary_only', action='store_true')
     args = parser.parse_args()
 
     test = args.t
-    return test
+    summary_only = args.summary_only
+    return test, summary_only
 
 def parse_city_words():
     """
@@ -76,7 +78,7 @@ def get_all_abrevs(aviation_dicts):
         all_abrevs.update(dfs[i]['acronym'])
     return all_abrevs
 
-def negatives(total_cts, summary_dict, word_categories, orig_col):
+def negatives(total_cts, summary_dict, word_categories, orig_col, summary_only):
     """
     This analyzes the words of the ASRS dataset that are not found in any
     abbreviation_dictionary. We label each word with a specific tag such as
@@ -100,6 +102,8 @@ def negatives(total_cts, summary_dict, word_categories, orig_col):
         word_categories[5] = set of all words from city names (scraped from wiki)
             see parse_city_words() for more info
     @param: orig_col (str) column that we are analyzing
+    @param: summary_only (bool) indicates whether or not we are just calculating summary
+        statistics, or just calculating word counts
     @returns: portion of total_cts that are negative words (words that don't occur
         in any aviation dictionary). Each word is given an associated tag
         as well as abrev = 0 (when it's not labelled as an abbreviation), or 1 when it is
@@ -161,10 +165,11 @@ def negatives(total_cts, summary_dict, word_categories, orig_col):
     summary_dict[SUMMARY_COLS[14]] = negs.loc[sel, 0].sum() # potential words from neg_nw
     summary_dict[SUMMARY_COLS[15]] = negs[sel].shape[0] # unique potential words from neg_nw
 
-    negs.to_csv(f'results/fn_tagged_{orig_col}.csv')
+    if not summary_only:
+        negs.to_csv(f'results/fn_tagged_{orig_col}.csv')
     return negs
 
-def positives(total_cts, summary_dict, word_categories, orig_col):
+def positives(total_cts, summary_dict, word_categories, orig_col, summary_only):
     """
     This analyzes the words of the ASRS dataset that are found in any
     abbreviation_dictionary. We label each word with a specific tag such as
@@ -188,6 +193,8 @@ def positives(total_cts, summary_dict, word_categories, orig_col):
         word_categories[5] = set of all words from city names (scraped from wiki)
             see parse_city_words() for more info
     @param: orig_col (str) column that we are analyzing
+    @param: summary_only (bool) indicates whether or not we are just calculating summary
+        statistics, or just calculating word counts
     @returns: portion of total_cts that are positive words (words that do occur
         in any aviation dictionary). Each word is given an associated tag
         as well as abrev = 0 (when it's not labelled as an abbreviation), or 1 when it is
@@ -237,7 +244,8 @@ def positives(total_cts, summary_dict, word_categories, orig_col):
     top_down_sel = (total_cts['tag'] == 'pos_handcoded_abrev') | (total_cts['tag'] == 'pos_nonword')
     summary_dict[SUMMARY_COLS[16]] = total_cts.loc[top_down_sel, 0].sum() # top down
     summary_dict[SUMMARY_COLS[17]] = total_cts[top_down_sel].shape[0] # unique top down
-    total_cts.to_csv(f'results/total_cts_tagged_{orig_col}.csv')
+    if not summary_only:
+        total_cts.to_csv(f'results/total_cts_tagged_{orig_col}.csv')
 
 def get_top_down_subset(total_cts, dictionary_names):
     """
@@ -395,7 +403,7 @@ def analyze_dictionary_words(total_cts, summary_dict, orig_col):
     dictionary_summary = pd.DataFrame.from_dict(dictionary_summary, orient='index')
     dictionary_summary.to_csv(f'results/dictionary_summary_{orig_col}.csv')
 
-def analyze_column(asrs, orig_col, summary_pd, word_categories, aviation_dicts):
+def analyze_column(asrs, orig_col, summary_pd, word_categories, aviation_dicts, summary_only):
     """
     This analyzes the ASRS dataset by utilizing aviation dictionaries and word categories
     to split all known words into different categories.
@@ -418,6 +426,8 @@ def analyze_column(asrs, orig_col, summary_pd, word_categories, aviation_dicts):
             see parse_city_words() for more info
     @param: aviation_dicts (dict[abbrev_dataset_name] -> pd.DataFrame), see
         preprocess_helper.py for more information
+    @param: summary_only (bool) indicates whether or not we are just calculating summary
+        statistics, or just calculating word counts
     """
     summary_dict = {}
     # this creates a dataframe of word counts
@@ -428,36 +438,35 @@ def analyze_column(asrs, orig_col, summary_pd, word_categories, aviation_dicts):
     summary_dict[SUMMARY_COLS[1]] = total_cts[0].shape[0] # unique words
 
     # analyze words not found in aviation dictionaries
-    false_negs = negatives(total_cts, summary_dict, word_categories, orig_col)
+    false_negs = negatives(total_cts, summary_dict, word_categories, orig_col, summary_only)
 
     total_cts = process_asrs(total_cts, false_negs, aviation_dicts)
 
     # Positives (or words that are found in an abbreviation dictionary)
     # combine with full-form from dictionaries
-    positives(total_cts, summary_dict, word_categories, orig_col)
+    positives(total_cts, summary_dict, word_categories, orig_col, summary_only)
 
-    analyze_dictionary_words(total_cts, summary_dict, orig_col)
+    if summary_only:
+        analyze_dictionary_words(total_cts, summary_dict, orig_col)
+        summary_pd[orig_col] = pd.Series(summary_dict)
 
-    summary_pd[orig_col] = pd.Series(summary_dict)
+        # generate bar charts of distribution
+        generate_all_bar_charts(total_cts, orig_col)
+        # save tags
+        for tag in total_cts['tag'].unique():
+            total_cts.loc[total_cts['tag'] == tag, :].to_csv(f"results/{orig_col}_{tag}.csv")
 
-    # generate bar charts of distribution
-    generate_all_bar_charts(total_cts, orig_col)
-
-    # save tags
-    for tag in total_cts['tag'].unique():
-        total_cts.loc[total_cts['tag'] == tag, :].to_csv(f"results/{orig_col}_{tag}.csv")
-
-    # save summary dataframe of tags (only abbreviations)
-    generate_abrev_tag_summary(total_cts, orig_col)
+        # save summary dataframe of tags (only abbreviations)
+        generate_abrev_tag_summary(total_cts, orig_col)
 
 def main():
-    test = parse_args()
+    test, summary_only = parse_args()
     cities = parse_city_words()
 
-    # load datasets
-    aviation_dicts = load_dictionaries() # see preprocess helper
+    # load datasets (see preprocess_helper)
+    aviation_dicts = load_dictionaries()
     all_abrevs = get_all_abrevs(aviation_dicts)
-    asrs = load_asrs(load_saved=False, test=test) # see preprocess helper
+    asrs = load_asrs(load_saved=False, test=test, expand_trcn=(not summary_only))
 
     # python dictionaries
     eng_stopwords = set(stopwords.words('english'))
@@ -473,11 +482,12 @@ def main():
     # analyze each column
     summary_pd = {}
     for orig_col in COLS:
-        analyze_column(asrs, orig_col, summary_pd, word_categories, aviation_dicts)
+        analyze_column(asrs, orig_col, summary_pd, word_categories, aviation_dicts, summary_only)
 
-    # save summary of all columns and corresponding dictionaries/abbreviations/etc.
-    all_summary = pd.DataFrame.from_dict(summary_pd, orient='index')
-    all_summary.to_csv('results/all_summary.csv')
+    if summary_only:
+        # save summary of all columns and corresponding dictionaries/abbreviations/etc.
+        all_summary = pd.DataFrame.from_dict(summary_pd, orient='index')
+        all_summary.to_csv('results/all_summary.csv')
 
 if __name__ == "__main__":
     main()

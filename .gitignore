@@ -3,6 +3,7 @@
 **/*.pyc
 **/outputs/**
 **/results/**
+results/final_dataset.csv
 
 
 /* Large files */

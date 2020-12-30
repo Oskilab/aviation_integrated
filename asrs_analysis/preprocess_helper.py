@@ -113,7 +113,7 @@ def tracon_analysis(asrs):
     return pd.DataFrame.from_records(all_pds)
 
 def load_asrs(path=f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load_saved=False, \
-        test=False):
+        test=False, expand_trcn=True):
     """
     This loads the ASRS dataset and pre-processes it. This is only done once in the pipeline,
     and all other times, we simply load a saved version.
@@ -179,7 +179,8 @@ def load_asrs(path=f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load_s
             asrs['synopsis']
     asrs['combined'] = asrs['combined'].str.lower()
 
-    asrs = tracon_analysis(asrs)
+    if expand_trcn:
+        asrs = tracon_analysis(asrs)
     asrs = generate_date_cols(asrs)
     asrs = asrs.loc[(asrs['year'] >= 1988) & (asrs['year'] < 2020)]
     asrs.to_csv(f'{start_path}/results/asrs_extracted_processed.csv')

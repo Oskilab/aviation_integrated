@@ -169,16 +169,20 @@ cd ../
     * Neg_nonalpha_abrev:  a neg_nonword with non-alphanumeric characters (these are not marked as abbreviations)
     * Pos_stopword: word that was found in an aviation dictionary and is an English stopword
     * Pos_nonword: word that was found in an aviation dictionary and is not an English word
+        * `pos_nwrd_ct = FAA + CASA + IATA + NASA + handcoded - english_words`
     * Pos_word: word that was found in an aviation dictionary and is an English word
     * Pos_handcoded_abrev: description in previous slide
     * Pos_iata_only_words: word that was only found in the iata dictionary (marked as non-abrev)
 
 **Running**:
+You may also utilize the -t flag for testing purposes
 ```
 cd asrs_analysis
+python abbrev_words_analysis.py -summary_only
 python abbrev_words_analysis.py
 cd ../
 ``` 
+The summary only tag indicates that we are just trying to summarize the breakdown of all words in each column (by pos_nwrd, pos_word, all the different categories). To do this, we don't expand the ASRS dataset by tracon (remember that the original ASRS dataset has multiple tracons per row and each row needs to be expanded by tracon_code), as doing so will cause some discrepancies (the word count for `combined != narrative + synopsis + callback`. If you don't utilize the summary_only tag, summaries of each tag as well as the overall summary csv is not generated and the only csv generated is the total_cts dataframes (see output section above).
 #### (4.b) top\_down.py
 **Purpose**: Organize ASRS dataset via tracon_month and create a counts dataframe mapping tracon_month to the number of times pos_nonwords, overall abbreviations, and (faa|casa|iata|hand|nasa) abbreviations show up.
 
@@ -193,10 +197,13 @@ cd ../
         * `tracon_month` (this is the index)
         * `pos_nwrd_{ct|unique_ct}`: the number of times the tag `pos_nonword` shows up in the tracon_month
             * If unique, the number of unique `pos_nonword`s that show up in the tracon_month
+            * `pos_nwrd_ct = FAA + CASA + IATA + NASA + handcoded - english_words`: note that if a word occurs in multiple dictionaries (FAA and CASA for example), it is not counted twice.
         * `abrvs_no_ovrcnt_{ct|unique_ct}`: the number of times all abbreviations show up in the tracon_month.
-        * `{casa|faa|iata|nasa|hand}_{ct|unique_ct}`: the number of times abbreviations show up for each given dictionary
-        * `{narr|syn|narrsyn|all}\_{avg_wc|wc}`: number of words in given tracon_month for that particular column (narrative/synopsis/etc). avg\_wc refers to average word count per observation within the tracon\_month
-        * `{narr|syn|narrsyn|all}\_wc_{out|all|prop}`: if the selection is out, then it's the word count outside the given tracon but within that year/month time period. If the selection is all, then it's the word count for all tracons within the year/month time period. If the selection is prop, then the field is the proportion of word counts within the given tracon\_month compared to all word counts within the same time period
+            * `abrvs_no_ovrcnt = pos_nwrd + pos_handcoded_abrev + neg_nonword` (any word that is counted as an abbreviation), as the name implies we do not overcount if a word occurs in multiple categories
+        * `{casa|faa|iata|nasa|hand}_{ct|unq_ct}{|_all|_out}`: the number of times abbreviations show up for each given dictionary
+            * The `{|_all|_out}` selection determines whether or not we are calculating counts within a specific tracon (for a year/month time period), for all tracons within a year/month time period, or for all tracons outside our specific tracon within a year/month time period (respectively).
+        * `{narr|syn|narrsyn|all}_{avg_wc|wc}`: number of words in given tracon_month for that particular column (narrative/synopsis/etc). avg\_wc refers to average word count per observation within the tracon\_month
+        * `{narr|syn|narrsyn|all}_wc_{out|all|prop}`: if the selection is out, then it's the word count outside the given tracon but within that year/month time period. If the selection is all, then it's the word count for all tracons within the year/month time period. If the selection is prop, then the field is the proportion of word counts within the given tracon\_month compared to all word counts within the same time period
 
 **Running**:
 ```
