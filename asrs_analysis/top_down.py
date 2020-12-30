@@ -28,7 +28,7 @@ abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
         'callback': 'call'}
 
-def convert_ctr_to_series(counter, abrev_set=set(), abrev_col='narr'):
+def convert_ctr_to_series(counter, abrev_set=None, abrev_col='narr'):
     """
     This converts a collections.Counter object to a pd.Series object. The collections.Counter
     counts how many times each word showed up within a tracon_month, and the abrev_set is a
@@ -41,6 +41,8 @@ def convert_ctr_to_series(counter, abrev_set=set(), abrev_col='narr'):
     @return: pd.Series with a ct of the number of times any word within the set showed up,
         and a unique_ct (the number of unique words within the set that showed up)
     """
+    if abrev_set is None:
+        abrev_set = set()
     ctr, unique_ct = 0, 0
     for word, num in counter.items():
         if word in abrev_set:
@@ -125,7 +127,7 @@ def load_asrs_ds():
     @returns: all_pds (pd.DataFrame) ASRS dataset
     """
     all_pds = preprocess_helper.load_asrs(load_saved=True)
-    # all_pds = preprocess_helper.tracon_analysis(all_pds)
+    all_pds = preprocess_helper.tracon_analysis(all_pds)
     return all_pds
 
 def get_ident_ct_cols(all_pds):
@@ -164,14 +166,12 @@ def select_subset(all_pds, tracon_month_df, i):
     asrs = all_pds.loc[selector, :].copy()
     return asrs
 
-def create_index_dicts(all_pds, tracon_month_df, col):
+def create_index_dicts(all_pds, col):
     """
     Given a column we are analyzing, we create two dictionaries that maps tracon_months
     to any relevant information we need to track (number of reports, observations, etc.)
     We also keep track of all the words that occur within the tracon_month.
     @param: all_pds (pd.DataFrame) ASRS dataset
-    @param: tracon_month_df (pd.DataFrame) of all unique tracon_code, year, month
-        combinations in ASRS dataset (see main.py for how it's generated)
     @param: col (str) column we are analyzing
     @returns: index_to_counter (dict[tracon_month_str] -> collections.Counter)
         the counter object keeps track of what words occurred within tracon_month and
@@ -185,38 +185,55 @@ def create_index_dicts(all_pds, tracon_month_df, col):
     index_to_counter = {} # dictionary from tracon_month -> collections.Counter obj
     index_to_other_info = {}
 
-    for i in tqdm(range(tracon_month_df.shape[0]), desc=col):
-        # this creates the string id of the given tracon_month
-        index_id = tracon_month_df.loc[i, sel[0]] + \
-                f' {tracon_month_df.loc[i, sel[1]]}/{tracon_month_df.loc[i, sel[2]]}'
+    all_pds.sort_values(['year', 'month', 'tracon_code'], inplace=True)
 
-        # select the rows of the all_pds dataframe with the given tracon_month
-        asrs = select_subset(all_pds, tracon_month_df, i)
+    yr_mth = all_pds[['year', 'month']].copy()
 
-        asrs[f'{col}_wc'] = asrs.apply(lambda x: \
-                preprocess_helper.convert_to_words(x, col).shape[0], axis=1)
+    yr_mth, yr_mth_idx, yr_mth_ct = np.unique(yr_mth.values.astype(int), \
+            axis=0, return_index=True, return_counts=True)
 
-        # fill in additional columns
-        other_info = {}
-        any_col_has_multiple_reports = get_selector_for_mult_reports(asrs, other_info)
+    for yr_mth_elem_idx, (year, mth) in tqdm(enumerate(yr_mth), desc=col, total=len(yr_mth)):
+        start = yr_mth_idx[yr_mth_elem_idx]
+        end = start + yr_mth_ct[yr_mth_elem_idx]
 
-        other_info['avg_code_per_obs'] = asrs['num_code_per_obs'].mean()
-        other_info['num_total_idents'] = get_total_num_idents(asrs, other_info, unique_idents)
-        other_info['num_multiple_reports'] = any_col_has_multiple_reports.sum()
-        other_info['num_observations'] = asrs.shape[0]
-        other_info['num_callbacks'] = asrs['contains_callback'].sum()
-        other_info[f'{abrev_col}_wc'] = asrs[f'{col}_wc'].sum()
-        other_info[f'{abrev_col}_avg_wc'] = asrs[f'{col}_wc'].mean()
+        asrs_yr_mth = all_pds.iloc[start:end]
 
-        # this is redundant (occurs in preprocess_helper.py)
-        asrs[col] = asrs[col].str.lower()
+        trcn_codes, trcn_codes_idx, trcn_codes_ct = \
+                np.unique(asrs_yr_mth['tracon_code'].astype(str), return_index=True, \
+                return_counts=True)
 
-        # this creates a collections.Counter object that counts the number of times each word
-        # showed up within the given tracon_month, then saved to index_to_counter
-        split = asrs.apply(lambda x: preprocess_helper.convert_to_words(x, col), axis=1)
+        for trcn_code_elem_idx, trcn_code in enumerate(trcn_codes):
+            trcn_start = trcn_codes_idx[trcn_code_elem_idx]
+            trcn_end = trcn_start + trcn_codes_ct[trcn_code_elem_idx]
+            asrs = asrs_yr_mth.iloc[trcn_start:trcn_end].copy()
 
-        index_to_counter[index_id] = Counter(np.hstack(split.values).flatten())
-        index_to_other_info[index_id] = pd.Series(other_info)
+            # this creates the string id of the given tracon_month
+            index_id = f'{trcn_code} {year}/{mth}'
+
+            asrs[f'{col}_wc'] = asrs.apply(lambda x: \
+                    preprocess_helper.convert_to_words(x, col).shape[0], axis=1)
+
+            # fill in additional columns
+            other_info = {}
+            any_col_has_multiple_reports = get_selector_for_mult_reports(asrs, other_info)
+
+            other_info['avg_code_per_obs'] = asrs['num_code_per_obs'].mean()
+            other_info['num_total_idents'] = get_total_num_idents(asrs, other_info, unique_idents)
+            other_info['num_multiple_reports'] = any_col_has_multiple_reports.sum()
+            other_info['num_observations'] = asrs.shape[0]
+            other_info['num_callbacks'] = asrs['contains_callback'].sum()
+            other_info[f'{abrev_col}_wc'] = asrs[f'{col}_wc'].sum()
+            other_info[f'{abrev_col}_avg_wc'] = asrs[f'{col}_wc'].mean()
+
+            # this is redundant (occurs in preprocess_helper.py)
+            asrs[col] = asrs[col].str.lower()
+
+            # this creates a collections.Counter object that counts the number of times each word
+            # showed up within the given tracon_month, then saved to index_to_counter
+            split = asrs.apply(lambda x: preprocess_helper.convert_to_words(x, col), axis=1)
+
+            index_to_counter[index_id] = Counter(np.hstack(split.values).flatten())
+            index_to_other_info[index_id] = pd.Series(other_info)
     return index_to_counter, index_to_other_info
 
 def generate_tracon_month_ctr(col, abrev_set, key_ctr, prefix):
@@ -414,15 +431,11 @@ def add_missing_rows(all_dfs):
 def main():
     all_pds = load_asrs_ds()
 
-    # this groups by tracon_code, year and month, so each row is a unique tracon_month
-    tracon_month_df = all_pds[sel].groupby(sel).count().reset_index()
-
     for col in cols:
         total_cts = load_total_cts(col)
 
         # create dictionaries mapping from tracon_month to cts
-        index_to_counter, index_to_other_info = create_index_dicts(all_pds, \
-                tracon_month_df, col)
+        index_to_counter, index_to_other_info = create_index_dicts(all_pds, col)
 
         # generate count dataframes
         all_dfs = generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col)
