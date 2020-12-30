@@ -380,7 +380,7 @@ def replace_words(sentence, replace_dict={}):
         split_sentence[idx] = replace_dict.get(elem, elem)
     return np.array(split_sentence)
 
-def create_counter(text_df, col='narrative'):
+def create_counter(text_df, col='narrative', drop_dups=True):
     """
     This creates a dataframe that maps each unique word to the number of times
     it appears in the full dataset.
@@ -391,7 +391,10 @@ def create_counter(text_df, col='narrative'):
     """
     tqdm.pandas(desc=col)
 
-    dropped = text_df.drop_duplicates(col)
+    if drop_dups:
+        dropped = text_df.drop_duplicates(col)
+    else:
+        dropped = text_df
     split = dropped.progress_apply(lambda x: np.array(x[col].split()), axis=1)
 
     res = Counter(generator_split(split))

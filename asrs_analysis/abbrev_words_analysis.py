@@ -431,7 +431,7 @@ def analyze_column(asrs, orig_col, summary_pd, word_categories, aviation_dicts, 
     """
     summary_dict = {}
     # this creates a dataframe of word counts
-    total_cts = create_counter(asrs, orig_col)
+    total_cts = create_counter(asrs, orig_col, not summary_only)
     total_cts.sort_values(by=0, ascending=False, inplace=True)
 
     summary_dict[SUMMARY_COLS[0]] = total_cts[0].sum() # total words
