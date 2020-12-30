@@ -336,6 +336,8 @@ def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, defa
             d2v_dict[f'trcn{col_type1}'] = (1 + (sum_comp[idx, idx] / 2 - code_cts[idx]) / comp) / 2
             d2v_dict[f'trcn{col_type2}'] = comp
             d2v_dict[f'trcn{col_type3}'] = code_cts[idx]
+        elif code_cts[idx] == 1:
+            d2v_dict[f'trcn{col_type3}'] = code_cts[idx]
 
         # other to other tracon
         num_other = searched.shape[0] - code_cts[idx]
@@ -344,6 +346,8 @@ def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, defa
             tot = (all_sum - 2 * trcn_sum[idx] + sum_comp[idx, idx]) / 2 - num_other
             d2v_dict[f'trcn_out{col_type1}'] = (1 + tot / comp) / 2
             d2v_dict[f'trcn_out{col_type2}'] = comp
+            d2v_dict[f'trcn_out{col_type3}'] = searched.shape[0] - code_cts[idx]
+        elif searched.shape[0] - code_cts[idx] == 1:
             d2v_dict[f'trcn_out{col_type3}'] = searched.shape[0] - code_cts[idx]
 
         # same to all tracon
