@@ -197,8 +197,8 @@ cd ../
             * `pos_nwrd_ct = FAA + CASA + IATA + NASA + handcoded - english_words`: note that if a word occurs in multiple dictionaries (FAA and CASA for example), it is not counted twice.
         * `abrvs_no_ovrcnt_{ct|unique_ct}`: the number of times all abbreviations show up in the tracon_month.
             * `abrvs_no_ovrcnt = pos_nwrd + pos_handcoded_abrev + neg_nonword` (any word that is counted as an abbreviation), as the name implies we do not overcount if a word occurs in multiple categories
-        * `{casa|faa|iata|nasa|hand}\_{ct|unq\_ct}{|\_all|\_out}`: the number of times abbreviations show up for each given dictionary
-            * The {|\_all|\_out} selection determines whether or not we are calculating counts within a specific tracon (for a year/month time period), for all tracons within a year/month time period, or for all tracons outside our specific tracon within a year/month time period (respectively).
+        * `{casa|faa|iata|nasa|hand}_{ct|unq_ct}{|_all|_out}`: the number of times abbreviations show up for each given dictionary
+            * The `{|\_all|\_out}` selection determines whether or not we are calculating counts within a specific tracon (for a year/month time period), for all tracons within a year/month time period, or for all tracons outside our specific tracon within a year/month time period (respectively).
         * `{narr|syn|narrsyn|all}\_{avg_wc|wc}`: number of words in given tracon_month for that particular column (narrative/synopsis/etc). avg\_wc refers to average word count per observation within the tracon\_month
         * `{narr|syn|narrsyn|all}\_wc_{out|all|prop}`: if the selection is out, then it's the word count outside the given tracon but within that year/month time period. If the selection is all, then it's the word count for all tracons within the year/month time period. If the selection is prop, then the field is the proportion of word counts within the given tracon\_month compared to all word counts within the same time period
 
