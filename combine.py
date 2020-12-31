@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 
 from helper import get_tracon, get_year, get_month, fill_with_empty
+from asrs_analysis import preprocess_helper
 
 ifr_vfr_dict = {
     'itinerant': 'itnr',
@@ -29,28 +30,6 @@ ABREV_COL_DICT = {'narrative': 'narr', 'synopsis': 'syn', \
 
 if not os.path.exists('results/final/'):
     os.makedirs('results/final/')
-
-def num_months_between(month1, year1, month2, year2):
-    return (year2 - year1) * 12 + month2 - month1
-
-def generate_compare_npy(year1, month1, num_month_range=1):
-    def inner_func(arr):
-        year2, month2 = arr
-        n_m = num_months_between(month2, year2, month1, year1)
-        return n_m > 0 and n_m <= num_month_range
-    return inner_func
-
-def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_month_range=1):
-    func = generate_compare_npy(year1, month1, num_months)
-    sel = np.apply_along_axis(func, 1, yr_mth)
-
-    idx_of_sel = sel.nonzero()[0]
-    if len(idx_of_sel) == 0:
-        return []
-    start = yr_mth_idx[idx_of_sel[0]]
-    end = yr_mth_idx[idx_of_sel[-1]] + yr_mth_cts[idx_of_sel[-1]]
-    return list(range(start, end))
-
 
 def rename_cols_dict(output_df, month_range_str, skip_cols=[]):
     """
@@ -293,8 +272,8 @@ def generate_cached_dicts(airport_month_events, asrs, n_month, yr_mth_info):
         month, year = int(date_row['month']), int(date_row['year'])
         code = ' '.join([str(month), str(year)])
 
-        yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month), \
-                num_month_range=n_month)
+        yr_mth_sel_idx = preprocess_helper.year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, \
+                int(year), int(month), num_months=n_month, lag=1)
         tracon_month_dict[code] = asrs.iloc[yr_mth_sel_idx, :].copy()
         unique_info[code] = np.unique(tracon_month_dict[code]['tracon'].values.astype(str), \
                 return_index=True, return_counts=True)
@@ -412,7 +391,7 @@ def generate_final_row(row, searched, d2v_tm, month, year, month_idx, n_month, c
 
     tr_yr_mon = row[['airport_code', 'year', 'month']]
 
-    num_month_from_start = num_months_between(1, 1988, month, year)
+    num_month_from_start = preprocess_helper.num_months_between(1, 1988, month, year)
     concat_series = []
 
     # after all month_ranges are generated, we concatenate the dataframes together
@@ -460,28 +439,25 @@ def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon
     @returns: final_dataset (pd.DataFrame) with elements from all datasets
     """
     final_rows, asrs_covered_ind = [], set()
-    ctr = 0
     cumulative_index = asrs.columns.drop(['tracon_month', 'tracon', 'year', 'month'])
     for _, row in tqdm(airport_month_events.iterrows(), total=airport_month_events.shape[0], \
             desc=f"Combining ASRS {n_month}mon"):
         month, year = float(row['month']), float(row['year'])
         code = ' '.join([str(int(month)), str(int(year))])
-        if code in tracon_month_dict:
-            searched = tracon_month_dict[code]
+        assert code in tracon_month_dict
 
-            trcn_code = row['airport_code']
-            # get indices of dataframe corresponding to our tracon month
-            same_tracon = compute_tracon_indices(unique_info[code], trcn_code)
-            searched = searched.iloc[same_tracon, :]
+        searched = tracon_month_dict[code]
 
-            asrs_covered_ind.update(searched.index)
+        trcn_code = row['airport_code']
+        # get indices of dataframe corresponding to our tracon month
+        same_tracon = compute_tracon_indices(unique_info[code], trcn_code)
+        searched = searched.iloc[same_tracon, :]
 
-            # row, month, year, month_idx, n_month, cumulative_index, searched
-            final_rows.append(generate_final_row(row, searched, d2v_tm, month, year, \
-                    month_idx, n_month, cumulative_index, col))
-        else:
-            ctr += 1
-    print('ctr', ctr)
+        asrs_covered_ind.update(searched.index)
+
+        # row, month, year, month_idx, n_month, cumulative_index, searched
+        final_rows.append(generate_final_row(row, searched, d2v_tm, month, year, \
+                month_idx, n_month, cumulative_index, col))
     print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
     print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
     # generate dataset and perform some preprocessing

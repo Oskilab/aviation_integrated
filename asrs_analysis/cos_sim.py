@@ -20,72 +20,6 @@ args = parser.parse_args()
 test = args.t
 NUM_TIME_PERIODS = (2020 - 1988) * 12
 
-def num_months_between(month1, year1, month2, year2):
-    """
-    Calculates the number of months between month1/year1 and month2/year2
-    @param: month1 (int) 1-12
-    @param: year1 (int)
-    @param: month2 (int) 1-12
-    @param: year2 (int)
-    @returns: numbero f months between the two dates.
-    """
-    return (year2 - year1) * 12 + month2 - month1
-
-def generate_compare(month1, year1, num_months=1): # accident date
-    """
-    This returns a function to be applied row-wise on a dataframe. The inner function, when
-    applied, returns a pandas series that finds which rows are within a month range. If
-    the FAA/NTSB incident tracon_month occurs in January 2011, then the inner function finds
-    all the rows that are within num_months months before January 2011.
-    @param: month1 (int) 1-12
-    @param: year1 (int)
-    @param: num_months (int)
-    @returns: function(row) that returns a pandas Series selecting the correct rows
-    """
-    def inner_func(row):
-        month2, year2 = row['month'], row['year']
-        n_m = num_months_between(month1, year1, month2, year2)
-        return (n_m > 0) and (n_m <= num_months)
-    return inner_func
-
-def generate_compare_npy(year1, month1, num_months=1):
-    """
-    This generates a function that returns True if the given date is between 1 and
-    num_months before year1/month1
-    @param: year1 (int)
-    @param: month1 (int) 1-12
-    @param: num_months (int) the window of months
-    """
-    def inner_func(arr):
-        year2, month2 = arr
-        n_m = num_months_between(month2, year2, month1, year1)
-        return (n_m > 0) and (n_m <= num_months)
-    return inner_func
-
-def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_months=1):
-    """
-    This calculates the indices within a given dataframe that are within num_months of
-    year1/month1.
-    @param: yr_mth (np.ndarray) with shape (n, 2) yr_mth[idx, 0] = year, yr_mth[idx, 1] = month
-    @param: yr_mth_idx (np.ndarray) yr_mth_idx[idx] indicates the first index in which
-        the year/month combination given by yr_mth[idx] occurs within the dataframe
-    @param: yr_mth_cts (np.ndarray) yr_mth_cts[idx] indicates the number of times the
-        year/month combination given by yr_mth[idx] occurs within the dataframe
-    @param: year1 (int) the year in question
-    @param: month1 (int) the month in question
-    @param: num_months (int) the month window
-    @returns: list of indices within the month_range defined by the parameters
-    """
-    func = generate_compare_npy(year1, month1, num_months)
-    sel = np.apply_along_axis(func, 1, yr_mth)
-
-    idx_of_sel = sel.nonzero()[0]
-    if len(idx_of_sel) == 0:
-        return []
-    start = yr_mth_idx[idx_of_sel[0]]
-    end = yr_mth_idx[idx_of_sel[-1]] + yr_mth_cts[idx_of_sel[-1]]
-    return list(range(start, end))
-
 abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
         'callback': 'call'}
@@ -425,8 +359,8 @@ def analyze_d2v(all_pds, d2v_model, replace=True, month_range_dict={}, col="", f
         for month, year in tqdm(product(range(1, 13), range(1988, 2020)), total=NUM_TIME_PERIODS, \
                 desc=f'{col} {mr_str}'):
             # select only the rows within the month range
-            yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, \
-                    int(year), int(month), num_months=month_range)
+            yr_mth_sel_idx = preprocess_helper.year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, \
+                    int(year), int(month), num_months=month_range, lag=1)
 
             # drop duplicates of given column
             searched = all_pds.iloc[yr_mth_sel_idx, :].copy().drop_duplicates(col)
@@ -625,7 +559,7 @@ def main():
     # load files
     all_pds = preprocess_helper.load_asrs(load_saved=True)
     all_pds = all_pds.reset_index().drop('index', axis=1)
-    all_pds = preprocess_helper.tracon_analysis(all_pds)
+    # all_pds = preprocess_helper.tracon_analysis(all_pds)
 
     # top 50/missing row analysis
     tracon_month_unique = all_pds[['tracon_code', 'month', 'year']].drop_duplicates()
