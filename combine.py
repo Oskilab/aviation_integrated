@@ -355,22 +355,29 @@ def calculate_props(searched, col):
     total_codes = (searched['avg_code_per_obs'] * searched['num_observations']).sum()
 
     cumulative = searched.sum()
-    num_observation = cumulative['num_observations']
-
-    # calculate avg_wc
-    if num_observation != 0:
-        cumulative[f'{abrev_col}_avg_wc'] = cumulative[f'{abrev_col}_wc'] / num_observation
-        cumulative['avg_code_per_obs'] = total_codes / num_observation
-    else:
-        cumulative[f'{abrev_col}_avg_wc'] = np.nan
-        cumulative['avg_code_per_obs'] = np.nan
-
-    # calculate wc_props
     total_wc = cumulative[f'{abrev_col}_wc_all']
-    if total_wc != 0:
-        cumulative[f'{abrev_col}_wc_prop'] = cumulative[f'{abrev_col}_wc'] / total_wc
-    else:
-        cumulative[f'{abrev_col}_wc_prop'] = np.nan
+    for idx, scope in enumerate(['', '_out', '_all']):
+        num_observation = cumulative[f'num_observations{scope}']
+
+        # average
+        if num_observation != 0:
+            cumulative[f'{abrev_col}_avg_wc{scope}'] = cumulative[f'{abrev_col}_wc{scope}'] / \
+                    num_observation
+            if scope == '':
+                cumulative['avg_code_per_obs'] = total_codes / num_observation
+        else:
+            cumulative[f'{abrev_col}_avg_wc{scope}'] = np.nan
+            if scope == '':
+                cumulative['avg_code_per_obs'] = np.nan
+
+        # proportion
+        if total_wc != 0 and scope != '_all':
+            cumulative[f'{abrev_col}_wc_prop{scope}'] = cumulative[f'{abrev_col}_wc{scope}'] / \
+                    total_wc
+        elif total_wc != 0 and scope == '_all':
+            cumulative[f'{abrev_col}_wc_prop{scope}'] = cumulative[f'{abrev_col}_wc'] / total_wc
+        else:
+            cumulative[f'{abrev_col}_wc_prop{scope}'] = np.nan
 
     return cumulative
 
@@ -572,10 +579,10 @@ def generate_liwc_prop_cols(final_df, col, n_month):
     mth_range_str = generate_month_range_str(n_month)
     abrev_col = ABREV_COL_DICT[col]
     liwc_grps = calculate_all_liwc_grps(final_df, abrev_col, mth_range_str)
+
+    all_wc = final_df[f'{abrev_col}_wc_all_{mth_range_str}']
     for grp in liwc_grps:
         start_colname = f'liwc_{grp}_{abrev_col}'
-        all_liwc_cts = final_df[f'{start_colname}_all_ct_{mth_range_str}']
-        nonzero_liwc_cts = all_liwc_cts != 0
 
         # average
         final_df[f'{start_colname}_avg_{mth_range_str}'] = \
@@ -591,16 +598,15 @@ def generate_liwc_prop_cols(final_df, col, n_month):
                 final_df[f'num_observations_out_{mth_range_str}']
 
         # proportions
-        final_df.loc[nonzero_liwc_cts, f'{start_colname}_prop_{mth_range_str}'] = \
-                final_df[f'{start_colname}_ct_{mth_range_str}'] / all_liwc_cts
-        final_df.loc[~nonzero_liwc_cts, f'{start_colname}_prop_{mth_range_str}'] = np.nan
+        final_df[f'{start_colname}_prop_{mth_range_str}'] = \
+                final_df[f'{start_colname}_ct_{mth_range_str}'] / all_wc
 
         final_df[f'{start_colname}_out_prop_{mth_range_str}'] = \
                 final_df[f'{start_colname}_out_ct_{mth_range_str}'] / \
-                final_df[f'{start_colname}_all_ct_{mth_range_str}']
+                all_wc
         final_df[f'{start_colname}_all_prop_{mth_range_str}'] = \
                 final_df[f'{start_colname}_ct_{mth_range_str}'] / \
-                final_df[f'{start_colname}_all_ct_{mth_range_str}']
+                all_wc
     return final_df
 
 def asrs_dictionary_cols(asrs_orig):

@@ -127,7 +127,7 @@ def load_asrs_ds():
     @returns: all_pds (pd.DataFrame) ASRS dataset
     """
     all_pds = preprocess_helper.load_asrs(load_saved=True)
-    all_pds = preprocess_helper.tracon_analysis(all_pds)
+    # all_pds = preprocess_helper.tracon_analysis(all_pds)
     return all_pds
 
 def get_ident_ct_cols(all_pds):

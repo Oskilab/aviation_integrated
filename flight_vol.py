@@ -185,7 +185,7 @@ def generate_final_row(row, code, date_str, id_to_idx, vol_data):
     if code in id_to_idx and date_str in id_to_idx[code]:
         final_row = pd.concat([row, vol_data.loc[id_to_idx[code][date_str], :]], axis=0)
     else:
-        final_row = pd.concat([row, pd.Series(index=vol_data.columns)], axis=0)
+        final_row = pd.concat([row, pd.Series(index=vol_data.columns, dtype=float)], axis=0)
     return final_row[~final_row.index.duplicated(keep='first')]
 
 def generate_combined_dfs(res, vol_data, id_to_idx):
