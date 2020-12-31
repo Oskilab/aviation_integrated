@@ -625,7 +625,7 @@ def main():
     # load files
     all_pds = preprocess_helper.load_asrs(load_saved=True)
     all_pds = all_pds.reset_index().drop('index', axis=1)
-    all_pds = preprocess_helper.tracon_analysis(all_pds)
+    # all_pds = preprocess_helper.tracon_analysis(all_pds)
 
     # top 50/missing row analysis
     tracon_month_unique = all_pds[['tracon_code', 'month', 'year']].drop_duplicates()

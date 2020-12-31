@@ -127,7 +127,7 @@ def load_asrs_ds():
     @returns: all_pds (pd.DataFrame) ASRS dataset
     """
     all_pds = preprocess_helper.load_asrs(load_saved=True)
-    all_pds = preprocess_helper.tracon_analysis(all_pds)
+    # all_pds = preprocess_helper.tracon_analysis(all_pds)
     return all_pds
 
 def get_ident_ct_cols(all_pds):
@@ -203,6 +203,8 @@ def create_index_dicts(all_pds, col):
                 return_counts=True)
 
         for trcn_code_elem_idx, trcn_code in enumerate(trcn_codes):
+            if pd.isna(trcn_code):
+                continue
             trcn_start = trcn_codes_idx[trcn_code_elem_idx]
             trcn_end = trcn_start + trcn_codes_ct[trcn_code_elem_idx]
             asrs = asrs_yr_mth.iloc[trcn_start:trcn_end].copy()
