@@ -580,7 +580,9 @@ def generate_liwc_prop_cols(final_df, col, n_month):
     abrev_col = ABREV_COL_DICT[col]
     liwc_grps = calculate_all_liwc_grps(final_df, abrev_col, mth_range_str)
 
-    all_wc = final_df[f'{abrev_col}_wc_all_{mth_range_str}']
+    wcs = [final_df[f'{abrev_col}_wc_{mth_range_str}'], \
+            final_df[f'{abrev_col}_wc_out_{mth_range_str}'], \
+            final_df[f'{abrev_col}_wc_all_{mth_range_str}']]
     for grp in liwc_grps:
         start_colname = f'liwc_{grp}_{abrev_col}'
 
@@ -599,14 +601,14 @@ def generate_liwc_prop_cols(final_df, col, n_month):
 
         # proportions
         final_df[f'{start_colname}_prop_{mth_range_str}'] = \
-                final_df[f'{start_colname}_ct_{mth_range_str}'] / all_wc
+                final_df[f'{start_colname}_ct_{mth_range_str}'] / wcs[0]
 
         final_df[f'{start_colname}_out_prop_{mth_range_str}'] = \
                 final_df[f'{start_colname}_out_ct_{mth_range_str}'] / \
-                all_wc
+                wcs[1]
         final_df[f'{start_colname}_all_prop_{mth_range_str}'] = \
                 final_df[f'{start_colname}_ct_{mth_range_str}'] / \
-                all_wc
+                wcs[2]
     return final_df
 
 def asrs_dictionary_cols(asrs_orig):
