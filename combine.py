@@ -23,10 +23,6 @@ all_cols = ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
 faa_ntsb_cols = ['ntsb_incidents', 'ntsb_accidents', 'faa_incidents']
 num_months = [1, 3, 6, 12]
 
-# converts full column name to shortened column name
-ABREV_COL_DICT = {'narrative': 'narr', 'synopsis': 'syn', \
-        'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
-        'callback': 'call'}
 
 if not os.path.exists('results/final/'):
     os.makedirs('results/final/')
@@ -148,7 +144,8 @@ def reorder_cols(final_df):
     flfrm = ['', 'flfrm']
     sel = ['ct', 'prop', 'avg', 'out_ct', 'all_ct', 'out_prop', 'all_prop']
 
-    liwc_cat = calculate_all_liwc_grps(final_df, ABREV_COL_DICT[all_cols[0]], time_windows[0])
+    liwc_cat = calculate_all_liwc_grps(final_df, preprocess_helper.ABREV_COL_DICT[all_cols[0]], \
+            time_windows[0])
     liwc_cols = generate_cartesian_prod_columns(\
             [liwc, liwc_cat, flfrm, text_columns, sel, time_windows])
     cols = cols + liwc_cols
@@ -328,7 +325,7 @@ def calculate_props(searched, col):
     @param: col (str) column we are analyzing
     @param: aggregated version of searched
     """
-    abrev_col = ABREV_COL_DICT[col]
+    abrev_col = preprocess_helper.ABREV_COL_DICT[col]
 
     # caclculate total number of codes
     total_codes = (searched['avg_code_per_obs'] * searched['num_observations']).sum()
@@ -553,7 +550,7 @@ def generate_liwc_prop_cols(final_df, col, n_month):
     @param: n_month (int/float) the time window
     """
     mth_range_str = generate_month_range_str(n_month)
-    abrev_col = ABREV_COL_DICT[col]
+    abrev_col = preprocess_helper.ABREV_COL_DICT[col]
     liwc_grps = calculate_all_liwc_grps(final_df, abrev_col, mth_range_str)
 
     wcs = [final_df[f'{abrev_col}_wc_{mth_range_str}'], \

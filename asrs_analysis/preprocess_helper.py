@@ -18,6 +18,11 @@ if start_path_split[-1] != 'asrs_analysis':
     else:
         raise ValueError(f"wrong cwd {start_path}")
 
+# converts long column name to shortened version
+ABREV_COL_DICT = {'narrative': 'narr', 'synopsis': 'syn', \
+        'narrative_synopsis_combined': 'nrsy', 'combined': 'all', \
+        'callback': 'call'}
+
 def num_months_between(month1, year1, month2, year2):
     """
     Calculates the number of months between month1/year1 and month2/year2

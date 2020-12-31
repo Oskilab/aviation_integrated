@@ -20,10 +20,6 @@ args = parser.parse_args()
 test = args.t
 NUM_TIME_PERIODS = (2020 - 1988) * 12
 
-abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
-        'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
-        'callback': 'call'}
-
 def generate_d2v_vecs(pd_df, d2v_model, field_dict, replace_dict, use_field_dict=True):
     """
     This generates a matrix representing the d2v vectors for all the documents within
@@ -337,7 +333,7 @@ def analyze_d2v(all_pds, d2v_model, replace=True, month_range_dict={}, col="", f
     yr_mth, yr_mth_idx, yr_mth_ct = np.unique(all_pds.values[:, [1, 2]].astype(int), \
             axis=0, return_index=True, return_counts=True)
 
-    abrev_col = abrev_col_dict[col]
+    abrev_col = preprocess_helper.ABREV_COL_DICT[col]
     for month_range in [1, 3, 6, 12]:
         mr_str = f'{month_range}m'
         if month_range == np.inf:
