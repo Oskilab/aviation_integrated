@@ -96,14 +96,30 @@ def generate_ct_df(key_ctr, group_to_set, col, flfrm=False):
     all_df = {}
     for liwc_group in group_to_set:
         if not flfrm:
-            columns = [f"liwc_{liwc_group}_{abrev_col}_ct"]
+            columns = [f"lwc_{liwc_group}_{abrev_col}_ct"]
         else:
-            columns = [f"liwc_{liwc_group}_flfrm_{abrev_col}_ct"]
+            columns = [f"lwc_{liwc_group}_ff_{abrev_col}_ct"]
 
         all_df[liwc_group] = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, \
                 group_to_set[liwc_group]) for key, ctr in key_ctr}, orient='index',\
                 columns=columns)
     return pd.concat(all_df, axis=1)
+
+def rename_column_dict(fin_df):
+    """
+    This generateas a dictionary that renames the final output columns in order to shorten
+    the length of each column name.
+    @param: fin_df (pd.DataFrame) dataframe at the end of the pipeline
+    @returns: rename_dict (dict[orig_col] = new_col)
+    """
+    rename_dict = {}
+    replace_dict = {'Focus': 'fcs', 'Affiliation': 'affil', 'Interrog': 'inter'}
+    for col1, col2 in fin_df.columns:
+        new_col = col2
+        for key in replace_dict:
+            new_col = new_col.replace(key, replace_dict[key])
+        rename_dict[col1, col2] = new_col
+    return rename_dict
 
 def analyze_tracon_period(df_grouped, asrs_df, group_to_set, col):
     """
@@ -152,6 +168,9 @@ def analyze_tracon_period(df_grouped, asrs_df, group_to_set, col):
     fin = top_down.add_missing_rows(fin)
     fin.drop(['year', 'month'], axis=1, inplace=True)
 
+    rename_dict = rename_column_dict(fin)
+    fin.rename(rename_dict, axis=1, inplace=True)
+
     fin.to_csv(f'results/liwc_tracon_month_{col}_counts.csv')
 
 def process_liwc_groups():
@@ -191,7 +210,7 @@ def load_asrs_ds():
     @returns: all_pds (pd.DataFrame) only the top50 iata code portion of the ASRS dataset.
     """
     all_pds = preprocess_helper.load_asrs(load_saved=True)
-    all_pds = preprocess_helper.tracon_analysis(all_pds)
+    # all_pds = preprocess_helper.tracon_analysis(all_pds)
     top_50_iata = \
             set(pd.read_excel('../datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
     all_pds = all_pds.loc[all_pds['tracon_code'].apply(lambda x: x in top_50_iata)]

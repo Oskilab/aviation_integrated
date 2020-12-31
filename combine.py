@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 
 from helper import get_tracon, get_year, get_month, fill_with_empty
+from asrs_analysis import preprocess_helper
 
 ifr_vfr_dict = {
     'itinerant': 'itnr',
@@ -22,35 +23,9 @@ all_cols = ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis
 faa_ntsb_cols = ['ntsb_incidents', 'ntsb_accidents', 'faa_incidents']
 num_months = [1, 3, 6, 12]
 
-# converts full column name to shortened column name
-ABREV_COL_DICT = {'narrative': 'narr', 'synopsis': 'syn', \
-        'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
-        'callback': 'call'}
 
 if not os.path.exists('results/final/'):
     os.makedirs('results/final/')
-
-def num_months_between(month1, year1, month2, year2):
-    return (year2 - year1) * 12 + month2 - month1
-
-def generate_compare_npy(year1, month1, num_month_range=1):
-    def inner_func(arr):
-        year2, month2 = arr
-        n_m = num_months_between(month2, year2, month1, year1)
-        return n_m > 0 and n_m <= num_month_range
-    return inner_func
-
-def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_month_range=1):
-    func = generate_compare_npy(year1, month1, num_months)
-    sel = np.apply_along_axis(func, 1, yr_mth)
-
-    idx_of_sel = sel.nonzero()[0]
-    if len(idx_of_sel) == 0:
-        return []
-    start = yr_mth_idx[idx_of_sel[0]]
-    end = yr_mth_idx[idx_of_sel[-1]] + yr_mth_cts[idx_of_sel[-1]]
-    return list(range(start, end))
-
 
 def rename_cols_dict(output_df, month_range_str, skip_cols=[]):
     """
@@ -141,7 +116,7 @@ def reorder_cols(final_df):
     # wc columns
     text_columns = ['narr', 'syn', 'call', 'narrsyn', 'all']
     word_c = ['avg_wc', 'wc']
-    sel = ['', 'all', 'out', 'prop']
+    sel = ['', 'all', 'out', 'pr']
     time_windows = ['1m', '3m', '6m', '12m', 'atime']
     wc_cols = generate_cartesian_prod_columns([text_columns, word_c, sel, time_windows])
     cols = cols + wc_cols
@@ -158,7 +133,7 @@ def reorder_cols(final_df):
     aviation = ['nasa', 'faa', 'casa', 'iata', 'hand', 'hand2']
     unique = ['unq', '']
     selection = ["", "out", "all"]
-    num_type = ["", "avg", "prop"]
+    num_type = ["", "avg", "pr"]
 
     aviation_cols = generate_cartesian_prod_columns( \
             [aviation, unique, text_columns, selection, num_type, time_windows])
@@ -167,9 +142,10 @@ def reorder_cols(final_df):
     # liwc cols
     liwc = ['liwc']
     flfrm = ['', 'flfrm']
-    sel = ['ct', 'prop', 'avg', 'out_ct', 'all_ct', 'out_prop', 'all_prop']
+    sel = ['ct', 'pr', 'avg', 'out_ct', 'all_ct', 'out_pr', 'all_pr']
 
-    liwc_cat = calculate_all_liwc_grps(final_df, ABREV_COL_DICT[all_cols[0]], time_windows[0])
+    liwc_cat = calculate_all_liwc_grps(final_df, preprocess_helper.ABREV_COL_DICT[all_cols[0]], \
+            time_windows[0])
     liwc_cols = generate_cartesian_prod_columns(\
             [liwc, liwc_cat, flfrm, text_columns, sel, time_windows])
     cols = cols + liwc_cols
@@ -293,8 +269,8 @@ def generate_cached_dicts(airport_month_events, asrs, n_month, yr_mth_info):
         month, year = int(date_row['month']), int(date_row['year'])
         code = ' '.join([str(month), str(year)])
 
-        yr_mth_sel_idx = year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, int(year), int(month), \
-                num_month_range=n_month)
+        yr_mth_sel_idx = preprocess_helper.year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, \
+                int(year), int(month), num_months=n_month, lag=1)
         tracon_month_dict[code] = asrs.iloc[yr_mth_sel_idx, :].copy()
         unique_info[code] = np.unique(tracon_month_dict[code]['tracon'].values.astype(str), \
                 return_index=True, return_counts=True)
@@ -349,28 +325,35 @@ def calculate_props(searched, col):
     @param: col (str) column we are analyzing
     @param: aggregated version of searched
     """
-    abrev_col = ABREV_COL_DICT[col]
+    abrev_col = preprocess_helper.ABREV_COL_DICT[col]
 
     # caclculate total number of codes
     total_codes = (searched['avg_code_per_obs'] * searched['num_observations']).sum()
 
     cumulative = searched.sum()
-    num_observation = cumulative['num_observations']
-
-    # calculate avg_wc
-    if num_observation != 0:
-        cumulative[f'{abrev_col}_avg_wc'] = cumulative[f'{abrev_col}_wc'] / num_observation
-        cumulative['avg_code_per_obs'] = total_codes / num_observation
-    else:
-        cumulative[f'{abrev_col}_avg_wc'] = np.nan
-        cumulative['avg_code_per_obs'] = np.nan
-
-    # calculate wc_props
     total_wc = cumulative[f'{abrev_col}_wc_all']
-    if total_wc != 0:
-        cumulative[f'{abrev_col}_wc_prop'] = cumulative[f'{abrev_col}_wc'] / total_wc
-    else:
-        cumulative[f'{abrev_col}_wc_prop'] = np.nan
+    for idx, scope in enumerate(['', '_out', '_all']):
+        num_observation = cumulative[f'num_observations{scope}']
+
+        # average
+        if num_observation != 0:
+            cumulative[f'{abrev_col}_avg_wc{scope}'] = cumulative[f'{abrev_col}_wc{scope}'] / \
+                    num_observation
+            if scope == '':
+                cumulative['avg_code_per_obs'] = total_codes / num_observation
+        else:
+            cumulative[f'{abrev_col}_avg_wc{scope}'] = np.nan
+            if scope == '':
+                cumulative['avg_code_per_obs'] = np.nan
+
+        # proportion
+        if total_wc != 0 and scope != '_all':
+            cumulative[f'{abrev_col}_wc_pr{scope}'] = cumulative[f'{abrev_col}_wc{scope}'] / \
+                    total_wc
+        elif total_wc != 0 and scope == '_all':
+            cumulative[f'{abrev_col}_wc_pr{scope}'] = cumulative[f'{abrev_col}_wc'] / total_wc
+        else:
+            cumulative[f'{abrev_col}_wc_pr{scope}'] = np.nan
 
     return cumulative
 
@@ -405,7 +388,7 @@ def generate_final_row(row, searched, d2v_tm, month, year, month_idx, n_month, c
 
     tr_yr_mon = row[['airport_code', 'year', 'month']]
 
-    num_month_from_start = num_months_between(1, 1988, month, year)
+    num_month_from_start = preprocess_helper.num_months_between(1, 1988, month, year)
     concat_series = []
 
     # after all month_ranges are generated, we concatenate the dataframes together
@@ -453,28 +436,25 @@ def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon
     @returns: final_dataset (pd.DataFrame) with elements from all datasets
     """
     final_rows, asrs_covered_ind = [], set()
-    ctr = 0
     cumulative_index = asrs.columns.drop(['tracon_month', 'tracon', 'year', 'month'])
     for _, row in tqdm(airport_month_events.iterrows(), total=airport_month_events.shape[0], \
             desc=f"Combining ASRS {n_month}mon"):
         month, year = float(row['month']), float(row['year'])
         code = ' '.join([str(int(month)), str(int(year))])
-        if code in tracon_month_dict:
-            searched = tracon_month_dict[code]
+        assert code in tracon_month_dict
 
-            trcn_code = row['airport_code']
-            # get indices of dataframe corresponding to our tracon month
-            same_tracon = compute_tracon_indices(unique_info[code], trcn_code)
-            searched = searched.iloc[same_tracon, :]
+        searched = tracon_month_dict[code]
 
-            asrs_covered_ind.update(searched.index)
+        trcn_code = row['airport_code']
+        # get indices of dataframe corresponding to our tracon month
+        same_tracon = compute_tracon_indices(unique_info[code], trcn_code)
+        searched = searched.iloc[same_tracon, :]
 
-            # row, month, year, month_idx, n_month, cumulative_index, searched
-            final_rows.append(generate_final_row(row, searched, d2v_tm, month, year, \
-                    month_idx, n_month, cumulative_index, col))
-        else:
-            ctr += 1
-    print('ctr', ctr)
+        asrs_covered_ind.update(searched.index)
+
+        # row, month, year, month_idx, n_month, cumulative_index, searched
+        final_rows.append(generate_final_row(row, searched, d2v_tm, month, year, \
+                month_idx, n_month, cumulative_index, col))
     print('% ASRS covered', len(asrs_covered_ind) / asrs.shape[0])
     print('% incident covered', len(asrs_covered_ind) / airport_month_events.shape[0])
     # generate dataset and perform some preprocessing
@@ -570,12 +550,14 @@ def generate_liwc_prop_cols(final_df, col, n_month):
     @param: n_month (int/float) the time window
     """
     mth_range_str = generate_month_range_str(n_month)
-    abrev_col = ABREV_COL_DICT[col]
+    abrev_col = preprocess_helper.ABREV_COL_DICT[col]
     liwc_grps = calculate_all_liwc_grps(final_df, abrev_col, mth_range_str)
+
+    wcs = [final_df[f'{abrev_col}_wc_{mth_range_str}'], \
+            final_df[f'{abrev_col}_wc_out_{mth_range_str}'], \
+            final_df[f'{abrev_col}_wc_all_{mth_range_str}']]
     for grp in liwc_grps:
         start_colname = f'liwc_{grp}_{abrev_col}'
-        all_liwc_cts = final_df[f'{start_colname}_all_ct_{mth_range_str}']
-        nonzero_liwc_cts = all_liwc_cts != 0
 
         # average
         final_df[f'{start_colname}_avg_{mth_range_str}'] = \
@@ -591,16 +573,15 @@ def generate_liwc_prop_cols(final_df, col, n_month):
                 final_df[f'num_observations_out_{mth_range_str}']
 
         # proportions
-        final_df.loc[nonzero_liwc_cts, f'{start_colname}_prop_{mth_range_str}'] = \
-                final_df[f'{start_colname}_ct_{mth_range_str}'] / all_liwc_cts
-        final_df.loc[~nonzero_liwc_cts, f'{start_colname}_prop_{mth_range_str}'] = np.nan
+        final_df[f'{start_colname}_pr_{mth_range_str}'] = \
+                final_df[f'{start_colname}_ct_{mth_range_str}'] / wcs[0]
 
-        final_df[f'{start_colname}_out_prop_{mth_range_str}'] = \
+        final_df[f'{start_colname}_out_pr_{mth_range_str}'] = \
                 final_df[f'{start_colname}_out_ct_{mth_range_str}'] / \
-                final_df[f'{start_colname}_all_ct_{mth_range_str}']
-        final_df[f'{start_colname}_all_prop_{mth_range_str}'] = \
+                wcs[1]
+        final_df[f'{start_colname}_all_pr_{mth_range_str}'] = \
                 final_df[f'{start_colname}_ct_{mth_range_str}'] / \
-                final_df[f'{start_colname}_all_ct_{mth_range_str}']
+                wcs[2]
     return final_df
 
 def asrs_dictionary_cols(asrs_orig):
@@ -635,11 +616,11 @@ def aggregate_asrs_cols(final_df, dict_cols, n_month):
                 final_df[f'num_observations_all_{mth_range_str}']
 
         # proportions
-        final_df[f'{col}_prop_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
+        final_df[f'{col}_pr_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
                 final_df[f'{col}_all_{mth_range_str}']
-        final_df[f'{col}_out_prop_{mth_range_str}'] = final_df[f'{col}_out_{mth_range_str}'] / \
+        final_df[f'{col}_out_pr_{mth_range_str}'] = final_df[f'{col}_out_{mth_range_str}'] / \
                 final_df[f'{col}_all_{mth_range_str}']
-        final_df[f'{col}_all_prop_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
+        final_df[f'{col}_all_pr_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
                 final_df[f'{col}_all_{mth_range_str}']
     return final_df
 

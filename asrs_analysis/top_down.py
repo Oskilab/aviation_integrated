@@ -23,11 +23,6 @@ sel = ['tracon_code', 'year', 'month']
 # columns of interest
 cols = ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']
 
-# converts full column name to shortened column name
-abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
-        'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
-        'callback': 'call'}
-
 def convert_ctr_to_series(counter, abrev_set=None, abrev_col='narr'):
     """
     This converts a collections.Counter object to a pd.Series object. The collections.Counter
@@ -179,7 +174,8 @@ def create_index_dicts(all_pds, col):
     @returns index_to_other_info (dict[tracon_month_str] -> dict[col_name] -> val)
         keeps track of any other relevant information regarding tracon month
     """
-    abrev_col = abrev_col_dict[col]
+    # converts full column name to shortened column name
+    abrev_col = preprocess_helper.ABREV_COL_DICT[col]
     unique_idents = get_ident_ct_cols(all_pds)
 
     index_to_counter = {} # dictionary from tracon_month -> collections.Counter obj
@@ -251,7 +247,8 @@ def generate_tracon_month_ctr(col, abrev_set, key_ctr, prefix):
     @returns: pd.DataFrame of each tracon_month and the corresponding counts
         e.g, SFO 08/2011 -> 5 occurences of words from abrev_set
     """
-    abrev_col = abrev_col_dict[col]
+    # converts full column name to shortened column name
+    abrev_col = preprocess_helper.ABREV_COL_DICT[col]
     pos_nonword_df = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, abrev_set, abrev_col) \
             for key, ctr in key_ctr}, orient='index')
     pos_nonword_df = pos_nonword_df.add_prefix(prefix)
