@@ -116,7 +116,7 @@ def reorder_cols(final_df):
     # wc columns
     text_columns = ['narr', 'syn', 'call', 'narrsyn', 'all']
     word_c = ['avg_wc', 'wc']
-    sel = ['', 'all', 'out', 'prop']
+    sel = ['', 'all', 'out', 'pr']
     time_windows = ['1m', '3m', '6m', '12m', 'atime']
     wc_cols = generate_cartesian_prod_columns([text_columns, word_c, sel, time_windows])
     cols = cols + wc_cols
@@ -133,7 +133,7 @@ def reorder_cols(final_df):
     aviation = ['nasa', 'faa', 'casa', 'iata', 'hand', 'hand2']
     unique = ['unq', '']
     selection = ["", "out", "all"]
-    num_type = ["", "avg", "prop"]
+    num_type = ["", "avg", "pr"]
 
     aviation_cols = generate_cartesian_prod_columns( \
             [aviation, unique, text_columns, selection, num_type, time_windows])
@@ -142,7 +142,7 @@ def reorder_cols(final_df):
     # liwc cols
     liwc = ['liwc']
     flfrm = ['', 'flfrm']
-    sel = ['ct', 'prop', 'avg', 'out_ct', 'all_ct', 'out_prop', 'all_prop']
+    sel = ['ct', 'pr', 'avg', 'out_ct', 'all_ct', 'out_pr', 'all_pr']
 
     liwc_cat = calculate_all_liwc_grps(final_df, preprocess_helper.ABREV_COL_DICT[all_cols[0]], \
             time_windows[0])
@@ -348,12 +348,12 @@ def calculate_props(searched, col):
 
         # proportion
         if total_wc != 0 and scope != '_all':
-            cumulative[f'{abrev_col}_wc_prop{scope}'] = cumulative[f'{abrev_col}_wc{scope}'] / \
+            cumulative[f'{abrev_col}_wc_pr{scope}'] = cumulative[f'{abrev_col}_wc{scope}'] / \
                     total_wc
         elif total_wc != 0 and scope == '_all':
-            cumulative[f'{abrev_col}_wc_prop{scope}'] = cumulative[f'{abrev_col}_wc'] / total_wc
+            cumulative[f'{abrev_col}_wc_pr{scope}'] = cumulative[f'{abrev_col}_wc'] / total_wc
         else:
-            cumulative[f'{abrev_col}_wc_prop{scope}'] = np.nan
+            cumulative[f'{abrev_col}_wc_pr{scope}'] = np.nan
 
     return cumulative
 
@@ -573,13 +573,13 @@ def generate_liwc_prop_cols(final_df, col, n_month):
                 final_df[f'num_observations_out_{mth_range_str}']
 
         # proportions
-        final_df[f'{start_colname}_prop_{mth_range_str}'] = \
+        final_df[f'{start_colname}_pr_{mth_range_str}'] = \
                 final_df[f'{start_colname}_ct_{mth_range_str}'] / wcs[0]
 
-        final_df[f'{start_colname}_out_prop_{mth_range_str}'] = \
+        final_df[f'{start_colname}_out_pr_{mth_range_str}'] = \
                 final_df[f'{start_colname}_out_ct_{mth_range_str}'] / \
                 wcs[1]
-        final_df[f'{start_colname}_all_prop_{mth_range_str}'] = \
+        final_df[f'{start_colname}_all_pr_{mth_range_str}'] = \
                 final_df[f'{start_colname}_ct_{mth_range_str}'] / \
                 wcs[2]
     return final_df
@@ -616,11 +616,11 @@ def aggregate_asrs_cols(final_df, dict_cols, n_month):
                 final_df[f'num_observations_all_{mth_range_str}']
 
         # proportions
-        final_df[f'{col}_prop_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
+        final_df[f'{col}_pr_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
                 final_df[f'{col}_all_{mth_range_str}']
-        final_df[f'{col}_out_prop_{mth_range_str}'] = final_df[f'{col}_out_{mth_range_str}'] / \
+        final_df[f'{col}_out_pr_{mth_range_str}'] = final_df[f'{col}_out_{mth_range_str}'] / \
                 final_df[f'{col}_all_{mth_range_str}']
-        final_df[f'{col}_all_prop_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
+        final_df[f'{col}_all_pr_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
                 final_df[f'{col}_all_{mth_range_str}']
     return final_df
 
