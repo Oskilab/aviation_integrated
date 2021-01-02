@@ -137,7 +137,7 @@ def analyze_tracon_period(df_grouped, asrs_df, group_to_set, col):
     index_to_counter_replace, index_to_counter = {}, {}
     for i in tqdm(range(df_grouped.shape[0])):
         index_id = df_grouped.loc[i, sel[0]] + \
-                f' {df_grouped.loc[i, sel[1]]}/{df_grouped.loc[i, sel[2]]}'
+                f' {int(df_grouped.loc[i, sel[1]])}/{int(df_grouped.loc[i, sel[2]])}'
 
         asrs = top_down.select_subset(asrs_df, df_grouped, i)
         asrs[col] = asrs[col].str.lower()

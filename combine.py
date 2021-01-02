@@ -175,7 +175,7 @@ def load_ame():
     with airport codes in the top50 iata.
     @returns: airport_month_events (pd.DataFrame) of inc_acc_ds.
     """
-    airport_month_events = pd.read_csv('results/combined_vol_incident.csv')
+    airport_month_events = pd.read_csv('results/combined_vol_incident.csv', index_col=0)
     top_50_iata = \
             set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
     airport_month_events['airport_code'] = airport_month_events['airport_code'].astype(str)
@@ -220,6 +220,10 @@ def combine_asrs_liwc(col):
     """
     asrs = pd.read_csv(f'asrs_analysis/results/tracon_month_{col}.csv', index_col=0)
     asrs = preprocess_asrs(asrs)
+
+    top_50_iata = \
+            set(pd.read_excel('datasets/2010 Busiest Airports wikipedia.xlsx')['IATA'].iloc[1:])
+    asrs = asrs[asrs['tracon'].apply(lambda x: x in top_50_iata)]
 
     # liwc counts
     liwc_df = pd.read_csv(f'asrs_analysis/results/liwc_tracon_month_{col}_counts.csv', \
@@ -290,10 +294,11 @@ def compute_tracon_indices(unq_info, trcn_code):
 
     idx_of_code = np.searchsorted(unq_codes, trcn_code)
     if idx_of_code >= unq_codes.shape[0] or unq_codes[idx_of_code] != trcn_code:
-        same_tracon = []
+        same_tracon = 0, 0
     else:
         start, end = unq_idx[idx_of_code], unq_idx[idx_of_code] + unq_cts[idx_of_code]
         same_tracon = list(range(start, end))
+        same_tracon = start, end
     return same_tracon
 
 def calculate_all_liwc_grps(final_df, abrev_col, time_w):
@@ -412,7 +417,8 @@ def generate_final_row(row, searched, d2v_tm, month, year, month_idx, n_month, c
         concat_series.append(cumulative)
 
     # select d2v rows, if it's the beginning, remove those rows
-    if ((num_month_from_start >= 0) and (num_month_from_start < n_month) and (n_month != np.inf)):
+    if ((num_month_from_start >= 0) and (num_month_from_start < n_month) and (n_month != np.inf)) or \
+            no_rows:
         concat_series.append(pd.Series(index=d2v_index, dtype='float64'))
     else:
         concat_series.append(d2v_tm.loc[d2v_code])
@@ -437,8 +443,9 @@ def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon
     """
     final_rows, asrs_covered_ind = [], set()
     cumulative_index = asrs.columns.drop(['tracon_month', 'tracon', 'year', 'month'])
-    for _, row in tqdm(airport_month_events.iterrows(), total=airport_month_events.shape[0], \
-            desc=f"Combining ASRS {n_month}mon"):
+    tqdm_obj = tqdm(airport_month_events.iterrows(), total=airport_month_events.shape[0], \
+            desc=f"Combining ASRS {n_month}mon")
+    for _, row in tqdm_obj:
         month, year = float(row['month']), float(row['year'])
         code = ' '.join([str(int(month)), str(int(year))])
         assert code in tracon_month_dict
@@ -448,7 +455,7 @@ def generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, tracon
         trcn_code = row['airport_code']
         # get indices of dataframe corresponding to our tracon month
         same_tracon = compute_tracon_indices(unique_info[code], trcn_code)
-        searched = searched.iloc[same_tracon, :]
+        searched = searched.iloc[same_tracon[0]:same_tracon[1], :]
 
         asrs_covered_ind.update(searched.index)
 
@@ -516,6 +523,7 @@ def combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, airport_
 
     # load datasets
     asrs = asrs_orig.copy()
+
     d2v_tm = pd.read_csv(f'./asrs_analysis/results/d2v_tracon_month_{col}_{n_month}mon.csv', \
             index_col=0)
     d2v_tm.index = d2v_tm.index.rename('tracon_month')
@@ -592,8 +600,8 @@ def asrs_dictionary_cols(asrs_orig):
     """
     dict_cols = []
     for col in asrs_orig.columns:
-        if 'liwc' not in col and 'avg' not in col and 'ident_ct' not in col and 'num' not in col \
-                and col not in ['tracon', 'month', 'year', 'tracon_month'] and \
+        if 'lwc' not in col and 'avg' not in col and 'ident_ct' not in col and 'num' not in col \
+                and col not in ['tracon', 'month', 'year', 'tracon_month', 'tracon_code'] and \
                 not col.endswith("_all") and not col.endswith("_out"):
             dict_cols.append(col)
     return dict_cols
@@ -635,7 +643,7 @@ def main():
         asrs_orig = combine_asrs_liwc(col)
         asrs_dict_cols = asrs_dictionary_cols(asrs_orig)
 
-        yr_mth_info = np.unique(asrs_orig[['year', 'month']].dropna().values.astype(int), axis=0, \
+        yr_mth_info = np.unique(asrs_orig[['year', 'month']].values.astype(int), axis=0, \
                 return_index=True, return_counts=True)
 
         for month_idx, n_month in enumerate(num_months):

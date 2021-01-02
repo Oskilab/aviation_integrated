@@ -341,9 +341,9 @@ def analyze_d2v(all_pds, d2v_model, replace=True, month_range_dict={}, col="", f
 
         # used in d2v column names
         end_str = f"{abrev_col}_{mr_str}"
-        col_type1 = f'{"_flfrm" if replace else ""}_{end_str}'
-        col_type2 = f'{"_flfrm" if replace else ""}_ct_{end_str}'
-        col_type3 = f'{"_flfrm" if replace else ""}_vol_{end_str}'
+        col_type1 = f'{"_ff" if replace else ""}_{end_str}'
+        col_type2 = f'{"_ff" if replace else ""}_ct_{end_str}'
+        col_type3 = f'{"_ff" if replace else ""}_vol_{end_str}'
         col_types = [col_type1, col_type2, col_type3]
 
         output_cols = [f'trcn{col_type1}', f'trcn{col_type2}', f'trcn{col_type3}', \
@@ -359,7 +359,7 @@ def analyze_d2v(all_pds, d2v_model, replace=True, month_range_dict={}, col="", f
                     int(year), int(month), num_months=month_range, lag=1)
 
             # drop duplicates of given column
-            searched = all_pds.iloc[yr_mth_sel_idx, :].copy().drop_duplicates(col)
+            searched = all_pds.iloc[yr_mth_sel_idx, :].copy()
 
             codes_info = generate_codes_info(searched, all_trcn_codes)
             num_comp, sum_comp = populate_comp_matrix(searched, d2v_model, \
@@ -505,7 +505,7 @@ def d2v_multiple_reports(all_pds):
 
         for r_d in [load_replace_dictionary(mult_col), {}]:
             replace = len(r_d) > 0
-            cos_col_name = f'{mult_col}_multiple_reports_cos_sim{"_flfrm" if replace else ""}'
+            cos_col_name = f'{mult_col}_multiple_reports_cos_sim{"_ff" if replace else ""}'
             all_pds[cos_col_name] = np.nan
 
             docs, doc_to_idx = generate_tagged_docs(reps, r_d)
