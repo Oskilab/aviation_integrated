@@ -193,7 +193,7 @@ def main():
             fin_df['faa_ntsb_overlap']
 
     # save results
-    fin_df.to_csv('results/airport_month_events.csv')
+    fin_df.to_csv('results/combined_vol_incident.csv')
     pickle.dump(fin_df['airport_code'].unique(), \
             open('results/unique_airport_code_ntsb_faa.pckl', 'wb'))
 
