@@ -13,9 +13,9 @@ import cos_sim
 import preprocess_helper
 import top_down
 
-abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
-        'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
-        'callback': 'call'}
+# abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
+#         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
+#         'callback': 'call'}
 
 sel = ['tracon_code', 'year', 'month']
 
@@ -91,7 +91,7 @@ def generate_ct_df(key_ctr, group_to_set, col, flfrm=False):
     @param: flfrm (bool) whether or not we replaced abbreviations with their full forms
     @returns: pd.DataFrame that maps each tracon_month to all liwc counts.
     """
-    abrev_col = abrev_col_dict[col]
+    abrev_col = preprocess_helper.ABREV_COL_DICT[col]
 
     all_df = {}
     for liwc_group in group_to_set:
@@ -132,7 +132,6 @@ def analyze_tracon_period(df_grouped, asrs_df, group_to_set, col):
         dictionary of all known english pronouns
     @param: col (str) column we are analyzing
     """
-    # abrev_col = abrev_col_dict[col]
     replace_dict = cos_sim.load_replace_dictionary(col)
 
     index_to_counter_replace, index_to_counter = {}, {}
