@@ -3,6 +3,7 @@ import pickle
 from itertools import product
 from collections import Counter
 
+from IPython import embed
 from tqdm import tqdm
 
 import pandas as pd
@@ -222,6 +223,7 @@ def create_index_dicts(all_pds, col):
             other_info['num_callbacks'] = asrs['contains_callback'].sum()
             other_info[f'{abrev_col}_wc'] = asrs[f'{col}_wc'].sum()
             other_info[f'{abrev_col}_avg_wc'] = asrs[f'{col}_wc'].mean()
+            other_info['tracon_code'] = trcn_code
 
             # this is redundant (occurs in preprocess_helper.py)
             asrs[col] = asrs[col].str.lower()
@@ -310,7 +312,14 @@ def analyze_wc(all_dfs):
     """
     # select all columns that can be summed up (and ignore ident_ct or date columns)
     all_cols = [col for col in all_dfs.columns if 'avg' not in col and 'ident_ct' not in col \
-            and col not in ['year', 'month']]
+            and col not in ['year', 'month', 'num_observations', 'tracon_code']]
+
+    num_obs = all_dfs[sel + ['num_observations']].drop_duplicates(sel)
+    num_obs = num_obs.groupby(['year', 'month']).sum().reset_index()
+    for _, row in num_obs.iterrows():
+        yr_mth_sel = (all_dfs['year'] == row['year']) & (all_dfs['month'] == row['month'])
+        all_dfs.loc[yr_mth_sel, 'num_observations_all'] = row['num_observations']
+    all_dfs['num_observations_out'] = all_dfs['num_observations_all'] - all_dfs['num_observations']
 
     year_month_gb = all_dfs[['year', 'month'] + all_cols] \
             .groupby(['year', 'month']).sum().reset_index()
