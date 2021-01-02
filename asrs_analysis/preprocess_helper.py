@@ -47,7 +47,7 @@ def generate_compare_npy(year1, month1, num_months=1, lag=1):
     def inner_func(arr):
         year2, month2 = arr
         n_m = num_months_between(month2, year2, month1, year1)
-        return (n_m >= lag) and (n_m <= num_months + lag)
+        return (n_m >= lag) and (n_m < num_months + lag)
     return inner_func
 
 def year_month_indices(yr_mth, yr_mth_idx, yr_mth_cts, year1, month1, num_months=1, lag=1):
