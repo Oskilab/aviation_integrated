@@ -1,6 +1,6 @@
 import argparse
 import pickle
-    import time
+import time
 from itertools import product
 from functools import reduce
 from collections import Counter
@@ -222,7 +222,6 @@ def create_index_dicts(all_pds, col, month_range=1, lag=0, unq_only=False):
     yr_mth, yr_mth_idx, yr_mth_ct = np.unique(yr_mth.values.astype(int), \
             axis=0, return_index=True, return_counts=True)
 
-    total_time = time.time()
     for yr_mth_elem_idx, (year, mth) in tqdm(enumerate(yr_mth), desc=col, total=len(yr_mth)):
         tmp = preprocess_helper.year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, \
                 year, mth, month_range, lag)
@@ -244,8 +243,9 @@ def create_index_dicts(all_pds, col, month_range=1, lag=0, unq_only=False):
 
             other_info = {}
             if not unq_only:
-                asrs[f'{col}_wc'] = asrs.apply(lambda x: \
-                        preprocess_helper.convert_to_words(x, col).shape[0], axis=1)
+                # asrs[f'{col}_wc'] = asrs.apply(lambda x: \
+                #         preprocess_helper.convert_to_words(x, col).shape[0], axis=1)
+                asrs[f'{col}_wc'] = asrs[col].apply(preprocess_helper.count_words, axis=1)
 
                 # fill in additional columns
                 any_col_has_multiple_reports = get_selector_for_mult_reports(asrs, other_info)
@@ -264,9 +264,10 @@ def create_index_dicts(all_pds, col, month_range=1, lag=0, unq_only=False):
 
             # this creates a collections.Counter object that counts the number of times each word
             # showed up within the given tracon_month, then saved to index_to_counter
-            split = asrs.apply(lambda x: preprocess_helper.convert_to_words(x, col), axis=1)
+            split = np.sum(asrs[col].apply(preprocess_helper.convert_to_ctr).values)
+            index_to_counter[index_id] = split
 
-            index_to_counter[index_id] = Counter(np.hstack(split.values).flatten())
+            # index_to_counter[index_id] = Counter(np.hstack(split.values).flatten())
             if not unq_only:
                 index_to_other_info[index_id] = pd.Series(other_info)
     return index_to_counter, index_to_other_info

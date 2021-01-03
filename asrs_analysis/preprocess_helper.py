@@ -379,7 +379,32 @@ def clean_word(elem):
             return match_res.group(grp_idx)
     return None
 
-def convert_to_words(row, col='narrative', replace_dict={}):
+def clean_string_and_tokenize(string_input):
+    for char in r'[!"#$&\'()*+,:;<=>?@[\\]^_`{|}~/-]\.%':
+        string_input = string_input.replace(char, ' ')
+    res = np.array(re.split(r'[( | ;|\. |\.$]', string_input))
+    res = res[res != ''].flatten()
+    return res
+
+def count_words(field, replace_dict=None):
+    if replace_dict is None:
+        replace_dict = {}
+    if isinstance(field, float) and np.isnan(field):
+        field = ''
+    word_ct = 0
+    for elem in clean_string_and_tokenize(field):
+        if elem in replace_dict:
+            word_ct += 1
+    return word_ct
+
+def convert_to_ctr(field, replace_dict=None):
+    if replace_dict is None:
+        replace_dict = {}
+    if isinstance(field, float) and np.isnan(field):
+        field = ''
+    return Counter(clean_string_and_tokenize(field))
+
+def convert_to_words(row, col='narrative', replace_dict=None):
     """
     This converts a string or pandas.Series containing a string into
     a cleaned tokenizerd version of the string (in a np.ndarray)
@@ -390,16 +415,15 @@ def convert_to_words(row, col='narrative', replace_dict={}):
         words we wish to replace with another version (abbreviation -> fullform)
     @returns: np.ndarray of cleaned tokenized version of the string in question
     """
+    if replace_dict is None:
+        replace_dict = {}
     if not isinstance(row, str):
         field = row[col]
     else:
         field = row
     if isinstance(field, float) and np.isnan(field):
         field = ''
-    for char in r'[!"#$&\'()*+,:;<=>?@[\\]^_`{|}~/-]\.%':
-        field = field.replace(char, ' ')
-    res = np.array(re.split(r'[( | ;|\. |\.$]', field))
-    res = res[res != ''].flatten()
+    res = clean_string_and_tokenize(field)
     fin = []
     for elem in res:
         if elem in replace_dict:
