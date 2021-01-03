@@ -10,11 +10,6 @@ from requests import HTTPError
 import pandas as pd
 import numpy as np
 
-from common_funcs import load_full_wiki, match_using_name_loc, search_wiki_airportname
-from selenium_funcs import search_city
-query_wiki, perform_name_matching = False, True
-backup, check_codes = False, False
-
 def load_faa_data():
     """
     This loads in the FAA incident dataset and does some preprocessing to column names
@@ -176,129 +171,6 @@ def process_faa_name(airport_name):
             process_word(fin, elem)
     return " ".join(fin)
 
-def search_wac_nearby(full, nan_airport_name_sel, load=True):
-    """
-    This generates a dataframe of nearby airports utilizing latitude/longitude coordinates
-    of the city provided in the faa incident dataset. This is accomplished by querying the
-    world-airport-codes website (wac).
-    @param: full (pd.DataFrame) faa incident dataset
-    @param: nan_airport_name_sel (pd.Series of bool type) is a row selector. If the airport
-        name is nan, then the corresponding element is True. It is used to select part
-        of the full dataframe
-    @param: load (bool) whether or not to load results from previous run
-    @returns: pd.DataFrame of nearby airports (see selenium_funcs.py:search_city for more info)
-    """
-    def save_files():
-        pickle.dump(results_dict, open('results/wac_search_results.pckl', 'wb'))
-        pickle.dump(errors, open('results/wac_search_http_errors.pckl', 'wb'))
-        pickle.dump(not_found, open('results/wac_search_nf.pckl', 'wb'))
-    geo_cols = ['eventcity', 'city_lat', 'city_lon']
-    city_lat_lon = full.loc[nan_airport_name_sel, geo_cols].drop_duplicates()
-
-    tqdm_obj = tqdm(city_lat_lon.iterrows(), total=city_lat_lon.shape[0], \
-            desc="search wac nearby found 0")
-    results_dict, errors, not_found = {}, {}, {}
-    if load:
-        results_dict = pickle.load(open('results/wac_search_results.pckl', 'rb'))
-        errors = pickle.load(open('results/wac_search_http_errors.pckl', 'rb'))
-        not_found = pickle.load(open('results/wac_search_nf.pckl', 'rb'))
-
-    for idx, row in tqdm_obj:
-        if idx in results_dict or idx in errors or idx in not_found:
-            continue
-        try:
-            res = search_city(row['eventcity'], 'United States', row['city_lat'], row['city_lon'])
-            if res is not None:
-                results_dict[idx] = res
-                tqdm_obj.set_description(f"search wac nearby found {len(results_dict)}")
-                if len(results_dict) % 25 == 0:
-                    save_files()
-            else:
-                not_found[idx] = row['eventcity']
-        except HTTPError as exception:
-            errors[idx] = exception
-
-    save_files()
-    return pd.DataFrame.from_dict(results_dict, orient='index')
-
-def wiki_name_matching(faa_inc):
-    """
-    Given the faa incident dataset (which includes airport names), create a new dataframe that
-    matches the airport names in the original df with a corresponding IATA code found in the
-    wikipedia article of list of airport codes (utilizes common_funcs.py:load_full_wiki(...),
-    and common_funcs.py:match_using_name_loc(...))
-    @param: faa_inc (pd.DataFrame) faa incident dataset
-    @returns: pd.DataFrame of airport names, and their corresponding IATA code on wikipedia.
-        See common_funcs.py:match_using_name_loc(...) for more info.
-    """
-    if perform_name_matching:
-        # load wikipedia airport name
-        us_wiki_tables = load_full_wiki(us_only=True) # see common_funcs.py
-        full_matched_pd = match_using_name_loc(faa_inc, us_wiki_tables)
-        full_matched_pd.to_csv('matched_using_name.csv')
-    else:
-        full_matched_pd = pd.read_csv('matched_using_name.csv', index_col=0)
-    return full_matched_pd
-
-def query_wikipedia(not_matched):
-    """
-    Given the dataframe created from get_unmatched_names_cities(...), or the dataset with
-    airport names, cities and the number of times it occurs in the faa incident dataset, create
-    a dataframe consisting of all the rows that can be connected to an article on wikipedia.
-
-    @param: not_matched (pd.DataFrame) dataframe of unmatched airport names, its corresponding
-        city, and the number of times they occur within the faa incident dataset
-        result of get_unmatched_names_cities(...)
-    @returns: pd.DataFrame of matched airport names (found by querying wikipedia).
-        See common_funcs.py:search_wiki_airportname(...) for more info on the columns
-    """
-    if query_wiki:
-        wiki_search_found = {}
-
-        name_state = not_matched[['eventairport_conv', 'event_fullstate']].drop_duplicates()
-        tqdm_obj = tqdm(name_state.iterrows(), \
-                desc="query wiki names found 0", total=name_state.shape[0])
-        for _, row in tqdm_obj:
-            airportname, fullstate = row['eventairport_conv'], row['event_fullstate']
-            res = search_wiki_airportname(airportname, fullstate)
-            if res is not None:
-                wiki_search_found[airportname] = res
-                tqdm_obj.set_description(f"query wiki names found {len(wiki_search_found)}")
-
-        wiki_search_found_df = pd.DataFrame.from_dict(wiki_search_found, orient='index')
-        wiki_search_found_df.to_csv('results/wiki_search_found.csv')
-    else:
-        wiki_search_found_df = pd.read_csv('results/wiki_search_found.csv', index_col=0)
-    return wiki_search_found_df
-
-def get_unmatched_names_cities(faa_inc, matched_names):
-    """
-    This creates a dataframe with airport name and its corresponding city (as well as how often
-    it occurs within the faa incident dataset).
-    @param: faa_inc (pd.DataFrame) faa incident dataset
-    @param: matched_names (set of str) contains all airport names that have ben matched
-        only via matching the airport names with the wikipedia table
-    @returns: airport name/city/count pd.DataFrame
-    """
-    not_matched_sel = faa_inc['eventairport_conv'].apply(lambda x: x not in matched_names)
-    return faa_inc.loc[not_matched_sel, ['eventairport_conv', 'eventcity']] \
-            .groupby('eventairport_conv').count() \
-            .sort_values(by='eventcity', ascending=False).reset_index()
-
-def save_not_matched(not_matched, matched_names):
-    """
-    This function saves the portion of the faa incident dataset with airport names that have not
-    been matched to an IATA code.
-    @param: faa_inc (pd.DataFrame) faa incident dataset
-    @param: not_matched (pd.DataFrame) contains the airport names and their corresponding cities
-        and the number of times they occur in the faa incident dataset
-        (see get_unmatched_names_cities(...))
-    @param: matched_names (set of str) contains all airport names that have been matched
-    @param: verbose (bool) whether or not to print out statistics
-    """
-    nf_sel = not_matched['eventairport_conv'].apply(lambda x: x not in matched_names)
-    not_matched.loc[nf_sel, :].to_csv('results/not_matched.csv', index=False)
-
 def fill_in_handcoded(faa_df):
     """
     This fills in the faa incident dataset with IATA codes by utilizing the name of airport
@@ -330,10 +202,8 @@ def fill_in_iata(faa_inc, full_matched_pd, wiki_search_found_df):
     @param: faa_inc (pd.DataFrame) faa incident dataset
     @param: full_matched_pd (pd.DataFrame) dataframe of matched airport names (from df),
         and their corresponding airport codes found on a wikipedia table of airport codes
-        see wiki_name_matching(...) for more info
     @param: wiki_search_found_df (pd.DataFrame) dataframe of matched airport names (from df),
         and their corresponding airport codes found by querying the wikipedia website
-        see query_wikipedia(...) for more info
     @returns: df (pd.DataFrame) faa incident dataset with the tracon codes filled in
     """
     name_to_iata = {}
@@ -346,69 +216,6 @@ def fill_in_iata(faa_inc, full_matched_pd, wiki_search_found_df):
     faa_inc['tracon_code'] = faa_inc['eventairport_conv'].apply(lambda x: name_to_iata[x] \
             if x in name_to_iata else np.nan)
     faa_inc = fill_in_handcoded(faa_inc)
-    return faa_inc
-
-def wiki_matched_set(faa_inc, wiki_tables):
-    """
-    This creates a set of tracon_codes that are found in the faa incident dataset and
-    the wikipedia table of tracon_codes.
-    @param: faa_inc (pd.DataFrame) faa incident dataset
-    @param: wiki_tables (pd.DataFrame) wikipedia airport dataset (see common_funcs:load_full_wiki)
-    """
-    matched_set = set()
-    code_and_loc_pd = faa_inc.loc[~faa_inc['tracon_code'].isna(), ['tracon_code']].drop_duplicates()
-    for _, row in code_and_loc_pd.iterrows():
-        selected = wiki_tables.loc[wiki_tables['wiki_IATA'] == row['tracon_code']]
-        if selected.shape[0] > 0:
-            matched_set.add(row['tracon_code'])
-    return matched_set
-
-def count_matched(faa_inc, matched_set):
-    """
-    This counts the number of rows with a tracon code within a given set.
-    @param: faa_inc (pd.DataFrame) faa incident dataset
-    @param: matched_set (set of tracon codes)
-    @returns: ctr (int) number of rows with a tracon code within the given set
-    """
-    ctr = 0
-    for code in matched_set:
-        sel = faa_inc['tracon_code'] == code
-        ctr += faa_inc.loc[sel].shape[0]
-    return ctr
-
-def check_tracon_codes(faa_inc):
-    """
-    Double check that codes in df are in wikipedia or airnav, and adds a new column that
-    indicates whether or not the code was found in wikipedia/airnav.
-    @param: faa_inc (pd.DataFrame) of faa incidents
-    @returns: faa_inc (pd.DataFrame) with added column
-    """
-    faa_inc['found_code_faa'] = 0
-    if check_codes:
-        # match with wiki
-        wiki_tables = load_full_wiki(us_only=False)
-        matched_set = wiki_matched_set(faa_inc, wiki_tables)
-
-        tmp = faa_inc.loc[faa_inc['eventairport_conv'] != 'nan', :].copy()
-        matched_set = wiki_matched_set(faa_inc, wiki_tables)
-
-        tmp = faa_inc.loc[faa_inc['eventairport_conv'] != 'nan', :].copy()
-        ctr = count_matched(tmp, matched_set)
-        print('wiki matched', ctr)
-
-        # match with wac
-        # for _, row in tqdm(code_and_loc_pd.iterrows(), total=code_and_loc_pd.shape[0]):
-        #     if row['tracon_code'] not in matched_set and check_code(row['tracon_code']):
-        #         matched_set.add(row['tracon_code'])
-
-        print('wiki + airnav matched', count_matched(tmp, matched_set))
-        pickle.dump(matched_set, open('results/matched_set_faa.pckl', 'wb'))
-    else:
-        # matched_set = pickle.load(open('results/matched_set_faa.pckl', 'rb'))
-        pass
-    # TODO: you need to rerun this while also checking codes. I neglected to add this to the
-    # github so this file is lost. Takes a while to run.
-    # faa_inc.loc[faa_inc['tracon_code'].apply(lambda x: x in matched_set), 'found_code_faa'] = 1
     return faa_inc
 
 def fill_in_handcode_iata(faa_inc):
@@ -466,33 +273,12 @@ def main(verbose=True):
     # searches
     full['eventairport_conv'] = full['eventairport'].apply(process_faa_name)
 
-    # the following lines are commented out because matching names to IATA codes created
-    # some number of false positives. Instead, we now utilize a dictionary that maps from
-    # eventairport to IATA code
-
-    # match names using wikipedia table
-    # full_matched_pd = wiki_name_matching(full)
-
-    # work on those that we could not find codes for
-    # all_matched_names = set(full_matched_pd['eventairport_conv'])
-    # not_matched = get_unmatched_names_cities(full, all_matched_names)
-
-    # match names by querying wikipedia
-    # wiki_search_found_df = query_wikipedia(not_matched)
-
-    # save unmatched part of dataset to separate csv file
-    # all_matched_names = all_matched_names.union(set(wiki_search_found_df.index))
-    # save_not_matched(not_matched, all_matched_names, verbose=verbose)
-
     # fill in dataset with matched iata codes (found via airport name above)
-    # full = fill_in_iata(full, full_matched_pd, wiki_search_found_df)
     full = fill_in_handcode_iata(full)
     full = fill_in_handcoded(full)
 
     if verbose:
         print('non empty tracon code rows', full.loc[~full['tracon_code'].isna()].shape[0])
-
-    full = check_tracon_codes(full)
 
     full = post_process_results(full)
     full.to_csv('results/FAA_AIDS_full_processed.csv', index=False)
