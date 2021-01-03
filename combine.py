@@ -232,6 +232,7 @@ def combine_asrs_liwc(col):
 
     asrs_orig = asrs.merge(liwc_df.drop(['tracon', 'month', 'year'], axis=1),\
             on='tracon_month', how='outer')
+    asrs_orig.drop(['tracon_code'], inplace=True, axis=1)
     asrs_orig.sort_values(['year', 'month', 'tracon'], inplace=True)
     return asrs_orig
 
@@ -335,7 +336,7 @@ def calculate_props(searched, col):
     # caclculate total number of codes
     total_codes = (searched['avg_code_per_obs'] * searched['num_observations']).sum()
 
-    cumulative = searched.sum()
+    cumulative = pd.Series(np.sum(searched.values, axis=0), searched.columns)
     total_wc = cumulative[f'{abrev_col}_wc_all']
     for idx, scope in enumerate(['', '_out', '_all']):
         num_observation = cumulative[f'num_observations{scope}']
