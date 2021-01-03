@@ -187,9 +187,7 @@ def load_asrs(path=f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load_s
     asrs = pd.read_csv(path)
 
     # Dropping Duplicates
-    dup_cols = ['ACN', 'narrative_report1', 'narrative_report2', 'synopsis_report1'] + \
-            ['callback_report1', 'callback_report2', 'Locale Reference']
-    asrs_dropped = asrs.drop_duplicates(dup_cols)
+    asrs_dropped = asrs.drop_duplicates()
     asrs = asrs_dropped
 
     if test:
