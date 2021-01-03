@@ -1,5 +1,6 @@
 import argparse
 import pickle
+    import time
 from itertools import product
 from functools import reduce
 from collections import Counter
@@ -221,6 +222,7 @@ def create_index_dicts(all_pds, col, month_range=1, lag=0, unq_only=False):
     yr_mth, yr_mth_idx, yr_mth_ct = np.unique(yr_mth.values.astype(int), \
             axis=0, return_index=True, return_counts=True)
 
+    total_time = time.time()
     for yr_mth_elem_idx, (year, mth) in tqdm(enumerate(yr_mth), desc=col, total=len(yr_mth)):
         tmp = preprocess_helper.year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, \
                 year, mth, month_range, lag)
@@ -240,21 +242,22 @@ def create_index_dicts(all_pds, col, month_range=1, lag=0, unq_only=False):
             # this creates the string id of the given tracon_month
             index_id = f'{trcn_code} {year}/{mth}'
 
-            asrs[f'{col}_wc'] = asrs.apply(lambda x: \
-                    preprocess_helper.convert_to_words(x, col).shape[0], axis=1)
-
-            # fill in additional columns
             other_info = {}
-            any_col_has_multiple_reports = get_selector_for_mult_reports(asrs, other_info)
+            if not unq_only:
+                asrs[f'{col}_wc'] = asrs.apply(lambda x: \
+                        preprocess_helper.convert_to_words(x, col).shape[0], axis=1)
 
-            other_info['avg_code_per_obs'] = asrs['num_code_per_obs'].mean()
-            other_info['num_total_idents'] = get_total_num_idents(asrs, other_info, unique_idents)
-            other_info['num_multiple_reports'] = any_col_has_multiple_reports.sum()
-            other_info['num_observations'] = asrs.shape[0]
-            other_info['num_callbacks'] = asrs['contains_callback'].sum()
-            other_info[f'{abrev_col}_wc'] = asrs[f'{col}_wc'].sum()
-            other_info[f'{abrev_col}_avg_wc'] = asrs[f'{col}_wc'].mean()
-            other_info['tracon_code'] = trcn_code
+                # fill in additional columns
+                any_col_has_multiple_reports = get_selector_for_mult_reports(asrs, other_info)
+
+                other_info['avg_code_per_obs'] = asrs['num_code_per_obs'].mean()
+                other_info['num_total_idents'] = get_total_num_idents(asrs, other_info, unique_idents)
+                other_info['num_multiple_reports'] = any_col_has_multiple_reports.sum()
+                other_info['num_observations'] = asrs.shape[0]
+                other_info['num_callbacks'] = asrs['contains_callback'].sum()
+                other_info[f'{abrev_col}_wc'] = asrs[f'{col}_wc'].sum()
+                other_info[f'{abrev_col}_avg_wc'] = asrs[f'{col}_wc'].mean()
+                other_info['tracon_code'] = trcn_code
 
             # this is redundant (occurs in preprocess_helper.py)
             asrs[col] = asrs[col].str.lower()
