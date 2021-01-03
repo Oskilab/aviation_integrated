@@ -183,6 +183,9 @@ def load_ame():
             airport_month_events['airport_code'].apply(lambda x: x.split()[0] in top_50_iata)]
 
     airport_month_events = fill_with_empty(airport_month_events, 'airport_code')
+    cols = [col for col in airport_month_events.columns if 'faa_ntsb' in col or '_total' in col]
+    for col in cols:
+        airport_month_events[col] = airport_month_events[col].fillna(0)
     return airport_month_events
 
 def preprocess_liwc(liwc_df):
