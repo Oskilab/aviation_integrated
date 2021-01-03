@@ -28,6 +28,32 @@ cols = ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_com
 # month ranges
 MONTH_RGS = [1, 3, 6, 12]
 
+def get_year(trcn_mnth):
+    """
+    Extracts year from a given string (trcn_mnth)
+    @param: trcn_mnth (string) with format 'tracon_code year/month'
+    @returns: year (float), nan if format incorrect
+    """
+    try:
+        return int(float(str(trcn_mnth).split("/")[0]))
+    except ValueError:
+        return np.nan
+    except IndexError:
+        return np.nan
+
+def get_month(trcn_mnth):
+    """
+    Extracts month from a given string (trcn_mnth)
+    @param: trcn_mnth (string) with format 'tracon_code year/month'
+    @returns: month (float), nan if format incorrect
+    """
+    try:
+        return int(float(str(trcn_mnth).split("/")[1]))
+    except ValueError:
+        return np.nan
+    except IndexError:
+        return np.nan
+
 def convert_ctr_to_series(counter, abrev_set=None, abrev_col='narr', unq_only=False):
     """
     This converts a collections.Counter object to a pd.Series object. The collections.Counter
@@ -278,8 +304,8 @@ def load_dictionary_sets(total_cts):
     return all_abrevs, pos_nonword_abrevs, df_sets
 
 def postprocess_unq_all_df(unq_all_df):
-    unq_all_df['year'] = unq_all_df.index.map(lambda x: int(x.split("/")[0]))
-    unq_all_df['month'] = unq_all_df.index.map(lambda x: int(x.split("/")[1]))
+    unq_all_df['year'] = unq_all_df.index.map(get_year)
+    unq_all_df['month'] = unq_all_df.index.map(get_month)
     return unq_all_df
 
 def calculate_all_unq(key_ctr, word_set, col, prefix):
