@@ -651,8 +651,14 @@ def main():
                 return_index=True, return_counts=True)
 
         for month_idx, n_month in enumerate(num_months):
+            asrs_unq = pd.read_csv(f'asrs_analysis/results/tracon_month_unq_{col}_{n_month}mon.csv'\
+                    , index_col=0)
+            asrs_unq = preprocess_asrs(asrs_unq)
+            asrs_unq = asrs_unq.reset_index().rename({'index':'tracon_month'}, axis=1)
+
             res = combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, \
                     airport_month_events, col)
+            res = pd.merge(res, asrs_unq, 'tracon_month')
             res = generate_liwc_prop_cols(res, col, n_month)
             res = aggregate_asrs_cols(res, asrs_dict_cols, n_month)
             all_res.append(res)

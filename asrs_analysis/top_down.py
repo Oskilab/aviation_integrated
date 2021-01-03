@@ -1,6 +1,7 @@
 import argparse
 import pickle
 from itertools import product
+from functools import reduce
 from collections import Counter
 
 from IPython import embed
@@ -24,7 +25,10 @@ sel = ['tracon_code', 'year', 'month']
 # columns of interest
 cols = ['narrative', 'synopsis', 'callback', 'combined', 'narrative_synopsis_combined']
 
-def convert_ctr_to_series(counter, abrev_set=None, abrev_col='narr'):
+# month ranges
+MONTH_RGS = [1, 3, 6, 12]
+
+def convert_ctr_to_series(counter, abrev_set=None, abrev_col='narr', unq_only=False):
     """
     This converts a collections.Counter object to a pd.Series object. The collections.Counter
     counts how many times each word showed up within a tracon_month, and the abrev_set is a
@@ -44,7 +48,10 @@ def convert_ctr_to_series(counter, abrev_set=None, abrev_col='narr'):
         if word in abrev_set:
             ctr += num
             unique_ct += 1
-    return pd.Series({f'{abrev_col}': ctr, f'unq_{abrev_col}': unique_ct})
+    if not unq_only:
+        return pd.Series({f'{abrev_col}': ctr})
+    else:
+        return pd.Series({f'unq_{abrev_col}': unique_ct})
 
 def get_selector_for_mult_reports(asrs, other_info):
     """
@@ -162,7 +169,7 @@ def select_subset(all_pds, tracon_month_df, i):
     asrs = all_pds.loc[selector, :].copy()
     return asrs
 
-def create_index_dicts(all_pds, col):
+def create_index_dicts(all_pds, col, month_range=1, lag=0, unq_only=False):
     """
     Given a column we are analyzing, we create two dictionaries that maps tracon_months
     to any relevant information we need to track (number of reports, observations, etc.)
@@ -185,15 +192,13 @@ def create_index_dicts(all_pds, col):
     all_pds.sort_values(['year', 'month', 'tracon_code'], inplace=True)
 
     yr_mth = all_pds[['year', 'month']].copy()
-
     yr_mth, yr_mth_idx, yr_mth_ct = np.unique(yr_mth.values.astype(int), \
             axis=0, return_index=True, return_counts=True)
 
     for yr_mth_elem_idx, (year, mth) in tqdm(enumerate(yr_mth), desc=col, total=len(yr_mth)):
-        start = yr_mth_idx[yr_mth_elem_idx]
-        end = start + yr_mth_ct[yr_mth_elem_idx]
-
-        asrs_yr_mth = all_pds.iloc[start:end]
+        tmp = preprocess_helper.year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, \
+                year, mth, month_range, lag)
+        asrs_yr_mth = all_pds.iloc[tmp]
 
         trcn_codes, trcn_codes_idx, trcn_codes_ct = \
                 np.unique(asrs_yr_mth['tracon_code'].astype(str), return_index=True, \
@@ -233,10 +238,11 @@ def create_index_dicts(all_pds, col):
             split = asrs.apply(lambda x: preprocess_helper.convert_to_words(x, col), axis=1)
 
             index_to_counter[index_id] = Counter(np.hstack(split.values).flatten())
-            index_to_other_info[index_id] = pd.Series(other_info)
+            if not unq_only:
+                index_to_other_info[index_id] = pd.Series(other_info)
     return index_to_counter, index_to_other_info
 
-def generate_tracon_month_ctr(col, abrev_set, key_ctr, prefix):
+def generate_tracon_month_ctr(col, abrev_set, key_ctr, prefix, unq_only=False):
     """
     This generates a dataframe that calculates how many times words from abrev_set occur
     for each tracon_month (as well as how many unique words occur).
@@ -251,12 +257,49 @@ def generate_tracon_month_ctr(col, abrev_set, key_ctr, prefix):
     """
     # converts full column name to shortened column name
     abrev_col = preprocess_helper.ABREV_COL_DICT[col]
-    pos_nonword_df = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, abrev_set, abrev_col) \
-            for key, ctr in key_ctr}, orient='index')
+    pos_nonword_df = pd.DataFrame.from_dict({key: convert_ctr_to_series(ctr, abrev_set, abrev_col, \
+            unq_only) for key, ctr in key_ctr}, orient='index')
     pos_nonword_df = pos_nonword_df.add_prefix(prefix)
     return pos_nonword_df
 
-def generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col):
+def load_dictionary_sets(total_cts):
+    """
+    Creates sets for different categorizations of words (pos_nwrd, all_abrevs, aviation_dicts)
+    """
+    aviation_dicts = preprocess_helper.load_dictionaries()
+
+    # set of abbreviations to calculate counts
+    all_abrevs = set(total_cts.loc[total_cts['abrev'] == 1, 'acronym'])
+    pos_nonword_abrevs = set(total_cts.loc[total_cts['tag'] == 'pos_nonword', 'acronym'])
+
+    # the list of set of acronyms for each dictionary. this is used to create counts for each
+    # tracon month (aligned with aviation dicts)
+    df_sets = [set(x['acronym']).intersection(all_abrevs) for x in aviation_dicts.values()]
+    return all_abrevs, pos_nonword_abrevs, df_sets
+
+def postprocess_unq_all_df(unq_all_df):
+    unq_all_df['year'] = unq_all_df.index.map(lambda x: int(x.split("/")[0]))
+    unq_all_df['month'] = unq_all_df.index.map(lambda x: int(x.split("/")[1]))
+    return unq_all_df
+
+def calculate_all_unq(key_ctr, word_set, col, prefix):
+    abrev_col = preprocess_helper.ABREV_COL_DICT[col]
+    yr_mth_to_ctrs = {}
+    for key, ctr in key_ctr:
+        index = key.split()[1]
+        yr_mth_to_ctrs[index] = yr_mth_to_ctrs.get(index, []) + [ctr]
+
+    for yr_mth in yr_mth_to_ctrs:
+        fin_res = convert_ctr_to_series(np.sum(yr_mth_to_ctrs[yr_mth]), abrev_set=word_set, \
+                unq_only=True, abrev_col=abrev_col)
+        yr_mth_to_ctrs[yr_mth] = fin_res
+    # create df and postprocess
+    unq_all_df = pd.DataFrame.from_dict(yr_mth_to_ctrs, orient='index')
+    unq_all_df = unq_all_df.add_prefix(prefix)
+    unq_all_df = postprocess_unq_all_df(unq_all_df).reset_index().drop('index', axis=1)
+    return unq_all_df
+
+def generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col, unq_only=False):
     """
     This generates one dataframe that calculates how many times words from each
     abbreviation_dictionaries occur for each tracon_month (each tracon_month has
@@ -271,26 +314,19 @@ def generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col):
     @returns: pd.DataFrame that maps each tracon_month to its associated casa ct/faa ct,
         and counts for each abbreviation dictionary
     """
+    all_abrevs, pos_nonword_abrevs, df_sets = load_dictionary_sets(total_cts)
     aviation_dicts = preprocess_helper.load_dictionaries()
-
-    # set of abbreviations to calculate counts
-    all_abrevs = set(total_cts.loc[total_cts['abrev'] == 1, 'acronym'])
-    pos_nonword_abrevs = set(total_cts.loc[total_cts['tag'] == 'pos_nonword', 'acronym'])
-
-    # the list of set of acronyms for each dictionary. this is used to create counts for each
-    # tracon month (aligned with aviation dicts)
-    df_sets = [set(x['acronym']).intersection(all_abrevs) for x in aviation_dicts.values()]
 
     other_info = pd.DataFrame.from_dict(index_to_other_info, orient='index')
     key_ctr = list(index_to_counter.items())
 
-    pos_nonword_df = generate_tracon_month_ctr(col, pos_nonword_abrevs, key_ctr, "pos_nwrd_")
-    all_df = generate_tracon_month_ctr(col, all_abrevs, key_ctr, "abrvs_no_ovrcnt_")
+    pos_nonword_df = generate_tracon_month_ctr(col, pos_nonword_abrevs, key_ctr, "pos_nwrd_", unq_only)
+    all_df = generate_tracon_month_ctr(col, all_abrevs, key_ctr, "abrvs_no_ovrcnt_", unq_only)
 
     all_dfs = [pos_nonword_df, all_df, other_info]
     # count the number of times words in each dictionary shows up in each tracon_month
     for dict_idx, dict_name in enumerate(aviation_dicts.keys()):
-        cts = generate_tracon_month_ctr(col, df_sets[dict_idx], key_ctr, f"{dict_name}_")
+        cts = generate_tracon_month_ctr(col, df_sets[dict_idx], key_ctr, f"{dict_name}_", unq_only)
         cts.to_csv(f'results/tracon_month_{col}_{dict_name}.csv')
         all_dfs.append(cts)
 
@@ -298,6 +334,22 @@ def generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col):
     all_dfs.index = all_dfs.index.rename('tracon_month')
 
     all_dfs = add_dates(all_dfs)
+
+    if unq_only:
+        all_abrevs_unq = calculate_all_unq(key_ctr, all_abrevs, col, "abrvs_no_ovrcnt_")
+        all_posnwrd_unq = calculate_all_unq(key_ctr, pos_nonword_abrevs, col, "pos_nwrd_")
+        new_all_dfs = [all_abrevs_unq, all_posnwrd_unq]
+        for dict_idx, dict_name in enumerate(aviation_dicts.keys()):
+            new_all_dfs.append(calculate_all_unq(key_ctr, df_sets[dict_idx], col, f"{dict_name}_"))
+        unq_all = reduce(lambda x, y: pd.merge(x, y, on=['year', 'month']), new_all_dfs)
+        unq_all = unq_all.add_suffix("_all")
+        unq_all.rename({'year_all': 'year', 'month_all': 'month'}, inplace=True, axis=1)
+        fin = pd.merge(all_dfs.reset_index(), unq_all, on=['year', 'month']).set_index(\
+                'tracon_month')
+        orig_cols = [col for col in fin.columns if col in fin.columns and f"{col}_all" in fin.columns]
+        for unq_col in orig_cols:
+            fin[f"{unq_col}_out"] = fin[f"{unq_col}_all"] - fin[f"{unq_col}"]
+        return fin
     return all_dfs
 
 def analyze_wc(all_dfs):
@@ -439,22 +491,38 @@ def add_missing_rows(all_dfs):
 def main():
     all_pds = load_asrs_ds()
 
+    # for col in cols:
+    #     total_cts = load_total_cts(col)
+    #
+    #     # create dictionaries mapping from tracon_month to cts
+    #     index_to_counter, index_to_other_info = create_index_dicts(all_pds, col)
+    #
+    #     # generate count dataframes
+    #     all_dfs = generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col)
+    #     all_dfs = analyze_wc(all_dfs)
+    #
+    #     # add rows for missing tracon_months
+    #     all_dfs = add_missing_rows(all_dfs)
+    #
+    #     # post-process and save
+    #     all_dfs.drop(['year', 'month'], axis=1, inplace=True)
+    #     all_dfs.to_csv(f'results/tracon_month_{col}.csv', index=True)
+
+    # calculate unique counts
     for col in cols:
         total_cts = load_total_cts(col)
 
-        # create dictionaries mapping from tracon_month to cts
-        index_to_counter, index_to_other_info = create_index_dicts(all_pds, col)
+        for month_range in MONTH_RGS:
+            index_to_counter, index_to_other_info = create_index_dicts(all_pds, col, \
+                    month_range, lag=1, unq_only=True)
+            all_dfs = generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col, \
+                    unq_only=True)
 
-        # generate count dataframes
-        all_dfs = generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col)
-        all_dfs = analyze_wc(all_dfs)
+            # add rows for missing tracons
+            all_dfs = add_missing_rows(all_dfs)
 
-        # add rows for missing tracon_months
-        all_dfs = add_missing_rows(all_dfs)
-
-        # post-process and save
-        all_dfs.drop(['year', 'month'], axis=1, inplace=True)
-        all_dfs.to_csv(f'results/tracon_month_{col}.csv', index=True)
+            all_dfs.drop(['year', 'month'], axis=1, inplace=True)
+            all_dfs.to_csv(f'results/tracon_month_unq_{col}_{month_range}mon.csv', index=True)
 
 if __name__ == "__main__":
     main()
