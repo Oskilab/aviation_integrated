@@ -363,7 +363,6 @@ R5 = r"^([A-Za-z]{1,})/([A-Za-z]{1,})$"
 
 pats = [R3, R1, R2, R4, R5]
 grps = [2, 2, 1, 1, 1] # which regex groups we need to extract
-mispelled_dict = neg_nonword_to_mispelled_dict()
 
 def clean_word(elem):
     """
@@ -380,60 +379,38 @@ def clean_word(elem):
     return None
 
 def clean_string_and_tokenize(string_input):
+    """
+    Cleans a string by removing punctuation and splitting on spaces/semi-colons/etc and
+    tokenizes into np.ndarray
+    @param: string_input (string)
+    @returns: np.ndarray of tokens
+    """
     for char in r'[!"#$&\'()*+,:;<=>?@[\\]^_`{|}~/-]\.%':
         string_input = string_input.replace(char, ' ')
     res = np.array(re.split(r'[( | ;|\. |\.$]', string_input))
     res = res[res != ''].flatten()
     return res
 
-def count_words(field, replace_dict=None):
-    if replace_dict is None:
-        replace_dict = {}
+def count_words(field):
+    """
+    Counts the number of words in a given string
+    @param: field (string)
+    @returns: number of tokens in field (int)
+    """
     if isinstance(field, float) and np.isnan(field):
         field = ''
-    word_ct = 0
-    for elem in clean_string_and_tokenize(field):
-        if elem in replace_dict:
-            word_ct += 1
-    return word_ct
+    return len(clean_string_and_tokenize(field))
 
-def convert_to_ctr(field, replace_dict=None):
-    if replace_dict is None:
-        replace_dict = {}
+def convert_to_ctr(field):
+    """
+    Converts a string to a collections.Counter object
+    @param: field (string)
+    @returns: collections.Counter object that counts the number of time each unique word
+    shows up
+    """
     if isinstance(field, float) and np.isnan(field):
         field = ''
     return Counter(clean_string_and_tokenize(field))
-
-def convert_to_words(row, col='narrative', replace_dict=None):
-    """
-    This converts a string or pandas.Series containing a string into
-    a cleaned tokenizerd version of the string (in a np.ndarray)
-    @param: row (str/pd.Series) containing the string we wish to analyze
-    @param: col (str) column we are analyzing, only utilized if row
-        is not a string
-    @param: replace_dict (dict[word] -> replace_word), dictionary of
-        words we wish to replace with another version (abbreviation -> fullform)
-    @returns: np.ndarray of cleaned tokenized version of the string in question
-    """
-    if replace_dict is None:
-        replace_dict = {}
-    if not isinstance(row, str):
-        field = row[col]
-    else:
-        field = row
-    if isinstance(field, float) and np.isnan(field):
-        field = ''
-    res = clean_string_and_tokenize(field)
-    fin = []
-    for elem in res:
-        if elem in replace_dict:
-            fin.append(replace_dict[elem])
-        else:
-            cleaned_word = clean_word(elem)
-            if cleaned_word is None:
-                cleaned_word = elem
-            fin.append(elem)
-    return np.array(fin)
 
 def generator_split(split_series):
     """
