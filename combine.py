@@ -610,14 +610,18 @@ def asrs_dictionary_cols(asrs_orig):
             dict_cols.append(col)
     return dict_cols
 
-def aggregate_asrs_cols(final_df, dict_cols, n_month):
+def aggregate_asrs_cols(final_df, dict_cols, n_month, orig_col):
     """
     Aggregates ASRS columns
     @param: final_df (pd.DataFrame) the final dataframe constructed at the end of the pipeline
     @param: dict_cols (list of str) list of all dictionary columns (excludes all/out permutations)
     @param: n_month (int/float) the time window
     """
+    abrev_col = preprocess_helper.ABREV_COL_DICT[orig_col]
     mth_range_str = generate_month_range_str(n_month)
+    wcs = [final_df[f'{abrev_col}_wc_{mth_range_str}'], \
+            final_df[f'{abrev_col}_wc_out_{mth_range_str}'], \
+            final_df[f'{abrev_col}_wc_all_{mth_range_str}']]
     for col in dict_cols:
         # average
         final_df[f'{col}_avg_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
@@ -629,11 +633,11 @@ def aggregate_asrs_cols(final_df, dict_cols, n_month):
 
         # proportions
         final_df[f'{col}_pr_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
-                final_df[f'{col}_all_{mth_range_str}']
+                wcs[0]
         final_df[f'{col}_out_pr_{mth_range_str}'] = final_df[f'{col}_out_{mth_range_str}'] / \
-                final_df[f'{col}_all_{mth_range_str}']
+                wcs[1]
         final_df[f'{col}_all_pr_{mth_range_str}'] = final_df[f'{col}_{mth_range_str}'] / \
-                final_df[f'{col}_all_{mth_range_str}']
+                wcs[2]
     return final_df
 
 def main():
@@ -654,7 +658,7 @@ def main():
             res = combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, \
                     airport_month_events, col)
             res = generate_liwc_prop_cols(res, col, n_month)
-            res = aggregate_asrs_cols(res, asrs_dict_cols, n_month)
+            res = aggregate_asrs_cols(res, asrs_dict_cols, n_month, col)
             all_res.append(res)
 
     all_res = ensure_multi_index(all_res)
