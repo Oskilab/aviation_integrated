@@ -38,6 +38,7 @@ def convert_ctr_to_series(counter, abrev_set=None, unq_only=False):
     @param: counter (collections.Counter) that counted the # of times each word showed up
         within a given tracon_month
     @param: abrev_set (set) a set of all the words you wish to count
+    @param: unq_only (bool) whether or not to return the unique ct or the total ct
     @return: pd.Series with a ct of the number of times any word within the set showed up,
         and a unique_ct (the number of unique words within the set that showed up)
     """
@@ -176,6 +177,8 @@ def create_index_dicts(all_pds, col, month_range=1, lag=0, unq_only=False):
     We also keep track of all the words that occur within the tracon_month.
     @param: all_pds (pd.DataFrame) ASRS dataset
     @param: col (str) column we are analyzing
+    @param: unq_only (bool) whether we should calculate only the unique word count columns
+        or all the columns
     @returns: index_to_counter (dict[tracon_month_str] -> collections.Counter)
         the counter object keeps track of what words occurred within tracon_month and
         how often each word occurred
@@ -253,6 +256,8 @@ def generate_tracon_month_ctr(col, abrev_set, key_ctr, prefix, unq_only=False):
         key (of tracon month, e.g., SFO 08/2011) to counter (collections.Counter object)
         see create_index_dicts for more info
     @param: prefix (str) prefix we wish to add to all columns in the final dataframe
+    @param: unq_only (bool) whether or not we're only calculating the unique word counts
+        or to the toal word counts
     @returns: pd.DataFrame of each tracon_month and the corresponding counts
         e.g, SFO 08/2011 -> 5 occurences of words from abrev_set
     """
@@ -357,6 +362,8 @@ def generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col, unq_o
     @param index_to_other_info (dict[tracon_month_str] -> dict[col_name] -> val)
         keeps track of any other relevant information regarding tracon month
     @param: col (str) column we are analyzing
+    @param: unq_only (bool) whether or not we're only calculating the unique word counts
+        or to the toal word counts
     @returns: pd.DataFrame that maps each tracon_month to its associated casa ct/faa ct,
         and counts for each abbreviation dictionary
     """
@@ -521,24 +528,24 @@ def add_missing_rows(all_dfs):
 def main():
     all_pds = load_asrs_ds()
 
-    # for col in cols:
-    #     total_cts = load_total_cts(col)
-    #
-    #     # create dictionaries mapping from tracon_month to cts
-    #     index_to_counter, index_to_other_info = create_index_dicts(all_pds, col)
-    #
-    #     # generate count dataframes
-    #     all_dfs = generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col)
-    #     all_dfs = analyze_wc(all_dfs)
-    #
-    #     # add rows for missing tracon_months
-    #     all_dfs = add_missing_rows(all_dfs)
-    #
-    #     # post-process and save
-    #     all_dfs.drop(['year', 'month'], axis=1, inplace=True)
-    #     all_dfs.to_csv(f'results/tracon_month_{col}.csv', index=True)
+    for col in cols:
+        total_cts = load_total_cts(col)
 
-    # calculate unique counts
+        # create dictionaries mapping from tracon_month to cts
+        index_to_counter, index_to_other_info = create_index_dicts(all_pds, col)
+
+        # generate count dataframes
+        all_dfs = generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col)
+        all_dfs = analyze_wc(all_dfs)
+
+        # add rows for missing tracon_months
+        all_dfs = add_missing_rows(all_dfs)
+
+        # post-process and save
+        all_dfs.drop(['year', 'month'], axis=1, inplace=True)
+        all_dfs.to_csv(f'results/tracon_month_{col}.csv', index=True)
+
+    # calculate unique counts for each column and month range
     for col in cols:
         total_cts = load_total_cts(col)
 
