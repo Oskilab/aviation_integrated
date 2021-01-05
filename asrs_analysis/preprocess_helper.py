@@ -215,7 +215,8 @@ def load_asrs(path=f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load_s
         asrs[type_report] = report1 + " " + report2
 
         # preprocess text
-        asrs[type_report] = asrs.apply(lambda x: ' '.join(convert_to_words(x, type_report)), axis=1)
+        asrs[type_report] = asrs[type_report]\
+                .apply(lambda x: ' '.join(clean_string_and_tokenize(x)), axis=1)
 
         asrs[type_report] = asrs[type_report].str.lower()
         asrs[f'{type_report}_report1'] = asrs[f'{type_report}_report1'].str.lower()
