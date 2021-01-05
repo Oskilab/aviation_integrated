@@ -31,3 +31,4 @@ dependencies:
       - urllib3
       - requests
       - gensim
+      - xlrd==1.2.0
