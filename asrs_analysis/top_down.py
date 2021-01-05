@@ -219,7 +219,7 @@ def create_index_dicts(all_pds, col, month_range=1, lag=0, unq_only=False):
 
             other_info = {}
             if not unq_only:
-                asrs[f'{col}_wc'] = asrs[col].apply(preprocess_helper.count_words, axis=1)
+                asrs[f'{col}_wc'] = asrs[col].apply(preprocess_helper.count_words)
 
                 # fill in additional columns
                 any_col_has_multiple_reports = get_selector_for_mult_reports(asrs, other_info)
@@ -385,6 +385,7 @@ def generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col, unq_o
 
     all_dfs = pd.concat(all_dfs, axis=1)
     all_dfs = add_dates(all_dfs)
+    all_dfs = all_dfs.loc[:, ~all_dfs.columns.duplicated(keep='first')]
     return all_dfs
 
 def analyze_wc(all_dfs):
@@ -545,21 +546,21 @@ def main():
         all_dfs.drop(['year', 'month'], axis=1, inplace=True)
         all_dfs.to_csv(f'results/tracon_month_{col}.csv', index=True)
 
-    # calculate unique counts for each column and month range
-    for col in cols:
-        total_cts = load_total_cts(col)
-
-        for month_range in MONTH_RGS:
-            index_to_counter, index_to_other_info = create_index_dicts(all_pds, col, \
-                    month_range, lag=1, unq_only=True)
-            all_dfs = generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col, \
-                    unq_only=True)
-
-            # add rows for missing tracons
-            all_dfs = add_missing_rows(all_dfs)
-
-            all_dfs.drop(['year', 'month'], axis=1, inplace=True)
-            all_dfs.to_csv(f'results/tracon_month_unq_{col}_{month_range}mon.csv', index=True)
+    # calculate unique counts
+    # for col in cols:
+    #     total_cts = load_total_cts(col)
+    #
+    #     for month_range in MONTH_RGS:
+    #         index_to_counter, index_to_other_info = create_index_dicts(all_pds, col, \
+    #                 month_range, lag=1, unq_only=True)
+    #         all_dfs = generate_ctr_df(total_cts, index_to_counter, index_to_other_info, col, \
+    #                 unq_only=True)
+    #
+    #         # add rows for missing tracons
+    #         all_dfs = add_missing_rows(all_dfs)
+    #
+    #         all_dfs.drop(['year', 'month'], axis=1, inplace=True)
+    #         all_dfs.to_csv(f'results/tracon_month_unq_{col}_{month_range}mon.csv', index=True)
 
 if __name__ == "__main__":
     main()
