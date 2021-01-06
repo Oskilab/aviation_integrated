@@ -4,7 +4,6 @@ Calculates LIWC counts for tracon_months.
 import argparse
 from collections import Counter
 
-from IPython import embed
 from tqdm import tqdm
 
 import pandas as pd
