@@ -4,6 +4,7 @@ Calculates LIWC counts for tracon_months.
 import argparse
 from collections import Counter
 
+from IPython import embed
 from tqdm import tqdm
 
 import pandas as pd
@@ -12,10 +13,6 @@ import numpy as np
 import cos_sim
 import preprocess_helper
 import top_down
-
-# abrev_col_dict = {'narrative': 'narr', 'synopsis': 'syn', \
-#         'narrative_synopsis_combined': 'narrsyn', 'combined': 'all', \
-#         'callback': 'call'}
 
 sel = ['tracon_code', 'year', 'month']
 
@@ -155,16 +152,18 @@ def analyze_tracon_period(df_grouped, asrs_df, group_to_set, col):
 
     # w/o replace
     fin_df = generate_ct_df(key_ctr, group_to_set, col, flfrm=False)
+    fin_df = top_down.add_dates(fin_df)
+    fin_df = top_down.add_missing_rows(fin_df)
     fin_df = generate_proportions(fin_df, "generate props w/o replace")
 
     # with replace
     fin_df_replace = generate_ct_df(key_ctr_replace, group_to_set, col, flfrm=True)
+    fin_df_replace = top_down.add_dates(fin_df_replace)
+    fin_df_replace = top_down.add_missing_rows(fin_df_replace)
     fin_df_replace = generate_proportions(fin_df_replace, "generate props w/replace")
 
     # postprocess results
     fin = pd.concat([fin_df, fin_df_replace], axis=1)
-    fin = top_down.add_dates(fin)
-    fin = top_down.add_missing_rows(fin)
     fin.drop(['year', 'month'], axis=1, inplace=True)
 
     rename_dict = rename_column_dict(fin)
@@ -180,7 +179,8 @@ def process_liwc_groups():
         and that dictionary has all the words in that liwc group. E.g., dict[pronouns] is a
         dictionary of all known english pronouns
     """
-    liwc = pd.read_excel('dictionaries/LIWC2015-dictionary-poster-unlocked.xlsx').iloc[3:]
+    # liwc = pd.read_excel('dictionaries/LIWC2015-dictionary-poster-unlocked.xlsx').iloc[3:]
+    liwc = pd.read_csv('dictionaries/LIWC2015-dictionary-poster-unlocked.csv').iloc[3:]
     # create dictionary of name of liwc group -> set of words
     start = 0
     group_to_set = {}

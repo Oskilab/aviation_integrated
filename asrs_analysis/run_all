@@ -34,7 +34,6 @@ python liwc_analysis.py
 printf "=============== Finished Analyzing LIWC ================\n\n"
 
 echo ================== Analyzing Doc2Vec ==================
-# python cos_sim.py
 if $test_var; then
     python cos_sim.py -t
 else
