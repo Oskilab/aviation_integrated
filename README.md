@@ -6,7 +6,7 @@ This repository processes the ASRS dataset by extracting the tracon information.
 ## Running The Repository
 First, you will need to upload, the ASRS dataset and place it in the folder `preprocess_asrs/datasets/`. We've excluded the file because of storage reasons (git LFS). Furthermore, you will need to add the files `faa_ntsb_analysis/datasets/NTSB_AviationData_new.txt`,`faa_ntsb_analysis/datasets/FAA_AIDS_full.txt`, `faa_ntsb_analysis/FAA_AIDS_addition.csv`.
 
-After that, you simply need to run the following command.
+After that, you simply need to run the following command. This will use the default lag month of 1.
 ```
 bash -e ./run_all
 ```
@@ -238,9 +238,10 @@ cd ../
 **Running**:
 ```
 cd asrs_analysis
-python cos_sim.py
+python cos_sim.py --lag 2
 cd ../
 ``` 
+This utilizes a lag range of 2 months. If `--lag` is not included, we utilize the default lag range of 1 month.
 #### (4.d) LIWC Analysis (liwc\_analysis.py)
 **Purpose**: for each tracon\_month, calculate the counts of each LIWC category
 
@@ -258,26 +259,7 @@ python liwc_analysis.py
 cd ../
 ```
 
-
-### (5) Merging with Volume Data (flight\_vol.py)
-**Purpose**: combine faa/ntsb accident/incident data from the volume data from this [link](https://aspm.faa.gov/opsnet/sys/tower.asp). Merged on same tracon_month.
-
-**Input**:
-* `airport_month_events.csv` from the result of `join_faa_ntsb.py` 
-* `WEB-Report-xxxx.{csv|xls}`: these are the datasets queried from the link above.
-
-**Output**:
-* `Combined_vol_incident.csv`: airport_month_events.csv + volume data. 
-    * They are combined on tracon_month. If some data cannot be matched, then they are filled with nas
-* `nf_dates.csv`: stands for not found dates. If the date in `airport_month_events.csv` cannot be found in the vol data, but the code exists in the vol data, the row is added to `nf_dates.csv`
-* `nf_codes.csv`: stands for not found codes. If the code doesn’t exist in the vol data, the row is added to `nf_codes.csv`
-
-**Running**:
-```
-python flight_vol.py
-```
-
-### (6) Joining All Datasets (combine.py)
+### (5) Joining All Datasets (combine.py)
 **Purpose**: combine asrs dataset, d2v dataset, liwc dataset, faa/ntsb incident/accident, volume data all together
 
 **Input**:
@@ -297,7 +279,6 @@ python flight_vol.py
 
 **Running**:
 ```
-python combine.py
+python combine.py --lag 2
 ```
-
-
+This utilizes a lag range of 2 months. If `--lag` is not included, we utilize the default lag range of 1 month.

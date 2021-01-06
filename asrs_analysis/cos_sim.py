@@ -8,16 +8,19 @@ from itertools import product
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from tqdm import tqdm
 from sklearn.metrics.pairwise import cosine_similarity
+from IPython import embed
 
 import pandas as pd
 import numpy as np
 import preprocess_helper
 
-parser = argparse.ArgumentParser(description='Analyze abbreviations.')
+parser = argparse.ArgumentParser(description='Calculate average cosine similarity.')
 parser.add_argument('-t', action='store_true')
+parser.add_argument('--lag', default=1, const=1, nargs='?', type=int)
 args = parser.parse_args()
 
 test = args.t
+lag = args.lag
 NUM_TIME_PERIODS = (2020 - 1988) * 12
 
 def generate_d2v_vecs(pd_df, d2v_model, field_dict, replace_dict, use_field_dict=True):
@@ -299,7 +302,7 @@ def analyze_time_period(searched, num_comp, sum_comp, code_info, col_types, defa
     return pd.Series(row)
 
 def analyze_d2v(all_pds, d2v_model, replace=True, month_range_dict={}, col="", field_dict={}, \
-        tracon_month_unique=None, replace_dict={}):
+        tracon_month_unique=None, replace_dict={}, lag=1):
     """
     Performs d2v cos_sim calculations for one particular column.
     @param: all_pds(pd.DataFrame) should be the full asrs dataset
@@ -356,7 +359,7 @@ def analyze_d2v(all_pds, d2v_model, replace=True, month_range_dict={}, col="", f
                 desc=f'{col} {mr_str}'):
             # select only the rows within the month range
             yr_mth_sel_idx = preprocess_helper.year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, \
-                    int(year), int(month), num_months=month_range, lag=1)
+                    int(year), int(month), num_months=month_range, lag=lag)
 
             # drop duplicates of given column
             searched = all_pds.iloc[yr_mth_sel_idx, :].copy()
@@ -524,7 +527,7 @@ def d2v_multiple_reports(all_pds):
                 all_pds.loc[idx, cos_col_name] = (cos_sim[0, 0] + 1) / 2
     return all_pds
 
-def cos_sim_analysis(all_pds, tracon_month_unique):
+def cos_sim_analysis(all_pds, tracon_month_unique, lag=1):
     """
     This performs the cos_sim calculation for all columns (and adds the columns to the dataset).
     @param: all_pds (pd.DataFrame) ASRS dataset
@@ -542,11 +545,11 @@ def cos_sim_analysis(all_pds, tracon_month_unique):
 
             analyze_d2v(all_pds, model, len(r_d) > 0, month_range_dict, col=col, \
                     field_dict=doc_to_idx, tracon_month_unique=tracon_month_unique, \
-                    replace_dict=r_d)
+                    replace_dict=r_d, lag=lag)
 
         for month_range in month_range_dict:
             res = pd.concat(month_range_dict[month_range], axis=1)
-            res.to_csv(f'results/d2v_tracon_month_{col}_{month_range}mon.csv')
+            res.to_csv(f'results/d2v_tracon_month_{col}_{month_range}mon_{lag}lag.csv')
 
 def main():
     """
@@ -569,7 +572,7 @@ def main():
     print('after missing rows')
 
     # all_pds = d2v_multiple_reports(all_pds)
-    cos_sim_analysis(all_pds, tracon_month_unique)
+    cos_sim_analysis(all_pds, tracon_month_unique, lag)
 
 if __name__ == "__main__":
     main()

@@ -6,6 +6,7 @@ import os
 import re
 from itertools import product
 
+from IPython import embed
 from tqdm import tqdm
 
 import pandas as pd
@@ -239,7 +240,7 @@ def combine_asrs_liwc(col):
     asrs_orig.sort_values(['year', 'month', 'tracon'], inplace=True)
     return asrs_orig
 
-def generate_cached_dicts(airport_month_events, asrs, n_month, yr_mth_info):
+def generate_cached_dicts(airport_month_events, asrs, n_month, yr_mth_info, lag=1):
     """
     For a given month_range (1/3/6/12 months), we calculate cached dictionaries in order
     to combine the datasets as quickly as possible. We define the dictionaries below.
@@ -278,7 +279,7 @@ def generate_cached_dicts(airport_month_events, asrs, n_month, yr_mth_info):
         code = ' '.join([str(month), str(year)])
 
         yr_mth_sel_idx = preprocess_helper.year_month_indices(yr_mth, yr_mth_idx, yr_mth_ct, \
-                int(year), int(month), num_months=n_month, lag=1)
+                int(year), int(month), num_months=n_month, lag=lag)
         tracon_month_dict[code] = asrs.iloc[yr_mth_sel_idx, :].copy()
         unique_info[code] = np.unique(tracon_month_dict[code]['tracon'].values.astype(str), \
                 return_index=True, return_counts=True)
@@ -506,7 +507,8 @@ def generate_month_range_str(month_range):
         month_range_str = 'atime'
     return month_range_str
 
-def combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, airport_month_events, col):
+def combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, airport_month_events, col, \
+        lag=1):
     """
     Given a column and a month_range, we combine the doc2vec, liwc, asrs, and airport_month_events
     datasets together.
@@ -528,17 +530,18 @@ def combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, airport_
     # load datasets
     asrs = asrs_orig.copy()
 
-    d2v_tm = pd.read_csv(f'./asrs_analysis/results/d2v_tracon_month_{col}_{n_month}mon.csv', \
-            index_col=0)
+    d2v_tm = \
+            pd.read_csv(f'./asrs_analysis/results/d2v_tracon_month_{col}_{n_month}mon_{lag}lag.csv'\
+            , index_col=0)
     d2v_tm.index = d2v_tm.index.rename('tracon_month')
 
     tracon_month_dict, unique_info = generate_cached_dicts(airport_month_events, \
-            asrs, n_month, yr_mth_info)
+            asrs, n_month, yr_mth_info, lag=lag)
 
     res = generate_final_ds_col_month_range(airport_month_events, asrs, d2v_tm, \
             tracon_month_dict, unique_info, month_idx, n_month, col)
     res = postprocess_final_ds(res, month_range_str, ame_cols)
-    res.to_csv(f'results/final/{col}_{month_range_str}.csv')
+    res.to_csv(f'results/final/{col}_{month_range_str}_{lag}lag.csv')
     return res
 
 def ensure_multi_index(all_res):
@@ -640,7 +643,7 @@ def aggregate_asrs_cols(final_df, dict_cols, n_month, orig_col):
                 wcs[2]
     return final_df
 
-def main():
+def main(lag=1):
     """
     Combines separate dataframes together
     """
@@ -656,7 +659,7 @@ def main():
 
         for month_idx, n_month in enumerate(num_months):
             res = combine_col_month_range(month_idx, n_month, yr_mth_info, asrs_orig, \
-                    airport_month_events, col)
+                    airport_month_events, col, lag=lag)
             res = generate_liwc_prop_cols(res, col, n_month)
             res = aggregate_asrs_cols(res, asrs_dict_cols, n_month, col)
             all_res.append(res)
@@ -664,17 +667,19 @@ def main():
     all_res = ensure_multi_index(all_res)
     all_res = pd.concat(all_res, ignore_index=False, axis=1, copy=False)
     all_res = reorder_cols(all_res)
-    all_res.to_csv('results/final_dataset.csv')
+    all_res.to_csv(f'results/final_dataset_{lag}lag.csv')
 
     coverage = all_res.isna().sum()
     coverage['total rows'] = all_res.shape[0]
-    coverage.to_csv('results/final_coverage.csv')
+    coverage.to_csv('results/final_coverage_{lag}lag.csv')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Combine ASRS data w/FAA/NTSB/LIWC/D2V.')
     parser.add_argument('-t', action='store_true')
+    parser.add_argument('--lag', default=1, const=1, nargs='?', type=int)
     args = parser.parse_args()
 
     test = args.t
+    lag = args.lag
     SKIP_EMPTY = False
-    main()
+    main(lag)
