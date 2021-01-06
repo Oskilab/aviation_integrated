@@ -4,7 +4,7 @@ This repository processes the ASRS dataset by extracting the tracon information.
 
 
 ## Running The Repository
-First, you will need to upload, the ASRS dataset and place it in the folder `preprocess_asrs/datasets/`. We've excluded the file because of storage reasons (git LFS). Furthermore, you will need to add the files `faa_ntsb_analysis/datasets/NTSB_AviationData_new.txt`,`faa_ntsb_analysis/datasets/FAA_AIDS_full.txt`, `faa_ntsb_analysis/FAA_AIDS_addition.csv`.
+First, you will need to upload, the ASRS dataset and place it in the folder `preprocess_asrs/datasets/` and unzip it to `preprocess_asrs/datasets/ASRS Data`. We've excluded the file because of storage reasons (git LFS). Furthermore, you will need to add the files `faa_ntsb_analysis/datasets/NTSB_AviationData_new.txt`,`faa_ntsb_analysis/datasets/FAA_AIDS_full.txt`, `faa_ntsb_analysis/FAA_AIDS_addition.csv`.
 
 After that, you simply need to run the following command. This will use the default lag month of 1.
 ```
