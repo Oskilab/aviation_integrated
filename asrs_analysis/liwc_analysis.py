@@ -163,7 +163,6 @@ def analyze_tracon_period(df_grouped, asrs_df, group_to_set, col):
 
     # postprocess results
     fin = pd.concat([fin_df, fin_df_replace], axis=1)
-    fin.drop(['year', 'month'], axis=1, inplace=True)
 
     rename_dict = rename_column_dict(fin)
     fin.rename(rename_dict, axis=1, inplace=True)
