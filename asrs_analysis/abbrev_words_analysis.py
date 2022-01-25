@@ -41,7 +41,7 @@ def parse_city_words():
     @returns: cities_words (set of str)
     """
     # get list of cities
-    with open('datasets/List_of_United_States_cities_by_population') as wiki_cities:
+    with open('datasets/List_of_United_States_cities_by_population', encoding="utf8") as wiki_cities:
         list_of_cities = BeautifulSoup(wiki_cities.read(), 'html.parser')
 
     # process html

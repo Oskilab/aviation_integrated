@@ -1,0 +1,4 @@
+,airport_code,year,month,ntsb_incidents,ntsb_accidents,faa_incidents,faa_ntsb_overlap,NTSB_FAA_incidents_total,NTSB_FAA_incidents_total_nodups
+382,BOS,1989,2,0.0,0.0,2.0,0,2.0,2.0
+2393,IAH,2015,8,0.0,0.0,1.0,0,1.0,1.0
+4799,PIT,1988,6,0.0,0.0,1.0,0,1.0,1.0

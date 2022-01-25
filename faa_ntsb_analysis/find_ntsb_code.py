@@ -190,7 +190,7 @@ def fill_in_handcode_iata(ntsb_inc):
     len4_sel = ntsb_inc[' Airport Code '].str.len() == 4
     startswith_k = ntsb_inc[' Airport Code '].str.startswith('K')
     sel = len4_sel & startswith_k
-    ntsb_inc.loc[sel, ' Airport code '] = ntsb_inc.loc[sel, ' Airport Code '].str.slice(1)
+    ntsb_inc.loc[sel, ' Airport Code '] = ntsb_inc.loc[sel, ' Airport Code '].str.slice(1)
 
     ntsb_inc[' Airport Code '] = ntsb_inc[' Airport Code '].apply(lambda x: fix_code_dict.get(x, x))
 

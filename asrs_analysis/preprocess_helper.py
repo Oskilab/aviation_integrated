@@ -11,7 +11,7 @@ import pandas as pd
 import numpy as np
 
 start_path = os.getcwd()
-start_path_split = start_path.split("/")
+start_path_split = start_path.split("\\")
 if start_path_split[-1] != 'asrs_analysis':
     if os.path.exists(f'{start_path}/asrs_analysis'):
         start_path += '/asrs_analysis'
@@ -105,6 +105,8 @@ def generate_ctrs_for_row(row):
 
                 code_and_type_set.add(code_and_type)
     return code_ctr, ident_ctr, num_na
+1
+
 
 def add_duplicated_rows(row, code_ctr, ident_ctr, all_pds, dropcols):
     """
@@ -147,18 +149,28 @@ def tracon_analysis(asrs):
     {atc|info}_code{0-6} (this is generated in preprocess_asrs)
 
     @param: asrs (pd.DataFrame) ASRS dataset
-    @returns: duplicated ASRS dataset (pd.DataFrame)
+    @returns: final duplicated ASRS dataset (pd.DataFrame)
     """
     pat = re.compile(r'(info|atc)_(code|type|repeated)\d')
     dropcols = [col for col in asrs if pat.match(col)]
 
     all_pds = []
+    split_counts = []
     for _, row in tqdm(asrs.iterrows(), total=asrs.shape[0]):
         # calculate the number of times a tracon_code appears
         # in this particular observation (including soft duplicates)
         code_ctr, ident_ctr, num_na = generate_ctrs_for_row(row)
 
         code_ctr, ident_ctr = dict(code_ctr), dict(ident_ctr)
+
+        # count the number of splits/duplications
+        num_code = len(code_ctr)
+        if num_code > 0:
+            for i in range(num_code):
+                split_counts.append(num_code)
+        else:
+            split_counts.append(1)
+
         if num_na == 12: # still add the row if all of the codes are NA
             copy_row = row.copy()
             for key in ident_ctr:
@@ -168,7 +180,9 @@ def tracon_analysis(asrs):
         else:
             add_duplicated_rows(row, code_ctr, ident_ctr, all_pds, dropcols)
 
-    return pd.DataFrame.from_records(all_pds)
+    final = pd.DataFrame.from_records(all_pds)
+    final['AtcAdvisoryMultCount'] = split_counts
+    return final
 
 def load_asrs(path=f'{start_path}/datasets/ASRS 1988-2019_extracted.csv', load_saved=False, \
         test=False, expand_trcn=True):

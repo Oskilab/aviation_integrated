@@ -1,0 +1,11 @@
+,year,month,tracon_code,num_obs,AtcAdvisoryMultCount_sum,word_count_sum,unique_word_count_sum,FAA_total_sum,FAA_unique_sum,NASA_total_sum,NASA_unique_sum,AtcAdvisoryMultCount_avg,word_count_avg,unique_word_count_avg,FAA_total_avg,FAA_unique_avg,NASA_total_avg,NASA_unique_avg,ntsb_incidents,ntsb_accidents,faa_incidents,faa_ntsb_overlap,NTSB_FAA_incidents_total,NTSB_FAA_incidents_total_nodups
+3204,2018,4,ORD,,,,,,,,,,,,,,,,0.0,0.0,1.0,0.0,1.0,1.0
+1676,2010,5,IAD,,,,,,,,,,,,,,,,1.0,0.0,2.0,1.0,3.0,2.0
+2969,2010,6,MSP,,,,,,,,,,,,,,,,1.0,0.0,1.0,0.0,2.0,2.0
+3076,1997,6,ORD,,,,,,,,,,,,,,,,1.0,0.0,1.0,1.0,2.0,1.0
+1815,1988,3,JFK,,,,,,,,,,,,,,,,0.0,0.0,1.0,0.0,1.0,1.0
+1541,2003,8,HNL,,,,,,,,,,,,,,,,1.0,0.0,1.0,0.0,2.0,2.0
+2714,1988,7,MIA,,,,,,,,,,,,,,,,1.0,0.0,0.0,0.0,1.0,1.0
+117,2006,2,LAX,1.0,1.0,457.0,182.0,15.0,6.0,50.0,20.0,1.0,457.0,182.0,15.0,6.0,50.0,20.0,,,,,,
+738,2001,6,DEN,,,,,,,,,,,,,,,,0.0,0.0,2.0,0.0,2.0,2.0
+2348,2010,10,LGA,,,,,,,,,,,,,,,,0.0,1.0,0.0,0.0,1.0,1.0
